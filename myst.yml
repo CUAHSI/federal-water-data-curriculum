@@ -1,0 +1,19 @@
+version: 1
+project:
+  id: federal-water-data-course
+  title: "Federal Open Water Data for Researchers"
+  authors:
+    - name: Lindsay Platt
+  github: https://github.com/CUAHSI/federal-water-data-curriculum
+  toc:
+    - file: index.md
+    - title: Data Best Practices in Water Research
+      children: []
+    - title: Federal Water Data Landscape
+      children: []
+    - title: Federal Water Data Access & Retrieval
+      children: []
+    - title: Federal Water Data Synthesis
+      children: []
+site:
+  template: book-theme
