@@ -5,9 +5,9 @@ _Under Development_
 
 ## Locally building the site
 
-This is built as a [MyST](https://mystmd.org/) Markdown-based site to fit with [CUAHSI's Water Content Portal](water-content-portal.cuahsi.io/) and ease the integration into that website. To build locally, you will need Node.js, npm, and MyST.
+This is built as a [MyST](https://mystmd.org/) Markdown-based site to fit with [CUAHSI's Water Content Portal](https://water-content-portal.cuahsi.io/) and ease the integration into that website. To build locally, you will need Node.js, npm, and MyST.
 
-Once you have npm, you can install `MyST` with:
+Once you have `npm`, you can install `MyST` with:
 ```
 npm install -g mystmd
 ```
