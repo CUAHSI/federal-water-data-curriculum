@@ -1,7 +1,7 @@
+https://img.shields.io/badge/course_status-under_development-%23fcc200?style=for-the-badge
+
 # federal-water-data-curriculum
 Course curriculum behind the CUAHSI program, Federal Open Water Data for Researchers (name still under development; repo name may change).
-
-_Under Development_
 
 ## Locally building the site
 
