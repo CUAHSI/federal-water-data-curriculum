@@ -1,30 +1,60 @@
 # Meet USGS NWIS
 
-[insert a "quick-facts" table; suggest doing this once the rest of the page is completed]
+The National Water Information System (NWIS) is produced by USGS’s Water Resources Mission Area. NWIS collects many different types of water data with the ultimate goal of providing high-quality and discoverable water data for everyone. This water data is collected at monitoring locations across the United States using automated sensors and manual data collection. Each monitoring location has unique location information, including the location name and identifier, the agency responsible for it, and geographic information. Water data provided by these monitoring locations covers a wide breadth of variables from chemical, to physical, to biological. This data is available as continuous data, daily data, field measurements, and discrete sample data. 
 
-[insert intro description, <5 sentences sentences: define agency + data acronym, give high-level elevator pitch for what the data set is and what it can be used to do plus why it is collected, provide some appropriate links to the agency-maintained landing page]
+NWIS and its API waterservices are in the process of being decommissioned, and USGS is moving to the modernized equivalents; Water Data For the Nation (WDFN) and waterdata. This training will be utilizing these modernized equivalents. Learn more about NWIS/WDFN at the [WDFN home page](https://waterdata.usgs.gov/).
+
 
 ## Terminology
 
-[define key terms used to describe this dataset; include mappings to some common terminolgy we will use in the training, such as location identifier, variable, variable unit, data quality flags -- see slide 9 of the pitch deck]
-[Need to mention the distinction between active and inactive gages and that some dataset searches will return gage that are no longer operational]
+| Shared term | NWM equivalent | Notes |
+|---|---|---|
+| Location Identifier | `monitoring_location_id` | Geographical location where data is collected, usually a USGS streamgage. Can be plotted as points on a map. |
+| Variable | Discharge, also referred to as streamflow by USGS | Stream discharge at a monitoring location, offered as continuous or daily values. Referred to with the parameter code 00060. |
+| Variable unit | ft³/s | Cubic feet per second |
+| Data Quality Flag(s) | `approval_status` | Variable specific approval status unique to each monitoring location. Can be either approved or provisional. |
 
 ## Dataset derivation
 
-[describe how the data is produced - collected, measured, modeled, etc. Link out to appropriate agency resources as needed. Include details about any version history or big methods changes, or how to find that information]
+Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data is the mean (average) of all continuously sampled data for that day.
+
+Discharge is not directly measured every 15 minutes, but is calculated using the gage height. This is because it’s easier to continuously measure the height of water than the volume of water passing by a point. Below are the three steps used to calculate continuous discharge data and ensure its accuracy. For further detail, see: [How Streamflow is Measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured?qt-science_center_objects=0#qt-science_center_objects) and [Why we use gage height](https://waterdata.usgs.gov/blog/gage_height/).
+
+**Gage height → discharge**
+
+1. Measuring gage height: at a location along a stream or river, direct measurements of the height of the water surface are taken. This is done every 15 minutes to create a continuous record over time. 
+2. Measuring discharge: then, direct measurements of discharge are taken periodically at a wide range of gage heights (stream depths).
+3. Establishing the gage height-discharge relationship: with these measurements, gage height and discharge are plotted to determine the relationship between them. Once that relationship is determined, gage height can be converted to discharge. The continuous record of gage height allows continuous determination of streamflow discharge.
+
 
 ## Spatial coverage
 
-[describe the extent (global, CONUS, etc), type (raster, point, vector, etc), resolution of the dataset, plus the coordinate reference system that is used]
+- **Extent:** Mainly CONUS + Alaska, Hawaii, and Puerto Rico. There are international monitoring locations which can be explored alongside all other monitoring locations here: [Monitoring locations - USGS Water Data for the Nation](https://waterdata.usgs.gov/monitoring-location/). 
+- **Type:** Point data for monitoring locations, included as shapefile geometries when querying monitoring location information from the API. Locations can also be found as coordinates (latitude and longitude) on monitoring location webpages
+- **Resolution:** There are 9,011 monitoring locations with discharge data across CONUS + Alaska, Hawaii, and Puerto Rico. The spread of these monitoring locations is uneven, but easily explored using the [National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/).
+- **CRS:** Shapefile point geometries are referenced to the WGS84 ellipsoid. This projection can also be referred to as EPSG 4326.
+
 
 ## Temporal coverage
 
-[describe the period of record (and whether it differs for different features), the frequency/resolution of the data (hourly, daily, etc), how often the data is updated (e.g. collected hourly, but pushed up to datasets every 5 hrs)]
+- **Period of record:**
+     - USGS water data has been collected since October 1st, 1950. The availability of that historic record is dependent on the type of water data and the history of the monitoring location collecting that data.
+    - Historical continuous data may have gaps in availability due to instrument problems, environmental conditions, or other factors. Daily data can be used for a more complete record.
+     - Some monitoring locations provide provisional water data, which is only available for the last 120 days.
+- **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is the mean of all continuous data from that day.
+- **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is usually available same-day.
+
 
 ## Data content
 
-[talk about the variable + units + valid ranges, and possibly related variables that aren't the main focus of this page; talk about known limitations/uncertainties such as QA/QC flags, missing data, gaps]
-[provisional vs approved data]
+- **Primary variables:** discharge (ft^3/s) at each monitoring_location_id, referred to with the parameter code 00060.
+- **Accuracy:** Discharge is not directly measured, but calculated using gage height. Monitoring locations that are streamgages operated by USGS maintain gage height measurements to the nearest 0.01 foot or 0.2 percent of stage, whichever is greater. The accuracy of the conversion from gage height to discharge is calibrated with direct measurements of discharge taken periodically.
+- **Related products not covered here:** NWIS provides water data not just for streams, but also for lakes, ground water, coastal conditions, wetlands, etc. The variables provided by monitoring locations are referred to by parameter code/name and fall under categories such as informational, chemical, physical, and biological. 
+- **Known limitations:** The availability and quality of discharge data can be inconsistent between monitoring locations. In this training we will introduce workflows that mitigate this inconsistency and utilize the rich water data NWIS provides to its full potential.
+     - Geographic coverage in an area is dependent on the quantity and spread of monitoring locations, which can be spotty. 
+     - Discharge data quality is monitoring location dependant, providing either approved or provisional data. The data quality flag approval_status can be used to only return approved data when querying discharge data from the water data API.
+     - Some data searches may return monitoring locations that are no longer operational.
+
 
 ## Usage and support
 
