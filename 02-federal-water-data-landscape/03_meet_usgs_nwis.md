@@ -2,7 +2,7 @@
 
 The National Water Information System (NWIS) is produced by USGS’s Water Resources Mission Area. NWIS collects many different types of water data with the ultimate goal of providing high-quality and discoverable water data for everyone. This water data is collected at monitoring locations across the United States using automated sensors and manual data collection. Each monitoring location has unique location information, including the location name and identifier, the agency responsible for it, and geographic information. Water data provided by these monitoring locations covers a wide breadth of variables from chemical, to physical, to biological. This data is available as continuous data, daily data, field measurements, and discrete sample data. 
 
-NWIS and its API waterservices are in the process of being decommissioned, and USGS is moving to the modernized equivalents; Water Data For the Nation (WDFN) and waterdata. This training will be utilizing these modernized equivalents. Learn more about NWIS/WDFN at the [WDFN home page](https://waterdata.usgs.gov/).
+NWIS web services and the NWIS API `waterservices` are in the process of being decommissioned. USGS is moving to the modernized equivalents; Water Data For the Nation (WDFN) web services and the WDFN API `waterdata`. This training will be utilizing these modernized equivalents. Learn more about NWIS/WDFN at the [WDFN home page](https://waterdata.usgs.gov/).
 
 
 ## Terminology
@@ -47,19 +47,32 @@ Discharge is not directly measured every 15 minutes, but is calculated using the
 
 ## Data content
 
-- **Primary variables:** discharge (ft^3/s) at each monitoring_location_id, referred to with the parameter code 00060.
+- **Primary variables:** discharge (ft^3/s) at each `monitoring_location_id`, referred to with the parameter code `00060`.
 - **Accuracy:** Discharge is not directly measured, but calculated using gage height. Monitoring locations that are streamgages operated by USGS maintain gage height measurements to the nearest 0.01 foot or 0.2 percent of stage, whichever is greater. The accuracy of the conversion from gage height to discharge is calibrated with direct measurements of discharge taken periodically.
 - **Related products not covered here:** NWIS provides water data not just for streams, but also for lakes, ground water, coastal conditions, wetlands, etc. The variables provided by monitoring locations are referred to by parameter code/name and fall under categories such as informational, chemical, physical, and biological. 
 - **Known limitations:** The availability and quality of discharge data can be inconsistent between monitoring locations. In this training we will introduce workflows that mitigate this inconsistency and utilize the rich water data NWIS provides to its full potential.
      - Geographic coverage in an area is dependent on the quantity and spread of monitoring locations, which can be spotty. 
-     - Discharge data quality is monitoring location dependant, providing either approved or provisional data. The data quality flag approval_status can be used to only return approved data when querying discharge data from the water data API.
+     - Discharge data quality is monitoring location dependent, providing either approved or provisional data. The data quality flag `approval_status` can be used to only return approved data when querying discharge data from the WDFN API.
      - Some data searches may return monitoring locations that are no longer operational.
 
 
 ## Usage and support
 
-[add details about how to cite, licensing/restrictions or other policies, how the data may (or may not) change through time, contact information to ask questions to the agencies]
+- **Citation:** USGS recommends citing WDFN data with the publication year, access date, and DOI. More information can be found at [How should I cite USGS Water Data for the Nation data?](https://waterdata.usgs.gov/citation/)
+- **Licence/access:** Data accessed through the WDFN API is completely open access. Acquiring an API key is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have an hourly limit.
+- **Change over time:** The WDFN API will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So, if a new API version is released, the underlying data has not changed. Still, it is a good idea to check the [Water Data Blogs](https://waterdata.usgs.gov/blog/) regularly for important updates. 
+- **Contact:** For questions about NWIS/WDFN, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments?referrerUrl=https://waterdata.usgs.gov/).
+
 
 ## Further reading
 
-[links out to agency pages on more information, can be duplicates of pages already referenced above]
+- [WDFN home page](https://waterdata.usgs.gov/) - home page for Water Data For the Nation
+- [USGS Water Data Collection Categories](https://waterdata.usgs.gov/data-collection-categories) - documentation and general info for the data types
+- [Collections](https://api.waterdata.usgs.gov/ogcapi/v0/collections#ref-lists) - reference lists with information related to data types and possible values for meta data
+- [USGS | National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/) - interactive web mapper to explore monitoring locations and different water data variables in real time
+- [Current and Historical Instantaneous Data Availability](https://waterdata.usgs.gov/iv-data-availability-statement/) - data availability statement
+- [What's new with WDFN APIs?](https://waterdata.usgs.gov/blog/api-whats-new-wdfn-apis/)  - detailed information about the difference between the legacy NWIS API and the new WDFN API
+- [NWISWeb Decommission Campaign Summary | Water Data Blog](https://waterdata.usgs.gov/blog/nwisweb-decommission-summary/) - detailed information about the decommissioning of NWIS web services and the transition to new WDFN web services.
+- [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/)  - How to get a WDFN API key
+- [Water Data Blog](https://waterdata.usgs.gov/blog/) - WDFN blog posts. It is good to visit this page regularly since important updates to the water data, WDFN API, and WDFN web services will be posted here.
+
