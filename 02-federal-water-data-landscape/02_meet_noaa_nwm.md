@@ -1,8 +1,4 @@
 # Meet NOAA NWM
-
-| Location Identifier | Variable | Variable unit | Time / resolution | Data Quality Flag(s) |
-|---|---|---|---|---|
-| `feature_id` (NHDPlus reach/COMID) | streamflow | m³/s | Hourly (Analysis & Short-Range); 3-hourly (Medium-Range); ~daily cycling, 3-hr steps (Long-Range); hourly (Retrospective, 1979–present) | No per-value flag — quality is tied to model version (v1.2 → v2.0 → v2.1 → v3.0); see [version history](#dataset-derivation) |
  
 The National Water Model (NWM) is produced by NOAA's [Office of Water Prediction](https://water.noaa.gov/about/nwm) (OWP), part of the National Weather Service. NWM is a hydrologic modeling framework, not an observational network — it simulates and forecasts streamflow (along with soil moisture, snowpack, and other water-budget variables) for over 3.4 million miles of rivers and streams across the U.S. and its territories by combining weather forecasts, land surface physics, and channel routing. It exists to fill the huge gap between the roughly ~3600 National Water Service (NWS) forecast points and the entire river network for CONUS, giving forecasters, emergency managers, and floodplain managers guidance in places with no data. Learn more at the [NWM landing page](https://water.noaa.gov/about/nwm), [National Water Prediction Service](https://water.noaa.gov/) viewer, and [CIROH's NWM overview](https://hub.ciroh.org/docs/products/national-water-model/).
 
