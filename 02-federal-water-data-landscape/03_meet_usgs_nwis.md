@@ -38,7 +38,7 @@ Discharge is not directly measured every 15 minutes, but is calculated using the
 ## Temporal coverage
 
 - **Period of record:**
-     - USGS water data has been collected since October 1st, 1950. The availability of that historic record is dependent on the type of water data and the history of the monitoring location collecting that data.
+     - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. However, instantaneous water data is only available as far back as October 1st, 1950. The availability of that historic record is dependent on the type of water data and the history of the monitoring location collecting that data.
     - Historical continuous data may have gaps in availability due to instrument problems, environmental conditions, or other factors. Daily data can be used for a more complete record.
      - Some monitoring locations provide provisional water data, which is only available for the last 120 days.
 - **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is the mean of all continuous data from that day.
