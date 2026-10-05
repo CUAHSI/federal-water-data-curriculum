@@ -7,7 +7,7 @@ NWIS web services and the NWIS API `waterservices` are in the process of being d
 
 ## Terminology
 
-| Shared term | NWM equivalent | Notes |
+| Shared term | NWIS equivalent | Notes |
 |---|---|---|
 | Location Identifier | `monitoring_location_id` | Geographical location where data is collected, usually a USGS streamgage. Can be plotted as points on a map. |
 | Variable | Discharge, also referred to as streamflow by USGS | Stream discharge at a monitoring location, offered as continuous or daily values. Referred to with the parameter code 00060. |
