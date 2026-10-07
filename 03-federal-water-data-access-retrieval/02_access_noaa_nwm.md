@@ -1,4 +1,5 @@
 # Retrieve NOAA NWM streamflow data
+TODO: LOOK INTO KERCHUNK AND/OR SEE IF THERE'S A BETTER OPTION THAN HYDROTOOLS WITH FEAR OF LACK OF EFFICIENCY, BUT BIGQUERY IS NOT WHAT WE'RE GOING TO SUGGEST
 
 NOAA National Water Model (NWM) streamflow data lives in a few different places depending on what you need. The full model output has no REST API behind it: it's stored as NetCDF files, made available through file listings and mirrored to cloud storage (Google Cloud Platform, AWS). NOAA does host a separate, official API, [NWPS](https://api.water.noaa.gov/nwps/v1/docs/), but it only covers NWM output at NWPS's ~4,000 established forecast locations, not the full 2.7-million-reach domain, so we're not going to focus on that here.
 
@@ -109,14 +110,16 @@ print(forecast_data.head())
 
 **A note on historical data:** for observed, historical streamflow, use USGS NWIS (`hydrotools.nwis_client`) rather than NWM's own retrospective archive. NWIS is the authoritative source for gauged, historical data and doesn't require the model-file access patterns covered above. The one exception is **ungauged reaches**: NWIS only has data where a physical gauge exists, so if your analysis needs historical streamflow at a reach with no gauge, NWM's retrospective archive (Zarr, on AWS, (see Further Reading below)) is the only source for that, since it's a modeled reconstruction covering every reach in the network, not just gauged ones.
 
-[TODO: Insert examples for medium and long-range forecasts + some code and figures that show the outputs as timeseries plots]
-
 
 ### Temporal scaling
 
 What is the recommended way to download data for one location but the full period of record?
 
-This depends on what "full period of record" means for your use case. If you want **historical, observed** streamflow, use USGS NWIS (`hydrotools.nwis_client`). It's the authoritative gauged record and a single call returns the full period a gauge has been active. If you specifically need NWM's own long-running **forecast** history (e.g. to evaluate forecast skill over time), that means retrieving many individual forecast cycles via `hydrotools`, one `reference_time` at a time. See [Parallelization](#parallelization) below, since this quickly becomes a large-N-of-small-requests problem rather than a single bulk pull.
+NWM forecast history. NWMFileClient.get() accepts a list of reference times (forecast issue times), and files are downloaded one forecast cycle at a time in groups of 20. A single forecast can be spread across hundreds of files, intermediate processing may use several GB of memory, and the recommended minimum system is a 4-core processor with 8 GB of RAM. Colleagues have noted that hydrotools downloads full files, which makes it less efficient for long time series slices.
+
+Availability depends on the source. The default Google Cloud source holds the largest amount of operational forecast data, but not every configuration covers the whole archive (the Alaska configurations, for example, only became available after August 2023). The AWS operational bucket (noaa-nwm-pds) is described as a rolling four-week archive of short-range output.
+
+NWM retrospective. NWM retrospective simulations are multi-decade model runs: version 3.0 covers February 1979 through January 2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for version 3.0.
 
 ### Spatial scaling
 
@@ -124,15 +127,19 @@ What is the recommended way to download data for all locations but a small time 
 
 Start with **discovery** to build your list of COMIDs (e.g. all reaches in a HUC or bounding box), then pass that list to the download step in a single batched request rather than looping one-COMID-at-a-time.
 
-[Fill in: concrete code example, and note whether hydrotools supports batched/vectorized COMID lists vs. requiring iteration.]
+NWMFileClient.get() accepts an array of NWM feature IDs (COMIDs), so multiple reaches can be requested in a single call. If you omit nwm_feature_ids, it returns the default set: channel features with a known USGS mapping (8,866 in the documented default).
+
+Results come back as pandas DataFrames that use categorical columns to save memory. The documentation notes that categorical columns can behave unexpectedly in groupby operations, are incompatible with fixed-format HDF files (use format="table"), and may cause problems when writing to geospatial formats with geopandas. Casting a categorical column to str resolves these issues. Setting compute=False returns a dask DataFrame instead of a pandas one.
 
 ### Parallelization
 
-If I am working on improving efficiency of my code through parallelization, what should I do vs avoid?
+NWMFileClient retrieves NWM data from file-based sources. By default it saves downloaded NetCDF files to a local directory, and its get() method returns a pandas DataFrame. get() accepts lists of configurations, reference times, and NWM feature IDs. If nwm_feature_ids is omitted, it defaults to channel features with a known USGS mapping. Setting compute=False returns a dask DataFrame instead.
 
-[Fill in: e.g. guidance on respecting rate limits / concurrent connection limits to NOMADS or GCP, whether to parallelize by file (time step) vs. by feature, recommended tools (e.g. `dask`, `multiprocessing`), and any known pitfalls specific to NWM's file layout.]
+Files for a single forecast cycle are downloaded in groups of 20 by default (the group_size parameter of get_files()). The documentation says this accommodates the xarray, dask, and HDF5 backends, which may struggle to open too many files at once, and that it matters mostly for medium-range forecasts.
 
-### [...]
+The package also includes a FileDownloader class for downloading files asynchronously over HTTP, with limit (default 10) and timeout (default 900 seconds) settings.
+
+A single forecast can be spread across hundreds of files, and intermediate processing may use several GB of memory. The recommended minimum system is a 4-core processor and 8 GB of RAM.
 
 ## Further reading
 
