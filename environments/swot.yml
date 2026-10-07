@@ -1,0 +1,17 @@
+# Environment for Module 3, "Retrieve NASA SWOT data" (03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
+# Create:   mamba env create -f environments/swot.yml   (or: conda env create -f environments/swot.yml)
+# Activate: conda activate fwdc-swot
+name: fwdc-swot
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.12        # 3.12+ avoids the earthaccess SSL import error noted on the page
+  - earthaccess
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - rioxarray
+  - pandas
+  - geopandas
+  - requests
+  - matplotlib
