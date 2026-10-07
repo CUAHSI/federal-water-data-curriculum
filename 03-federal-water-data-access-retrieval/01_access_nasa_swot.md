@@ -45,13 +45,13 @@ Before you download or try to access the data itself, a common first step in any
 
 As with many of the methods, a GUI (Graphical User Interface) approach to data discovery does exist. However, programmatic implementations support reproducibility and future extensions or applications of your work. So, while you can navigate to [Earthdata Search](https://search.earthdata.nasa.gov/), know that it would be a good idea to capture your search and discovery steps in code as documentation of the methods. 
 
-There are ways to search Earthdata broadly using general terms if you are unsure of what data product to use, see `seach_datasets` and `search_services` methods in the API documentation [here](https://earthaccess.readthedocs.io/en/latest/api/#earthaccess.api.search_datasets). The object returned from a search can be inspected to extract key information, including the dataset's shorthand name which is critical for querying and downloading the data itself. Below is an example of what you could do to search any Earthdata dataset that is linked to a "river" keyword. 
+There are ways to search Earthdata broadly using general terms if you are unsure of what data product to use, see the `search_datasets` and `search_services` methods in the API documentation [here](https://earthaccess.readthedocs.io/en/latest/api/#earthaccess.api.search_datasets). The object returned from a search can be inspected to extract key information, including the dataset's shorthand name which is critical for querying and downloading the data itself. Below is an example of what you could do to search any Earthdata dataset that is linked to a "river" keyword. 
 
 ```python
 river_datasets_all = earthaccess.search_datasets(
     keyword="river"
 )
-len(river_datasets_all)  # 1568 at time of writing
+len(river_datasets_all)  # 1539 at time of writing
 ```
 
 At time of writing, this returned over 1500 datasets from a variety of data providers and locations. Let's add more specific querying parameters, such as a spatial and temporal filter to get only cloud-available datasets for an analysis of Minnesota rivers during 2023-2025. 
