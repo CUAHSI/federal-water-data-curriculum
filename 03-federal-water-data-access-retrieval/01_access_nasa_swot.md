@@ -20,7 +20,7 @@ RiverSP is tied to the [SWOT River Database (SWORD)](https://www.swordexplorer.c
 In order to complete this lesson about accessing NASA SWOT water surface elevation data, you first need to install a few libraries and create an account.
 
 1. **Make an Earthdata Login account.** In order to _access_ data from the NASA Earthdata system, you will need to create an Earthdata Login account. Please visit [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) to register and setup your login. 
-2. **Create the course environment.** We will be using the NASA `earthaccess` Python library for programmatic authentication to NASA Earthdata systems, data discovery, and data downloads, plus `xarray`, `geopandas` and `requests` for reading the files and calling `hydrocron`. The course provides a conda environment file, [`environments/swot.yml`](https://github.com/CUAHSI/federal-water-data-curriculum/blob/dev/environments/swot.yml), with everything this lesson uses. `mamba` is faster, but `conda` works the same way. To install `earthaccess` on its own instead, see its [user quick start guide](https://earthaccess.readthedocs.io/en/latest/user/quick-start/#installing-earthaccess).
+2. **Create the course environment.** We will be using the NASA `earthaccess` Python library for programmatic authentication to NASA Earthdata systems, data discovery, and data downloads, plus `xarray`, `geopandas` and `requests` for reading the files and calling `hydrocron`. The course provides a conda environment file, `environments/swot.yml` (in the course repository), with everything this lesson uses. `mamba` is faster, but `conda` works the same way. To install `earthaccess` on its own instead, see its [user quick start guide](https://earthaccess.readthedocs.io/en/latest/user/quick-start/#installing-earthaccess).
 
 ```bash
 # From the root of the course repository
@@ -117,7 +117,7 @@ SWOT_L2_HR_RiverSP_Reach_051_216_NA_20260606T033652_20260606T035154_PID0_01_swot
 
 Reading the first name: `Reach` granule, cycle `051`, pass `121`, continent `NA` (North America), start and end time in UTC, and a processing counter (`01`). Notice the two granules for June 5 that differ only in that last counter (`_01` and `_02`): the same overpass was processed more than once. Usually you keep the highest counter.
 
-A few things to know about `search_data` (see the [`earthaccess` API docs](https://earthaccess.readthedocs.io/en/latest/user-reference/api/api/) for every option):
+A few things to know about `search_data` (see the [`earthaccess` API docs](https://earthaccess.readthedocs.io/en/latest/api/) for every option):
 
 - **`temporal`** takes a `(start, end)` pair of strings or `datetime` objects. A month such as `("2026-06", "2026-06")` covers the whole month (42 granules here, the same as `("2026-06-01", "2026-06-30T23:59:59")`), but a single day written as `("2026-06-01", "2026-06-01")` means one instant at midnight and finds nothing. Write full dates and times when you need to be precise.
 - **`bounding_box`** is `(west, south, east, north)` in decimal degrees. Swapping the order is a common mistake.
