@@ -16,6 +16,7 @@ dependencies:
   - netcdf4
   - h5netcdf
   - rioxarray
+  - pyproj
   # NOAA NWM forecasts and NHD/NLDI reach lookups
   - pynhd>=0.19
   - fsspec
