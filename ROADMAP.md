@@ -40,9 +40,9 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
 
 ## Phase 1 — Data spike (first) → `spike/` scratch folder outside the repo, plus a report
 
-- [ ] **P1.1 USGS 12200500, Dec 1–31 2025** (`dataretrieval.waterdata`): continuous discharge + gage height,
-      daily values, field measurements. Identify the peak (date/time, discharge, stage).
-- [ ] **P1.2 SWOT over the lower Skagit** — both products will be taught in Modules 3 and 4:
+- [x] **P1.1 USGS 12200500, Dec 1–31 2025** (`dataretrieval.waterdata`): continuous discharge + gage height,
+      daily values, field measurements. Identify the peak (date/time, discharge, stage). *Done (Lane B): `spike/usgs/REPORT.md`; PR pending.*
+- [x] **P1.2 SWOT over the lower Skagit** *(done, Lane B: `spike/swot/REPORT.md`; PR pending)* — both products will be taught in Modules 3 and 4:
   - `SWOT_L2_HR_RiverSP` via hydrocron: reach/node WSE (and width) time series for the SWORD reach(es) at the gage.
   - `SWOT_L2_HR_Raster_100m` via `earthaccess` + `xarray`: water area / water fraction for each pass.
   - Confirm which passes truly cover the gage reach (CMR search on 10/7 suggested UTM 10U tiles on Dec 1, Dec 4,

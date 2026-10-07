@@ -17,7 +17,7 @@ The December 2025 atmospheric river that drove the Skagit River flood, shown in 
 
 _The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT tutorial "Hydrocron API: Getting Started with SWOT Time Series"](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) authored by Nikki Tebaldi, Cassandra Nickles, and Brandi Downs._
 
-The sections below walk through the data you would collect for this flood, product by product. Each code block runs on its own in the order shown, using the Module 4 environment ([environments/synthesis.yml](https://github.com/CUAHSI/federal-water-data-curriculum/blob/dev/environments/synthesis.yml)):
+The sections below walk through the data you would collect for this flood, product by product. Each code block runs on its own in the order shown, using the Module 4 environment ([environments/synthesis.yml](../environments/synthesis.yml)):
 
 ```bash
 conda env create -f environments/synthesis.yml
