@@ -1,0 +1,50 @@
+# Builds the MyST site from the `dev` branch and publishes it to GitHub Pages as a DRAFT preview.
+# The final course will live on CUAHSI's Water Content Portal; this site is for review only.
+# One-time setup: Settings → Pages → Source: "GitHub Actions";
+#                 Settings → Environments → github-pages → Deployment branches: add `dev`.
+name: Deploy draft preview (dev)
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  BASE_URL: /${{ github.event.repository.name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install MyST
+        run: npm install -g mystmd
+      - name: Mark the build as a draft (CI-only edit, not committed)
+        run: python3 .github/scripts/mark_draft.py
+      - name: Build HTML
+        run: myst build --html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

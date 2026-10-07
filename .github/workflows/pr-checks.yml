@@ -1,0 +1,41 @@
+# Runs on every pull request into dev or main: the site must build, and links in the
+# pages the PR changes must resolve. External sites can be flaky; re-run the job before
+# assuming a link is really broken.
+name: PR checks
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: MyST build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g mystmd
+      - run: myst build --html
+
+  links:
+    name: Link check (changed pages)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check links in changed Markdown
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          FILES=$(git diff --name-only "$BASE"...HEAD -- '*.md' | while read -r f; do [ -f "$f" ] && echo "$f"; done)
+          if [ -z "$FILES" ]; then echo "No Markdown changes."; exit 0; fi
+          echo "$FILES"
+          python3 .claude/scripts/check_links.py $FILES
