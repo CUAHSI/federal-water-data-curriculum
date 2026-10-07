@@ -13,5 +13,7 @@ dependencies:
   - rioxarray
   - pandas
   - geopandas
+  - shapely
+  - pyproj
   - requests
   - matplotlib

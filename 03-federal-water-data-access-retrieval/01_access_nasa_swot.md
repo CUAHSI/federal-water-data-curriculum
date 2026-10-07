@@ -116,6 +116,7 @@ SWOT_L2_HR_RiverSP_Reach_051_216_NA_20260606T033652_20260606T035154_PID0_01_swot
 ```
 
 Reading the first name: `Reach` granule, cycle `051`, pass `121`, continent `NA` (North America), start and end time in UTC, and a processing counter (`01`). Notice the two granules for June 5 that differ only in that last counter (`_01` and `_02`): the same overpass was processed more than once. Usually you keep the highest counter.
+[PARTNER REVIEW: NASA] Confirm that keeping the highest processing counter is the recommended way to de-duplicate granules.
 
 A few things to know about `search_data` (see the [`earthaccess` API docs](https://earthaccess.readthedocs.io/en/latest/api/) for every option):
 
@@ -132,7 +133,8 @@ len(earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_rech_D", count=5))  #
 The water-area product is discovered the same way. Here we search the 100 m Raster product around USGS gage 12200500 on the Skagit River near Mount Vernon, WA, for the weeks around the December 2025 flood that we study in Module 4:
 
 ```python
-# A small box (about 3 km across) around USGS 12200500, Skagit River near Mount Vernon, WA
+# A small box (about 3 km across) around USGS 12200500, Skagit River near Mount Vernon, WA:
+# the gage location (-122.3354, 48.4448) plus or minus 0.02 degrees
 skagit_bbox = (-122.355, 48.425, -122.315, 48.465)
 
 skagit_raster = earthaccess.search_data(
@@ -189,7 +191,7 @@ Discovery told us _which_ granules exist. Now we get the data. The two tools beh
 
 `earthaccess` works for every SWOT product. The file format depends on the product: RiverSP granules are zipped shapefiles (read them with `geopandas`), and Raster granules are NetCDF files (read them with `xarray`).
 
-**RiverSP reaches.** We download one RiverSP reach granule over the Skagit gage and find the SWORD reach closest to it. This is also how you find a `reach_id` to use with `hydrocron` below if you don't already have one. (You can also look up reach IDs interactively in [SWORD Explorer](https://www.swordexplorer.com/).)
+**RiverSP reaches.** We download one RiverSP reach granule over the Skagit gage and find the SWORD reach closest to it. This is also how you find a `reach_id` to use with `hydrocron` below if you don't already have one. (You can also look up reach IDs interactively in [SWORD Explorer](https://www.swordexplorer.com/).) The gage coordinates (-122.3354, 48.4448) come from the [USGS monitoring-location record for 12200500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-12200500). We download only the first granule, which is the December 1 overpass on pass 246; printing its name before downloading confirms what you are getting.
 
 ```python
 import geopandas as gpd
@@ -200,6 +202,7 @@ skagit_reach_granules = earthaccess.search_data(
     bounding_box=skagit_bbox,
     temporal=("2025-12-01", "2025-12-31"),
 )
+print(len(skagit_reach_granules), "granules; downloading", skagit_reach_granules[0]["umm"]["GranuleUR"])
 files = earthaccess.download(skagit_reach_granules[:1], local_path="data/swot")
 
 reaches = gpd.read_file(files[0])  # geopandas reads the zipped shapefile directly
@@ -213,6 +216,7 @@ reaches_utm.nsmallest(3, "dist_to_gage_m")[["reach_id", "river_name", "dist_to_g
 ```
 
 ```
+22 granules; downloading SWOT_L2_HR_RiverSP_Reach_042_246_NA_20251201T103443_20251201T104249_PID0_01_swot
 303 reaches in this granule
         reach_id    river_name  dist_to_gage_m     wse       width  reach_q              time_str
 117  78310800031  Skagit River        3.386485  5.4848  189.069678        2  2025-12-01T10:37:59Z
@@ -220,10 +224,10 @@ reaches_utm.nsmallest(3, "dist_to_gage_m")[["reach_id", "river_name", "dist_to_g
 103  78310700025       no_data     6776.970430  1.3255  120.554252        1  2025-12-01T10:38:01Z
 ```
 
-The gage sits on reach **`78310800031`**, the Skagit River reach just upstream of the delta (it is one of the reaches used in the PO.DAAC Hydrocron tutorial listed under Further reading). The granule itself holds every reach SWOT observed along this pass, 303 in total. RiverSP granules carry many more columns than shown here (about 130); the [product description document](https://podaac.github.io/tutorials/quarto_text/SWOT.html) defines them all.
+The gage sits on reach **`78310800031`**, the Skagit River reach just upstream of the delta (it is one of the reaches used in the PO.DAAC Hydrocron tutorial listed under Further reading). The granule itself holds every reach SWOT observed along this pass, 303 in total. RiverSP granules carry many more columns than shown here (about 130); the product description documents (PDDs), linked from the [PO.DAAC Cookbook SWOT page](https://podaac.github.io/tutorials/quarto_text/SWOT.html), define them all.
 
 Each row is one SWORD reach seen on this overpass. Key columns:
-- `reach_id` is the **Location Identifier**.
+- `wse` (water surface elevation) and `width` are the main **Variables**. Their **Variable unit** is meters; `wse` is relative to the EGM2008 geoid.
 - `wse` (water surface elevation, meters above the EGM2008 geoid) and `width` (meters) are the main **Variables**.
 - `wse_u` and `width_u` give each value's uncertainty.
 - `reach_q` is the summary **Data Quality Flag**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
@@ -265,7 +269,7 @@ Attributes: (12/49)
 ```
 
 For each 100 m pixel:
-- `water_area` (m²) is the surface area of water in the pixel. A pixel that is fully water is about 10,000 m².
+- `water_area` (**Variable unit**: m²) is the surface area of water in the pixel. A pixel that is fully water is about 10,000 m².
 - `water_frac` (unitless) is the fraction of the pixel covered by water.
 - `wse` (m above the geoid) is the water surface elevation.
 - `water_area_qual` is the **Data Quality Flag** for `water_area`: 0 = good, 1 = suspect, 2 = degraded, 3 = bad. `wse_qual` and the other `_qual` variables work the same way.
@@ -318,7 +322,7 @@ USGS discharge values are from the [USGS Water Data API](https://api.waterdata.u
 
 [PARTNER REVIEW: NASA] Confirm the interpretation of `water_area` values far above pixel area when `water_area_qual` = 3, and whether `water_area_qual <= 1` is the recommended filter for flood-extent work.
 
-Module 4 maps these scenes to show how far the Skagit spread out of bank during the flood.
+Module 4 returns to the Skagit flood with all three agencies' data. [TODO: confirm with Lane B whether Module 4 maps these Raster scenes]
 
 ### `hydrocron`
 
@@ -331,7 +335,7 @@ While a user can access SWOT data through `earthaccess`, if timeseries data for 
 | Parameter | Example | Notes |
 |---|---|---|
 | `feature` | `Reach` | `Reach`, `Node` or `PriorLake` |
-| `feature_id` | `78310800041` | SWORD reach or node ID (the **Location Identifier**) |
+| `feature_id` | `78310800031` | SWORD reach or node ID (the **Location Identifier**) |
 | `start_time`, `end_time` | `2025-11-01T00:00:00Z` | UTC |
 | `fields` | `reach_id,time_str,wse,wse_u,width,reach_q` | Only the columns you need |
 | `output` | `csv` | `csv` or `geojson`, returned inside a JSON response |
@@ -380,7 +384,7 @@ skagit[["time_str", "wse", "wse_u", "width", "reach_q"]]
 9  2026-01-12T04:08:08Z   6.0671  0.11089  242.501993        2
 ```
 
-Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertainty) and `width` in meters. Hydrocron also returns a row for each overpass that produced no valid measurement. Those rows have `time_str` = `no_data`, a fill value for `wse` and `reach_q` = 3; the function drops them, which is why the index skips 2, 5 and 8.
+Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertainty) and `width` in meters. Hydrocron also adds a `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as a timestamp for plotting. Hydrocron also returns a row for each overpass that produced no valid measurement. Those rows have `time_str` = `no_data`, a fill value for `wse` and `reach_q` = 3; the function drops them, which is why the index skips 2, 5 and 8.
 
 Two things stand out:
 
@@ -418,7 +422,7 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Do** let `earthaccess.download()` handle parallel downloads. It already fetches several files at once (see its `threads` argument).
 - **Do** run large `earthaccess` workflows in AWS `us-west-2` (for example, a cloud JupyterHub) and use `earthaccess.open()` to stream data instead of downloading it.
 - **Avoid** firing many `hydrocron` requests in parallel. Send them one after another, or a few at a time, and request a `hydrocron` API key from PO.DAAC if you have a heavy or recurring workload.
-- **Avoid** re-downloading the same granules every time you run your code. Save them locally (`local_path=`) and check for the file first.
+- **Avoid** re-downloading the same granules every time you run your code. Keep a fixed `local_path=`: `earthaccess.download()` skips files that are already there unless you pass `force=True`.
 
 [PARTNER REVIEW: NASA] Confirm these recommendations, in particular the guidance on parallel `hydrocron` requests and when to request an API key.
 
@@ -431,4 +435,4 @@ If I am working on improving efficiency of my code through parallelization, what
 - [Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis) (NASA Earthdata).
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
 - [SWORD Explorer](https://www.swordexplorer.com/) for finding reach and node IDs interactively.
-- The `get_reach_timeseries` function is adapted from `PullReachTimeseries` in [SWOT - River Longitudinal Profiles for Water Resources](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources) by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0).
+- Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources) by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The `get_reach_timeseries` function adapts its `PullReachTimeseries` helper.
