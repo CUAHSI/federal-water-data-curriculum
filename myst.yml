@@ -1,0 +1,35 @@
+version: 1
+project:
+  id: federal-water-data-course
+  title: "Federal Open Water Data for Researchers"
+  authors:
+    - name: Lindsay Platt, Kimberlee Wong, Kaysa Vaarre-Lamoureux
+  github: https://github.com/CUAHSI/federal-water-data-curriculum
+  toc:
+    - file: index.md
+    - title: Data Best Practices in Water Research
+      children: 
+        - file: '01-data-best-practices/00_introduction.md'
+        - file: '01-data-best-practices/01_open_science.md'
+        - file: '01-data-best-practices/02_data_management.md'
+        - file: '01-data-best-practices/03_data_publishing.md'
+    - title: Federal Water Data Landscape
+      children:
+        - file: '02-federal-water-data-landscape/00_introduction.md'
+        - file: '02-federal-water-data-landscape/01_meet_nasa_swot.md'
+        - file: '02-federal-water-data-landscape/02_meet_noaa_nwm.md'
+        - file: '02-federal-water-data-landscape/03_meet_usgs_nwis.md'
+    - title: Federal Water Data Access & Retrieval
+      children: 
+        - file: '03-federal-water-data-access-retrieval/00_introduction.md'
+        - file: '03-federal-water-data-access-retrieval/01_access_nasa_swot.md'
+        - file: '03-federal-water-data-access-retrieval/02_access_noaa_nwm.md'
+        - file: '03-federal-water-data-access-retrieval/03_access_usgs_nwis.md'
+    - title: Federal Water Data Synthesis
+      children: 
+        - file: '04-federal-water-data-synthesis/00_introduction.md'
+        - file: '04-federal-water-data-synthesis/01_comparative_overview.md'
+        - file: '04-federal-water-data-synthesis/02_synthesize_river_data.md'
+        - file: '04-federal-water-data-synthesis/03_additional_data.md'
+site:
+  template: book-theme
