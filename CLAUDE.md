@@ -50,7 +50,8 @@ Edits to Modules 1 and 2 are blocked by `.claude/settings.json`; don't try to wo
   *how*; small examples; describe what comes back (columns, units, quality flags).
 - Content that agencies must confirm gets `[PARTNER REVIEW: NASA|NOAA|USGS] <what to check>`.
   Anything you couldn't verify gets `[TODO: verify ...]`. Never invent facts, figures or quotes.
-- Credentials only from environment variables (`API_USGS_PAT`, Earthdata via env/`~/.netrc`,
+- Credentials only from environment variables (`API_USGS_PAT`, `EARTHDATA_USERNAME`/`EARTHDATA_PASSWORD`;
+  `earthaccess.login()` picks these up automatically,
   no other keys). Never write real values into any file or print them.
 
 ## Source material and attribution
