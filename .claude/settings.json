@@ -118,7 +118,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/git_guard.py\""
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run_guard.sh\"",
+            "shell": "bash"
           }
         ]
       }

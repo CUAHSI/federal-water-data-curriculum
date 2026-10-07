@@ -48,9 +48,32 @@ ROADMAP.md                             Module 4 → Module 3 plan to the 10/12 f
    `github-pages` → Deployment branches: add `dev` (by default only `main` may deploy).
    The preview appears at `https://cuahsi.github.io/federal-water-data-curriculum/`.
 4. **Local tools:** conda/mamba, Node + `npm install -g mystmd`, `gh auth login`.
-5. **Credentials** in your shell profile (the agent reads them; they never go in the repo):
-   `API_USGS_PAT`; Earthdata Login via `EARTHDATA_USERNAME`/`EARTHDATA_PASSWORD` or `~/.netrc`.
+5. **Credentials** — see "Windows: credentials" below (they never go in the repo).
 6. **Update Claude Code** (`claude update`) so auto mode is available.
+
+## Windows notes (Lindsay's setup)
+
+**Use Git Bash** for every command in this file (Start menu → *Git Bash*; it comes with Git for Windows). Claude
+Code on Windows also uses Git Bash for its own shell commands and for the guard hook.
+
+**Python must be reachable from Git Bash** — the git guard runs on Python, and if it can't find one it blocks all
+shell commands on purpose. Check in Git Bash: `python --version` (3.10 or newer). If it's not found and you use
+conda, open *Anaconda Prompt*, run `conda init bash`, then reopen Git Bash.
+
+### Windows: credentials
+1. Get a USGS Water Data API token (<https://api.waterdata.usgs.gov/signup/>) and confirm your Earthdata Login works
+   at <https://urs.earthdata.nasa.gov>.
+2. Start menu → search **"Edit environment variables for your account"** → under *User variables* click **New…**
+   three times:
+   - `API_USGS_PAT` = your USGS token
+   - `EARTHDATA_USERNAME` = your Earthdata username
+   - `EARTHDATA_PASSWORD` = your Earthdata password
+   Click **OK** to save. (Using this window keeps the secrets out of your command history.)
+3. **Close every open terminal** and open a new Git Bash so it picks up the variables. Check without printing them:
+   ```bash
+   for v in API_USGS_PAT EARTHDATA_USERNAME EARTHDATA_PASSWORD; do [ -n "${!v}" ] && echo "$v set" || echo "$v MISSING"; done
+   ```
+4. Start `claude` from a terminal opened *after* step 2.
 
 ## Fewer "Allow" prompts
 
@@ -107,5 +130,5 @@ Afterwards, `git worktree remove ../fwdc-laneA` (etc.) cleans up; branches stay.
 
 ```bash
 echo '{"tool_name":"Bash","cwd":".","tool_input":{"command":"gh pr merge 1"}}' \
-  | python3 .claude/hooks/git_guard.py; echo "exit=$?"   # expect exit=2 and a BLOCKED message
+  | CLAUDE_PROJECT_DIR="$PWD" bash .claude/hooks/run_guard.sh; echo "exit=$?"   # expect exit=2 and a BLOCKED message
 ```
