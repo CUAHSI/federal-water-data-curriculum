@@ -17,13 +17,23 @@ dependencies:
   - h5netcdf
   - rioxarray
   # NOAA NWM forecasts and NHD/NLDI reach lookups
-  - pynhd
+  - pynhd>=0.19
   - fsspec
   - gcsfs
   # Tables, maps and plots
   - pandas
   - geopandas
   - matplotlib
+  # hydrotools dependencies, installed from conda-forge so pip doesn't pull
+  # binary wheels (e.g. pyarrow) that clash with conda-forge libraries on Windows
+  - pyarrow
+  - dask
+  - pytables
+  - pydantic
+  - pint
+  - scipy
+  - adlfs
+  - planetary-computer
   - pip
   - pip:
       - hydrotools.nwm_client_new
