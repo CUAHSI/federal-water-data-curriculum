@@ -37,7 +37,7 @@ This installs everything needed for discovery (`pynhd`), all three download rout
 
 Before you download or try to access the data itself, a common first step is to *discover* or *find* the specific reach(es) you need. You don't want to page through the whole NWM domain just to learn which COMID matches your location. Doing this discovery step first also lets you build a COMID list once and reuse it, which matters more once you get to spatially scaling (see [Spatial scaling](#nwm-spatial-scaling)).
 
-A GUI (graphic user interface) approach exists here too: NOAA's own [interactive map](https://water.noaa.gov/map) lets you click a point and read off a reach ID directly, which is functionally the same identifier as a COMID. That's a fine way to explore or spot-check, but a programmatic discovery step keeps your work reproducible and reusable, and it's worth capturing in code even if you first found the reach by clicking around.
+A GUI (graphic user interface) approach exists here too: NOAA's own [interactive map](https://water.noaa.gov/map) lets you click a point and read off a reach ID directly, which is functionally the same identifier as a COMID [PARTNER REVIEW: NOAA] confirm the map's reach ID is the NWM `feature_id`. That's a fine way to explore or spot-check, but a programmatic discovery step keeps your work reproducible and reusable, and it's worth capturing in code even if you first found the reach by clicking around.
 
 ### USGS Network Linked Data Index (NLDI)
 
@@ -70,7 +70,7 @@ It returns a one-row GeoDataFrame with the matching `comid` and the flowline geo
 
 The same lookup with the raw NLDI REST endpoint (point-in-polygon lookup), which you can paste into a browser:
 
-```
+```text
 https://api.water.usgs.gov/nldi/linked-data/comid/position?coords=POINT(-71.1739 42.4238)
 ```
 
@@ -90,7 +90,7 @@ print(gage[["identifier", "name", "comid"]])
 print(f"COMID for the gage reach: {comid}")
 ```
 
-```
+```text
       identifier                                name     comid
 0  USGS-12200500  SKAGIT RIVER NEAR MOUNT VERNON, WA  24270288
 COMID for the gage reach: 24270288
@@ -114,11 +114,11 @@ Once you have your desired COMID(s), move on to downloads below.
 
 ## Programmatic data downloads
 
-While the discovery step above uses a USGS service, the forecast values come from NOAA. This section covers three routes, in order of how much data they're built for: the NOAA NWM API, `hydrotools`, and kerchunk references read with `xarray`. All three return NWM's *Variable* `streamflow` in m³/s (the API labels it `CMS`) for each COMID; NWM has no per-value *Data Quality Flag*, so record the configuration, reference time and model version with your data instead (see Module 2).
+While the discovery step above uses a USGS service, the forecast values come from NOAA. This section covers three routes, in order of how much data they're built for: the NOAA NWM API, `hydrotools`, and kerchunk references read with `xarray`. All three return NWM's *Variable* `streamflow` in m³/s (the API labels it `CMS`) for each COMID; NWM has no per-value *Data Quality Flag* [PARTNER REVIEW: NOAA] confirm, so record the configuration, reference time and model version with your data instead (see Module 2).
 
 Two terms you'll see in every route:
 
-* **Configuration**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several ensemble members), `long_range`, or `analysis_assim` (the model's best estimate of current conditions).
+* **Configuration**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several ensemble members), `long_range`, or `analysis_assim` (the model's best estimate of current conditions). [PARTNER REVIEW: NOAA] confirm cadences, horizons and ensemble sizes for NWM v3.0.
 * **Reference time**: when a forecast was issued (UTC). The time each forecast value applies to is the *valid time* (`value_time` in `hydrotools`).
 
 (nwm-api)=
@@ -146,7 +146,7 @@ print(run["configuration"], run["reference_datetime"], run["units"])
 print(forecast.head())
 ```
 
-```
+```text
 short_range 2026-10-07T23:00:00Z CMS
              valid_datetime   value
 0 2026-10-08 00:00:00+00:00  216.91
@@ -183,7 +183,7 @@ runs = pd.DataFrame(rows)
 print(runs.groupby("reference_time").member.nunique())
 ```
 
-Each medium-range run has 6 ensemble members here (member 1 runs out to 240 hours, the others to 204 hours). In our test, every short-range run the API held for one reach (116 runs) came back in a single **0.15 MB** response in under 10 seconds.
+Each medium-range run had 6 ensemble members in the API response (member 1 runs out to 240 hours, the others to 204 hours). In our test, every short-range run the API held for one reach (116 runs) came back in a single **0.15 MB** response in under 10 seconds.
 
 (nwm-hydrotools)=
 ### `hydrotools`: past forecasts from the cloud archive
@@ -205,7 +205,7 @@ from hydrotools.nwm_client.NWMFileClient import NWMFileClient
 
 comid = 24270288  # from the discovery step
 
-# downloads go to ./NWMFileClient_NetCDF_files; results are cached in ./nwm_store.parquet
+# downloads go to ./hydrotools_data/NWMFileClient_NetCDF_files; results are cached in ./hydrotools_data/nwm_store.parquet
 client = NWMFileClient()   # default catalog: Google Cloud Platform
 
 forecast_data = client.get(
@@ -216,7 +216,7 @@ forecast_data = client.get(
 print(forecast_data[["reference_time", "value_time", "value", "measurement_unit", "usgs_site_code"]].head().to_string())
 ```
 
-```
+```text
   reference_time          value_time        value measurement_unit usgs_site_code
 0     2025-12-11 2025-12-11 01:00:00  1864.630005           m3 s-1       12200500
 1     2025-12-11 2025-12-11 02:00:00  1943.659912           m3 s-1       12200500
@@ -228,7 +228,9 @@ The result is a long-format `pandas.DataFrame`, one row per COMID and valid time
 
 `hydrotools` downloads files asynchronously. If you run it inside Jupyter (which already runs an event loop) and get an event-loop error, add `import nest_asyncio; nest_asyncio.apply()` at the top of the notebook (`nest-asyncio` is in the environment file). This is a known issue on JupyterHub; plain Python scripts don't need it.
 
-What happens behind the `.get()` call matters for cost: `hydrotools` downloads **every file of every forecast run you ask for, in full**, to `NWMFileClient_NetCDF_files/`, then extracts your COMIDs. One short-range run is 18 files (~235 MB); one medium-range member is 240 files (~3.1 GB). Results are cached in `nwm_store.parquet`, so asking for the same run again is fast. Delete both folders when you're done, or pass `cleanup_files=True` to `NWMFileClient`.
+What happens behind the `.get()` call matters for cost: `hydrotools` downloads **every file of every forecast run you ask for, in full**, to `hydrotools_data/NWMFileClient_NetCDF_files/` in your working directory, then extracts your COMIDs. One short-range run is 18 files (~235 MB); one medium-range member is 240 files (~3.1 GB). Results are cached in `hydrotools_data/nwm_store.parquet`, so asking for the same run again is fast. Just importing `NWMFileClient` creates the `hydrotools_data/` folder in the current directory, so keep it out of version control (e.g. add it to `.gitignore`) and delete it when you're done. You can also pass `file_directory=` to choose where files go, or `cleanup_files=True` to delete the downloaded NetCDF files after each `get()`.
+
+**On a slow connection, large requests can time out.** `hydrotools` queues every file of a run at once and gives each download 900 seconds, including time spent waiting in the queue. In our test, a medium-range member (3.1 GB) on a shared home connection timed out after ~15 minutes in both clean attempts (138 of 240 files downloaded in the first). Rerunning the same call did *not* recover cleanly: the half-written file was skipped as "already downloaded" and then failed to open. If this happens, delete `hydrotools_data/NWMFileClient_NetCDF_files/` and retry on a faster connection, or use kerchunk references (below), which fetch about 7× less.
 
 (nwm-kerchunk)=
 ### Kerchunk references: lazy, cloud-native reads with `xarray`
@@ -294,7 +296,7 @@ q = ds["streamflow"].sel(feature_id=comid).load()
 print(q.to_series().head())
 ```
 
-```
+```text
 <xarray.Dataset> Size: 2GB
 Dimensions:         (time: 18, feature_id: 2776734, reference_time: 1)
 Coordinates:
@@ -348,7 +350,7 @@ print(len(paths), "reference files;", dict(ds.sizes))
 print(ds["streamflow"].sel(feature_id=comid).load().to_series().head())
 ```
 
-```
+```text
 18 reference files; {'time': 18, 'feature_id': 2776734, 'reference_time': 1}
 time
 2026-10-07 13:00:00    214.079995
@@ -377,7 +379,17 @@ We measured this for the Skagit gage reach, using three short-range runs before 
 | Kerchunk references + `xarray` | 2,540 | 96 MB | 0.6 GB | 64 s |
 | *Building the references (one time)* | – | 2.8 MB, in ~5,400 small requests | 0.2 GB | 7–11 min |
 
-Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. [POLISH: re-time on a quiet connection and in-cloud; add medium-range row]
+Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. [POLISH: re-time on a quiet connection and in-cloud]
+
+One **medium-range** member (issued 2025-12-09 00Z: 240 hourly files) scales the same way, about 13× a short-range run:
+
+| Route | Reaches | Data transferred | Peak memory | Wall time |
+|---|---|---|---|---|
+| `hydrotools` (GCP) | 1 | 3.1 GB needed (did not finish) | – | **timed out** after 15 min (2 of 2 attempts on our connection) |
+| Kerchunk references + `xarray` | 1 | 417 MB | 0.8 GB | 100 s |
+| *Building the references (one time)* | – | 1.3 GB | 0.2 GB | 6 min |
+
+Building references for medium-range files moved far more data than for short-range files. [TODO: verify why; likely metadata spread through each file plus read-ahead caching]
 
 (nwm-temporal-scaling)=
 ### Temporal scaling
@@ -392,7 +404,7 @@ For more than a handful of runs, use kerchunk references (built once, reused), i
 
 Availability depends on the source. According to the [hydrotools NWM Client documentation](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client), Google Cloud holds the largest amount of operational forecast data, which is why `hydrotools` uses it by default. On 2026-10-07 the AWS bucket `noaa-nwm-pds` held every day from 2025-01-01 onward (earlier descriptions call it a rolling four-week archive). [PARTNER REVIEW: NOAA] confirm the retention policy of each mirror. Not every configuration covers the whole archive (the Alaska configurations, for example, only became available after August 2023).
 
-**NWM retrospective.** If you need a long *simulated* record rather than forecasts, use the NWM retrospective simulations: multi-decade model runs, not archived forecasts. Version 3.0 covers February 1979 through January 2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for version 3.0.
+**NWM retrospective.** If you need a long *simulated* record rather than forecasts, use the NWM retrospective simulations: multi-decade model runs, not archived forecasts. Version 3.0 covers February 1979 through January 2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for version 3.0 (see the [NWM retrospective registry entry](https://registry.opendata.aws/nwm-archive/)). [TODO: verify retrospective date ranges and link the NCAR v3.0 Zarr source]
 
 (nwm-spatial-scaling)=
 ### Spatial scaling
