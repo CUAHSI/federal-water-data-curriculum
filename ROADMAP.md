@@ -75,7 +75,7 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
       USGS observations incl. out-of-bank measurement limits · NWM forecasts: how forecasts changed approaching
       the peak, using the no-key route, with a one-paragraph pointer to Module 3's access-route guidance ·
       SWOT: RiverSP WSE through the event + Raster water extent pre-event vs. near peak · conclusions.
-- [ ] **P3.2 04/01 "Comparative overview"** (branch `content/04-comparative-overview`, PR #2): NWM spatial/temporal
+- [x] **P3.2 04/01 "Comparative overview"** (branch `content/04-comparative-overview`, [PR #49](https://github.com/CUAHSI/federal-water-data-curriculum/pull/49), draft): NWM spatial/temporal
       bullets, accuracy section, comparison table (shared terminology), "Data provider recommendations" drafted
       from agency sources, each cited and marked `[PARTNER REVIEW: NASA|NOAA|USGS]`.
 - [ ] **P3.3 04/00 overview + 04/03 additional data** (branch `content/04-overview-additional`, PR #3): objectives and
