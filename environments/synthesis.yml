@@ -30,3 +30,6 @@ dependencies:
   - pandas
   - geopandas
   - matplotlib
+  - pip
+  - pip:
+      - nwmurl   # CIROH: builds NWM file URLs
