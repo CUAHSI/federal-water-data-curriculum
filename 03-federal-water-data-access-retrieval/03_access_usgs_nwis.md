@@ -22,48 +22,57 @@ NWIS is public and doesn't require an account for the legacy service. The modern
 3. Add it as environment variable
 4. Restart
  
- ### Create a Conda environment
+USGS documents how keys work on its [API keys page](https://api.waterdata.usgs.gov/docs/ogcapi/keys/). Requests over the limit get an HTTP `429 Too Many Requests` error, and a key raises how many requests you can make per hour. `dataretrieval` reads the key from the `API_USGS_PAT` environment variable and sends it for you, so it never needs to appear in your code.
+
+### Create a Conda environment
+
+The course provides an environment file, `environments/nwis.yml` (in the course repository), with `dataretrieval` and the other packages this lesson uses:
+
 ```bash
-conda create -n nwis-env python=3.11 -y
-conda activate nwis-env
-python3 -m pip install --upgrade pip wheel
-python3 -m pip install dataretrieval
+# From the root of the course repository
+conda env create -f environments/nwis.yml   # or: mamba env create -f environments/nwis.yml
+conda activate fwdc-nwis
 
-# we'll pretend the token that was created is 'abc123'
+# Store your token in the environment. We'll pretend the token you created is 'abc123'.
 conda env config vars set API_USGS_PAT="abc123"
-conda activate nwis-env
+conda activate fwdc-nwis   # re-activate so the variable takes effect
 
-# install and register this environment as a kernel option
-python3 -m pip install ipykernel
-python3 -m ipykernel install --user --name nwis-env --display-name "Python (nwis-env)"
+# Optional: register this environment as a Jupyter kernel
+python -m pip install ipykernel
+python -m ipykernel install --user --name fwdc-nwis --display-name "Python (fwdc-nwis)"
 ```
-You can test that the token saved to your environment.
-```Python
+
+You can check that the token is available. Check only that it exists; don't print the token itself, because printed output ends up in notebooks, logs and screenshots.
+```python
 import os
 
-print(os.getenv("API_USGS_PAT"))
+print("API_USGS_PAT is set:", bool(os.getenv("API_USGS_PAT")))
 ```
 
 ## Programmatic data discovery
 
 ### dataRetrieval help:
-```python
 
-parameter_codes = waterdata.get_reference_table("parameter-codes")
-statistic_codes = waterdata.get_reference_table("statistic-codes")
+The Water Data APIs use codes for many query arguments: `00060` is discharge and `00003` is the daily mean statistic, for example. `get_reference_table` returns the list of allowed values for each kind of code as a `pandas` DataFrame, so you can look them up in code rather than on a web page:
+
+```python
+from dataretrieval import waterdata
+
+parameter_codes, _ = waterdata.get_reference_table("parameter-codes")
+statistic_codes, _ = waterdata.get_reference_table("statistic-codes")
 # Others:
-agency_codes = waterdata.get_reference_table("agency-codes")
-aquifer_codes = waterdata.get_reference_table("aquifer-codes")
-aquifer_types = waterdata.get_reference_table("aquifer-types")
-coordinate_datum_codes = waterdata.get_reference_table("coordinate-datum-codes")
-huc_codes = waterdata.get_reference_table("hydrologic-unit-codes")
-national_aquifer_codes = waterdata.get_reference_table("national-aquifer-codes")
-reliability_codes = waterdata.get_reference_table("reliability-codes")
-site_types = waterdata.get_reference_tablea("site-types")
-topographic_codes = waterdata.get_reference_table("topographic-codes")
-time_zone_codes = waterdata.get_reference_table("time-zone-codes")
-counties = waterdata.get_reference_table("counties")
-states = waterdata.get_reference_table("states")
+agency_codes, _ = waterdata.get_reference_table("agency-codes")
+aquifer_codes, _ = waterdata.get_reference_table("aquifer-codes")
+aquifer_types, _ = waterdata.get_reference_table("aquifer-types")
+coordinate_datum_codes, _ = waterdata.get_reference_table("coordinate-datum-codes")
+huc_codes, _ = waterdata.get_reference_table("hydrologic-unit-codes")
+national_aquifer_codes, _ = waterdata.get_reference_table("national-aquifer-codes")
+reliability_codes, _ = waterdata.get_reference_table("reliability-codes")
+site_types, _ = waterdata.get_reference_table("site-types")
+topographic_codes, _ = waterdata.get_reference_table("topographic-codes")
+time_zone_codes, _ = waterdata.get_reference_table("time-zone-codes")
+counties, _ = waterdata.get_reference_table("counties")
+states, _ = waterdata.get_reference_table("states")
 ```
  
 Before downloading values, a common first step is to *discover* which site(s) match your question, by location, HUC, or the parameter you care about, rather than assuming you already know the exact site number.
@@ -106,6 +115,150 @@ sites_available, md = waterdata.get_combined_metadata(
   statistic_id = "00003" # mean statistic code
 )
 ```
+
+`get_combined_metadata` combines monitoring-location details with the list of time series each location records. At time of writing, it returns two Suffolk County stream sites with daily mean discharge.
+
+**Example: The December 2025 Skagit River flood at USGS 12200500**
+
+Module 4 uses one gage, USGS 12200500 (Skagit River near Mount Vernon, WA), to study the December 2025 atmospheric-river flood. Here is how to get its observations. Every function below returns a `(DataFrame, metadata)` pair. The DataFrame uses the same columns across services, which map onto the course's shared vocabulary:
+
+| Column | Shared term | Notes |
+|---|---|---|
+| `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-12200500` |
+| `parameter_code` | **Variable** | `00060` = discharge, `00065` = gage height |
+| `unit_of_measure` | **Variable unit** | e.g. `ft^3/s`, `ft` |
+| `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags things such as ice or equipment problems |
+| `time`, `value` | | Timestamps are in UTC |
+
+First, ask which time series the gage records. This is discovery for a single site:
+
+```python
+site = "USGS-12200500"
+series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]]
+```
+
+```
+   parameter_code       parameter_name statistic_id computation_period_identifier                     begin                       end
+0           63680       Turbidity, FNU        00002                         Daily 2016-09-20 07:00:00+00:00 2017-10-02 07:00:00+00:00
+1           00010   Temperature, water        00003                         Daily 1974-02-01 07:00:00+00:00 2026-10-05 07:00:00+00:00
+...
+3           00065          Gage height        00011                        Points 2007-10-01 08:00:00+00:00 2026-10-07 08:15:00+00:00
+...
+7           00060            Discharge        00003                         Daily 1940-10-01 08:00:00+00:00 2026-10-05 07:00:00+00:00
+8           00060            Discharge        00011                        Points 1988-10-01 07:00:00+00:00 2026-10-07 06:45:00+00:00
+9           00065          Gage height        00003                         Daily 1988-04-11 07:00:00+00:00 2026-10-05 07:00:00+00:00
+...
+```
+
+**Continuous (instantaneous) values** are the 15-minute sensor record. `get_continuous` accepts up to three years per call. Here we request one month of discharge and gage height together:
+
+```python
+cont, md = waterdata.get_continuous(
+    monitoring_location_id=site,
+    parameter_code=["00060", "00065"],  # discharge and gage height
+    time="2025-12-01T00:00:00Z/2026-01-01T00:00:00Z",
+)
+print(cont.shape)
+cont[["time", "parameter_code", "value", "unit_of_measure", "approval_status", "qualifier"]].head()
+```
+
+```
+(5954, 13)
+                       time parameter_code     value unit_of_measure approval_status qualifier
+0 2025-12-01 00:00:00+00:00          00065     14.35              ft        Approved      None
+1 2025-12-01 00:00:00+00:00          00060  14700.00          ft^3/s        Approved      None
+2 2025-12-01 00:15:00+00:00          00065     14.35              ft        Approved      None
+3 2025-12-01 00:15:00+00:00          00060  14700.00          ft^3/s        Approved      None
+4 2025-12-01 00:30:00+00:00          00065     14.34              ft        Approved      None
+```
+
+To find the flood peak, take the row with the largest value for each parameter:
+
+```python
+peaks = cont.loc[cont.groupby("parameter_code")["value"].idxmax()]
+peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
+```
+
+```
+     parameter_code                      time      value unit_of_measure approval_status
+2177          00060 2025-12-12 08:00:00+00:00  133000.00          ft^3/s        Approved
+2178          00065 2025-12-12 08:15:00+00:00      37.73              ft        Approved
+```
+
+The continuous record peaked at **133,000 ft³/s** at 08:00 UTC on December 12, 2025 (midnight Pacific time), with a gage height of **37.73 ft** fifteen minutes later. The whole month is already `Approved`. Data from the last several months are usually `Provisional`, so check `approval_status` before you publish numbers.
+
+**Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range:
+
+```python
+daily, md = waterdata.get_daily(
+    monitoring_location_id=site,
+    parameter_code="00060",
+    statistic_id="00003",
+    time="2025-12-01/2025-12-31",
+)
+daily.sort_values("time")[["time", "value", "unit_of_measure", "approval_status"]].iloc[8:16]
+```
+
+```
+         time     value unit_of_measure approval_status
+8  2025-12-09   54100.0          ft^3/s        Approved
+9  2025-12-10   62000.0          ft^3/s        Approved
+10 2025-12-11  102000.0          ft^3/s        Approved
+11 2025-12-12  112000.0          ft^3/s        Approved
+12 2025-12-13   82400.0          ft^3/s        Approved
+13 2025-12-14   69000.0          ft^3/s        Approved
+14 2025-12-15   62100.0          ft^3/s        Approved
+15 2025-12-16   73600.0          ft^3/s        Approved
+```
+
+**Field measurements** are the discharge and gage-height measurements that hydrographers make in person at the gage. USGS uses them to build and check the rating curve that turns the sensor's gage height into the continuous discharge record. They are the closest thing to "ground truth" for discharge:
+
+```python
+fm, md = waterdata.get_field_measurements(
+    monitoring_location_id=site,
+    time="2025-11-01T00:00:00Z/2026-01-31T00:00:00Z",
+)
+discharge_fm = fm[fm["parameter_code"] == "00060"].sort_values("time")
+discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "measurement_rated", "approval_status"]]
+```
+
+```
+         time     value unit_of_measure                observing_procedure measurement_rated approval_status
+4  2025-11-14   43800.0          ft^3/s  Acoustic Doppler Current Profiler              Good        Approved
+7  2025-12-12  111000.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
+13 2026-01-28   20000.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
+```
+
+Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. A hydrographer measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) on December 12, the day of the peak. `measurement_rated` is that measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy (here `Fair`, compared with `Good` for the calmer November measurement). Measurements in the middle of a large flood are hard to make, and they are exactly what anchors the top of the rating curve. That matters when we compare USGS observations to the NWM and SWOT in Module 4.
+
+[PARTNER REVIEW: USGS] Confirm the description of field measurements and rating curves, and how the course should describe discharge accuracy for out-of-bank flows at 12200500.
+
+**For contrast: the legacy `nwis` module.** Most older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. The same daily request looks like this:
+
+```python
+from dataretrieval import nwis
+
+legacy_daily, legacy_md = nwis.get_dv(sites="12200500", parameterCd="00060", start="2025-12-01", end="2025-12-31")
+legacy_daily.head(3)
+```
+
+```
+DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
+                           00060_Mean 00060_Mean_cd   site_no
+datetime
+2025-12-01 00:00:00+00:00       14200             A  12200500
+2025-12-02 00:00:00+00:00       14100             A  12200500
+2025-12-03 00:00:00+00:00       13700             A  12200500
+```
+
+Notice the differences:
+- a bare site number instead of `USGS-12200500`;
+- legacy column names, where `00060_Mean` is the value and `00060_Mean_cd` a one-letter approval code (`A` = approved);
+- the date as the index.
+
+The values match the `waterdata` daily values above. `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
+[PARTNER REVIEW: USGS] Confirm the retirement timeline for the legacy Water Services to cite here.
  
 ## Best practices FAQs
  
@@ -146,6 +299,14 @@ nonspecific_location
 ### Parallelization
  
 If I am working on improving efficiency of my code through parallelization, what should I do vs avoid?
+
+- **Do** ask for more in each request before reaching for parallel code. Most `waterdata` functions accept lists (several `monitoring_location_id`s or `parameter_code`s), a `bbox`, or a time interval. One request that returns 10,000 rows is cheaper for you and for USGS than 100 requests that return 100 rows each.
+- **Do** use an API key (`API_USGS_PAT`) for any repeated or large workflow, and expect HTTP `429 Too Many Requests` if you go over your hourly limit.
+- **Do** let `dataretrieval` handle paging (`limit` sets the page size, `max_rows` caps the total) instead of writing your own loop of requests.
+- **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you. Use that sparingly, and only for pulls you know are large.
+- **Avoid** re-downloading the same historical record every time you run your code. Approved data rarely change, so save results to a file and only request what is new (the `last_modified` argument helps).
+
+[PARTNER REVIEW: USGS] Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
   
 ## Further reading
  
@@ -153,3 +314,5 @@ If I am working on improving efficiency of my code through parallelization, what
 * `dataretrieval` documentation: https://doi-usgs.github.io/dataretrieval-python/
 * Modernized Water Data API docs: https://api.waterdata.usgs.gov/
 * NWIS Mapper (GUI): https://maps.waterdata.usgs.gov/mapper/
+* USGS Water Data API keys: https://api.waterdata.usgs.gov/docs/ogcapi/keys/
+* Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here. [TODO: verify notebook author(s) for credit]
