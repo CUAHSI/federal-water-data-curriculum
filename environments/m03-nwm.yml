@@ -1,8 +1,8 @@
 # Environment for Module 3, "Retrieve NOAA NWM streamflow data"
 # (03-federal-water-data-access-retrieval/02_access_noaa_nwm.md).
-#   conda env create -f environments/nwm.yml
-#   conda activate nwm
-name: nwm
+#   conda env create -f environments/m03-nwm.yml
+#   conda activate m03-nwm
+name: m03-nwm
 channels:
   - conda-forge
 dependencies:

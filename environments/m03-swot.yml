@@ -1,7 +1,7 @@
 # Environment for Module 3, "Retrieve NASA SWOT data" (03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
-# Create:   mamba env create -f environments/swot.yml   (or: conda env create -f environments/swot.yml)
-# Activate: conda activate fwdc-swot
-name: fwdc-swot
+# Create:   mamba env create -f environments/m03-swot.yml   (or: conda env create -f environments/m03-swot.yml)
+# Activate: conda activate m03-swot
+name: m03-swot
 channels:
   - conda-forge
 dependencies:

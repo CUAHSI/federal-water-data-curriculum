@@ -1,7 +1,7 @@
 # Conda environment for Module 4: Synthesizing Federal water data products.
-# Create with:  conda env create -f environments/synthesis.yml
-# Then:         conda activate fwdc-synthesis
-name: fwdc-synthesis
+# Create with:  conda env create -f environments/m04-synthesis.yml
+# Then:         conda activate m04-synthesis
+name: m04-synthesis
 channels:
   - conda-forge
 dependencies:

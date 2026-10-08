@@ -13,19 +13,23 @@ This lesson uses two SWOT hydrology products. They answer different questions, s
 | Where was there water, and how much area did it cover, on a given overpass? | Water mask raster (Raster) | `SWOT_L2_HR_Raster_100m_D` (also `_250m_D`) | A gridded (UTM, 100 m or 250 m) scene per overpass: `water_area`, `water_frac`, `wse` and their quality flags | `earthaccess` + `xarray` |
 
 RiverSP is tied to the [SWOT River Database (SWORD)](https://www.swordexplorer.com/) river centerlines, so it describes the channel. It does not tell you how far water spread out of bank. Raster is not tied to a river network, so it can show water anywhere in the scene, including floodplains. This lesson uses both on the upper Mississippi River in Minnesota. [Module 4](../04-federal-water-data-synthesis/02_synthesize_river_data.md) uses both again in a flood case study.
-[PARTNER REVIEW: NASA] Confirm this "which product for which question" framing and the description of what RiverSP does not capture out of bank.
+
+:::{admonition} Partner review (NASA): Retrieve NASA SWOT water surface elevation data
+:class: important
+Confirm this "which product for which question" framing and the description of what RiverSP does not capture out of bank.
+:::
 
 ## Tools and environment setup
 
 In order to complete this lesson about accessing NASA SWOT water surface elevation data, you first need to install a few libraries and create an account.
 
-1. **Make an Earthdata Login account.** In order to _access_ data from the NASA Earthdata system, you will need to create an Earthdata Login account. Please visit [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) to register and setup your login. 
-2. **Create the course environment.** We will be using the NASA `earthaccess` Python library for programmatic authentication to NASA Earthdata systems, data discovery, and data downloads, plus `xarray`, `geopandas` and `requests` for reading the files and calling `hydrocron`. The course provides a conda environment file, `environments/swot.yml` (in the course repository), with everything this lesson uses. `mamba` is faster, but `conda` works the same way. To install `earthaccess` on its own instead, see its [user quick start guide](https://earthaccess.readthedocs.io/en/latest/user/quick-start/#installing-earthaccess).
+1. **Make an Earthdata Login account.** In order to _access_ data from the NASA Earthdata system, you will need to create an Earthdata Login account. Please visit [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) to register and setup your login.
+2. **Create the course environment.** We will be using the NASA `earthaccess` Python library for programmatic authentication to NASA Earthdata systems, data discovery, and data downloads, plus `xarray`, `geopandas` and `requests` for reading the files and calling `hydrocron`. The course provides a conda environment file, `environments/m03-swot.yml` (in the course repository), with everything this lesson uses. `mamba` is faster, but `conda` works the same way. To install `earthaccess` on its own instead, see its [user quick start guide](https://earthaccess.readthedocs.io/en/latest/user/quick-start/#installing-earthaccess).
 
 ```bash
 # From the root of the course repository
-mamba env create -f environments/swot.yml   # or: conda env create -f environments/swot.yml
-conda activate fwdc-swot
+mamba env create -f environments/m03-swot.yml   # or: conda env create -f environments/m03-swot.yml
+conda activate m03-swot
 ```
 
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it will prompt you for your Earthdata username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment variables (or use a `.netrc` file); `earthaccess.login()` finds them automatically. Never write your password into a script or notebook. You can learn more in the [`earthaccess` authentication docs](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
@@ -43,9 +47,9 @@ auth.authenticated  # True once you are logged in
 
 Before you download or try to access the data itself, a common first step in any open data analysis is to first _discover_ or _find_ data in the data system that can meet your research needs. You don't want to download all of the database just to learn which dates are available, that would be incredibly inefficient. Instead, we can do the _discovery_ step and then adjust our data download approach using that information. As you will learn later, this discovery stage can also be a way to initialize information such as locations or times that allows you to build more efficient and scalable data download workflows.
 
-As with many of the methods, a GUI (Graphical User Interface) approach to data discovery does exist. However, programmatic implementations support reproducibility and future extensions or applications of your work. So, while you can navigate to [Earthdata Search](https://search.earthdata.nasa.gov/), know that it would be a good idea to capture your search and discovery steps in code as documentation of the methods. 
+As with many of the methods, a GUI (Graphical User Interface) approach to data discovery does exist. However, programmatic implementations support reproducibility and future extensions or applications of your work. So, while you can navigate to [Earthdata Search](https://search.earthdata.nasa.gov/), know that it would be a good idea to capture your search and discovery steps in code as documentation of the methods.
 
-There are ways to search Earthdata broadly using general terms if you are unsure of what data product to use, see the `search_datasets` and `search_services` methods in the API documentation [here](https://earthaccess.readthedocs.io/en/latest/api/#earthaccess.api.search_datasets). The object returned from a search can be inspected to extract key information, including the dataset's shorthand name which is critical for querying and downloading the data itself. Below is an example of what you could do to search any Earthdata dataset that is linked to a "river" keyword. 
+There are ways to search Earthdata broadly using general terms if you are unsure of what data product to use, see the `search_datasets` and `search_services` methods in the API documentation [here](https://earthaccess.readthedocs.io/en/latest/api/#earthaccess.api.search_datasets). The object returned from a search can be inspected to extract key information, including the dataset's shorthand name which is critical for querying and downloading the data itself. Below is an example of what you could do to search any Earthdata dataset that is linked to a "river" keyword.
 
 ```python
 river_datasets_all = earthaccess.search_datasets(
@@ -54,7 +58,7 @@ river_datasets_all = earthaccess.search_datasets(
 len(river_datasets_all)  # 1539 at time of writing
 ```
 
-At time of writing, this returned over 1500 datasets from a variety of data providers and locations. Let's add more specific querying parameters, such as a spatial and temporal filter to get only cloud-available datasets for an analysis of Minnesota rivers during 2023-2025. 
+At time of writing, this returned over 1500 datasets from a variety of data providers and locations. Let's add more specific querying parameters, such as a spatial and temporal filter to get only cloud-available datasets for an analysis of Minnesota rivers during 2023-2025.
 
 ```python
 river_datasets_MN = earthaccess.search_datasets(
@@ -76,15 +80,15 @@ This more specific query returned only 47 datasets. With a smaller set of datase
 ['SWOT_L2_HR_RiverSP_D', 'DLEM_C_N_Export_1699', 'SWOT_L2_HR_RiverAvg_2.0', 'SWOT_L2_HR_RiverAvg_D', 'SWOT_L2_HR_RiverSP_2.0', 'SWOT_L2_HR_RiverSP_node_2.0', 'SWOT_L2_HR_RiverSP_node_D', 'SWOT_L2_HR_RiverSP_reach_2.0', 'SWOT_L2_HR_RiverSP_reach_D', 'SWOT_L4_HR_DAWG_SOS_DISCHARGE_V3', 'SENTINEL-1A_SLC', 'SENTINEL-1A_DP_GRD_HIGH', 'SENTINEL-1A_META_RAW', 'SWOT_L2_HR_PIXC_D', 'SENTINEL-1A_RAW', 'SENTINEL-1A_META_SLC', 'SENTINEL-1A_DP_GRD_MEDIUM', 'SENTINEL-1A_SP_GRD_HIGH', 'SENTINEL-1A_DP_META_GRD_HIGH', 'ABI_G16-STAR-L3C-v2.70', 'AERDB_D3_VIIRS_NOAA20', 'AERDB_D3_VIIRS_SNPP', 'AERDB_M3_VIIRS_NOAA20', 'AERDB_M3_VIIRS_SNPP', 'AVHRRF_MB-STAR-L3U-v2.80', 'AVHRRF_MC-STAR-L3U-v2.80', 'VIIRS_N20-STAR-L3U-v2.80', 'VIIRS_NPP-STAR-L3U-v2.80', 'ABI_G16-STAR-L2P-v2.70', 'AERDB_L2_VIIRS_NOAA20', 'AERDB_L2_VIIRS_SNPP', 'SWOT_L2_HR_LakeSP_2.0', 'SWOT_L2_HR_LakeSP_obs_2.0', 'SWOT_L2_HR_LakeSP_prior_2.0', 'SWOT_L2_HR_LakeSP_unassigned_2.0', 'SWOT_L2_HR_PIXCVec_2.0', 'SWOT_L2_HR_PIXCVec_D', 'SENTINEL-1A_DP_GRD_FULL', 'SENTINEL-1A_SP_GRD_MEDIUM', 'SENTINEL-1A_DP_META_GRD_FULL', 'SENTINEL-1A_DP_META_GRD_MEDIUM', 'SENTINEL-1A_SP_META_GRD_HIGH', 'SENTINEL-1A_SP_META_GRD_MEDIUM', 'AERDB_D3_VIIRS_NOAA21', 'AERDB_M3_VIIRS_NOAA21', 'AERDB_L2_VIIRS_NOAA21', 'N21-VIIRS-L3U-ACSPO-v2.80']
 ```
 
-In this lesson, we know that we are specifically interested in searching the available data for within the data product `L2_HR_RiverSP`. As this is a SWOT product, its "short name" would be `SWOT_L2_HR_RiverSP`. You will see 6 different datasets prefixed with `SWOT_L2_HR_RiverSP`: 
-- `SWOT_L2_HR_RiverSP_2.0` with children: 
+In this lesson, we know that we are specifically interested in searching the available data for within the data product `L2_HR_RiverSP`. As this is a SWOT product, its "short name" would be `SWOT_L2_HR_RiverSP`. You will see 6 different datasets prefixed with `SWOT_L2_HR_RiverSP`:
+- `SWOT_L2_HR_RiverSP_2.0` with children:
    - `SWOT_L2_HR_RiverSP_node_2.0`
    - `SWOT_L2_HR_RiverSP_reach_2.0`
-- `SWOT_L2_HR_RiverSP_D` with children: 
+- `SWOT_L2_HR_RiverSP_D` with children:
    - `SWOT_L2_HR_RiverSP_node_D`
-   - `SWOT_L2_HR_RiverSP_reach_D`. 
-   
-The `2.0` vs `D` distinction is referring to the _version_ of the data. `2.0` refers to "Version C", which has now been superseded by "Version D" (see the [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)). In addition, each _version_ has two different spatial variants available, "node" (one file per 200m node along a reach) and "reach" (one file per 10km river reach). 
+   - `SWOT_L2_HR_RiverSP_reach_D`.
+
+The `2.0` vs `D` distinction is referring to the _version_ of the data. `2.0` refers to "Version C", which has now been superseded by "Version D" (see the [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)). In addition, each _version_ has two different spatial variants available, "node" (one file per 200m node along a reach) and "reach" (one file per 10km river reach).
 
 In our example here, we are interested in the most up-to-date, reach-level data so we would use the `search_data` method to find files within the `SWOT_L2_HR_RiverSP_reach_D` dataset:
 
@@ -116,7 +120,11 @@ SWOT_L2_HR_RiverSP_Reach_051_216_NA_20260606T033652_20260606T035154_PID0_01_swot
 ```
 
 Reading the first name: `Reach` granule, cycle `051`, pass `121`, continent `NA` (North America), start and end time in UTC, and a processing counter (`01`). Notice the two granules for June 5 that differ only in that last counter (`_01` and `_02`): the same overpass was processed more than once. Usually you keep the highest counter.
-[PARTNER REVIEW: NASA] Confirm that keeping the highest processing counter is the recommended way to de-duplicate granules.
+
+:::{admonition} Partner review (NASA): Programmatic data discovery
+:class: important
+Confirm that keeping the highest processing counter is the recommended way to de-duplicate granules.
+:::
 
 A few things to know about `search_data` (see the [`earthaccess` API docs](https://earthaccess.readthedocs.io/en/latest/api/) for every option):
 
@@ -147,9 +155,19 @@ print(int(reaches.intersects(box(-95.26, 47.17, -95.15, 47.25)).sum()), "reaches
 0 reaches inside the headwaters box
 ```
 
-None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The most likely reason is not SWOT's orbit: the SWOT River Database (SWORD) does not appear to include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN. [TODO: verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer]
+None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The most likely reason is not SWOT's orbit: the SWOT River Database (SWORD) does not appear to include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN.
 
-For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the [USGS lesson](03_access_usgs_nwis.md) uses too. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example]
+:::{admonition} TODO (dev team): Verify the upstream end of SWORD's Mississippi…
+:class: attention
+Verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer
+:::
+
+For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the [USGS lesson](03_access_usgs_wdfn.md) uses too.
+
+:::{admonition} TODO (dev team): Confirm the Aitkin site and spring 2026…
+:class: attention
+Confirm the Aitkin site and spring 2026 period, or name another Module 3 example
+:::
 
 The water-area product is discovered the same way. Here we search the 100 m Raster product in a small box around the gage, for the weeks around the snowmelt peak:
 
@@ -212,7 +230,10 @@ SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_050_009_118F_20260508T215320_20260508T2153
 
 The Raster name adds the UTM zone and latitude band (`UTM15T`) and a scene number (for example `036F`) to the cycle, pass and time.
 
-[PARTNER REVIEW: NASA] Is the antimeridian false-match behavior a known CMR/`earthaccess` issue, and is checking the granule's `GPolygons` footprint (as above) the recommended workaround?
+:::{admonition} Partner review (NASA): Programmatic data discovery
+:class: important
+Is the antimeridian false-match behavior a known CMR/`earthaccess` issue, and is checking the granule's `GPolygons` footprint (as above) the recommended workaround?
+:::
 
 Behind the scenes, `earthaccess` is querying NASA's [Common Metadata Repository (CMR)](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html) and, when you download, reading from the PO.DAAC cloud archive in Amazon Web Services (AWS) `us-west-2`. You don't need to know either system to use `earthaccess`, but it helps when you read other tutorials that call them directly.
 
@@ -272,7 +293,10 @@ Each row is one SWORD reach seen on this overpass. Key columns:
 - `reach_q` is the summary **Data Quality Flag**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - Missing values are stored as `-999999999999`, not as `NaN`. Filter them out before plotting.
 
-[PARTNER REVIEW: NASA] Confirm the reach_q value meanings and the EGM2008 vertical reference for Version D RiverSP `wse`.
+:::{admonition} Partner review (NASA): earthaccess
+:class: important
+Confirm the reach_q value meanings and the EGM2008 vertical reference for Version D RiverSP `wse`.
+:::
 
 **Raster water area.** Next, download the Raster granules we kept and open one with `xarray`. Each file is a fixed scene, about 160 km on a side, on a 100 m UTM grid.
 
@@ -352,11 +376,17 @@ pd.DataFrame([water_area_near(f) for f in raster_files])
 The 10 km box holds about 10,000 pixels, but no overpass observed all of them (`pixels_observed`). The numbers also jump between overpasses in a way discharge can't explain. USGS daily mean discharge at Aitkin ([USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31), approved as of October 2026) rose from about 2,100 ft³/s on April 15 to a peak of 4,950 ft³/s on May 1, then fell to about 3,500 ft³/s by May 8. Yet the April 18 and May 8 scenes (pass 009, scene `118F`) show roughly two and a half to four times more water than the April 15 and May 6 scenes (pass 522, scene `037F`). Two lessons follow:
 
 1. **Compare like with like.** Different passes view the area from different geometries and cover different parts of the box, so compare water area within the same pass and scene, and check `pixels_observed` before comparing totals.
-2. **Check satellite numbers against an independent source.** A gage, an aerial image, or the other pass will tell you when a change is not physically plausible. The [USGS lesson](03_access_usgs_nwis.md) shows how to get the discharge record used here.
+2. **Check satellite numbers against an independent source.** A gage, an aerial image, or the other pass will tell you when a change is not physically plausible. The [USGS lesson](03_access_usgs_wdfn.md) shows how to get the discharge record used here.
 
-[PARTNER REVIEW: NASA] Why do pass 009 (scene 118F) and pass 522 (scene 037F) give such different water areas around Aitkin at similar discharge, and what is the recommended way to compare water extent across passes?
+:::{admonition} Partner review (NASA): earthaccess
+:class: important
+Why do pass 009 (scene 118F) and pass 522 (scene 037F) give such different water areas around Aitkin at similar discharge, and what is the recommended way to compare water extent across passes?
+:::
 
-[PARTNER REVIEW: NASA] Confirm the interpretation of `water_area` values far above pixel area when `water_area_qual` = 3, and whether `water_area_qual <= 1` is the recommended filter for water-extent work.
+:::{admonition} Partner review (NASA): earthaccess
+:class: important
+Confirm the interpretation of `water_area` values far above pixel area when `water_area_qual` = 3, and whether `water_area_qual <= 1` is the recommended filter for water-extent work.
+:::
 
 ### `hydrocron`
 
@@ -439,11 +469,23 @@ Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertaint
 SWOT saw this reach 22 times in five months, often in pairs a few days apart, because the reach sits where several passes overlap. Three things stand out:
 
 - **The broad pattern follows the river.** Water surface elevation is higher around the snowmelt peak (362.4 m on May 6, when USGS reported about 3,900 ft³/s) than in late July (360.4 m on July 28, about 490 ft³/s).
-- **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s (USGS marks its March discharge values as estimated; see [USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31)) [TODO: verify whether the March 2026 record at 05227500 is ice-affected]. Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
+- **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s (USGS marks its March discharge values as estimated; see [USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31)). Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
 - **No observation is flagged good.** Fifteen are suspect (`reach_q` = 1) and seven degraded (2). A strict `reach_q == 0` filter (`get_reach_timeseries(..., max_reach_q=0)`) would return an empty table. Quality flags are reach-specific, so keep the flag in your analysis and decide what to trust rather than silently filtering everything away.
 
-[PARTNER REVIEW: NASA] Confirm how researchers should use suspect and degraded observations on narrow rivers, and whether screening on `width` versus `p_width` is a reasonable extra check.
-[POLISH: plot the SWOT WSE series against the USGS NAVD88 stream level (parameter 63160) at 05227500]
+:::{admonition} TODO (dev team): Verify whether the March 2026 record at…
+:class: attention
+Verify whether the March 2026 record at 05227500 is ice-affected
+:::
+
+:::{admonition} Partner review (NASA): hydrocron
+:class: important
+Confirm how researchers should use suspect and degraded observations on narrow rivers, and whether screening on `width` versus `p_width` is a reasonable extra check.
+:::
+
+:::{admonition} TODO (dev team): Plot the SWOT WSE series against the…
+:class: attention
+Plot the SWOT WSE series against the USGS NAVD88 stream level (parameter 63160) at 05227500
+:::
 
 If a reach ID does not exist in the collection, `hydrocron` answers with an HTTP 400 and a message such as `Results with the specified Feature ID ... were not found`. The function raises that as an error, so a typo doesn't pass silently.
 
@@ -459,7 +501,12 @@ See sections below for answers and code examples to the following questions.
 
 What is the recommended way to download data for one location but the full period of record?
 
-Use `hydrocron`, one request per reach or node. Set `start_time` to the start of the mission's science orbit (July 2023 [TODO: verify exact date of first science-orbit RiverSP data]) and `end_time` to today, and ask only for the `fields` you need. Fewer fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach (one per overpass, each covering a whole continent-scale pass) only to keep a single row from each. The CUAHSI longitudinal-profile notebook in Further reading follows this pattern for a single reach.
+Use `hydrocron`, one request per reach or node. Set `start_time` to the start of the mission's science orbit (July 2023) and `end_time` to today, and ask only for the `fields` you need. Fewer fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach (one per overpass, each covering a whole continent-scale pass) only to keep a single row from each. The CUAHSI longitudinal-profile notebook in Further reading follows this pattern for a single reach.
+
+:::{admonition} TODO (dev team): Verify exact date of first science-orbit RiverSP…
+:class: attention
+Verify exact date of first science-orbit RiverSP data
+:::
 
 ### Spatial scaling
 
@@ -476,7 +523,10 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Avoid** firing many `hydrocron` requests in parallel. Send them one after another, or a few at a time, and request a `hydrocron` API key from PO.DAAC if you have a heavy or recurring workload.
 - **Avoid** re-downloading the same granules every time you run your code. Keep a fixed `local_path=`: `earthaccess.download()` skips files that are already there unless you pass `force=True`.
 
-[PARTNER REVIEW: NASA] Confirm these recommendations, in particular the guidance on parallel `hydrocron` requests and when to request an API key.
+:::{admonition} Partner review (NASA): Parallelization
+:class: important
+Confirm these recommendations, in particular the guidance on parallel `hydrocron` requests and when to request an API key.
+:::
 
 ## Further reading
 

@@ -18,13 +18,13 @@ project:
         - file: '02-federal-water-data-landscape/00_introduction.md'
         - file: '02-federal-water-data-landscape/01_meet_nasa_swot.md'
         - file: '02-federal-water-data-landscape/02_meet_noaa_nwm.md'
-        - file: '02-federal-water-data-landscape/03_meet_usgs_nwis.md'
+        - file: '02-federal-water-data-landscape/03_meet_usgs_wdfn.md'
     - title: Federal Water Data Access & Retrieval
       children: 
         - file: '03-federal-water-data-access-retrieval/00_introduction.md'
         - file: '03-federal-water-data-access-retrieval/01_access_nasa_swot.md'
         - file: '03-federal-water-data-access-retrieval/02_access_noaa_nwm.md'
-        - file: '03-federal-water-data-access-retrieval/03_access_usgs_nwis.md'
+        - file: '03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md'
     - title: Federal Water Data Synthesis
       children: 
         - file: '04-federal-water-data-synthesis/00_introduction.md'

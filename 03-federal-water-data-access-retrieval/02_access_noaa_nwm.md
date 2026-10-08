@@ -24,13 +24,18 @@ The numbers behind these recommendations are in [Why NWM downloads cost what the
 
 ## Tools and environment setup
 
-We're using a dedicated `conda` environment to manage dependency collisions with other lessons. [TODO / for consideration: should we use environments to avoid dependency collisions? Or try to actually address any dependency collisions? We ultimately want people to be able to use all three datasets on their computers, and give them the knowledge and tools to do so]
+We're using a dedicated `conda` environment to manage dependency collisions with other lessons.
 
-The environment file [`environments/nwm.yml`](../environments/nwm.yml) lists everything this page uses. From the root of the course repository:
+:::{admonition} TODO (dev team): For consideration: should we use environments to…
+:class: attention
+For consideration: should we use environments to avoid dependency collisions? Or try to actually address any dependency collisions? We ultimately want people to be able to use all three datasets on their computers, and give them the knowledge and tools to do so
+:::
+
+The environment file [`environments/m03-nwm.yml`](../environments/m03-nwm.yml) lists everything this page uses. From the root of the course repository:
 
 ```bash
-conda env create -f environments/nwm.yml
-conda activate nwm
+conda env create -f environments/m03-nwm.yml
+conda activate m03-nwm
 ```
 
 This installs everything needed for discovery (`pynhd`), all three download routes (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`) in one place, so you don't have to juggle separate environments to go from "find a COMID" to "pull its forecast" within the same script or notebook. None of the routes on this page need an API key or account.
@@ -39,7 +44,12 @@ This installs everything needed for discovery (`pynhd`), all three download rout
 
 Before you download or try to access the data itself, a common first step is to *discover* or *find* the specific reach(es) you need. You don't want to page through the whole NWM domain just to learn which COMID matches your location. Doing this discovery step first also lets you build a COMID list once and reuse it, which matters more once you get to spatially scaling (see [Spatial scaling](#nwm-spatial-scaling)).
 
-A GUI (graphic user interface) approach exists here too: NOAA's own [interactive map](https://water.noaa.gov/map) lets you click a point and read off a reach ID directly, which is functionally the same identifier as a COMID [PARTNER REVIEW: NOAA] confirm the map's reach ID is the NWM `feature_id`. That's a fine way to explore or spot-check, but a programmatic discovery step keeps your work reproducible and reusable, and it's worth capturing in code even if you first found the reach by clicking around.
+A GUI (graphic user interface) approach exists here too: NOAA's own [interactive map](https://water.noaa.gov/map) lets you click a point and read off a reach ID directly, which is functionally the same identifier as a COMID That's a fine way to explore or spot-check, but a programmatic discovery step keeps your work reproducible and reusable, and it's worth capturing in code even if you first found the reach by clicking around.
+
+:::{admonition} Partner review (NOAA): Programmatic data discovery
+:class: important
+Confirm the map's reach ID is the NWM `feature_id`.
+:::
 
 ### USGS Network Linked Data Index (NLDI)
 
@@ -78,7 +88,10 @@ https://api.water.usgs.gov/nldi/linked-data/comid/position?coords=POINT(-71.1739
 
 **Example: what's the COMID for a USGS gage?**
 
-[TODO: switch example: per Lindsay (2026-10-08), the Skagit River / December 2025 flood is reserved for the Module 4 case study. Replace the Skagit gage, reaches and dates throughout this page (discovery, API, hydrotools, kerchunk, cost tables) with a Module 3 example, and re-run the measurements.]
+:::{admonition} TODO (dev team): Switch example: per Lindsay (2026-10-08), the Skagit…
+:class: attention
+Switch example: per Lindsay (2026-10-08), the Skagit River / December 2025 flood is reserved for the Module 4 case study. Replace the Skagit gage, reaches and dates throughout this page (discovery, API, hydrotools, kerchunk, cost tables) with a Module 3 example, and re-run the measurements.
+:::
 
 Throughout the rest of this page (and in Module 4) we use USGS gage 12200500, *Skagit River near Mount Vernon, WA*, which saw major flooding in December 2025. NLDI indexes USGS gages as the `nwissite` source, so you can ask for the reach the gage sits on directly:
 
@@ -118,17 +131,32 @@ Once you have your desired COMID(s), move on to downloads below.
 
 ## Programmatic data downloads
 
-While the discovery step above uses a USGS service, the forecast values come from NOAA. This section covers three routes, in order of how much data they're built for: the NOAA NWM API, `hydrotools`, and kerchunk references read with `xarray`. All three return NWM's *Variable* `streamflow` in m³/s (the API labels it `CMS`) for each COMID; NWM has no per-value *Data Quality Flag* [PARTNER REVIEW: NOAA] confirm, so record the configuration, reference time and model version with your data instead (see Module 2).
+While the discovery step above uses a USGS service, the forecast values come from NOAA. This section covers three routes, in order of how much data they're built for: the NOAA NWM API, `hydrotools`, and kerchunk references read with `xarray`. All three return NWM's *Variable* `streamflow` in m³/s (the API labels it `CMS`) for each COMID; NWM has no per-value *Data Quality Flag*
+
+:::{admonition} Partner review (NOAA): Programmatic data downloads
+:class: important
+Confirm, so record the configuration, reference time and model version with your data instead (see Module 2).
+:::
 
 Two terms you'll see in every route:
 
-* **Configuration**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several ensemble members), `long_range`, or `analysis_assim` (the model's best estimate of current conditions). [PARTNER REVIEW: NOAA] confirm cadences, horizons and ensemble sizes for NWM v3.0.
+* **Configuration**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several ensemble members), `long_range`, or `analysis_assim` (the model's best estimate of current conditions).
 * **Reference time**: when a forecast was issued (UTC). The time each forecast value applies to is the *valid time* (`value_time` in `hydrotools`).
+
+:::{admonition} Partner review (NOAA): Programmatic data downloads
+:class: important
+Confirm cadences, horizons and ensemble sizes for NWM v3.0.
+:::
 
 (nwm-api)=
 ### NOAA NWM API: today's forecasts for a few reaches
 
-NOAA's [NWM API](https://api.water.noaa.gov/nwm/v1/docs) returns forecasts for one or more reaches as JSON, with no key and no files to manage. It is labelled **experimental**, and it only keeps roughly the **last 3–5 days** of forecasts (on 2026-10-07 the oldest short-range run it held was from 2026-10-03, and the oldest medium-range run from 2026-10-04). Use it for "what is the model predicting now?", not for past events. [PARTNER REVIEW: NOAA] confirm the API's retention window and whether it is intended for research use.
+NOAA's [NWM API](https://api.water.noaa.gov/nwm/v1/docs) returns forecasts for one or more reaches as JSON, with no key and no files to manage. It is labelled **experimental**, and it only keeps roughly the **last 3–5 days** of forecasts (on 2026-10-07 the oldest short-range run it held was from 2026-10-03, and the oldest medium-range run from 2026-10-04). Use it for "what is the model predicting now?", not for past events.
+
+:::{admonition} Partner review (NOAA): NOAA NWM API: today's forecasts for a few reaches
+:class: important
+Confirm the API's retention window and whether it is intended for research use.
+:::
 
 **Example: the latest short-range forecast at the Skagit gage reach**
 
@@ -250,8 +278,13 @@ NetCDF files aren't designed to be read piece by piece over the internet. **Kerc
 
 Two kinds of reference are available:
 
-1. **NOAA-published references.** NOAA's Open Data Dissemination program publishes ready-made references in `s3://noaa-nodd-kerchunk-pds` ([registry entry](https://registry.opendata.aws/noaa-nodd-kerchunk/)) for NWM `short_range` and `medium_range_mem1` (plus the Alaska, Hawaii and Puerto Rico short range), built automatically as new files arrive. On 2026-10-07 they started at **2026-01-01**, so they don't cover the December 2025 case study. [PARTNER REVIEW: NOAA] confirm how far back these references are kept.
+1. **NOAA-published references.** NOAA's Open Data Dissemination program publishes ready-made references in `s3://noaa-nodd-kerchunk-pds` ([registry entry](https://registry.opendata.aws/noaa-nodd-kerchunk/)) for NWM `short_range` and `medium_range_mem1` (plus the Alaska, Hawaii and Puerto Rico short range), built automatically as new files arrive. On 2026-10-07 they started at **2026-01-01**, so they don't cover the December 2025 case study.
 2. **References you build yourself** for any files in the archive. This is a one-time step per forecast run, and the result is tiny (22 KB of JSON for an 18-file short-range run).
+
+:::{admonition} Partner review (NOAA): Kerchunk references: lazy, cloud-native reads with xarray
+:class: important
+Confirm how far back these references are kept.
+:::
 
 **Example: build references for the December 11, 2025 00Z short-range run**
 
@@ -298,10 +331,15 @@ https://storage.googleapis.com/national-water-model/nwm.20251211/short_range/nwm
 
 A few choices in this code are deliberate:
 
-* `urlbaseinput=3` asks `nwmurl` for the public HTTPS address of each file in the Google Cloud archive, so both scanning and later reads use plain HTTPS with no cloud account. In our tests, reading through `gcsfs` with the current `zarr`/`kerchunk` versions stalled, while HTTPS worked. [TODO: verify whether the gcsfs stall is Windows-only] `nwmurl` can also point at the AWS copy (`urlbaseinput=7`) or other configurations (e.g. `runinput=2` and `meminput=1` for medium-range member 1).
+* `urlbaseinput=3` asks `nwmurl` for the public HTTPS address of each file in the Google Cloud archive, so both scanning and later reads use plain HTTPS with no cloud account. In our tests, reading through `gcsfs` with the current `zarr`/`kerchunk` versions stalled, while HTTPS worked. `nwmurl` can also point at the AWS copy (`urlbaseinput=7`) or other configurations (e.g. `runinput=2` and `meminput=1` for medium-range member 1).
 * `inline_threshold=500` stores tiny variables (like the single `time` value in each file) directly in the JSON, so the combine step doesn't need to download anything.
 * `block_size=2**20` makes each file's scan one 1 MB request, which covers the file's metadata. fsspec's default 5 MB block read about 5× more data for no benefit, and smaller blocks took many more requests and were slower. In our test the build took 4 s and 19 MB for this run.
 * Save `refs` to a JSON file (`json.dump`) and reuse it, rather than rebuilding.
+
+:::{admonition} TODO (dev team): Verify whether the gcsfs stall is Windows-only
+:class: attention
+Verify whether the gcsfs stall is Windows-only
+:::
 
 Check that `nwmurl` gave you files that exist: a URL for a run that isn't in the archive fails when `index_one` opens it. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first and drops missing ones.
 
@@ -399,10 +437,15 @@ The sections below answer these questions, with code examples. All three answers
 (nwm-cost)=
 ### Why NWM downloads cost what they cost
 
-One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 1.8 MB compressed). There is no way to read "just my reach" from a file: any tool that reads the files has to fetch at least that whole chunk. Services such as the NOAA NWM API and the CIROH BigQuery API are different: they return just the reaches you ask for, and whatever reading of the underlying data that takes happens on their side (CIROH asks BigQuery users to estimate each query's cost before running it). [TODO: verify how the NWM API and BigQuery store NWM data] For the files themselves:
+One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 1.8 MB compressed). There is no way to read "just my reach" from a file: any tool that reads the files has to fetch at least that whole chunk. Services such as the NOAA NWM API and the CIROH BigQuery API are different: they return just the reaches you ask for, and whatever reading of the underlying data that takes happens on their side (CIROH asks BigQuery users to estimate each query's cost before running it). For the files themselves:
 
 * **Cost grows with the number of forecast hours (files) you touch, not with the number of reaches.**
 * `hydrotools` downloads whole files (~13 MB each, every variable). Kerchunk references fetch only the `streamflow` chunk you need (~1.8 MB per hour), so they move fewer bytes, but the bytes are still CONUS-sized.
+
+:::{admonition} TODO (dev team): Verify how the NWM API and BigQuery…
+:class: attention
+Verify how the NWM API and BigQuery store NWM data
+:::
 
 We measured this for the Skagit gage reach, using three short-range runs before the December 2025 peak (54 hourly files), from a home internet connection (~13 MB/s):
 
@@ -415,7 +458,12 @@ We measured this for the Skagit gage reach, using three short-range runs before 
 | Kerchunk references + `xarray` | 2,540 | 96 MB | 0.6 GB | 64 s |
 | *Building the references (one time), as in the example above* | – | 57 MB, in 54 requests | – | 14 s |
 
-Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. The reference build was measured on 2026-10-08. An earlier build through `gcsfs` (~100 small requests per file) moved only 2.8 MB but took 7–11 min on a busy connection, and 16 s per run on a quiet one. [POLISH: re-time on a quiet connection and in-cloud; measure build memory]
+Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. The reference build was measured on 2026-10-08. An earlier build through `gcsfs` (~100 small requests per file) moved only 2.8 MB but took 7–11 min on a busy connection, and 16 s per run on a quiet one.
+
+:::{admonition} TODO (dev team): Re-time on a quiet connection and in-cloud;…
+:class: attention
+Re-time on a quiet connection and in-cloud; measure build memory
+:::
 
 One **medium-range** member (issued 2025-12-09 00Z: 240 hourly files) scales the same way, about 13× a short-range run:
 
@@ -438,9 +486,19 @@ What is the recommended way to download data for one location but a long period?
 
 For more than a handful of runs, use kerchunk references (built once, reused), ideally from a cloud machine in the same region as the bucket (Google Cloud's `US` multi-region for `gs://national-water-model`; AWS `us-east-1` for `s3://noaa-nwm-pds`), so the CONUS-sized chunks never cross your home connection. `NWMFileClient.get()` does accept a list of reference times, but it processes them one at a time, keeps every downloaded file on disk until you delete it, and its intermediate processing used ~1.7 GB of memory in our test (the documentation recommends at least a 4-core processor and 8 GB of RAM).
 
-Availability depends on the source. According to the [hydrotools NWM Client documentation](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client), Google Cloud holds the largest amount of operational forecast data, which is why `hydrotools` uses it by default. On 2026-10-07 the AWS bucket `noaa-nwm-pds` held every day from 2025-01-01 onward (earlier descriptions call it a rolling four-week archive). [PARTNER REVIEW: NOAA] confirm the retention policy of each mirror. Not every configuration covers the whole archive (the Alaska configurations, for example, only became available after August 2023).
+Availability depends on the source. According to the [hydrotools NWM Client documentation](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client), Google Cloud holds the largest amount of operational forecast data, which is why `hydrotools` uses it by default. On 2026-10-07 the AWS bucket `noaa-nwm-pds` held every day from 2025-01-01 onward (earlier descriptions call it a rolling four-week archive). Not every configuration covers the whole archive (the Alaska configurations, for example, only became available after August 2023).
 
-**NWM retrospective.** If you need a long *simulated* record rather than forecasts, use the NWM retrospective simulations: multi-decade model runs, not archived forecasts. Version 3.0 covers February 1979 through January 2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for version 3.0 (see the [NWM retrospective registry entry](https://registry.opendata.aws/nwm-archive/)). [TODO: verify retrospective date ranges and link the NCAR v3.0 Zarr source]
+:::{admonition} Partner review (NOAA): Temporal scaling
+:class: important
+Confirm the retention policy of each mirror.
+:::
+
+**NWM retrospective.** If you need a long *simulated* record rather than forecasts, use the NWM retrospective simulations: multi-decade model runs, not archived forecasts. Version 3.0 covers February 1979 through January 2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for version 3.0 (see the [NWM retrospective registry entry](https://registry.opendata.aws/nwm-archive/)).
+
+:::{admonition} TODO (dev team): Verify retrospective date ranges and link the…
+:class: attention
+Verify retrospective date ranges and link the NCAR v3.0 Zarr source
+:::
 
 (nwm-spatial-scaling)=
 ### Spatial scaling
@@ -451,7 +509,12 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 
 * **`hydrotools`:** `NWMFileClient.get()` accepts an array of COMIDs. In our test, 2,540 reaches cost the same downloads and memory as 1 reach. If you omit `nwm_feature_ids`, it returns the default set: channel features with a known USGS mapping (8,866 in `hydrotools.nwm_client` 9.2.1).
 * **Kerchunk references:** `ds["streamflow"].sel(feature_id=upstream_comids)` (drop any COMIDs that aren't NWM reaches first, e.g. with `numpy.isin`). Again, 2,540 reaches fetched exactly the same 96 MB as one reach.
-* **NOAA NWM API:** accepts a comma-separated list of COMIDs, but it is built for a few reaches. For hundreds or thousands, use one of the file-based routes. [TODO: verify any documented limit on IDs per API request]
+* **NOAA NWM API:** accepts a comma-separated list of COMIDs, but it is built for a few reaches. For hundreds or thousands, use one of the file-based routes.
+
+:::{admonition} TODO (dev team): Verify any documented limit on IDs per…
+:class: attention
+Verify any documented limit on IDs per API request
+:::
 
 `hydrotools` results come back as pandas DataFrames that use categorical columns to save memory. The documentation notes that categorical columns can behave unexpectedly in groupby operations, are incompatible with fixed-format HDF files (use `format="table"`), and may cause problems when writing to geospatial formats with geopandas. Casting a categorical column to `str` resolves these issues. Setting `compute=False` returns a dask DataFrame instead of a pandas one.
 
@@ -479,4 +542,9 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 * USGS NWIS (recommended source for historical, gauged streamflow): https://waterdata.usgs.gov/nwis
 * NWM retrospective archive (Zarr, AWS, for the ungauged-reach case only): https://registry.opendata.aws/nwm-archive/
 * CIROH NWM BigQuery API (CIROH members and partners with active CIROH projects; access by request): https://hub.ciroh.org/docs/products/data-management/bigquery-api/
-* Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP). [TODO: verify license/attribution wording for adapted hydrotools examples]
+* Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP).
+
+:::{admonition} TODO (dev team): Verify license/attribution wording for adapted hydrotools examples
+:class: attention
+Verify license/attribution wording for adapted hydrotools examples
+:::

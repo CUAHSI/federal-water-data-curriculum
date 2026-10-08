@@ -1,4 +1,4 @@
-# Meet USGS NWIS
+# Meet USGS WDFN
 
 The National Water Information System (NWIS) is produced by USGS’s Water Resources Mission Area. NWIS collects many different types of water data with the ultimate goal of providing high-quality and discoverable water data for everyone. This water data is collected at monitoring locations across the United States using automated sensors and manual data collection. Each monitoring location has unique location information, including the location name and identifier, the agency responsible for it, and geographic information. Water data provided by these monitoring locations covers a wide breadth of variables from chemical, to physical, to biological. This data is available as continuous data, daily data, field measurements, and discrete sample data. 
 

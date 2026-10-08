@@ -32,4 +32,17 @@ By the end of this module, learners should be able to:
 - **Files vs. services.** Some data are best retrieved as whole files (SWOT granules, NWM output files) and some through a query service that returns only the rows you ask for (`hydrocron`, the USGS Water Data API). Knowing which one you are using tells you how cost grows: with the number of files touched, or with the number of requests sent.
 - **Scaling and cloud-native access.** Very large analyses often run fastest _next to the data_: on a cloud computer in the same region as the archive, streaming only the needed parts of files instead of downloading them. The SWOT and NWM lessons point out when this is worth it. Service-based access, such as the USGS Water Data API, returns only the rows you ask for, so where your code runs matters much less.
 
-[PARTNER REVIEW: NASA|NOAA|USGS] Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::{admonition} Partner review (NASA): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
+
+:::{admonition} Partner review (NOAA): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
+
+:::{admonition} Partner review (USGS): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
