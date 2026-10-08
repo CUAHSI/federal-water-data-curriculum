@@ -250,7 +250,7 @@ Before using any values, decide which passes to trust. RiverSP gives three quali
   - **0 = good**
   - **1 = suspect:** "may have large errors"
   - **2 = degraded:** "very likely do have large errors"
-  - **3 = bad:** "may be nonsensical and should be ignored"
+  - **3 = bad:** may be nonsensical and "should be ignored"
 - **`reach_q_b`**, an "expert" bit flag recording *why* `reach_q` is set (p. 28; bit names and values on pp. 60–61, details in Appendix C). For example, bit 2048 is `few_wse_observations`, 32768 is `partially_observed` and 262144 is `classification_qual_degraded`. Any bit at or above 262144 makes the pass at least degraded.
 - **`wse_u`**: the total (random plus systematic) uncertainty of the reach WSE in meters (p. 22).
 
@@ -294,7 +294,7 @@ print(december[["reach_id", "time_str", "wse", "wse_u", "reach_q"]]
 ```
 
 All 14 degraded passes carry `classification_qual_degraded`, and 11 also carry `geolocation_qual_degraded`. These flags are common across this stretch of river, so they don't single out the bad values. Two things do:
-- **`few_wse_observations` is set on exactly the 4 and 25 December passes.** On 4 December the gage reach has a `wse_u` of 0.66 m, the largest of the month, and on 25 December 0.32 m. Typical values are about 0.1 m.
+- **`few_wse_observations` is set only on the 4 and 25 December passes** (on every reach except `…041`). On 4 December the gage reach has a `wse_u` of 0.66 m, the largest of the month, and on 25 December 0.32 m. Typical values are about 0.1 m.
 - **The same passes look wrong against the gage** in the next step.
 
 `wse_u` and `reach_q_b` give you the reason; the gage confirms it. [PARTNER REVIEW: NASA] confirm this reading of `few_wse_observations` and `wse_u` for these passes.
