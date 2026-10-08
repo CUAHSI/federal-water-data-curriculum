@@ -119,13 +119,13 @@ sites_available, md = waterdata.get_combined_metadata(
 
 `get_combined_metadata` combines monitoring-location details with the list of time series each location records. At time of writing, it returns two Suffolk County stream sites with daily mean discharge.
 
-**Example: The December 2025 Skagit River flood at USGS 12200500**
+**Example: Spring snowmelt on the upper Mississippi River at USGS 05227500**
 
-Module 4 uses one gage, USGS 12200500 (Skagit River near Mount Vernon, WA), to study the December 2025 atmospheric-river flood. Here is how to get its observations. Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
+USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses. Spring snowmelt raises the river there each April and May. Here is how to get its observations for spring 2026. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example] Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
 
 | Column | Shared term | Notes |
 |---|---|---|
-| `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-12200500` |
+| `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-05227500` |
 | `parameter_code` | **Variable** | `00060` = discharge, `00065` = gage height |
 | `unit_of_measure` | **Variable unit** | e.g. `ft^3/s`, `ft` |
 | `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags things such as ice or estimated values |
@@ -134,47 +134,47 @@ Module 4 uses one gage, USGS 12200500 (Skagit River near Mount Vernon, WA), to s
 First, ask which time series the gage records. This is discovery for a single site:
 
 ```python
-site = "USGS-12200500"
+site = "USGS-05227500"
 series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
 series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]]
 ```
 
 ```
-   parameter_code       parameter_name statistic_id computation_period_identifier                     begin                       end
-0           63680       Turbidity, FNU        00002                         Daily 2016-09-20 07:00:00+00:00 2017-10-02 07:00:00+00:00
-1           00010   Temperature, water        00003                         Daily 1974-02-01 07:00:00+00:00 2026-10-05 07:00:00+00:00
-...
-3           00065          Gage height        00011                        Points 2007-10-01 08:00:00+00:00 2026-10-07 08:15:00+00:00
-...
-7           00060            Discharge        00003                         Daily 1940-10-01 08:00:00+00:00 2026-10-05 07:00:00+00:00
-8           00060            Discharge        00011                        Points 1988-10-01 07:00:00+00:00 2026-10-07 06:45:00+00:00
-9           00065          Gage height        00003                         Daily 1988-04-11 07:00:00+00:00 2026-10-05 07:00:00+00:00
-...
+  parameter_code        parameter_name statistic_id computation_period_identifier                     begin                       end
+0          63160  Stream level, NAVD88        00011                        Points 2019-10-01 06:00:00+00:00 2026-10-07 05:30:00+00:00
+1          00065           Gage height          NaN                    Water Year 1888-06-01 06:00:00+00:00 2025-07-29 05:00:00+00:00
+2          00065           Gage height        00011                        Points 2007-10-01 06:00:00+00:00 2026-10-07 05:30:00+00:00
+3          00060             Discharge        00003                         Daily 1945-03-01 05:00:00+00:00 2026-10-05 05:00:00+00:00
+4          00045         Precipitation          NaN                        Points 2026-06-08 00:00:00+00:00 2026-10-07 05:30:00+00:00
+5          00060             Discharge          NaN                    Water Year 1888-06-01 06:00:00+00:00 2025-07-29 05:00:00+00:00
+6          00060             Discharge        00011                        Points 2013-10-01 05:00:00+00:00 2026-10-07 05:30:00+00:00
 ```
 
-**Continuous (instantaneous) values** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request one month of discharge and gage height together:
+Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous record (here gage height since 2007 and discharge since 2013), and `00003` with period `Daily` is the daily mean (discharge since 1945). This gage also reports `63160`, stream level relative to the NAVD88 vertical datum, which is handy for comparisons with other elevation data such as SWOT water surface elevation.
+
+**Continuous (instantaneous) values** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
 
 ```python
 cont, md = waterdata.get_continuous(
     monitoring_location_id=site,
     parameter_code=["00060", "00065"],  # discharge and gage height
-    time="2025-12-01T00:00:00Z/2026-01-01T00:00:00Z",
+    time="2026-04-01T00:00:00Z/2026-06-01T00:00:00Z",
 )
 print(cont.shape)
 cont[["time", "parameter_code", "value", "unit_of_measure", "approval_status", "qualifier"]].head()
 ```
 
 ```
-(5954, 13)
-                       time parameter_code     value unit_of_measure approval_status qualifier
-0 2025-12-01 00:00:00+00:00          00065     14.35              ft        Approved      None
-1 2025-12-01 00:00:00+00:00          00060  14700.00          ft^3/s        Approved      None
-2 2025-12-01 00:15:00+00:00          00065     14.35              ft        Approved      None
-3 2025-12-01 00:15:00+00:00          00060  14700.00          ft^3/s        Approved      None
-4 2025-12-01 00:30:00+00:00          00065     14.34              ft        Approved      None
+(11465, 13)
+                       time parameter_code    value unit_of_measure approval_status    qualifier
+0 2026-04-01 00:00:00+00:00          00065     5.61              ft        Approved         None
+1 2026-04-01 00:15:00+00:00          00065     5.60              ft        Approved         None
+2 2026-04-01 00:22:00+00:00          00060  1400.00          ft^3/s        Approved  [ESTIMATED]
+3 2026-04-01 00:30:00+00:00          00065     5.60              ft        Approved         None
+4 2026-04-01 00:45:00+00:00          00065     5.58              ft        Approved         None
 ```
 
-To find the flood peak, take the row with the largest value for each parameter:
+To find the snowmelt peak, take the row with the largest value for each parameter:
 
 ```python
 peaks = cont.loc[cont.groupby("parameter_code")["value"].idxmax()]
@@ -182,65 +182,73 @@ peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
 ```
 
 ```
-     parameter_code                      time      value unit_of_measure approval_status
-2177          00060 2025-12-12 08:00:00+00:00  133000.00          ft^3/s        Approved
-2178          00065 2025-12-12 08:15:00+00:00      37.73              ft        Approved
+     parameter_code                      time    value unit_of_measure approval_status
+5722          00060 2026-05-02 02:15:00+00:00  5000.00          ft^3/s        Approved
+5721          00065 2026-05-02 02:15:00+00:00     9.58              ft        Approved
 ```
 
-The continuous record peaked at **133,000 ft³/s** at 08:00 UTC on December 12, 2025 (midnight Pacific time), with a gage height of **37.73 ft** fifteen minutes later. The whole month is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
+The continuous record peaked at **5,000 ft³/s** and a gage height of **9.58 ft** at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve [TODO: verify that the April estimates at 05227500 are ice-related]. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
 
-**Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range:
+**Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range. We start in March to see what late-winter values look like:
 
 ```python
 daily, md = waterdata.get_daily(
     monitoring_location_id=site,
     parameter_code="00060",
     statistic_id="00003",
-    time="2025-12-01/2025-12-31",
+    time="2026-03-01/2026-05-31",
 )
-daily.sort_values("time")[["time", "value", "unit_of_measure", "approval_status"]].iloc[8:16]
+daily = daily.sort_values("time")
+print(daily["qualifier"].astype(str).value_counts().to_dict())
+daily[["time", "value", "unit_of_measure", "approval_status", "qualifier"]].iloc[[0, 30, 31, 45, 60, 61, 91]]
 ```
 
 ```
-         time     value unit_of_measure approval_status
-8  2025-12-09   54100.0          ft^3/s        Approved
-9  2025-12-10   62000.0          ft^3/s        Approved
-10 2025-12-11  102000.0          ft^3/s        Approved
-11 2025-12-12  112000.0          ft^3/s        Approved
-12 2025-12-13   82400.0          ft^3/s        Approved
-13 2025-12-14   69000.0          ft^3/s        Approved
-14 2025-12-15   62100.0          ft^3/s        Approved
-15 2025-12-16   73600.0          ft^3/s        Approved
+{"['ESTIMATED']": 34}
+         time   value unit_of_measure approval_status    qualifier
+0  2026-03-01   786.0          ft^3/s        Approved  [ESTIMATED]
+30 2026-03-31  1390.0          ft^3/s        Approved  [ESTIMATED]
+31 2026-04-01  1420.0          ft^3/s        Approved  [ESTIMATED]
+45 2026-04-15  2100.0          ft^3/s        Approved         None
+60 2026-04-30  4780.0          ft^3/s        Approved         None
+61 2026-05-01  4950.0          ft^3/s        Approved         None
+91 2026-05-31  1400.0          ft^3/s        Approved         None
 ```
+
+Thirty-four daily values (March 1 through early April) carry the `[ESTIMATED]` qualifier, and the rest have none. The daily mean peaked at 4,950 ft³/s on May 1, slightly below the 5,000 ft³/s continuous peak, as expected for an average. If your analysis is sensitive to estimated values, filter or flag them using `qualifier`.
 
 **Field measurements** are the discharge and gage-height measurements that hydrographers make in person at the gage. USGS uses them to build and check the rating curve that turns the sensor's gage height into the continuous discharge record. They are the closest thing to "ground truth" for discharge:
 
 ```python
 fm, md = waterdata.get_field_measurements(
     monitoring_location_id=site,
-    time="2025-11-01T00:00:00Z/2026-01-31T00:00:00Z",
+    time="2026-01-01T00:00:00Z/2026-10-01T00:00:00Z",
 )
 discharge_fm = fm[fm["parameter_code"] == "00060"].sort_values("time")
 discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "measurement_rated", "approval_status"]]
 ```
 
 ```
-         time     value unit_of_measure                observing_procedure measurement_rated approval_status
-4  2025-11-14   43800.0          ft^3/s  Acoustic Doppler Current Profiler              Good        Approved
-7  2025-12-12  111000.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
-13 2026-01-28   20000.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
+         time   value unit_of_measure                observing_procedure measurement_rated approval_status
+1  2026-02-11   776.0          ft^3/s                        Mid-section              Poor        Approved
+3  2026-02-11   769.0          ft^3/s                        Mid-section              Poor        Approved
+7  2026-04-15  2170.0          ft^3/s  Acoustic Doppler Current Profiler              Good        Approved
+10 2026-05-14  2260.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
+14 2026-06-16   768.0          ft^3/s  Acoustic Doppler Current Profiler              Fair        Approved
+21 2026-07-31   514.0          ft^3/s  Acoustic Doppler Current Profiler              Good        Approved
+26 2026-08-26   394.0          ft^3/s  Acoustic Doppler Current Profiler              Good     Provisional
 ```
 
-Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. A hydrographer measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) on December 12, the day of the peak. `measurement_rated` is that measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy (here `Fair`, compared with `Good` for the calmer November measurement). Measurements in the middle of a large flood are hard to make, and they are exactly what anchors the top of the rating curve. That matters when we compare USGS observations to the NWM and SWOT in Module 4.
+Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. Hydrographers visited about once a month. `observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice) [TODO: verify], and the later ones used an acoustic Doppler current profiler (ADCP). `measurement_rated` is each measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy, from `Poor` in February to `Good` in April and July. The April 15 measurement (2,170 ft³/s) agrees closely with that day's daily mean from the continuous record (2,100 ft³/s). The August measurement is still `Provisional`, like the continuous record from that time.
 
-[PARTNER REVIEW: USGS] Confirm the description of field measurements and rating curves, and how the course should describe discharge accuracy for out-of-bank flows at 12200500.
+[PARTNER REVIEW: USGS] Confirm the description of field measurements, measurement ratings and rating curves, including how under-ice measurements are made and rated.
 
 **For contrast: the legacy `nwis` module.** Most older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. The same daily request looks like this:
 
 ```python
 from dataretrieval import nwis
 
-legacy_daily, legacy_md = nwis.get_dv(sites="12200500", parameterCd="00060", start="2025-12-01", end="2025-12-31")
+legacy_daily, legacy_md = nwis.get_dv(sites="05227500", parameterCd="00060", start="2026-03-01", end="2026-05-31")
 legacy_daily.head(3)
 ```
 
@@ -248,17 +256,17 @@ legacy_daily.head(3)
 DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
                            00060_Mean 00060_Mean_cd   site_no
 datetime
-2025-12-01 00:00:00+00:00       14200             A  12200500
-2025-12-02 00:00:00+00:00       14100             A  12200500
-2025-12-03 00:00:00+00:00       13700             A  12200500
+2026-03-01 00:00:00+00:00         786          A, e  05227500
+2026-03-02 00:00:00+00:00         788          A, e  05227500
+2026-03-03 00:00:00+00:00         802          A, e  05227500
 ```
 
 Notice the differences:
-- a bare site number instead of `USGS-12200500`;
-- legacy column names, where `00060_Mean` is the value and `00060_Mean_cd` a one-letter approval code (`A` = approved);
+- a bare site number instead of `USGS-05227500`;
+- legacy column names, where `00060_Mean` is the value and `00060_Mean_cd` combines the approval code and qualifiers (here `A, e`: approved and estimated);
 - the date as the index.
 
-The values match the `waterdata` daily values (December 1–3: 14,200, 14,100 and 13,700 ft³/s). `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
+The values match the `waterdata` daily values (786 ft³/s on March 1, approved and estimated). `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
 [PARTNER REVIEW: USGS] Confirm the retirement timeline for the legacy Water Services to cite here.
  
 ## Best practices FAQs

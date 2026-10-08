@@ -11,7 +11,7 @@ Each agency lesson follows the same structure:
 3. **Programmatic data downloads:** retrieving values, and what comes back (columns, units, quality flags).
 4. **Best practices FAQs:** temporal scaling, spatial scaling and parallelization.
 
-The examples come back together in Module 4, where we use all three products to study the December 2025 Skagit River flood in Washington.
+The examples in this module use the upper Mississippi River in Minnesota (and a few other sites). In Module 4, you will apply the same access patterns together in a flood case study.
 
 ## Learning objectives
 
