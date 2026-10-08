@@ -101,7 +101,7 @@ text; don't rewrite sections that are already filled in.
 - [ ] **P4.2 03/01 SWOT** (branch `content/03-swot-raster`, PR #5): add Raster water-area discovery + download alongside
       RiverSP/hydrocron, with "which product for which question"; fix `river_datasets_all`; replace the expired signed
       CloudFront PDF link; setup → `environments/swot.yml`.
-- [ ] **P4.3 03/03 NWIS + 03/00 overview** (branch `content/03-nwis-overview`, PR #6): continuous values + field
+- [x] **P4.3 03/03 NWIS + 03/00 overview** (branch `content/03-nwis-overview`, [PR #48](https://github.com/CUAHSI/federal-water-data-curriculum/pull/48), draft): continuous values + field
       measurements as used in 04/02; fix `get_reference_tablea`; modernized `waterdata` first; setup →
       `environments/nwis.yml`; 03/00 objectives + concepts (APIs, keys/rate limits, scaling, agency libraries).
 - [ ] **P4.4 Module 2 suggestions** — write the proposed issue text (no `02-*` edits), including a short pointer from
