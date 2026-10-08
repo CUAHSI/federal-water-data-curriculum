@@ -44,9 +44,12 @@ For every fenced code block in the changed pages, check:
 - `myst build --html` succeeds; list any warnings from changed files.
 - Page keeps the module's section skeleton (see CLAUDE.md).
 - Every notebook and agency resource used is cited and credited (title, author/org, URL; license for notebooks); images have credit + alt text.
-- Changes only in allowed paths (no edits under `01-*` or `02-*`).
-- `[PARTNER REVIEW: ...]` markers present on agency recommendations and agency-specific claims.
-- Remaining `[TODO ...]` placeholders in changed files are listed (not failures unless the roadmap
+- Changes only in allowed paths (no edits under `01-*`).
+- Follows `STYLE_GUIDE.md`: lesson structure, NASA → NOAA → USGS order, WDFN naming, Module 3 lessons that stand alone,
+  environment names, the shared example rivers (STYLE_GUIDE §10), rendered figures shown, glossary links, References entries.
+- Open items use only the two callout forms in STYLE_GUIDE §7; agency recommendations carry a `Partner review (AGENCY)` callout;
+  no leftover `[TODO`/`[POLISH`/`[PARTNER REVIEW` brackets.
+- Remaining callouts in changed files are listed (not failures unless the roadmap
   task said to resolve them).
 
 ## Report format
