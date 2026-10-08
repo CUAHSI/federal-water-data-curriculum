@@ -248,38 +248,55 @@ Two kinds of reference are available:
 
 **Example: build references for the December 11, 2025 00Z short-range run**
 
+The first step is a list of the run's files. CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds NWM file URLs from a date, issue time, forecast hours, configuration and archive, so you don't have to know the archive's folder and file-naming scheme. It only builds URLs; it doesn't download anything. Its arguments are numeric codes, listed on that page (and in the comments below).
+
 ```python
 import fsspec
+import nwmurl
 from concurrent.futures import ThreadPoolExecutor
 from kerchunk.hdf import SingleHdf5ToZarr
 from kerchunk.combine import MultiZarrToZarr
 
-gcs = fsspec.filesystem("gcs", token="anon")   # public bucket: no account or key
+# the 18 hourly files of the 2025-12-11 00Z short-range forecast, as public HTTPS URLs
+urls = nwmurl.generate_urls_operational(
+    start_date="202512110000", end_date="202512110000",  # YYYYMMDDHHMM; one day
+    fcst_cycle=[0],                  # issue time: 00Z
+    lead_time=list(range(1, 19)),    # forecast hours 1-18
+    varinput=1,                      # 1 = channel_rt (streamflow)
+    geoinput=1,                      # 1 = CONUS
+    runinput=1,                      # 1 = short_range
+    urlbaseinput=3,                  # 3 = https://storage.googleapis.com/national-water-model/
+    meminput=None,                   # short_range has no ensemble members
+)
+print(urls[0])
 
-# the 18 hourly files of the 2025-12-11 00Z short-range forecast
-files = sorted(gcs.glob("national-water-model/nwm.20251211/short_range/"
-                        "nwm.t00z.short_range.channel_rt.f*.conus.nc"))
-
-def index_one(path):
+def index_one(url):
     """Scan one NetCDF file's internal layout and return its byte-range references."""
-    with gcs.open(path, "rb") as f:
-        url = "https://storage.googleapis.com/" + path   # read later over plain HTTPS
+    with fsspec.open(url, "rb", block_size=2**20) as f:   # read in 1 MB blocks (see below)
         return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
 
-with ThreadPoolExecutor(8) as pool:          # metadata scans are many small requests: run them in parallel
-    singles = list(pool.map(index_one, files))
+with ThreadPoolExecutor(8) as pool:          # one request per file: run them in parallel
+    singles = list(pool.map(index_one, urls))
 
 # stitch the 18 per-file references into one dataset along the time dimension
 refs = MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
                        identical_dims=["feature_id", "reference_time", "crs"]).translate()
-print(len(files), "files indexed;", len(refs["refs"]), "reference entries")
+print(len(urls), "files indexed;", len(refs["refs"]), "reference entries")
+```
+
+```text
+https://storage.googleapis.com/national-water-model/nwm.20251211/short_range/nwm.t00z.short_range.channel_rt.f001.conus.nc
+18 files indexed; 134 reference entries
 ```
 
 A few choices in this code are deliberate:
 
+* `urlbaseinput=3` asks `nwmurl` for the public HTTPS address of each file in the Google Cloud archive, so both scanning and later reads use plain HTTPS with no cloud account. In our tests, reading through `gcsfs` with the current `zarr`/`kerchunk` versions stalled, while HTTPS worked. [TODO: verify whether the gcsfs stall is Windows-only] `nwmurl` can also point at the AWS copy (`urlbaseinput=7`) or other configurations (e.g. `runinput=2` and `meminput=1` for medium-range member 1).
 * `inline_threshold=500` stores tiny variables (like the single `time` value in each file) directly in the JSON, so the combine step doesn't need to download anything.
-* References point at `https://storage.googleapis.com/...`, the public HTTPS address of the same objects. In our tests, reading through `gcsfs` with the current `zarr`/`kerchunk` versions stalled, while HTTPS worked. [TODO: verify whether the gcsfs stall is Windows-only]
-* Scanning reads only file metadata (2.8 MB for 54 files in our test), but it takes ~100 small requests per file, so it is slow from a laptop (several minutes per run) and much faster on a cloud machine. Save `refs` to a JSON file (`json.dump`) and reuse it.
+* `block_size=2**20` makes each file's scan one 1 MB request, which covers the file's metadata. fsspec's default 5 MB block read about 5× more data for no benefit, and smaller blocks took many more requests and were slower. In our test the build took 4 s and 19 MB for this run.
+* Save `refs` to a JSON file (`json.dump`) and reuse it, rather than rebuilding.
+
+Check that `nwmurl` gave you files that exist: a URL for a run that isn't in the archive fails when `index_one` opens it. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first and drops missing ones.
 
 **Example: read the gage reach from the references**
 
@@ -381,9 +398,9 @@ We measured this for the Skagit gage reach, using three short-range runs before 
 | `hydrotools` (GCP) | 2,540 | 707 MB (saved to disk) | 1.7 GB | 4–13 min |
 | Kerchunk references + `xarray` | 1 | 96 MB | 0.7 GB | 27 s |
 | Kerchunk references + `xarray` | 2,540 | 96 MB | 0.6 GB | 64 s |
-| *Building the references (one time)* | – | 2.8 MB, in ~5,400 small requests | 0.2 GB | 7–11 min |
+| *Building the references (one time), as in the example above* | – | 57 MB, in 54 requests | – | 14 s |
 
-Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. [POLISH: re-time on a quiet connection and in-cloud]
+Going from 1 reach to the whole basin above the gage (2,540 reaches) changed neither the data transferred nor the memory. Wall times vary a lot with network conditions; treat them as rough. The reference build was measured on 2026-10-08. An earlier build through `gcsfs` (~100 small requests per file) moved only 2.8 MB but took 7–11 min on a busy connection, and 16 s per run on a quiet one. [POLISH: re-time on a quiet connection and in-cloud; measure build memory]
 
 One **medium-range** member (issued 2025-12-09 00Z: 240 hourly files) scales the same way, about 13× a short-range run:
 
@@ -391,9 +408,9 @@ One **medium-range** member (issued 2025-12-09 00Z: 240 hourly files) scales the
 |---|---|---|---|---|
 | `hydrotools` (GCP) | 1 | 3.1 GB needed (did not finish) | – | **timed out** after 15 min (2 of 2 attempts on our connection) |
 | Kerchunk references + `xarray` | 1 | 417 MB | 0.8 GB | 100 s |
-| *Building the references (one time)* | – | 1.3 GB | 0.2 GB | 6 min |
+| *Building the references (one time), as in the example above* | – | 252 MB, in 240 requests | – | 69 s |
 
-Building references for medium-range files moved far more data than for short-range files. [TODO: verify why; likely metadata spread through each file plus read-ahead caching]
+Building with `gcsfs` and its default read-ahead on 2026-10-07 moved 1.3 GB and took 6 min for the same member. Reading 1 MB blocks over HTTPS (as above) cut that to about 1 MB per file.
 
 (nwm-temporal-scaling)=
 ### Temporal scaling
@@ -427,7 +444,7 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 ### Parallelization
 
 * **Parallelize over files (forecast hours / runs), not over reaches.** Reaches share chunks, so splitting COMIDs across workers multiplies the bytes; splitting files across workers doesn't.
-* **Kerchunk + dask:** opening references with `chunks={}` gives you dask arrays with one task per chunk, so `.load()` fetches chunks concurrently. Building references is many small requests per file; a thread pool (as in the example above, 8 threads) helps a lot. We saw intermittent SSL errors from too many simultaneous connections at 16 threads; fewer threads plus a retry fixed it.
+* **Kerchunk + dask:** opening references with `chunks={}` gives you dask arrays with one task per chunk, so `.load()` fetches chunks concurrently. Building references makes one request per file (with 1 MB blocks), so a thread pool (as in the example above, 8 threads) helps a lot. We saw intermittent SSL errors from too many simultaneous connections at 16 threads (with `gcsfs`); fewer threads plus a retry fixed it.
 * **`hydrotools`:** downloads are already asynchronous. The `FileDownloader` class has `limit` (default 10 concurrent downloads) and `timeout` (default 900 seconds) settings. Files for a single forecast cycle are processed in groups of 20 by default (the `group_size` parameter of `get_files()`); the documentation says this accommodates the xarray, dask, and HDF5 backends, which may struggle to open too many files at once, and that it matters mostly for medium-range forecasts. Running several `NWMFileClient.get()` calls at once mostly multiplies disk use and memory (~1.7 GB each in our test).
 * **Run next to the data** when the job is big. Moving compute to a cloud machine in the bucket's region does more for large NWM jobs than any amount of local parallelism.
 
@@ -442,6 +459,7 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 * NWM operational data on AWS (Registry of Open Data): https://registry.opendata.aws/noaa-nwm-pds/
 * NOAA Cloud Optimized Zarr Reference Files (Kerchunk), Registry of Open Data: https://registry.opendata.aws/noaa-nodd-kerchunk/
 * Kerchunk documentation: https://fsspec.github.io/kerchunk/
+* `nwmurl` (CIROH), builds NWM file URLs: https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library and source: https://github.com/CIROH-UA/nwmurl
 * Tuhinanshu, T. (2023), *Using Kerchunk to make NOAA's National Water Model dataset more accessible*, Element 84: https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/
 * USGS NWIS (recommended source for historical, gauged streamflow): https://waterdata.usgs.gov/nwis
 * NWM retrospective archive (Zarr, AWS, for the ungauged-reach case only): https://registry.opendata.aws/nwm-archive/

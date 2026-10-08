@@ -39,3 +39,4 @@ dependencies:
   - pip
   - pip:
       - hydrotools.nwm_client
+      - nwmurl
