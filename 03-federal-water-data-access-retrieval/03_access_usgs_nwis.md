@@ -38,7 +38,6 @@ conda env config vars set API_USGS_PAT="abc123"
 conda activate fwdc-nwis   # re-activate so the variable takes effect
 
 # Optional: register this environment as a Jupyter kernel
-python -m pip install ipykernel
 python -m ipykernel install --user --name fwdc-nwis --display-name "Python (fwdc-nwis)"
 ```
 
@@ -92,6 +91,8 @@ site_info, md = waterdata.get_monitoring_locations(
 
 site_info
 ```
+
+This returns a GeoDataFrame with one row per monitoring location (156 at time of writing), including inactive sites. Key columns are `monitoring_location_id` (the **Location Identifier**), `monitoring_location_name`, `site_type`, `drainage_area` and `geometry` (a point you can map).
   
 Once you have site number(s), move on to downloads below.
  
@@ -104,7 +105,7 @@ Once you have site number(s), move on to downloads below.
 * `dataretrieval.waterdata` (modernized, API key recommended for heavier use): the actively developed replacement, covering the same data types plus discrete water quality (Samples database).
 * Canonical outputs are `pandas.DataFrame`s alongside a metadata object describing the query, similar in spirit to hydrotools' canonical columns for NWM/NWIS joins.
 
-**Example: Daily mean values of discharge for stream sites in Suffolk County, MA**
+**Example: Which Suffolk County, MA stream sites have daily mean discharge?**
  
 ```python
 sites_available, md = waterdata.get_combined_metadata(
@@ -120,15 +121,15 @@ sites_available, md = waterdata.get_combined_metadata(
 
 **Example: The December 2025 Skagit River flood at USGS 12200500**
 
-Module 4 uses one gage, USGS 12200500 (Skagit River near Mount Vernon, WA), to study the December 2025 atmospheric-river flood. Here is how to get its observations. Every function below returns a `(DataFrame, metadata)` pair. The DataFrame uses the same columns across services, which map onto the course's shared vocabulary:
+Module 4 uses one gage, USGS 12200500 (Skagit River near Mount Vernon, WA), to study the December 2025 atmospheric-river flood. Here is how to get its observations. Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
 
 | Column | Shared term | Notes |
 |---|---|---|
 | `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-12200500` |
 | `parameter_code` | **Variable** | `00060` = discharge, `00065` = gage height |
 | `unit_of_measure` | **Variable unit** | e.g. `ft^3/s`, `ft` |
-| `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags things such as ice or equipment problems |
-| `time`, `value` | | Timestamps are in UTC |
+| `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags things such as ice or estimated values |
+| `time`, `value` | | Continuous timestamps are in UTC; daily `time` is a calendar date [TODO: verify whether daily dates are local-standard-time days] |
 
 First, ask which time series the gage records. This is discovery for a single site:
 
@@ -151,7 +152,7 @@ series[["parameter_code", "parameter_name", "statistic_id", "computation_period_
 ...
 ```
 
-**Continuous (instantaneous) values** are the 15-minute sensor record. `get_continuous` accepts up to three years per call. Here we request one month of discharge and gage height together:
+**Continuous (instantaneous) values** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request one month of discharge and gage height together:
 
 ```python
 cont, md = waterdata.get_continuous(
@@ -186,7 +187,7 @@ peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
 2178          00065 2025-12-12 08:15:00+00:00      37.73              ft        Approved
 ```
 
-The continuous record peaked at **133,000 ft³/s** at 08:00 UTC on December 12, 2025 (midnight Pacific time), with a gage height of **37.73 ft** fifteen minutes later. The whole month is already `Approved`. Data from the last several months are usually `Provisional`, so check `approval_status` before you publish numbers.
+The continuous record peaked at **133,000 ft³/s** at 08:00 UTC on December 12, 2025 (midnight Pacific time), with a gage height of **37.73 ft** fifteen minutes later. The whole month is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
 
 **Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range:
 
@@ -257,7 +258,7 @@ Notice the differences:
 - legacy column names, where `00060_Mean` is the value and `00060_Mean_cd` a one-letter approval code (`A` = approved);
 - the date as the index.
 
-The values match the `waterdata` daily values above. `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
+The values match the `waterdata` daily values (December 1–3: 14,200, 14,100 and 13,700 ft³/s). `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
 [PARTNER REVIEW: USGS] Confirm the retirement timeline for the legacy Water Services to cite here.
  
 ## Best practices FAQs
@@ -271,10 +272,12 @@ See sections below for answers and code examples to the following questions.
 ### Temporal scaling
  
 **What is the recommended way to access data for one location but the full period of record?**
+
+Make one request per site and leave out `time`. For daily values, `get_daily` then returns the whole record, and `dataretrieval` handles the paging. Continuous values are limited to three years per call, so request a long continuous record in three-year windows. The example below uses USGS 05427930, Dorn (Spring) Creek near Waunakee, WI, a small stream with a record that starts in 2012:
  
-```Python
+```python
 daily_data, md = waterdata.get_daily(
-    monitoring_location_id= "USGS-05427930", # random monitoring location
+    monitoring_location_id= "USGS-05427930", # Dorn (Spring) Creek at CT Highway M near Waunakee, WI
     parameter_code="00060",
     statistic_id="00003"
 )
@@ -282,9 +285,13 @@ daily_data, md = waterdata.get_daily(
 daily_data
 ```
 
+At time of writing, this one request returns about 5,190 rows: one per day from July 2012 to the present. Note the `qualifier` column, where some values are marked `[ESTIMATED]`.
+
 ### Spatial scaling
  
 **What is the recommended way to download data across all locations but a small time range?**
+
+Leave out `monitoring_location_id` and set a short `time` instead. One request for one day returns that day's value for every site with daily mean discharge. Looping over thousands of site IDs one request at a time would send thousands of requests and quickly use up your rate limit. To narrow the area, add `bbox` or a list of sites rather than looping.
  
 ```python
 nonspecific_location, md = waterdata.get_daily(
@@ -295,6 +302,8 @@ nonspecific_location, md = waterdata.get_daily(
 
 nonspecific_location
 ```
+
+At time of writing, this returns about 8,700 rows, one per site, from a single request.
 
 ### Parallelization
  

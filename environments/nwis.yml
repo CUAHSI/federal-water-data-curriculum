@@ -6,7 +6,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.12
-  - dataretrieval>=1.1   # modernized `waterdata` module (USGS Water Data APIs)
+  - dataretrieval>=1.4   # modernized `waterdata` module (USGS Water Data APIs)
   - pandas
   - geopandas
-  - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter
