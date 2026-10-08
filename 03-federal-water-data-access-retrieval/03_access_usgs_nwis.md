@@ -121,14 +121,14 @@ sites_available, md = waterdata.get_combined_metadata(
 
 **Example: Spring snowmelt on the upper Mississippi River at USGS 05227500**
 
-USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses. Spring snowmelt raises the river there each April and May. Here is how to get its observations for spring 2026. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example] Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
+USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses [TODO: confirm after content/03-swot-raster merges]. Spring snowmelt raised the river there in April and May 2026. Here is how to get its observations for spring 2026. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example] Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
 
 | Column | Shared term | Notes |
 |---|---|---|
 | `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-05227500` |
 | `parameter_code` | **Variable** | `00060` = discharge, `00065` = gage height |
 | `unit_of_measure` | **Variable unit** | e.g. `ft^3/s`, `ft` |
-| `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags things such as ice or estimated values |
+| `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags special conditions, for example estimated values (`[ESTIMATED]`) |
 | `time`, `value` | | Continuous timestamps are in UTC; daily `time` is a calendar date [TODO: verify whether daily dates are local-standard-time days] |
 
 First, ask which time series the gage records. This is discovery for a single site:
@@ -150,7 +150,7 @@ series[["parameter_code", "parameter_name", "statistic_id", "computation_period_
 6          00060             Discharge        00011                        Points 2013-10-01 05:00:00+00:00 2026-10-07 05:30:00+00:00
 ```
 
-Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous record (here gage height since 2007 and discharge since 2013), and `00003` with period `Daily` is the daily mean (discharge since 1945). This gage also reports `63160`, stream level relative to the NAVD88 vertical datum, which is handy for comparisons with other elevation data such as SWOT water surface elevation.
+Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous record (here gage height since 2007 and discharge since 2013), and `00003` with period `Daily` is the daily mean (discharge since 1945). This gage also reports `63160`, stream level relative to the NAVD88 vertical datum, which is handy for comparisons with other elevation data. Comparing it with SWOT water surface elevation needs a datum conversion, because SWOT heights are relative to a geoid model rather than NAVD88. [PARTNER REVIEW: NASA|USGS] Confirm the conversion needed to compare parameter 63160 (NAVD88) with SWOT `wse`. The `Water Year` rows are annual summaries that end in 2025, and `00045` is a precipitation record added in June 2026.
 
 **Continuous (instantaneous) values** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
 
@@ -187,7 +187,7 @@ peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
 5721          00065 2026-05-02 02:15:00+00:00     9.58              ft        Approved
 ```
 
-The continuous record peaked at **5,000 ft³/s** and a gage height of **9.58 ft** at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve [TODO: verify that the April estimates at 05227500 are ice-related]. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
+The continuous record first reached its peak of **5,000 ft³/s**, with a gage height of **9.58 ft**, at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps: during the estimated period in early April, discharge is reported every 4 hours rather than every 15 minutes. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve [TODO: verify that the April estimates at 05227500 are ice-related]. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
 
 **Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range. We start in March to see what late-winter values look like:
 
