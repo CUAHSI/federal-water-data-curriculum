@@ -31,14 +31,8 @@ Findability starts with persistent identifiers, which link people and data indef
  
 - **DOIs (Digital Object Identifiers)** for your dataset or software release. A DOI keeps resolving even if a repository redesigns its website, and it is what lets others cite your data.
 - **[ORCID iDs](https://orcid.org)** for the authors. These tell people with common names apart, follow you from institution to institution, and connect your data, code, and papers back to you.
-It also starts with choosing a good home for your data. 
 
-Repositories generally fall into a few groups:
- 
-- **Domain-specific repositories** (like HydroShare for water data) serve a particular field. They often offer metadata fields tailored to your data and a community of people likely to use it.
-- **Generalist repositories** (like [Zenodo](https://zenodo.org), Figshare, or Dryad) accept almost any type of material and are not tied to a field. They are a great fit when no domain repository exists, and Zenodo's GitHub integration makes it a common place to archive a release of your code. Generalist repositories account for a large share of data and software citations.
-- **Institutional and national repositories** are offered by universities, funders, or governments. They can be a good home for large data, so ask your librarian.
-Whichever you choose, check what your funder, journal, and institution require, and look for a repository that provides a DOI, descriptive metadata, and long-term preservation. [re3data.org](https://www.re3data.org) is a searchable registry of repositories, and [AGU maintains a list of domain repositories](https://data.agu.org/resources/useful-domain-repositories) as well.
+It also starts with choosing a good home for your data. Where you publish affects how easily others can find your work, so we cover how to choose, and compare some water-specific options, in the Water domain repositories section below. Whichever repository you pick, look for one that provides a DOI, descriptive metadata, and long-term preservation.
 
 ### A = Accessible
  
@@ -74,19 +68,41 @@ A very important decision that members of the water science community have to ma
 
 **What should be considered when deciding on a repository?**
 
-Broadly, there are two categories of repositories; generalist and domain-specific. Generalist repositories accept data regardless of data type, format, content, or disciplinary focus. They tend to be less FAIR and have more lenient publication processes. You are probably familiar with some generalist repositories, such as Zenodo, Dataverse (Harvard Dataverse Repository), or Figshare. Domain-specific repositories are what they sound like, repositories that host data related to a specific discipline/domain. These tend to prioritize FAIR principles more than generalist repositories, and may have strict guidelines for their publication processes. Some examples of domain-specific repositories for environmental science include the [EDI (Environmental Data Initiative) Data Portal](https://portal.edirepository.org/nis/home.jsp) and [HydroShare](https://www.hydroshare.org/landingPage/). 
+Broadly, there are two categories of repositories: generalist and domain-specific.
+ 
+- **Generalist repositories** accept data regardless of data type, format, content, or disciplinary focus. You are probably familiar with some, such as [Zenodo](https://zenodo.org), Dataverse (Harvard Dataverse Repository), or Figshare. Many of them issue DOIs and support solid metadata, and they account for a large share of data and software citations, so a generalist choice is not a lesser one. Zenodo's GitHub integration, for example, makes it a common place to archive a release of your code. The trade-off is that they usually offer fewer field-specific metadata options and often have little or no curation of submissions.
+- **Domain-specific repositories** host data related to a specific discipline. They tend to offer metadata fields and conventions tailored to the field, may have stricter guidelines for the publication process, and put your data in front of the community most likely to use it. Examples for environmental science include the [HydroShare](https://www.hydroshare.org) and [EDI (Environmental Data Initiative)](https://edirepository.org) data portal.
 
-People often wait until their research is publication ready before searching for a repository to publish their data and code to. By this point, it's tempting to go with a recommendation from the journal they're trying to publish to, or to publish on a generalist repository with a low barrier to publication. A more appropriate approach that would be more aligned with FAIR principles would be to create a data management plan at the start of the project. The best way to find a repository is to ask members of the community in your discipline, water science in our case, to see which domain-specific repository would be the best fit.
+Some repositories are also run by universities, funders, or governments. These can be a good home for large datasets, so it is worth asking your librarian.
 
 **Comparison of water-specific repositories**
-[More explicit comparison of water-specific repositories, including HydroShare and EDI]
+| | **HydroShare** | **EDI** |
+|---|---|---|
+| **Run by** | CUAHSI | Environmental Data Initiative |
+| **Best suited to** | Hydrologic data, models, code, notebooks, and teaching materials | Environmental data, including ecological and long-term monitoring data |
+| **Metadata** | Web forms on the resource page, plus extra metadata for content types like time series, rasters, and NetCDF | Ecological Metadata Language (EML), created with tools like ezEML or EMLassemblyline |
+| **Review before publishing** | Light review by CUAHSI staff for minimum metadata | Required automated evaluation of the metadata and its match to the data, with curators available for advice |
+| **DOIs** | One DOI per published resource | Every version of a data package gets its own DOI and identifier |
+| **Collaboration and compute** | Staged sharing with people and groups, linked JupyterHub environments, and the `hsclient` Python package | Primarily a publication and archive step |
+ 
+In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. Since HydroShare is the repository this course is built around, we will spend a bit more time there.
 
 **Introduction to HydroShare**
-HydroShare is a CUAHSI hosted, domain-specific repository that hosts diverse types of data, models, scripts, and applications related to water research projects and manuscripts. Some core capabilities of HydroShare are as follows:
+[HydroShare](https://www.hydroshare.org) is a domain-specific repository hosted by CUAHSI that holds diverse types of data, models, scripts, and applications related to water research projects and manuscripts. The unit of content is a **resource**, which can hold data, models, code, notebooks, and teaching materials along with metadata. It includes content types for things like time series, rasters, and NetCDF, which come with extra metadata and viewers.
+ 
+A few features make it particularly useful:
+ 
+- **Sharing happens in stages.** A resource can be private, shared with specific people or groups, discoverable (anyone can find the metadata, but only people with permission can get the files), public, and finally published. This makes it easy to collaborate and prepare before anything is final.
+- **Publishing is permanent.** Publishing a resource assigns a DOI and locks the content, title, and authorship. A few things, like the abstract and related resources, can still be edited, but users cannot delete a published resource. Take care to finish your resource and metadata before you publish, and don't publish test resources. HydroShare also has [guidance on its minimum metadata requirements](https://help.hydroshare.org/publishing-in-hydroshare/minimum-metadata-requirements-for-publishing-in-hydroshare/): a descriptive title, an abstract, and at least three keywords including geographic ones. A CUAHSI staff member does a light review before publication.
+- **Data and compute sit together.** You can open a resource in a linked JupyterHub environment, and the [`hsclient`](https://github.com/hydroshare/hsclient) Python package lets you create resources, edit metadata, and add files from code.
+- **It supports the full citation loop.** HydroShare lets you know what your resource's DOI will be before you permanently publish, so you don't have to wait to cite it. [Its recommended workflow](https://help.hydroshare.org/introduction-to-hydroshare/getting-started/permanently-publish-a-resource/) is to make the resource public when you submit the paper and cite it by URL, switch to the DOI in the final text once the paper is accepted, add the paper's full reference to the resource's related resources once the publisher issues its DOI, and only then finalize and permanently publish. That way the paper and the resource each cite the other by DOI.
 
-- Free and open source platform for data sharing, publishing, and discovery
-- Enables collaboration on data preparation, analysis, and management though the data life cycle
-- Share and run workflows through built in cloud computing capabilities
+
+### EDI and other options
+ 
+The [Environmental Data Initiative (EDI)](https://edirepository.org) is a repository for environmental data, including data from long-term ecological research sites. Data are published as **data packages**, which pair the data files with metadata written in Ecological Metadata Language (EML), typically created with tools like ezEML or the EMLassemblyline R package. Each version of a package gets its own DOI and identifier. Before a package can be published, it must pass an [automated evaluation](https://edirepository.org/resources/evaluating-a-data-package) that checks the metadata and its match with the data, and EDI's curators are available for advice.
+ 
+Other domain repositories may suit parts of your work. The [EarthChem Library](https://www.earthchem.org), for example, curates geochemical data and works with SESAR, which registers physical samples with persistent IDs called IGSNs. 
 
 ## Publishing derivative data
 
@@ -112,8 +128,6 @@ Peer review of data and code is less standardized than it is for papers, but the
 - **Informal review.** Ask a colleague to open your data or run your code cold. It is often the quickest way to catch problems, and it ties back to the idea we discussed in the Open Science section of sharing work early and often.
 
 ## Further reading
-
-[links out to some of the tools/people/orgs referenced along the way]
 
 - [Generalist Repository Comparison Chart](https://zenodo.org/records/17315963)
  [Wilkinson et al. (2016), The FAIR Guiding Principles](https://doi.org/10.1038/sdata.2016.18)
