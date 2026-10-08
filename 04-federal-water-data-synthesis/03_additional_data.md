@@ -51,9 +51,9 @@ Confirm the description of SoS, its development status, and the recommended way 
 
 The **Analysis of Record for Calibration (AORC)** is a gridded, hourly record of precipitation and other near-surface weather (temperature, humidity, wind, radiation) over the contiguous United States. The copy used here, in the NWM retrospective archive, is on the 1 km NWM grid. It is the historical weather forcing used to calibrate the National Water Model and to drive its retrospective simulation ([AWS Registry of Open Data: NWM archive](https://registry.opendata.aws/nwm-archive/)). That makes it the natural precipitation dataset to pair with NWM streamflow, and a good first look at what "caused" a hydrograph. NOAA publishes it as cloud-optimized Zarr stores in the NWM retrospective archive on the [AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/). No account or key is needed.
 
-:::{admonition} TODO (dev team): Verify native AORC resolution
+:::{admonition} TODO (dev team): AORC native resolution
 :class: attention
-Verify native AORC resolution
+Verify native AORC resolution.
 :::
 
 Zarr lets `xarray` open the whole dataset _lazily_: only metadata is read until you ask for values. This example pulls hourly precipitation for December 2022 (the last full December in this copy, which ends in January 2023) at the grid cell nearest USGS 12200500. The gage coordinates come from its [USGS monitoring-location record](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-12200500).
@@ -83,9 +83,9 @@ Frozen({'time': 385704, 'y': 3840, 'x': 4608}) ['1979-02-01T00:00:00.000000000' 
 
 The full dataset is about 27 TB, but this request reads only the few chunks that contain the one grid cell and one month. It still takes about a minute from a laptop, because each chunk holds 28 days for a 350 × 350 km block. This **retrospective** copy ends in January 2023, so it does not cover the December 2025 flood. For recent events, NOAA distributes AORC through other channels.
 
-:::{admonition} TODO (dev team): Verify the current access route for post-2023…
+:::{admonition} TODO (dev team): Post-2023 AORC access
 :class: attention
-Verify the current access route for post-2023 AORC data
+Verify the current access route for post-2023 AORC data.
 :::
 
 :::{admonition} Partner review (NOAA): NOAA AORC precipitation
@@ -101,19 +101,19 @@ The National Water Model routes water over the NHDPlus river network (Module 2).
 
 The hydrofabric is distributed as GeoPackage files by Lynker Spatial. **At time of writing, the files at the public path used in the CUAHSI notebook (`s3://lynker-spatial/hydrofabric/v2.2/conus/conus_nextgen.gpkg`) are listed but no longer readable anonymously**, and the v2.2 data carry a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 license (per `license.txt` in `s3://lynker-spatial/hydrofabric/v2.2/`). Check the [Lynker Spatial data page](https://www.lynker-spatial.com/data) for current access terms before building a workflow on it.
 
-:::{admonition} TODO (dev team): Verify Lynker Spatial's role and the NHDPlus/hydrolocation…
+:::{admonition} TODO (dev team): NextGen hydrofabric access route
 :class: attention
-Verify Lynker Spatial's role and the NHDPlus/hydrolocation links described above
-:::
-
-:::{admonition} TODO (dev team): Confirm the current public access route for…
-:class: attention
-Confirm the current public access route for the NextGen hydrofabric (NOAA-hosted copy? registration?) and add a runnable discovery example
+Confirm the current public access route for the NextGen hydrofabric (NOAA-hosted copy? registration?) and add a runnable discovery example.
 :::
 
 :::{admonition} Partner review (NOAA): NOAA NextGen hydrofabric
 :class: important
 Confirm the description of the hydrofabric and the recommended source for researchers.
+:::
+
+:::{admonition} TODO (dev team): Lynker Spatial and hydrolocations
+:class: attention
+Verify Lynker Spatial's role and the NHDPlus/hydrolocation links described above.
 :::
 
 **Go further:** the CUAHSI notebook [Accessing the NGEN HydroFabric on S3](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/NGEN%20-%20Hydrofabric%20Exploration) by Tony Castronova and Irene Garousi-Nejad shows how to read hydrofabric layers for a bounding box with `geopandas`, without downloading the whole file. Its data path currently returns a permission error (see the note above).
@@ -126,9 +126,10 @@ Confirm the description of the hydrofabric and the recommended source for resear
 - Adapted from [Collecting and Manipulating AORC Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/AORC%20-%20Data%20Collection%20and%20Manipulation%20Primer) by Tony Castronova, Irene Garousi-Nejad, Danielle Tijerina-Kreuzer and Abner Bogan, CUAHSI notebooks (GPL-3.0).
 - Adapted from [SWOT - Visualizing SOS Discharge with Xarray](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Visualizing%20SOS%20Discharge%20with%20Xarray), CUAHSI notebooks (GPL-3.0).
 - Adapted from [SWOT - Compare Observed and SoS Discharge](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Compare%20Observed%20and%20SoS%20Discharge), CUAHSI notebooks (GPL-3.0).
-- [Accessing the NGEN HydroFabric on S3](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/NGEN%20-%20Hydrofabric%20Exploration) by Tony Castronova and Irene Garousi-Nejad, CUAHSI notebooks (GPL-3.0).
 
-:::{admonition} TODO (dev team): Verify authors of both SoS notebooks (shallow…
-:class: attention
-Verify authors of both SoS notebooks (shallow clone shows no author list)
-:::
+  :::{admonition} TODO (dev team): SoS notebook authors
+  :class: attention
+  Verify authors of both SoS notebooks (shallow clone shows no author list).
+  :::
+
+- [Accessing the NGEN HydroFabric on S3](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/NGEN%20-%20Hydrofabric%20Exploration) by Tony Castronova and Irene Garousi-Nejad, CUAHSI notebooks (GPL-3.0).

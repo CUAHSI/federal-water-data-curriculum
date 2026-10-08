@@ -3,6 +3,11 @@
 Every external source cited in the course, grouped by the page that cites it. Each page's list lives in its own
 file under `references/` and is included here (see the style guide, section 8).
 
+:::{admonition} TODO (dev team): Fill in the reference lists
+:class: attention
+The per-page lists are being filled in during Phase 6. Until then, some pages below have no entries.
+:::
+
 ## Module 2: Federal Water Data Landscape
 
 ### [Module overview](02-federal-water-data-landscape/00_introduction.md)

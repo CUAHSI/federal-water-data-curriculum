@@ -123,16 +123,6 @@ sites_available, md = waterdata.get_combined_metadata(
 
 USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses. Spring snowmelt raised the river there in April and May 2026. Here is how to get its observations for spring 2026. Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
 
-:::{admonition} TODO (dev team): Confirm after content/03-swot-raster merges
-:class: attention
-Confirm after content/03-swot-raster merges
-:::
-
-:::{admonition} TODO (dev team): Confirm the Aitkin site and spring 2026…
-:class: attention
-Confirm the Aitkin site and spring 2026 period, or name another Module 3 example
-:::
-
 | Column | Shared term | Notes |
 |---|---|---|
 | `monitoring_location_id` | **Location Identifier** | Agency prefix plus site number, e.g. `USGS-05227500` |
@@ -141,9 +131,19 @@ Confirm the Aitkin site and spring 2026 period, or name another Module 3 example
 | `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags special conditions, for example estimated values (`[ESTIMATED]`) |
 | `time`, `value` | | Continuous timestamps are in UTC; daily `time` is a calendar date |
 
-:::{admonition} TODO (dev team): Verify whether daily dates are local-standard-time days
+:::{admonition} TODO (dev team): Same site as the SWOT lesson
 :class: attention
-Verify whether daily dates are local-standard-time days
+Confirm after content/03-swot-raster merges. (Refers to: “USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses”)
+:::
+
+:::{admonition} TODO (dev team): Aitkin example site
+:class: attention
+Confirm the Aitkin site and spring 2026 period, or name another Module 3 example.
+:::
+
+:::{admonition} TODO (dev team): Daily-value dates and time zone
+:class: attention
+Verify whether daily dates are local-standard-time days.
 :::
 
 First, ask which time series the gage records. This is discovery for a single site:
@@ -214,9 +214,9 @@ peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
 
 The continuous record first reached its peak of **5,000 ft³/s**, with a gage height of **9.58 ft**, at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps: during the estimated period in early April, discharge is reported every 4 hours rather than every 15 minutes. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
 
-:::{admonition} TODO (dev team): Verify that the April estimates at 05227500…
+:::{admonition} TODO (dev team): April estimates at 05227500
 :class: attention
-Verify that the April estimates at 05227500 are ice-related
+Verify that the April estimates at 05227500 are ice-related.
 :::
 
 **Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range. We start in March to see what late-winter values look like:
@@ -271,9 +271,9 @@ discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "measur
 
 Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. Hydrographers visited about once a month. `observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice), and the later ones used an acoustic Doppler current profiler (ADCP). `measurement_rated` is each measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy, from `Poor` in February to `Good` in April and July. The April 15 measurement (2,170 ft³/s) agrees closely with that day's daily mean from the continuous record (2,100 ft³/s). The August measurement is still `Provisional`, like the continuous record from that time.
 
-:::{admonition} TODO (dev team): Verify the February measurement method
+:::{admonition} TODO (dev team): February measurement method
 :class: attention
-Verify — “`observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice)”
+Verify. (Refers to: “`observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice)”)
 :::
 
 :::{admonition} Partner review (USGS): dataretrieval
@@ -283,6 +283,11 @@ Confirm the description of field measurements, measurement ratings and rating cu
 
 **A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. You can recognize it by bare site numbers (`05227500` instead of `USGS-05227500`) and function names such as `nwis.get_dv`. `dataretrieval` now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, as in this lesson.
 
+:::{admonition} Partner review (USGS): dataretrieval
+:class: important
+Confirm the retirement timeline for the legacy Water Services to cite here.
+:::
+
 ## Best practices FAQs
 
 See sections below for answers and code examples to the following questions.
@@ -290,11 +295,6 @@ See sections below for answers and code examples to the following questions.
 * What is the recommended way to download data for **one location across the full period of record**?
 * What is the recommended way to download data across **all locations for a small time range**?
 * If I am working on improving efficiency through **code parallelization**, what should I do vs avoid?
-
-:::{admonition} Partner review (USGS): dataretrieval
-:class: important
-Confirm the retirement timeline for the legacy Water Services to cite here.
-:::
 
 ### Temporal scaling
 
@@ -342,6 +342,11 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you. Use that sparingly, and only for pulls you know are large.
 - **Avoid** re-downloading the same historical record every time you run your code. Approved data rarely change, so save results to a file and only request what is new (the `last_modified` argument helps).
 
+:::{admonition} Partner review (USGS): Parallelization
+:class: important
+Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
+:::
+
 ## Further reading
 
 * `dataretrieval` (Python) GitHub repo: https://github.com/DOI-USGS/dataretrieval-python
@@ -351,12 +356,7 @@ If I am working on improving efficiency of my code through parallelization, what
 * USGS Water Data API keys: https://api.waterdata.usgs.gov/docs/ogcapi/keys/
 * Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here.
 
-:::{admonition} Partner review (USGS): Parallelization
-:class: important
-Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
-:::
-
-:::{admonition} TODO (dev team): Verify notebook author(s) for credit
-:class: attention
-Verify notebook author(s) for credit
-:::
+  :::{admonition} TODO (dev team): Notebook authors
+  :class: attention
+  Verify notebook author(s) for credit.
+  :::

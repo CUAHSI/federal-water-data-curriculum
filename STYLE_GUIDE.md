@@ -97,8 +97,8 @@ the path starts with `../`. Every figure has `alt` text (what the image shows, f
 :width: 100%
 
 Daily mean discharge at USGS 03294500, Ohio River at Louisville, KY, during the April 2025 flood. Data: USGS Water Data
-for the Nation daily values (parameter `00060`, statistic `00003`), accessed 2026-10-08; values from April 2025 onward
-were provisional at access.
+for the Nation daily values (parameter `00060`, statistic `00003`), accessed 2026-10-08; values from 9 April 2025 onward
+(including the crest) were provisional at access.
 :::
 ````
 
@@ -171,7 +171,7 @@ The specific claim or recommendation the agency should confirm or correct.
   - NOAA Office of Water Prediction. (n.d.). *About the National Water Model*. https://water.noaa.gov/about/nwm (accessed 2026-10-08).
   - Hodson, T. O., & Hariharan, J. A. (2023). *dataretrieval (python): a Python package for discovering and retrieving water data available from Federal hydrologic web services* (software). U.S. Geological Survey. https://doi.org/10.5066/P94I5TX3
   ```
-- **Check.** `python3 references/check_references.py --changed` (or pass page paths; no arguments checks every page).
+- **Check.** `python3 references/check_references.py --changed` (use `python` where `python3` isn't on the path) (or pass page paths; no arguments checks every page).
   It lists each external link outside code blocks that has no entry in that page's reference file and exits 1 if any
   are missing. Entries no longer linked from the page are listed as "unused" (warning only).
 - **Glossary page:** one course-wide Glossary page. Define each term once there. On each page, link the first

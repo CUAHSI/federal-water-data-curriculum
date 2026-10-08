@@ -157,16 +157,16 @@ print(int(reaches.intersects(box(-95.26, 47.17, -95.15, 47.25)).sum()), "reaches
 
 None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The most likely reason is not SWOT's orbit: the SWOT River Database (SWORD) does not appear to include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN.
 
-:::{admonition} TODO (dev team): Verify the upstream end of SWORD's Mississippi…
+:::{admonition} TODO (dev team): SWORD upstream end on the Mississippi
 :class: attention
-Verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer
+Verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer.
 :::
 
 For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the [USGS lesson](03_access_usgs_wdfn.md) uses too.
 
-:::{admonition} TODO (dev team): Confirm the Aitkin site and spring 2026…
+:::{admonition} TODO (dev team): Aitkin example site
 :class: attention
-Confirm the Aitkin site and spring 2026 period, or name another Module 3 example
+Confirm the Aitkin site and spring 2026 period, or name another Module 3 example.
 :::
 
 The water-area product is discovered the same way. Here we search the 100 m Raster product in a small box around the gage, for the weeks around the snowmelt peak:
@@ -470,21 +470,22 @@ SWOT saw this reach 22 times in five months, often in pairs a few days apart, be
 
 - **The broad pattern follows the river.** Water surface elevation is higher around the snowmelt peak (362.4 m on May 6, when USGS reported about 3,900 ft³/s) than in late July (360.4 m on July 28, about 490 ft³/s).
 - **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s (USGS marks its March discharge values as estimated; see [USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31)). Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
-- **No observation is flagged good.** Fifteen are suspect (`reach_q` = 1) and seven degraded (2). A strict `reach_q == 0` filter (`get_reach_timeseries(..., max_reach_q=0)`) would return an empty table. Quality flags are reach-specific, so keep the flag in your analysis and decide what to trust rather than silently filtering everything away.
 
-:::{admonition} TODO (dev team): Verify whether the March 2026 record at…
-:class: attention
-Verify whether the March 2026 record at 05227500 is ice-affected
-:::
+  :::{admonition} TODO (dev team): Ice-affected March record at 05227500
+  :class: attention
+  Verify whether the March 2026 record at 05227500 is ice-affected.
+  :::
+
+- **No observation is flagged good.** Fifteen are suspect (`reach_q` = 1) and seven degraded (2). A strict `reach_q == 0` filter (`get_reach_timeseries(..., max_reach_q=0)`) would return an empty table. Quality flags are reach-specific, so keep the flag in your analysis and decide what to trust rather than silently filtering everything away.
 
 :::{admonition} Partner review (NASA): hydrocron
 :class: important
 Confirm how researchers should use suspect and degraded observations on narrow rivers, and whether screening on `width` versus `p_width` is a reasonable extra check.
 :::
 
-:::{admonition} TODO (dev team): Plot the SWOT WSE series against the…
+:::{admonition} TODO (dev team): Plot SWOT WSE against USGS stream level
 :class: attention
-Plot the SWOT WSE series against the USGS NAVD88 stream level (parameter 63160) at 05227500
+Plot the SWOT WSE series against the USGS NAVD88 stream level (parameter 63160) at 05227500.
 :::
 
 If a reach ID does not exist in the collection, `hydrocron` answers with an HTTP 400 and a message such as `Results with the specified Feature ID ... were not found`. The function raises that as an error, so a typo doesn't pass silently.
@@ -503,9 +504,9 @@ What is the recommended way to download data for one location but the full perio
 
 Use `hydrocron`, one request per reach or node. Set `start_time` to the start of the mission's science orbit (July 2023) and `end_time` to today, and ask only for the `fields` you need. Fewer fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach (one per overpass, each covering a whole continent-scale pass) only to keep a single row from each. The CUAHSI longitudinal-profile notebook in Further reading follows this pattern for a single reach.
 
-:::{admonition} TODO (dev team): Verify exact date of first science-orbit RiverSP…
+:::{admonition} TODO (dev team): First science-orbit RiverSP date
 :class: attention
-Verify exact date of first science-orbit RiverSP data
+Verify exact date of first science-orbit RiverSP data.
 :::
 
 ### Spatial scaling

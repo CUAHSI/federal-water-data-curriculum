@@ -1,6 +1,6 @@
 # Glossary
 
-Terms used across the course, defined once. On each page, the first use of a term links here. For example,
+Terms used across the course, defined once. As pages are revised, the first use of each term on a page will link here. For example,
 NOAA identifies a river reach by its {term}`COMID`, while USGS uses a {term}`monitoring location ID <Monitoring location ID>`.
 
 To link a term from a page, use the MyST `term` role: `` {term}`COMID` ``, or `` {term}`reaches <Reach>` `` to show
@@ -11,7 +11,7 @@ different text. Add new terms to the section where they fit, keeping each sectio
 Every data product in the course is introduced with these seven concepts (see the style guide's shared-concept table).
 
 ```{glossary}
-Data quality flag
+Data quality flag(s)
 : A value attached to a measurement that says how much to trust it. Examples: SWOT's `reach_q` and `wse_qual`,
   and USGS's approval status and qualifiers. NWM model output has no per-value quality flag.
 
@@ -24,8 +24,8 @@ Location identifier
   or a USGS monitoring location ID such as `USGS-12200500`.
 
 Time
-: *When* a value applies, and how often values are produced: a SWOT overpass time, an NWM forecast reference time
-  and valid time, or a USGS timestamp (continuous or daily).
+: *When* a value applies, and how often values are produced: a SWOT overpass time, an NWM {term}`forecast reference time <Forecast reference time>`
+  and {term}`valid time <Valid time>`, or a USGS timestamp (continuous or daily).
 
 Variable
 : *What* was measured or modeled, for example water surface elevation (SWOT), streamflow (NWM),
@@ -48,8 +48,9 @@ API
   so code can retrieve data without a point-and-click website.
 
 API key
-: A personal token that identifies you to an API, often allowing higher request limits. Keep it in an environment
-  variable, never in your code.
+: A personal token that identifies you to an API, often allowing higher request limits. Also called a token or
+  personal access token (PAT); the USGS key goes in the `API_USGS_PAT` environment variable. Keep keys in environment
+  variables, never in your code.
 
 Conda environment
 : An isolated set of Python packages, defined by a file such as `environments/m03-swot.yml`, so a lesson's code
@@ -94,22 +95,23 @@ SWOT
   width and extent of rivers and lakes from space.
 
 Water surface elevation
-: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`).
+: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`), relative to a geoid
+  model (see the SWOT lessons for the exact reference).
 ```
 
 ## NOAA NWM
 
 ```{glossary}
 COMID
-: Common Identifier: the unique numeric ID of a stream reach in the NHDPlus network. NWM's `feature_id` values
-  are the same numbers.
+: Common Identifier: the unique numeric ID of a stream reach in the NHDPlus network. In the contiguous U.S. (CONUS),
+  NWM's `feature_id` values are the same numbers.
 
 Configuration
 : One of the NWM's standard model runs, for example `short_range`, `medium_range`, `long_range`
-  or `analysis_assim`, each with its own forecast length and issue schedule.
+  or `analysis_assim`, each with its own length (forecast horizon or lookback) and issue schedule.
 
 feature_id
-: NWM's name for a reach identifier. It is the same number as the NHDPlus {term}`COMID`.
+: NWM's name for a reach identifier. In CONUS it is the same number as the NHDPlus {term}`COMID`.
 
 kerchunk
 : A Python library that builds reference files describing where each variable sits inside existing files
@@ -127,8 +129,12 @@ NWM
 : The National Water Model, NOAA's hydrologic model that simulates and forecasts streamflow for millions of
   river reaches across the United States.
 
-Reference time
-: When an NWM forecast was issued (UTC). Each forecast value also has a valid time: the time it applies to.
+Forecast reference time
+: When an NWM forecast was issued (UTC). Also called the reference time. Each forecast value also has a
+  {term}`valid time <Valid time>`.
+
+Valid time
+: The time an NWM forecast value applies to (UTC). Valid time minus reference time is the forecast's lead time.
 
 Retrospective simulation
 : A long NWM run over historical weather, used for reach-level streamflow records where there is no gage.
@@ -145,7 +151,7 @@ Continuous values
 : USGS sensor values recorded at a fixed interval, typically every 15 minutes. Also called instantaneous values.
 
 Daily values
-: USGS values summarized per day, most often the daily mean (statistic code `00003`).
+: USGS values summarized per day, most often the daily mean (statistic code, `statistic_id`, `00003`).
 
 dataretrieval
 : A USGS Python package for retrieving USGS water data. Its modernized `waterdata` module uses the

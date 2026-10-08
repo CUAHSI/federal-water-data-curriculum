@@ -13,7 +13,7 @@ We are going to explore a flood from December 2025 in the Skagit River in Washin
 The December 2025 atmospheric river that drove the Skagit River flood, shown in a NASA GEOS analysis for 06:00 UTC on 9 December 2025: total precipitable water over the North Pacific, with accumulated precipitation along the Pacific Northwest coast. Credit: NASA's Global Modeling and Assimilation Office and NASA's Scientific Visualization Studio ([Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596)).
 :::
 
-:::{admonition} TODO (dev team): Consider adding a before/after photo of the…
+:::{admonition} TODO (dev team): Skagit valley photo
 :class: attention
 Consider adding a before/after photo of the Skagit valley with a reuse-cleared credit.
 :::
@@ -29,7 +29,7 @@ conda activate m04-synthesis
 
 You will need the same credentials as in Module 3: a USGS Water Data API key stored in the `API_USGS_PAT` environment variable (optional, but it raises your rate limit), and an Earthdata Login stored in `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` (required for the SWOT raster download).
 
-:::{admonition} TODO (dev team): Maybe the following sections are just informational…
+:::{admonition} TODO (dev team): Informational sections vs. lab assignment
 :class: attention
 Maybe the following sections are just informational and then the coded more prescriptive step-by-step analysis comes in the form of the lab assignment?
 :::
@@ -59,9 +59,9 @@ print(f"Gage location: {gage_lat:.4f}, {gage_lon:.4f}")
 
 The result is a one-row GeoDataFrame. `drainage_area` is in square miles (3,093 mi²) and `altitude` is the elevation of the gage datum (3.8, in feet) in the `vertical_datum` NAVD88. Keep that datum in mind: USGS gage height is measured from the gage datum, while SWOT water surface elevation is measured from a global geoid, so the two can't be compared directly without first converting between datums (the CUAHSI SWOT longitudinal-profile notebook in Further reading shows one way, using NOAA's VDatum service). In this lesson we sidestep that by comparing *changes* in water level.
 
-:::{admonition} TODO (dev team): Verify unit of altitude in the monitoring-locations…
+:::{admonition} TODO (dev team): Unit of `altitude`
 :class: attention
-Verify unit of `altitude` in the monitoring-locations collection
+Verify unit of `altitude` in the monitoring-locations collection.
 :::
 
 The USGS [Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) indexes gages to the NHDPlus network that the National Water Model uses. The `pynhd` package wraps it; the NWM `feature_id` for a reach is its NHDPlus COMID.
@@ -104,7 +104,7 @@ print(swot.groupby("reach_id")[["p_lat", "p_lon"]].first())
 
 `p_lat`/`p_lon` are the reach's prior (SWORD) center point, which isn't enough on its own to tell which reach holds the gage. We compared the reach centerlines instead (hydrocron returns them when you request `output=geojson` with the `geometry` field). The centerline of reach `78310800031` passes within a few tens of meters of the gage, about 1.2 km above the reach's downstream end, so that is the gage's reach. Reaches `…021` and `…015` continue downstream to Skagit Bay.
 
-:::{admonition} TODO (dev team): Replace the hard-coded reach list with a…
+:::{admonition} TODO (dev team): SWORD spatial lookup and map
 :class: attention
 Replace the hard-coded reach list with a SWORD spatial lookup, and add a small map of the gage, NWM reach and SWORD reaches.
 :::
@@ -152,9 +152,9 @@ print(q_meas[["time", "time_of_day", "value", "unit_of_measure", "measurement_ra
 
 Field measurements come back as one row per reading, with gage-height readings and discharge readings from the same `field_visit_id`. `time` holds only the date, and `time_of_day` only the time of day in UTC (for example `17:07:50+00:00`). To place a measurement on a timeline, join the two; converting `time_of_day` on its own would fill in today's date. `measurement_rated` is the hydrographer's rating of the measurement's accuracy (for example `Good` or `Fair`), and `observing_procedure` records how it was made.
 
-USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely.
+USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely..
 
-:::{admonition} TODO (dev team): Verify whether the 12200500 rating has measurements…
+:::{admonition} TODO (dev team): Rating measurements above 111,000 ft³/s
 :class: attention
 Verify whether the 12200500 rating has measurements above 111,000 ft³/s from earlier floods, e.g. via `waterdata.get_ratings`.
 :::
@@ -184,7 +184,7 @@ plt.show()
 
 The plot shows the flood rising from about 14,000 ft³/s in early December, the sharp crest on 12 December and a second, smaller rise around 17 December. The daily mean for 12 December is 112,000 ft³/s. That is well below the 15-minute peak, so daily values understate flood peaks. Daily values are computed over local (Pacific) calendar days, so plotting them at UTC midnight shifts the steps about 8 hours early; that's fine for a quick look.
 
-:::{admonition} TODO (dev team): Commit a static copy of this figure…
+:::{admonition} TODO (dev team): Static copy of the hydrograph figure
 :class: attention
 Commit a static copy of this figure with alt text.
 :::
@@ -200,19 +200,19 @@ Confirm this description of the NWPS gauge forecast vs. NWM.
 
 **Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key.
 
-:::{admonition} TODO (dev team): Confirm 03/02 contains the access-route comparison and…
+:::{admonition} TODO (dev team): Module 3 NWM access-route comparison
 :class: attention
-Confirm 03/02 contains the access-route comparison and kerchunk example once ROADMAP P4.1 merges
+Confirm 03/02 contains the access-route comparison and kerchunk example once ROADMAP P4.1 merges.
 :::
 
-:::{admonition} TODO (dev team): Confirm figures against the final 03/02 table…
+:::{admonition} TODO (dev team): Access-route figures
 :class: attention
 Confirm figures against the final 03/02 table before publishing.
 :::
 
 The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test all three took about 15 seconds together.
 
-:::{admonition} TODO (dev team): Timing depends on the connection; re-time before…
+:::{admonition} TODO (dev team): Re-time the forecast build
 :class: attention
 Timing depends on the connection; re-time before publishing.
 :::
@@ -305,7 +305,7 @@ The observed crest was 133,000 ft³/s at 08:00 UTC on 12 December. Two cautions 
 Interpretation of the short-range forecasts against the observed hydrograph for this event.
 :::
 
-:::{admonition} TODO (dev team): Add a medium-range member to show multi-day…
+:::{admonition} TODO (dev team): Medium-range forecast member
 :class: attention
 Add a medium-range member to show multi-day lead time; commit a static copy of the figure with alt text.
 :::
@@ -476,33 +476,40 @@ The results are a lesson in what a single satellite pass can and can't show:
 
 - **The near-peak pass missed the gage.** The edge of the 12 December swath falls about 4 km west of Mount Vernon. The gage cell is empty (`wse` is NaN, `wse_qual` = 3), matching the missing RiverSP value for reach `…031`.
 - **In the delta it did see, extent barely changed.** Of the cells good or suspect in both passes, about 5,800 were wet in both, about 340 became wet and about 450 became dry, mostly along channel margins and field edges. This pass shows no broad sheet of new floodwater over the delta farmland.
+
+  :::{admonition} TODO (dev team): Where the delta flooded
+  :class: attention
+  Verify against agency or news reports of where the delta flooded on 12 Dec, and check the tide at 09:00 UTC; levees may have kept water in the channel here.
+  :::
+
 - **Quality flags matter.** Only about a third of the cells in the box (about 9,300 of 27,000) are good or suspect in both passes. The 4 December scene (not plotted) shows striped false "water" across dry land near the gage, and `water_area_qual` flags most of it.
 
-:::{admonition} TODO (dev team): Verify against agency or news reports of…
-:class: attention
-Verify against agency or news reports of where the delta flooded on 12 Dec, and check the tide at 09:00 UTC; levees may have kept water in the channel here.
-:::
-
-:::{admonition} TODO (dev team): Commit a static copy of the before/near-peak…
+:::{admonition} TODO (dev team): Static copy of the water-extent figure
 :class: attention
 Commit a static copy of the before/near-peak figure with alt text; consider adding the 4 Dec scene to illustrate quality flags.
 :::
 
 ## Conclusions
 
+:::{admonition} TODO (dev team): Tighten prose in this section
+:class: attention
+Tighten prose.
+:::
+
 - **USGS** gives the most reliable, highest-frequency record *at a point*: the crest timing (08:00–08:15 UTC on 12 Dec), stage and discharge. Its field measurements show how far the flood peak was extrapolated beyond direct measurement.
 - **NOAA NWM** short-range forecasts gave many hours' warning of an exceptional flood. At this reach they ran high and early, peaking at 142,000–160,000 ft³/s against an observed 133,000. They cover every reach, including reaches with no gage, and past forecasts can be read cheaply from the cloud with kerchunk references.
 - **NASA SWOT** adds a spatial view. RiverSP's WSE changes matched the gage's rise and showed it shrinking toward the bay. The Raster product can map water extent, but only when a pass lines up with the flood. Here the one near-peak pass stopped short of Mount Vernon.
 - Linking the products takes deliberate work: three Location Identifiers (gage ID, COMID, SWORD reach), different vertical references (gage datum vs. geoid), different time steps (15-minute, hourly forecasts, a few passes per cycle) and different Data Quality Flags. Each product fills gaps the others leave.
 
-:::{admonition} TODO (dev team): Tighten prose
-:class: attention
-Tighten prose. — “”
-:::
-
 ## Further reading
 
 - Adapted from [Notebook to Demonstrate Collecting USGS Data (collect-usgs-streamflow.ipynb)](https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval/collect-usgs-streamflow.ipynb), CUAHSI notebooks (GPL-3.0); ported from the legacy `nwis` module to `waterdata`.
+
+  :::{admonition} TODO (dev team): Notebook authors
+  :class: attention
+  Verify notebook author(s) for attribution.
+  :::
+
 - Adapted from [Notebook to visualize SWOT longitudinal profile data (LongProfileVerticalDatum.ipynb)](https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources/LongProfileVerticalDatum.ipynb) by Mike Durand with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0); hydrocron request pattern and quality-flag filtering.
 - [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html), PO.DAAC: Skagit River SWORD reach IDs.
 - [Hydrocron documentation](https://podaac.github.io/hydrocron/), PO.DAAC.
@@ -517,8 +524,3 @@ Tighten prose. — “”
 - [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) (CIROH), which builds the NWM file URLs used above ([source](https://github.com/CIROH-UA/nwmurl)).
 - [`kerchunk` documentation](https://fsspec.github.io/kerchunk/). The reference-building pattern follows Module 3's NWM lesson ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 - [Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596), NASA Scientific Visualization Studio.
-
-:::{admonition} TODO (dev team): Verify notebook author(s) for attribution
-:class: attention
-Verify notebook author(s) for attribution.
-:::
