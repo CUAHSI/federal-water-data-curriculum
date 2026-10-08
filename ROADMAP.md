@@ -104,7 +104,7 @@ text; don't rewrite sections that are already filled in.
 - [ ] **P4.3 03/03 NWIS + 03/00 overview** (branch `content/03-nwis-overview`, PR #6): continuous values + field
       measurements as used in 04/02; fix `get_reference_tablea`; modernized `waterdata` first; setup →
       `environments/nwis.yml`; 03/00 objectives + concepts (APIs, keys/rate limits, scaling, agency libraries).
-- [ ] **P4.4 Module 2 suggestions** — write the proposed issue text (no `02-*` edits), including a short pointer from
+- [x] **P4.4 Module 2 suggestions** ([issue #52](https://github.com/CUAHSI/federal-water-data-curriculum/issues/52)) — write the proposed issue text (no `02-*` edits), including a short pointer from
       02_meet_noaa_nwm to the new access-route guidance. Open the issue only with Lindsay's approval.
 
 ## Phase 5 — Wrap-up (each lane)
