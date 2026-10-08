@@ -243,30 +243,7 @@ Field measurements include both discharge (`00060`) and gage-height (`00065`) re
 
 [PARTNER REVIEW: USGS] Confirm the description of field measurements, measurement ratings and rating curves, including how under-ice measurements are made and rated.
 
-**For contrast: the legacy `nwis` module.** Most older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. The same daily request looks like this:
-
-```python
-from dataretrieval import nwis
-
-legacy_daily, legacy_md = nwis.get_dv(sites="05227500", parameterCd="00060", start="2026-03-01", end="2026-05-31")
-legacy_daily.head(3)
-```
-
-```
-DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
-                           00060_Mean 00060_Mean_cd   site_no
-datetime
-2026-03-01 00:00:00+00:00         786          A, e  05227500
-2026-03-02 00:00:00+00:00         788          A, e  05227500
-2026-03-03 00:00:00+00:00         802          A, e  05227500
-```
-
-Notice the differences:
-- a bare site number instead of `USGS-05227500`;
-- legacy column names, where `00060_Mean` is the value and `00060_Mean_cd` combines the approval code and qualifiers (here `A, e`: approved and estimated);
-- the date as the index.
-
-The values match the `waterdata` daily values (786 ft³/s on March 1, approved and estimated). `dataretrieval` itself now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, and recognize the legacy pattern so you can update older code.
+**A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. You can recognize it by bare site numbers (`05227500` instead of `USGS-05227500`) and function names such as `nwis.get_dv`. `dataretrieval` now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, as in this lesson.
 [PARTNER REVIEW: USGS] Confirm the retirement timeline for the legacy Water Services to cite here.
  
 ## Best practices FAQs
