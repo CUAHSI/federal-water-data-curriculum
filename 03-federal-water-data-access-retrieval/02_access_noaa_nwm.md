@@ -183,6 +183,7 @@ for run in resp.json():
         for step in member["timeseries"]:
             rows.append({"reference_time": run["reference_datetime"], "member": member["member_id"],
                          "valid_time": step["valid_datetime"], "streamflow_cms": step["value"]})
+
 runs = pd.DataFrame(rows)
 print(runs.groupby("reference_time").member.nunique())
 ```
@@ -230,11 +231,17 @@ print(forecast_data[["reference_time", "value_time", "value", "measurement_unit"
 
 The result is a long-format `pandas.DataFrame`, one row per COMID and valid time, with columns `reference_time`, `nwm_feature_id`, `value_time`, `value`, `measurement_unit`, `variable_name`, `configuration` and `usgs_site_code` (filled in where NWM maps the reach to a USGS gage, as here). Values are in SI units (`m3 s-1`); pass `unit_system=MeasurementUnitSystem.US` (from `hydrotools.nwm_client.NWMClientDefaults`) to `NWMFileClient` for cubic feet per second.
 
+**If `.get()` fails:**
+
+* **In Jupyter or another notebook**, `hydrotools` raises `RuntimeError: asyncio.run() cannot be called from a running event loop`, because its downloader starts its own event loop. Run `import nest_asyncio; nest_asyncio.apply()` once before calling `.get()` (`nest-asyncio` is in the course environment).
+* **With errors about reading a NetCDF/HDF file**, an earlier run was probably interrupted (a timeout, a lost connection or a stopped cell), leaving a half-downloaded file in `hydrotools_data/`. `hydrotools` treats files already in that folder as downloaded, so it tries to open the broken one instead of fetching it again. Delete the `hydrotools_data/` folder in your working directory and run the call again.
+* The `FutureWarning` and `UserWarning` messages printed during `.get()` (from `xarray`, `dask` and Google's libraries) are harmless: if the table prints, it worked.
+
 `hydrotools` downloads files asynchronously. If you run it inside Jupyter (which already runs an event loop) and get an event-loop error, add `import nest_asyncio; nest_asyncio.apply()` at the top of the notebook (`nest-asyncio` is in the environment file). This is a known issue on JupyterHub; plain Python scripts don't need it.
 
 What happens behind the `.get()` call matters for cost: `hydrotools` downloads **every file of every forecast run you ask for, in full**, to `hydrotools_data/NWMFileClient_NetCDF_files/` in your working directory, then extracts your COMIDs. One short-range run is 18 files (~235 MB); one medium-range member is 240 files (~3.1 GB). Results are cached in `hydrotools_data/nwm_store.parquet`, so asking for the same run again is fast. Just importing `NWMFileClient` creates the `hydrotools_data/` folder in the current directory, so keep it out of version control (e.g. add it to `.gitignore`) and delete it when you're done. You can also pass `file_directory=` to choose where files go, or `cleanup_files=True` to delete the downloaded NetCDF files after each `get()`.
 
-**On a slow connection, large requests can time out.** `hydrotools` queues every file of a run at once and gives each download 900 seconds, including time spent waiting in the queue. In our test, a medium-range member (3.1 GB) on a shared home connection timed out after ~15 minutes in both clean attempts (138 of 240 files downloaded in the first). Rerunning the same call did *not* recover cleanly: the half-written file was skipped as "already downloaded" and then failed to open. If this happens, delete `hydrotools_data/NWMFileClient_NetCDF_files/` and retry on a faster connection, or use kerchunk references (below), which fetch about 7× less.
+**On a slow connection, large requests can time out.** `hydrotools` queues every file of a run at once and gives each download 900 seconds, including time spent waiting in the queue. In our test, a medium-range member (3.1 GB) on a shared home connection timed out after ~15 minutes in both clean attempts (138 of 240 files downloaded in the first). Rerunning the same call did *not* recover cleanly: the half-written file was skipped as "already downloaded" and then failed to open (see "If `.get()` fails" above). Retry on a faster connection, or use kerchunk references (below), which fetch about 7× less.
 
 (nwm-kerchunk)=
 ### Kerchunk references: lazy, cloud-native reads with `xarray`
@@ -381,10 +388,18 @@ time
 
 **A note on historical data:** for observed, historical streamflow, use USGS NWIS rather than NWM's own retrospective archive. NWIS is the authoritative source for gauged, historical data and doesn't require the model-file access patterns covered above. The one exception is **ungauged reaches**: NWIS only has data where a physical gauge exists, so if your analysis needs historical streamflow at a reach with no gauge, NWM's retrospective archive (Zarr, on AWS; see Further reading) is the only source for that, since it's a modeled reconstruction covering every reach in the network, not just gauged ones.
 
+## Best practices FAQs
+
+The sections below answer these questions, with code examples. All three answers follow from how NWM files are stored, so we start with [why NWM downloads cost what they cost](#nwm-cost).
+
+* What is the recommended way to download data for **one location across the full period of record**? See [Temporal scaling](#nwm-temporal-scaling).
+* What is the recommended way to download data across **all locations for a small time range**? See [Spatial scaling](#nwm-spatial-scaling).
+* If I am working on improving efficiency through **code parallelization**, what should I do vs avoid? See [Parallelization](#nwm-parallelization).
+
 (nwm-cost)=
 ### Why NWM downloads cost what they cost
 
-One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 1.8 MB compressed). There is no way to read "just my reach" from a file: any tool has to fetch at least that whole chunk. So:
+One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 1.8 MB compressed). There is no way to read "just my reach" from a file: any tool that reads the files has to fetch at least that whole chunk. Services such as the NOAA NWM API and the CIROH BigQuery API are different: they return just the reaches you ask for, and whatever reading of the underlying data that takes happens on their side (CIROH asks BigQuery users to estimate each query's cost before running it). [TODO: verify how the NWM API and BigQuery store NWM data] For the files themselves:
 
 * **Cost grows with the number of forecast hours (files) you touch, not with the number of reaches.**
 * `hydrotools` downloads whole files (~13 MB each, every variable). Kerchunk references fetch only the `streamflow` chunk you need (~1.8 MB per hour), so they move fewer bytes, but the bytes are still CONUS-sized.
@@ -465,12 +480,3 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 * NWM retrospective archive (Zarr, AWS, for the ungauged-reach case only): https://registry.opendata.aws/nwm-archive/
 * CIROH NWM BigQuery API (CIROH members and partners with active CIROH projects; access by request): https://hub.ciroh.org/docs/products/data-management/bigquery-api/
 * Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP). [TODO: verify license/attribution wording for adapted hydrotools examples]
-
-## Best practices FAQs
-
-See sections above for answers and code examples to the following questions.
-
-* What is the recommended way to download data for **one location across the full period of record**? See [Temporal scaling](#nwm-temporal-scaling).
-* What is the recommended way to download data across **all locations for a small time range**? See [Spatial scaling](#nwm-spatial-scaling).
-* If I am working on improving efficiency through **code parallelization**, what should I do vs avoid? See [Parallelization](#nwm-parallelization).
-* [...]
