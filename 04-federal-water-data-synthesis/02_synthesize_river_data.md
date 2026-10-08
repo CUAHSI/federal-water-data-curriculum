@@ -159,28 +159,31 @@ The gage tells us what happened. The National Water Model (NWM) tells us what wa
 
 **Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)) [TODO: confirm 03/02 contains the access-route comparison and kerchunk example once ROADMAP P4.1 merges]. Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key. [TODO: confirm figures against the final 03/02 table before publishing.]
 
-The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. Building references reads a little metadata from each of the 18 hourly files per forecast; in our test all three took under a minute together. [POLISH: timing depends on the connection; re-time before publishing.]
+The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test all three took about 15 seconds together. [POLISH: timing depends on the connection; re-time before publishing.]
 
 ```python
 import fsspec
+import nwmurl
 from concurrent.futures import ThreadPoolExecutor
 from kerchunk.hdf import SingleHdf5ToZarr
 from kerchunk.combine import MultiZarrToZarr
 
-gcs = fsspec.filesystem("gcs", token="anon")  # public bucket: no account or key
-
-def index_one(path):
+def index_one(url):
     """Scan one NetCDF file's internal layout and return its kerchunk references."""
-    with gcs.open(path, "rb") as f:
-        url = "https://storage.googleapis.com/" + path  # read the data later over plain HTTPS
+    with fsspec.open(url, "rb", block_size=2**20) as f:  # one 1 MB read covers the file's metadata
         return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
 
 def build_refs(day, hour):
     """Index the 18 hourly files of one NWM short-range forecast and return combined kerchunk references."""
-    files = sorted(gcs.glob(f"national-water-model/nwm.{day}/short_range/"
-                            f"nwm.t{hour}z.short_range.channel_rt.f*.conus.nc"))
-    with ThreadPoolExecutor(8) as pool:  # many small metadata requests: run them in parallel
-        singles = list(pool.map(index_one, files))
+    urls = nwmurl.generate_urls_operational(
+        start_date=f"{day}0000", end_date=f"{day}0000",  # YYYYMMDDHHMM; one day
+        fcst_cycle=[int(hour)], lead_time=list(range(1, 19)),  # issue time; forecast hours 1-18
+        varinput=1, geoinput=1, runinput=1,  # channel_rt (streamflow), CONUS, short_range
+        urlbaseinput=3,                      # https://storage.googleapis.com/national-water-model/ (no account or key)
+        meminput=None,                       # short_range has no ensemble members
+    )
+    with ThreadPoolExecutor(8) as pool:  # one request per file: run them in parallel
+        singles = list(pool.map(index_one, urls))
     return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
                            identical_dims=["feature_id", "reference_time", "crs"]).translate()
 
@@ -414,5 +417,6 @@ The results are a lesson in what a single satellite pass can and can't show:
 - [USGS Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) and [`pynhd`](https://docs.hyriver.io/readme/pynhd.html).
 - [NOAA National Water Prediction Service: Skagit River near Mount Vernon (MVEW1)](https://water.noaa.gov/gauges/MVEW1).
 - NWM forecast archive on Google Cloud: the public `national-water-model` bucket, readable without an account at `https://storage.googleapis.com/national-water-model/<path>` (the code above reads it this way); also on AWS as [NOAA National Water Model Short-Range Forecast (`noaa-nwm-pds`)](https://registry.opendata.aws/noaa-nwm-pds/), Registry of Open Data on AWS.
+- [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) (CIROH), which builds the NWM file URLs used above ([source](https://github.com/CIROH-UA/nwmurl)).
 - [`kerchunk` documentation](https://fsspec.github.io/kerchunk/). The reference-building pattern follows Module 3's NWM lesson ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 - [Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596), NASA Scientific Visualization Studio.
