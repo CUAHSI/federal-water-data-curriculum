@@ -98,7 +98,7 @@ text; don't rewrite sections that are already filled in.
 
       Final rows and numbers come from the spike — don't publish these expectations as findings. Learners see the
       recommendations, not our exploration. Also fix the broken install lines (`nwm-envpython3 -m`); setup → `environments/nwm.yml`.
-- [ ] **P4.2 03/01 SWOT** (branch `content/03-swot-raster`, PR #5): add Raster water-area discovery + download alongside
+- [x] **P4.2 03/01 SWOT** (branch `content/03-swot-raster`, [PR #47](https://github.com/CUAHSI/federal-water-data-curriculum/pull/47), draft): add Raster water-area discovery + download alongside
       RiverSP/hydrocron, with "which product for which question"; fix `river_datasets_all`; replace the expired signed
       CloudFront PDF link; setup → `environments/swot.yml`.
 - [ ] **P4.3 03/03 NWIS + 03/00 overview** (branch `content/03-nwis-overview`, PR #6): continuous values + field
