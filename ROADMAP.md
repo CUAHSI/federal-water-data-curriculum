@@ -149,7 +149,7 @@ USGS Water Data OGC APIs, API key signup, `dataRetrieval` API-limit notes, 2026 
 | 2026-10-07 | NWM: recommend routes that scale, by use case; package findings into Module 3, not the exploration itself. | Lindsay |
 | 2026-10-07 | Use the existing `dev` branch (fast-forwarded to `main`) as the integration branch. | Claude, per Lindsay's "develop or similar" |
 | 2026-10-07 | Don't recommend the CIROH NWM/BigQuery API; evaluate kerchunk vs. hydrotools (from the TODO in 03/02). | Team (PR #43) |
-| 2026-10-08 | Reserve the Skagit River / December 2025 flood for the Module 4 case study. Module 3 lessons will switch to other examples (the NWM page currently uses Skagit; flagged with a TODO, to change later). | Lindsay |
 | 2026-10-07 | Fork-and-pull: agent branches and PRs go directly to `upstream` (CUAHSI); `origin` (fork) unused. | Lindsay |
 | 2026-10-07 | Rough cut today in parallel lanes; polish later. Review Thu; Lindsay out Fri. | Lindsay |
 | 2026-10-07 | **Proposed — confirm:** agent commits locally on feature branches without asking (keeps one branch per PR moving without waiting on you); pushes/PRs still need approval. | Claude |
+| 2026-10-08 | Reserve the Skagit River / December 2025 flood for the Module 4 case study. Module 3 lessons will switch to other examples (the NWM page currently uses Skagit; flagged with a TODO, to change later). | Lindsay |
