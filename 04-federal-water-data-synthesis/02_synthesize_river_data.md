@@ -407,7 +407,7 @@ The results are a lesson in what a single satellite pass can and can't show:
 - [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html), PO.DAAC: Skagit River SWORD reach IDs.
 - [Hydrocron documentation](https://podaac.github.io/hydrocron/), PO.DAAC.
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/).
-- [SWOT mission and product documentation](https://podaac.jpl.nasa.gov/SWOT), PO.DAAC.
+- [NASA SWOT mission site](https://swot.jpl.nasa.gov/), NASA/JPL: mission overview, data and documents.
 - [SWOT Product Description: Level 2 KaRIn high rate river single pass vector product (L2_HR_RiverSP), JPL D-56413 Rev C, 24 Feb 2025](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf): `reach_q`, `reach_q_b`, `wse_u` and geoid definitions.
 - [`dataretrieval-python` documentation](https://doi-usgs.github.io/dataretrieval-python/) and the [USGS Water Data APIs](https://api.waterdata.usgs.gov/).
 - [USGS Water Science School: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured).
