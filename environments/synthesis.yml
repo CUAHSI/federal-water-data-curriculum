@@ -15,6 +15,7 @@ dependencies:
   - xarray
   - netcdf4
   - h5netcdf
+  - h5py
   - rioxarray
   - pyproj
   # NOAA NWM forecasts (kerchunk references over cloud storage) and NHD/NLDI reach lookups

@@ -153,11 +153,11 @@ The plot shows the flood rising from about 14,000 ft³/s in early December, the 
 
 ## Looking ahead: forecasts from NOAA NWM
 
-The gage tells us what happened. The National Water Model (NWM) tells us what was *expected* to happen, on every NHDPlus reach, gaged or not. NOAA runs a **short-range** forecast every hour that looks 18 hours ahead. Here we ask: in the day before the crest, what did those forecasts say the Skagit at Mount Vernon would do? (You can compare with the forecast hydrographs NOAA shows on its [National Water Prediction Service page for MVEW1](https://water.noaa.gov/gauges/MVEW1).)
+The gage tells us what happened. The National Water Model (NWM) tells us what was *expected* to happen, on every NHDPlus reach, gaged or not. NOAA runs a **short-range** forecast every hour that looks 18 hours ahead. Here we ask: in the day before the crest, what did those forecasts say the Skagit at Mount Vernon would do? (NOAA's [National Water Prediction Service page for MVEW1](https://water.noaa.gov/gauges/MVEW1) shows a different product: the official National Weather Service river forecast for this gauge, issued by the Northwest River Forecast Center, not raw NWM output. [PARTNER REVIEW: NOAA] confirm this description of the NWPS gauge forecast vs. NWM.)
 
-**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.7 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key. [TODO: confirm figures against the final 03/02 table before publishing.]
+**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)) [TODO: confirm 03/02 contains the access-route comparison and kerchunk example once ROADMAP P4.1 merges]. Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key. [TODO: confirm figures against the final 03/02 table before publishing.]
 
-The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. Building references reads a little metadata from each of the 18 hourly files per forecast; in our test all three took about a minute together.
+The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. Building references reads a little metadata from each of the 18 hourly files per forecast; in our test all three took under a minute together. [POLISH: timing depends on the connection; re-time before publishing.]
 
 ```python
 import fsspec
@@ -295,8 +295,6 @@ for g in skagit:
 Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass):
 
 ```python
-import xarray as xr
-
 files = earthaccess.download(skagit, local_path="swot_raster")
 before = xr.open_dataset([f for f in files if "20251201T" in str(f)][0])
 peak = xr.open_dataset([f for f in files if "20251212T" in str(f)][0])
@@ -365,6 +363,6 @@ The results are a lesson in what a single satellite pass can and can't show:
 - [USGS Water Science School: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured).
 - [USGS Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) and [`pynhd`](https://docs.hyriver.io/readme/pynhd.html).
 - [NOAA National Water Prediction Service: Skagit River near Mount Vernon (MVEW1)](https://water.noaa.gov/gauges/MVEW1).
-- NWM forecast archive on Google Cloud: [`national-water-model` bucket](https://console.cloud.google.com/storage/browser/national-water-model) (public, no key); also on AWS as [NOAA National Water Model Short-Range Forecast (`noaa-nwm-pds`)](https://registry.opendata.aws/noaa-nwm-pds/), Registry of Open Data on AWS.
+- NWM forecast archive on Google Cloud: the public `national-water-model` bucket, readable without an account at `https://storage.googleapis.com/national-water-model/<path>` (the code above reads it this way); also on AWS as [NOAA National Water Model Short-Range Forecast (`noaa-nwm-pds`)](https://registry.opendata.aws/noaa-nwm-pds/), Registry of Open Data on AWS.
 - [`kerchunk` documentation](https://fsspec.github.io/kerchunk/). The reference-building pattern follows Module 3's NWM lesson ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 - [Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596), NASA Scientific Visualization Studio.
