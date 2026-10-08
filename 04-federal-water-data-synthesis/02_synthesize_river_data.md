@@ -75,7 +75,7 @@ import requests
 HYDROCRON = "https://soto.podaac.earthdatacloud.nasa.gov/hydrocron/v1/timeseries"
 
 def get_swot_reach(reach_id, start, end,
-                   fields="reach_id,time_str,wse,wse_u,width,reach_q,p_lat,p_lon"):
+                   fields="reach_id,time_str,wse,wse_u,width,reach_q,reach_q_b,p_lat,p_lon"):
     """Return the SWOT RiverSP time series for one SWORD reach as a DataFrame."""
     params = {"feature": "Reach", "feature_id": reach_id, "start_time": start,
               "end_time": end, "output": "csv", "fields": fields}
@@ -87,7 +87,7 @@ def get_swot_reach(reach_id, start, end,
 # Lowest four SWORD reaches on the Skagit, upstream to downstream
 sword_reaches = ["78310800041", "78310800031", "78310800021", "78310800015"]
 swot = pd.concat([get_swot_reach(r, "2025-11-01T00:00:00Z", "2026-01-15T00:00:00Z")
-                  for r in sword_reaches])
+                  for r in sword_reaches], ignore_index=True)
 print(swot.groupby("reach_id")[["p_lat", "p_lon"]].first())
 ```
 
@@ -242,17 +242,62 @@ SWOT doesn't measure the river continuously. It passes over a given spot a few t
 
 ### River water surface elevation through the event (RiverSP)
 
-We already downloaded the RiverSP reach time series with `get_swot_reach()` while defining the area of interest. Missing passes come back with `time_str` of `no_data` and fill values, so we drop those. We keep `reach_q` up to 2: the **Data Quality Flag** `reach_q` runs from 0 (good) through 1 (suspect) and 2 (degraded) to 3 (bad) ([SWOT_L2_HR_RiverSP_D at PO.DAAC](https://podaac.jpl.nasa.gov/dataset/SWOT_L2_HR_RiverSP_D); see the product description document there) [TODO: verify direct link to the RiverSP product description PDF]. Most passes over the three lowest reaches are flagged 2 (degraded), so filtering to 0–1 would discard most of this event. [PARTNER REVIEW: NASA] confirm that `reach_q` ≤ 2 is a reasonable filter for a ~200 m wide tidal river.
+We already downloaded the RiverSP reach time series with `get_swot_reach()` while defining the area of interest. Missing passes come back with `time_str` of `no_data` and fill values, so we drop those first.
+
+Before using any values, decide which passes to trust. RiverSP gives three quality fields per reach and pass, all defined in the [RiverSP product description, JPL D-56413 Rev C](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf):
+
+- **`reach_q`**, the summary **Data Quality Flag** (§4.1.7, p. 28):
+  - **0 = good**
+  - **1 = suspect:** "may have large errors"
+  - **2 = degraded:** "very likely do have large errors"
+  - **3 = bad:** "may be nonsensical and should be ignored"
+- **`reach_q_b`**, an "expert" bit flag recording *why* `reach_q` is set (p. 28; bit names and values on pp. 60–61, details in Appendix C). For example, bit 2048 is `few_wse_observations`, 32768 is `partially_observed` and 262144 is `classification_qual_degraded`. Any bit at or above 262144 makes the pass at least degraded.
+- **`wse_u`**: the total (random plus systematic) uncertainty of the reach WSE in meters (p. 22).
+
+How many December passes would each threshold keep? The cross-tabulation below counts reach-passes by `reach_q`:
 
 ```python
 swot = swot[swot["time_str"] != "no_data"].copy()
 swot["time"] = pd.to_datetime(swot["time_str"])
+december = swot[(swot["time"] >= "2025-12-01") & (swot["time"] < "2026-01-01")]
+print(pd.crosstab(december["reach_id"], december["reach_q"], margins=True))
+print("Passes kept with reach_q <= 1:", (december["reach_q"] <= 1).sum(),
+      "| with reach_q <= 2:", (december["reach_q"] <= 2).sum())
+```
+
+December has 18 valid reach-passes: 4 flagged suspect (1) and 14 flagged degraded (2), with none good or bad. A strict `reach_q` ≤ 1 filter would leave **4 of 18**:
+- **No passes at all for the gage's reach (`…031`)** or for `…041`.
+- Only the 12 December pass for `…021`, which also loses its 1 December baseline, so we couldn't measure its rise.
+- Three passes for `…015` at the river mouth.
+
+That's why this lesson keeps **`reach_q` ≤ 2** and then checks the degraded values instead of trusting them: against the gage, and with `wse_u` and `reach_q_b`. [PARTNER REVIEW: NASA] confirm that keeping `reach_q` = 2 (degraded) passes, with the checks below, is reasonable for the ~200 m wide tidal lower Skagit, and whether NASA recommends a different threshold for flood analyses.
+
+```python
 swot = swot[swot["reach_q"] <= 2]
 # One row per overpass (rounded to the hour), one column per reach
 print(swot.pivot_table(index=swot["time"].dt.strftime("%Y-%m-%d %H:00"), columns="reach_id", values="wse"))
 ```
 
-`wse` is in meters above the EGM2008 geoid [TODO: verify against the RiverSP product description], `wse_u` is its uncertainty (m) and `width` is in meters. The pivot shows five December passes over these reaches: 1 Dec, 4 Dec, **12 Dec at 09:00 UTC (one hour after the crest)**, 22 Dec and 25 Dec. On 12 December only the two downstream reaches were observed. Reach `…031`, where the gage sits, has no data for that pass. On 4 December, reach `…031` reports 17.3 m (up from 5.5 m three days earlier) with a large uncertainty, while the gage was still at baseflow. Even a "degraded" flag can hide a bad value, so sanity-check SWOT against another source.
+`wse` is in meters above the EGM2008 geoid (PDD p. 29) and `width` is in meters. The pivot shows five December passes over these reaches: 1 Dec, 4 Dec, **12 Dec at 09:00 UTC (one hour after the crest)**, 22 Dec and 25 Dec. On 12 December only the two downstream reaches were observed. Reach `…031`, where the gage sits, has no data for that pass. On 4 December, reach `…031` reports 17.3 m, up from 5.5 m three days earlier, while the gage was still at baseflow. Its `reach_q` is 2, the same as most of the good-looking passes, so the summary flag alone can't separate it. The other two fields can. A few `reach_q_b` bits, decoded:
+
+```python
+reach_q_bits = {2048: "few_wse_observations", 32768: "partially_observed",
+                262144: "classification_qual_degraded", 524288: "geolocation_qual_degraded"}
+
+def describe_bits(value):
+    """Name the selected reach_q_b bits that are set in one flag value."""
+    return ", ".join(name for bit, name in reach_q_bits.items() if int(value) & bit)
+
+december = swot[(swot["time"] >= "2025-12-01") & (swot["time"] < "2026-01-01")]
+print(december[["reach_id", "time_str", "wse", "wse_u", "reach_q"]]
+      .assign(why=december["reach_q_b"].apply(describe_bits)).to_string(index=False))
+```
+
+All 14 degraded passes carry `classification_qual_degraded`, and 11 also carry `geolocation_qual_degraded`. These flags are common across this stretch of river, so they don't single out the bad values. Two things do:
+- **`few_wse_observations` is set on exactly the 4 and 25 December passes.** On 4 December the gage reach has a `wse_u` of 0.66 m, the largest of the month, and on 25 December 0.32 m. Typical values are about 0.1 m.
+- **The same passes look wrong against the gage** in the next step.
+
+`wse_u` and `reach_q_b` give you the reason; the gage confirms it. [PARTNER REVIEW: NASA] confirm this reading of `few_wse_observations` and `wse_u` for these passes.
 
 Because SWOT WSE and USGS gage height use different vertical references, we compare **changes** from a common baseline (the 1 December pass) instead of raw values. `stage_at()` looks up the gage height closest in time to each SWOT overpass:
 
@@ -267,11 +312,11 @@ first_pass = swot.loc[swot["time"].dt.strftime("%Y-%m-%d") == "2025-12-01", "tim
 gage_baseline = stage_at(first_pass)
 swot["gage_change_m"] = [stage_at(t) - gage_baseline for t in swot["time"]]
 dec = swot[(swot["time"] >= "2025-12-01") & (swot["time"] < "2026-01-01")]
-print(dec[["reach_id", "time", "wse_change_m", "gage_change_m", "reach_q"]]
+print(dec[["reach_id", "time", "wse_change_m", "gage_change_m", "reach_q", "wse_u"]]
       .round({"wse_change_m": 2, "gage_change_m": 2}).to_string(index=False))
 ```
 
-Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change, with `reach_q` = 2. Treat single degraded values with caution. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach. [PARTNER REVIEW: NASA] confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
+Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change. Those are the passes flagged `few_wse_observations` (and `partially_observed`), and the gage reach's `wse_u` (0.32 m) is about three times its usual value. Treat single degraded values with caution, and let `wse_u` and `reach_q_b` tell you which ones to doubt first. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach. [PARTNER REVIEW: NASA] confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
 
 ### Water extent before and near the peak (Raster)
 
@@ -359,6 +404,7 @@ The results are a lesson in what a single satellite pass can and can't show:
 - [Hydrocron documentation](https://podaac.github.io/hydrocron/), PO.DAAC.
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/).
 - [SWOT mission and product documentation](https://podaac.jpl.nasa.gov/SWOT), PO.DAAC.
+- [SWOT Product Description: Level 2 KaRIn high rate river single pass vector product (L2_HR_RiverSP), JPL D-56413 Rev C, 24 Feb 2025](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf): `reach_q`, `reach_q_b`, `wse_u` and geoid definitions.
 - [`dataretrieval-python` documentation](https://doi-usgs.github.io/dataretrieval-python/) and the [USGS Water Data APIs](https://api.waterdata.usgs.gov/).
 - [USGS Water Science School: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured).
 - [USGS Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) and [`pynhd`](https://docs.hyriver.io/readme/pynhd.html).
