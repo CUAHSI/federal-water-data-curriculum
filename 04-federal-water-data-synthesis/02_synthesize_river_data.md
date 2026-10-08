@@ -153,17 +153,85 @@ The plot shows the flood rising from about 14,000 ft³/s in early December, the 
 
 ## Looking ahead: forecasts from NOAA NWM
 
-:::{note} Stub: waiting on the NWM access-route measurements
-This section will be written from Lane A's access-route measurements (ROADMAP P1.3, `spike/nwm/REPORT.md`), which weren't ready when this rough cut was drafted.
-:::
+The gage tells us what happened. The National Water Model (NWM) tells us what was *expected* to happen, on every NHDPlus reach, gaged or not. NOAA runs a **short-range** forecast every hour that looks 18 hours ahead. Here we ask: in the day before the crest, what did those forecasts say the Skagit at Mount Vernon would do? (You can compare with the forecast hydrographs NOAA shows on its [National Water Prediction Service page for MVEW1](https://water.noaa.gov/gauges/MVEW1).)
 
-[TODO: NWM section, waiting on P1.3 results. Planned content:]
+**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.7 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key. [TODO: confirm figures against the final 03/02 table before publishing.]
 
-- **Why forecasts:** NWM short- and medium-range forecasts at COMID `24270288` show what forecasters' model guidance said *before* the 12 December crest. That fills the gap between gages and adds a forward look.
-- **How the forecasts changed approaching the peak:** pull 2–3 short-range reference times before 08:00 UTC 12 Dec plus one medium-range member, then overlay them on the USGS observations from the previous section.
-- **Access route:** use the no-key route that P1.3 recommends for past forecasts (expected: `hydrotools` GCP archive or kerchunk references). The NOAA NWM API only keeps about three days of forecasts [TODO: verify retention window from P1.3], so it can't reach December 2025.
-- **One-paragraph pointer** to Module 3's NWM access-route guidance ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md); a "Which access route for which use case?" table is being added there in ROADMAP P4.1), covering the cost of pulling whole CONUS files and when to use kerchunk.
-- Data viewer for comparison: [NOAA National Water Prediction Service — MVEW1](https://water.noaa.gov/gauges/MVEW1).
+The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. Building references reads a little metadata from each of the 18 hourly files per forecast; in our test all three took about a minute together.
+
+```python
+import fsspec
+from concurrent.futures import ThreadPoolExecutor
+from kerchunk.hdf import SingleHdf5ToZarr
+from kerchunk.combine import MultiZarrToZarr
+
+gcs = fsspec.filesystem("gcs", token="anon")  # public bucket: no account or key
+
+def build_refs(day, hour):
+    """Index the 18 hourly files of one NWM short-range forecast and return combined kerchunk references."""
+    files = sorted(gcs.glob(f"national-water-model/nwm.{day}/short_range/"
+                            f"nwm.t{hour}z.short_range.channel_rt.f*.conus.nc"))
+
+    def index_one(path):
+        with gcs.open(path, "rb") as f:
+            url = "https://storage.googleapis.com/" + path  # read the data later over plain HTTPS
+            return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
+
+    with ThreadPoolExecutor(8) as pool:  # many small metadata requests: run them in parallel
+        singles = list(pool.map(index_one, files))
+    return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
+                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+# Three short-range forecasts issued before the 08:00 UTC 12 Dec crest (YYYYMMDD, HH in UTC)
+issue_times = [("20251211", "00"), ("20251211", "12"), ("20251211", "18")]
+refs = {f"{day} {hour}Z": build_refs(day, hour) for day, hour in issue_times}
+print({k: len(v["refs"]) for k, v in refs.items()})
+```
+
+Each forecast becomes a dictionary of references (`refs`), about 20 KB of JSON per forecast, which you could save and reuse instead of rebuilding. Next we open each forecast lazily with `xarray` and pull out our reach. Selecting `feature_id=comid` reads one ~1.8 MB `streamflow` chunk per forecast hour, the chunk holding that hour for every reach in the country, rather than the whole file.
+
+```python
+import xarray as xr
+
+def open_refs(r):
+    """Open kerchunk references lazily: data are read only when values are needed."""
+    return xr.open_dataset("reference://", engine="zarr", chunks={}, consolidated=False, zarr_format=2,
+                           storage_options={"fo": r, "remote_protocol": "https",
+                                            "remote_options": {"asynchronous": True}})
+
+forecasts = {}
+for issued, r in refs.items():
+    q = open_refs(r)["streamflow"].sel(feature_id=comid).load()
+    forecasts[issued] = q.to_series() * 35.3147  # m³/s -> ft³/s, to match USGS
+    print(issued, "| units:", q.attrs.get("units"), "| max:", f"{forecasts[issued].max():,.0f} ft³/s",
+          "at", forecasts[issued].idxmax())
+```
+
+The **Variable** is `streamflow`, the **Variable unit** is `m3 s-1` (we convert to ft³/s to match USGS), and the time index is the forecast's valid time in UTC. NWM output has no per-value **Data Quality Flags** like USGS's `approval_status` or SWOT's `reach_q`. [PARTNER REVIEW: NOAA] confirm there is no per-value quality flag in NWM channel output.
+
+Finally, we overlay the three forecasts on the USGS observations from earlier:
+
+```python
+fig, ax = plt.subplots(figsize=(10, 4))
+obs = discharge.set_index("time")["value"]["2025-12-10":"2025-12-13"]
+ax.plot(obs.index, obs.values, "k", lw=2, label="USGS observed")
+for issued, series in forecasts.items():
+    ax.plot(series.index.tz_localize("UTC"), series.values, lw=1.5, label=f"NWM short range, issued {issued}")
+ax.set_ylabel("Discharge (ft³/s)")
+ax.set_title(f"NWM forecasts at COMID {comid} vs. USGS 12200500")
+ax.legend()
+plt.show()
+```
+
+All three forecasts called for a bigger flood, sooner, than the gage recorded:
+
+| Forecast issued (UTC) | Forecast peak (ft³/s) | Forecast peak time (UTC) | USGS observed at that time (ft³/s) |
+|---|---|---|---|
+| 11 Dec 00Z | 142,000 | 11 Dec 16:00 | 87,500 |
+| 11 Dec 12Z | 160,000 | 12 Dec 00:00 | 116,000 |
+| 11 Dec 18Z | 154,000 | 12 Dec 04:00 | 127,000 |
+
+The observed crest was 133,000 ft³/s at 08:00 UTC on 12 December. Two cautions before reading this as "the model was wrong by 20%". The observed peak is itself computed from the rating curve above the highest flow measured in this flood (see the USGS section). And an NWM reach value is a model estimate for a whole reach, not a point measurement. What these forecasts did give, many hours ahead, is a consistent signal of an exceptional flood on a reach that, unlike most NWM reaches, also has a gage to check against. [PARTNER REVIEW: NOAA] interpretation of the short-range forecasts against the observed hydrograph for this event. [POLISH: add a medium-range member to show multi-day lead time; commit a static copy of the figure with alt text.]
 
 ## A view from above: surface water from NASA SWOT
 
@@ -278,10 +346,10 @@ The results are a lesson in what a single satellite pass can and can't show:
 
 ## Conclusions
 
-[POLISH: tighten once the NWM section is in.]
+[POLISH: tighten prose.]
 
 - **USGS** gives the most reliable, highest-frequency record *at a point*: the crest timing (08:00–08:15 UTC on 12 Dec), stage and discharge. Its field measurements show how far the flood peak was extrapolated beyond direct measurement.
-- **NOAA NWM** forecasts (section pending) show what the model expected ahead of the crest, on every reach, including reaches with no gage.
+- **NOAA NWM** short-range forecasts gave many hours' warning of an exceptional flood. At this reach they ran high and early, peaking at 142,000–160,000 ft³/s against an observed 133,000. They cover every reach, including reaches with no gage, and past forecasts can be read cheaply from the cloud with kerchunk references.
 - **NASA SWOT** adds a spatial view. RiverSP's WSE changes matched the gage's rise and showed it shrinking toward the bay. The Raster product can map water extent, but only when a pass lines up with the flood. Here the one near-peak pass stopped short of Mount Vernon.
 - Linking the products takes deliberate work: three Location Identifiers (gage ID, COMID, SWORD reach), different vertical references (gage datum vs. geoid), different time steps (15-minute, hourly forecasts, a few passes per cycle) and different Data Quality Flags. Each product fills gaps the others leave.
 
@@ -297,4 +365,6 @@ The results are a lesson in what a single satellite pass can and can't show:
 - [USGS Water Science School: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured).
 - [USGS Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) and [`pynhd`](https://docs.hyriver.io/readme/pynhd.html).
 - [NOAA National Water Prediction Service: Skagit River near Mount Vernon (MVEW1)](https://water.noaa.gov/gauges/MVEW1).
+- NWM forecast archive on Google Cloud: [`national-water-model` bucket](https://console.cloud.google.com/storage/browser/national-water-model) (public, no key); also on AWS as [NOAA National Water Model Short-Range Forecast (`noaa-nwm-pds`)](https://registry.opendata.aws/noaa-nwm-pds/), Registry of Open Data on AWS.
+- [`kerchunk` documentation](https://fsspec.github.io/kerchunk/). The reference-building pattern follows Module 3's NWM lesson ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 - [Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596), NASA Scientific Visualization Studio.
