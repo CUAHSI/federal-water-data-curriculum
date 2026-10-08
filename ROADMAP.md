@@ -153,3 +153,4 @@ USGS Water Data OGC APIs, API key signup, `dataRetrieval` API-limit notes, 2026 
 | 2026-10-07 | Rough cut today in parallel lanes; polish later. Review Thu; Lindsay out Fri. | Lindsay |
 | 2026-10-07 | **Proposed — confirm:** agent commits locally on feature branches without asking (keeps one branch per PR moving without waiting on you); pushes/PRs still need approval. | Claude |
 | 2026-10-08 | Reserve the Skagit River / December 2025 flood for the Module 4 case study. Module 3 lessons will switch to other examples (the NWM page currently uses Skagit; flagged with a TODO, to change later). | Lindsay |
+| 2026-10-08 | List the CIROH NWM BigQuery API in the 03/02 access-route table as an option for researchers on CIROH projects (access by request, linked to CIROH), not as a general recommendation. Narrows the 2026-10-07 BigQuery decision. | Lindsay |

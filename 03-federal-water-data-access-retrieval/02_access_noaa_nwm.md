@@ -10,7 +10,7 @@ If you already know your COMID(s), you can skip programmatic data discovery.
 (nwm-access-routes)=
 ## Which access route for which use case?
 
-NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an API key.
+NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. Except for the CIROH BigQuery API (last row), none of these routes needs an API key.
 
 | Use case | Recommended route | Key? | Caveat |
 |---|---|---|---|
@@ -18,6 +18,7 @@ NWM output is big: every forecast hour is a file covering all ~2.8 million reach
 | Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole CONUS files (~235 MB per short-range run); cost grows with the number of runs, not reaches |
 | Past forecasts for many reaches or a region, or many issue times | [Kerchunk references](#nwm-kerchunk) + `xarray`/`dask`, ideally run in the cloud | No | Lazy reads, ~7× fewer bytes and less memory than whole files, but each read is still a CONUS-wide chunk; building references is a one-time step |
 | Long historical record (simulation, not forecasts) | NWM retrospective (cloud Zarr) | No | Different product (see [Temporal scaling](#nwm-temporal-scaling)) |
+| Researchers working on CIROH projects | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
 
 The numbers behind these recommendations are in [Why NWM downloads cost what they cost](#nwm-cost).
 
@@ -444,6 +445,7 @@ Start with **discovery** to build your list of COMIDs (e.g. all reaches upstream
 * Tuhinanshu, T. (2023), *Using Kerchunk to make NOAA's National Water Model dataset more accessible*, Element 84: https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/
 * USGS NWIS (recommended source for historical, gauged streamflow): https://waterdata.usgs.gov/nwis
 * NWM retrospective archive (Zarr, AWS, for the ungauged-reach case only): https://registry.opendata.aws/nwm-archive/
+* CIROH NWM BigQuery API (CIROH members and partners with active CIROH projects; access by request): https://hub.ciroh.org/docs/products/data-management/bigquery-api/
 * Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP). [TODO: verify license/attribution wording for adapted hydrotools examples]
 
 ## Best practices FAQs
