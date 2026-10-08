@@ -12,7 +12,7 @@ This lesson uses two SWOT hydrology products. They answer different questions, s
 | How did the water surface elevation (and width) of a river reach change over time? | River single-pass vector (RiverSP) | `SWOT_L2_HR_RiverSP_reach_D` / `_node_D` | One row per reach (~10 km) or node (~200 m) per overpass: `wse`, `width`, quality flags | `hydrocron` for time series at a few reaches; `earthaccess` for every reach in an area |
 | Where was there water, and how much area did it cover, on a given overpass? | Water mask raster (Raster) | `SWOT_L2_HR_Raster_100m_D` (also `_250m_D`) | A gridded (UTM, 100 m or 250 m) scene per overpass: `water_area`, `water_frac`, `wse` and their quality flags | `earthaccess` + `xarray` |
 
-RiverSP is tied to the [SWOT River Database (SWORD)](https://www.swordexplorer.com/) river centerlines, so it describes the channel. It does not tell you how far water spread out of bank. Raster is not tied to a river network, so it can show water anywhere in the scene, including floodplains. We use both for the December 2025 Skagit River flood in [Module 4](../04-federal-water-data-synthesis/02_synthesize_river_data.md).
+RiverSP is tied to the [SWOT River Database (SWORD)](https://www.swordexplorer.com/) river centerlines, so it describes the channel. It does not tell you how far water spread out of bank. Raster is not tied to a river network, so it can show water anywhere in the scene, including floodplains. This lesson uses both on the upper Mississippi River in Minnesota. [Module 4](../04-federal-water-data-synthesis/02_synthesize_river_data.md) uses both again in a flood case study.
 [PARTNER REVIEW: NASA] Confirm this "which product for which question" framing and the description of what RiverSP does not capture out of bank.
 
 ## Tools and environment setup
@@ -130,53 +130,88 @@ A few things to know about `search_data` (see the [`earthaccess` API docs](https
 len(earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_rech_D", count=5))  # 0
 ```
 
-The water-area product is discovered the same way. Here we search the 100 m Raster product around USGS gage 12200500 on the Skagit River near Mount Vernon, WA, for the weeks around the December 2025 flood that we study in Module 4:
+**A granule in your results is not a guaranteed observation of your site.** Each RiverSP granule covers a whole pass across a continent, so its footprint "intersects" the headwaters box even when SWOT measured no river there. Download one and look:
 
 ```python
-# A small box (about 3 km across) around USGS 12200500, Skagit River near Mount Vernon, WA:
-# the gage location (-122.3354, 48.4448) plus or minus 0.02 degrees
-skagit_bbox = (-122.355, 48.425, -122.315, 48.465)
+import geopandas as gpd
+from shapely.geometry import box
 
-skagit_raster = earthaccess.search_data(
+files = earthaccess.download(mississippi_headwaters_2026[:1], local_path="data/swot")
+reaches = gpd.read_file(files[0])  # geopandas reads the zipped shapefile directly
+print(len(reaches), "reaches; extent", reaches.total_bounds.round(1))
+print(int(reaches.intersects(box(-95.26, 47.17, -95.15, 47.25)).sum()), "reaches inside the headwaters box")
+```
+
+```
+650 reaches; extent [-109.4   25.3  -94.8   59.7]
+0 reaches inside the headwaters box
+```
+
+None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The reason is not SWOT's orbit: the SWOT River Database (SWORD) does not include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN. [TODO: verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer]
+
+For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the USGS lesson uses too. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example]
+
+The water-area product is discovered the same way. Here we search the 100 m Raster product in a small box around the gage, for the weeks around the snowmelt peak:
+
+```python
+# USGS 05227500, Mississippi River at Aitkin, MN (coordinates from its USGS monitoring-location record),
+# plus or minus 0.02 degrees: a box about 3 km across
+aitkin_lon, aitkin_lat = -93.7074, 46.5407
+aitkin_bbox = (aitkin_lon - 0.02, aitkin_lat - 0.02, aitkin_lon + 0.02, aitkin_lat + 0.02)
+
+aitkin_raster = earthaccess.search_data(
     short_name="SWOT_L2_HR_Raster_100m_D",
-    bounding_box=skagit_bbox,
-    temporal=("2025-11-15", "2025-12-31"),
+    bounding_box=aitkin_bbox,
+    temporal=("2026-04-15", "2026-05-10"),
 )
-print(len(skagit_raster), "granules")
-print(sorted({g["umm"]["GranuleUR"].split("_")[5] for g in skagit_raster}))  # the UTM zone + band of each scene
+print(len(aitkin_raster), "granules")
+print(sorted({g["umm"]["GranuleUR"].split("_")[5] for g in aitkin_raster}))  # the UTM zone + band of each scene
 ```
 
 ```
-49 granules
-['UTM01C', 'UTM01W', 'UTM10U', 'UTM60C', 'UTM60V', 'UTM60W']
+39 granules
+['UTM01C', 'UTM01W', 'UTM15T', 'UTM60C', 'UTM60F', 'UTM60K', 'UTM60L', 'UTM60U', 'UTM60V', 'UTM60W']
 ```
 
-About 50 granules (49 at time of writing) is far more than SWOT could have seen over one gage in six weeks. The UTM zone in each name gives the problem away: Mount Vernon, WA is in UTM zone **10**, but most results are in zones 01 and 60, on either side of the antimeridian (180° longitude). Their footprints wrap around the globe, so they falsely "intersect" almost any bounding box. Always sanity-check search results before downloading: here that would have been about 3 GB of files from the wrong side of the planet. Keep only the zone-10 scenes, and where a scene was processed more than once, keep the highest processing counter:
+Thirty-nine granules in less than four weeks is far more than SWOT could have seen over one gage. The UTM zone in each name gives the problem away. Aitkin is in UTM zone **15**, but most results are in zones 01 and 60, on either side of the antimeridian (180° longitude). The metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost any bounding box. Always sanity-check search results before downloading. Here, downloading everything would have meant 2.7 GB, including 1.5 GB of files from the wrong side of the planet (at time of writing).
+
+A more reliable check than the bounding box is each granule's footprint _polygon_ (`GPolygons` in its metadata). The false matches have no polygon, only a global rectangle. Even among the zone-15 scenes, neighboring scenes from the same pass (for example `036F` and `037F`) both match the box, but only one of them actually contains the gage. The function below keeps the granules whose footprint polygon contains the gage, then keeps only the latest processing of each scene:
 
 ```python
-# Keep scenes in UTM zone 10 (the Skagit), then keep the latest processing of each scene
-zone10 = [g for g in skagit_raster if "_UTM10" in g["umm"]["GranuleUR"]]
+from shapely.geometry import Point, Polygon
+
+def footprint_covers(granule, lon, lat):
+    """True if one of the granule's footprint polygons contains the point (lon, lat)."""
+    geometry = granule["umm"]["SpatialExtent"]["HorizontalSpatialDomain"]["Geometry"]
+    for polygon in geometry.get("GPolygons", []):
+        points = [(p["Longitude"], p["Latitude"]) for p in polygon["Boundary"]["Points"]]
+        if Polygon(points).contains(Point(lon, lat)):
+            return True
+    return False
+
+covering = [g for g in aitkin_raster if footprint_covers(g, aitkin_lon, aitkin_lat)]
+
+# Where a scene was processed more than once, keep the highest processing counter
 latest = {}
-for g in sorted(zone10, key=lambda g: g["umm"]["GranuleUR"]):
+for g in sorted(covering, key=lambda g: g["umm"]["GranuleUR"]):
     scene = g["umm"]["GranuleUR"].rsplit("_", 2)[0]  # name without the processing counter
     latest[scene] = g
-skagit_raster = list(latest.values())
-for g in skagit_raster:
+aitkin_raster = list(latest.values())
+for g in aitkin_raster:
     print(g["umm"]["GranuleUR"], round(g.size, 1), "MB")
 ```
 
 ```
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_041_552_035F_20251121T121537_20251121T121558_PID0_01_swot 65.1 MB
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_042_246_035F_20251201T103754_20251201T103815_PID0_01_swot 62.8 MB
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_042_345_120F_20251204T235932_20251204T235953_PID0_01_swot 67.4 MB
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_042_552_035F_20251212T090040_20251212T090101_PID0_01_swot 68.8 MB
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_043_246_035F_20251222T072258_20251222T072319_PID0_02_swot 62.7 MB
-SWOT_L2_HR_Raster_100m_UTM10U_N_x_x_x_043_345_120F_20251225T204438_20251225T204459_PID0_01_swot 68.1 MB
+SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_048_522_037F_20260415T114827_20260415T114849_PID0_01_swot 82.1 MB
+SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_049_009_118F_20260418T010816_20260418T010837_PID0_01_swot 85.1 MB
+SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_049_216_036F_20260425T101025_20260425T101046_PID0_01_swot 80.1 MB
+SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_049_522_037F_20260506T083332_20260506T083353_PID0_03_swot 83.4 MB
+SWOT_L2_HR_Raster_100m_UTM15T_N_x_x_x_050_009_118F_20260508T215320_20260508T215341_PID0_01_swot 83.8 MB
 ```
 
-The Raster name adds the UTM zone and latitude band (`UTM10U`) and a scene number (`035F`, `120F`) to the cycle, pass and time.
+The Raster name adds the UTM zone and latitude band (`UTM15T`) and a scene number (for example `036F`) to the cycle, pass and time.
 
-[PARTNER REVIEW: NASA] Is the antimeridian false-match behavior a known CMR/`earthaccess` issue with a recommended fix (for example, a polygon search, or a granule-name filter like the one above)?
+[PARTNER REVIEW: NASA] Is the antimeridian false-match behavior a known CMR/`earthaccess` issue, and is checking the granule's `GPolygons` footprint (as above) the recommended workaround?
 
 Behind the scenes, `earthaccess` is querying NASA's [Common Metadata Repository (CMR)](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html) and, when you download, reading from the PO.DAAC cloud archive in Amazon Web Services (AWS) `us-west-2`. You don't need to know either system to use `earthaccess`, but it helps when you read other tutorials that call them directly.
 
@@ -191,66 +226,69 @@ Discovery told us _which_ granules exist. Now we get the data. The two tools beh
 
 `earthaccess` works for every SWOT product. The file format depends on the product: RiverSP granules are zipped shapefiles (read them with `geopandas`), and Raster granules are NetCDF files (read them with `xarray`).
 
-**RiverSP reaches.** We download one RiverSP reach granule over the Skagit gage and find the SWORD reach closest to it. This is also how you find a `reach_id` to use with `hydrocron` below if you don't already have one. (You can also look up reach IDs interactively in [SWORD Explorer](https://www.swordexplorer.com/).) The gage coordinates (-122.3354, 48.4448) come from the [USGS monitoring-location record for 12200500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-12200500). We download only the first granule, which is the December 1 overpass on pass 246; printing its name before downloading confirms what you are getting.
+**RiverSP reaches.** We download one RiverSP reach granule from an overpass that saw the Aitkin gage, and find the SWORD reach closest to the gage. RiverSP granule metadata only has a bounding rectangle for the whole pass, so `footprint_covers` can't screen them. Instead we keep the RiverSP granules from the same cycle and pass as the Raster scenes that do cover the gage. This is also how you find a `reach_id` to use with `hydrocron` below if you don't already have one. (You can also look up reach IDs interactively in [SWORD Explorer](https://www.swordexplorer.com/).) The gage coordinates come from the [USGS monitoring-location record for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-05227500). Printing the granule name before downloading confirms what you are getting.
 
 ```python
-import geopandas as gpd
-from shapely.geometry import Point
-
-skagit_reach_granules = earthaccess.search_data(
+aitkin_reach_granules = earthaccess.search_data(
     short_name="SWOT_L2_HR_RiverSP_reach_D",
-    bounding_box=skagit_bbox,
-    temporal=("2025-12-01", "2025-12-31"),
+    bounding_box=aitkin_bbox,
+    temporal=("2026-04-15", "2026-05-10"),
 )
-print(len(skagit_reach_granules), "granules; downloading", skagit_reach_granules[0]["umm"]["GranuleUR"])
-files = earthaccess.download(skagit_reach_granules[:1], local_path="data/swot")
+# (cycle, pass) of the Raster scenes that cover the gage, e.g. ("049", "009")
+seen_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in aitkin_raster}
+covering = [g for g in aitkin_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in seen_passes]
+print(len(aitkin_reach_granules), "granules found,", len(covering), "from passes that saw the gage; downloading", covering[0]["umm"]["GranuleUR"])
+files = earthaccess.download(covering[:1], local_path="data/swot")
 
-reaches = gpd.read_file(files[0])  # geopandas reads the zipped shapefile directly
+reaches = gpd.read_file(files[0])
 print(len(reaches), "reaches in this granule")
 
-# Distance from each reach to the gage, in meters (UTM zone 10N)
-gage = gpd.GeoSeries([Point(-122.3354, 48.4448)], crs="EPSG:4326").to_crs(32610).iloc[0]
-reaches_utm = reaches.to_crs(32610)
+# Distance from each reach to the gage, in meters (UTM zone 15N)
+gage = gpd.GeoSeries([Point(aitkin_lon, aitkin_lat)], crs="EPSG:4326").to_crs(32615).iloc[0]
+reaches_utm = reaches.to_crs(32615)
 reaches_utm["dist_to_gage_m"] = reaches_utm.distance(gage)
-reaches_utm.nsmallest(3, "dist_to_gage_m")[["reach_id", "river_name", "dist_to_gage_m", "wse", "width", "reach_q", "time_str"]]
+reaches_utm.nsmallest(3, "dist_to_gage_m")[["reach_id", "river_name", "dist_to_gage_m", "p_width", "wse", "width", "reach_q", "time_str"]]
 ```
 
 ```
-22 granules; downloading SWOT_L2_HR_RiverSP_Reach_042_246_NA_20251201T103443_20251201T104249_PID0_01_swot
-303 reaches in this granule
-        reach_id    river_name  dist_to_gage_m     wse       width  reach_q              time_str
-117  78310800031  Skagit River        3.386485  5.4848  189.069678        2  2025-12-01T10:37:59Z
-116  78310800021  Skagit River     1151.133741  3.1370  189.720561        2  2025-12-01T10:37:59Z
-103  78310700025       no_data     6776.970430  1.3255  120.554252        1  2025-12-01T10:38:01Z
+44 granules found, 7 from passes that saw the gage; downloading SWOT_L2_HR_RiverSP_Reach_048_522_NA_20260415T114417_20260415T115921_PID0_01_swot
+1371 reaches in this granule
+         reach_id         river_name  dist_to_gage_m  p_width       wse      width  reach_q              time_str
+1255  74289700111  Mississippi River       38.873441     36.0  361.5908   3.333258        2  2026-04-15T11:48:30Z
+1254  74289700101  Mississippi River     4054.308625     36.0  361.1173  11.358914        2  2026-04-15T11:48:29Z
+1256  74289700121  Mississippi River     4855.032971     42.0  362.5025  10.784087        2  2026-04-15T11:48:29Z
 ```
 
-The gage sits on reach **`78310800031`**, the Skagit River reach just upstream of the delta (it is one of the reaches used in the PO.DAAC Hydrocron tutorial listed under Further reading). The granule itself holds every reach SWOT observed along this pass, 303 in total. RiverSP granules carry many more columns than shown here (about 130); the product description documents (PDDs), linked from the [PO.DAAC Cookbook SWOT page](https://podaac.github.io/tutorials/quarto_text/SWOT.html), define them all.
+The gage sits on reach **`74289700111`**, about 40 m from its centerline. The granule itself holds every reach SWOT observed along this pass across North America, 1,371 in total. RiverSP granules carry many more columns than shown here (about 130); the product description documents (PDDs), linked from the [PO.DAAC Cookbook SWOT page](https://podaac.github.io/tutorials/quarto_text/SWOT.html), define them all.
+
+Notice `p_width`: SWORD expects this reach to be about 36 m wide. That is a narrow river for SWOT, close to the size it can resolve (see Module 2), and the measured `width` of 3 m on this overpass is not believable. Keep that in mind when we look at the time series below.
 
 Each row is one SWORD reach seen on this overpass. Key columns:
+- `reach_id` is the **Location Identifier**.
 - `wse` (water surface elevation) and `width` are the main **Variables**. Their **Variable unit** is meters; `wse` is relative to the EGM2008 geoid.
-- `wse` (water surface elevation, meters above the EGM2008 geoid) and `width` (meters) are the main **Variables**.
 - `wse_u` and `width_u` give each value's uncertainty.
+- `p_width` is SWORD's prior (expected) width for the reach, useful for judging whether a measured `width` is plausible.
 - `reach_q` is the summary **Data Quality Flag**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - Missing values are stored as `-999999999999`, not as `NaN`. Filter them out before plotting.
 
 [PARTNER REVIEW: NASA] Confirm the reach_q value meanings and the EGM2008 vertical reference for Version D RiverSP `wse`.
 
-**Raster water area.** Next, download the six Raster granules we kept (about 400 MB in total) and open one with `xarray`. Each file is a fixed scene, about 160 km on a side, on a 100 m UTM grid. A single file therefore covers the whole lower Skagit floodplain, if the overpass saw it.
+**Raster water area.** Next, download the Raster granules we kept and open one with `xarray`. Each file is a fixed scene, about 160 km on a side, on a 100 m UTM grid.
 
 ```python
 import xarray as xr
 
-raster_files = earthaccess.download(skagit_raster, local_path="data/swot")
-ds = xr.open_dataset(raster_files[1])  # the December 1 overpass
+raster_files = earthaccess.download(aitkin_raster, local_path="data/swot")
+ds = xr.open_dataset(raster_files[0])
 ds[["water_area", "water_frac", "wse", "water_area_qual"]]
 ```
 
 ```
-<xarray.Dataset> Size: 41MB
-Dimensions:          (y: 1596, x: 1597)
+<xarray.Dataset> Size: 39MB
+Dimensions:          (y: 1560, x: 1560)
 Coordinates:
-  * y                (y) float64 13kB 5.261e+06 5.261e+06 ... 5.42e+06 5.42e+06
-  * x                (x) float64 13kB 4.953e+05 4.954e+05 ... 6.549e+05
+  * y                (y) float64 12kB 5.016e+06 5.016e+06 ... 5.172e+06
+  * x                (x) float64 12kB 3.48e+05 3.481e+05 ... 5.038e+05 5.039e+05
 Data variables:
     water_area       (y, x) float32 10MB ...
     water_frac       (y, x) float32 10MB ...
@@ -261,10 +299,10 @@ Attributes: (12/49)
     title:                         Level 2 KaRIn High Rate Raster Data Product
     source:                        Ka-band radar interferometer
     ...                            ...
-    x_min:                         495300.0
-    x_max:                         654900.0
-    y_min:                         5260800.0
-    y_max:                         5420300.0
+    x_min:                         348000.0
+    x_max:                         503900.0
+    y_min:                         5016100.0
+    y_max:                         5172000.0
     institution:                   CNES
 ```
 
@@ -284,7 +322,7 @@ To compare overpasses, add up `water_area` in a 10 km × 10 km box around the ga
 import pandas as pd
 import pyproj
 
-def water_area_near(path, lon=-122.3354, lat=48.4448, half_width_m=5000):
+def water_area_near(path, lon=aitkin_lon, lat=aitkin_lat, half_width_m=5000):
     """Open-water area (km^2) in a square box centred on (lon, lat), using good/suspect pixels only."""
     ds = xr.open_dataset(path)
     utm = pyproj.CRS.from_wkt(ds["crs"].attrs["crs_wkt"])
@@ -303,30 +341,25 @@ pd.DataFrame([water_area_near(f) for f in raster_files])
 
 ```
                time  pixels_observed  pixels_flagged_bad  water_area_km2
-0  2025-11-21T12:15                0                   0             0.0
-1  2025-12-01T10:37             6175                   3            17.9
-2  2025-12-04T23:59             8208                1318            64.4
-3  2025-12-12T09:00                0                   0             0.0
-4  2025-12-22T07:22             7683                   2            35.5
-5  2025-12-25T20:44             8414                1595            71.2
+0  2026-04-15T11:48                5304                   0             4.6
+1  2026-04-18T01:08                6835                   3            20.3
+2  2026-04-25T10:10                3534                   0             2.2
+3  2026-05-06T08:33                5807                   0             6.1
+4  2026-05-08T21:53                6255                   0            15.3
 ```
 
-There are three lessons in this small table:
+The 10 km box holds 10,000 pixels, but no overpass observed all of them (`pixels_observed`). The numbers also jump between overpasses in a way discharge can't explain. USGS daily mean discharge at Aitkin rose from about 2,100 ft³/s on April 15 to a peak of 4,950 ft³/s on May 1, then fell to about 3,500 ft³/s by May 8. Yet the April 18 and May 8 scenes (pass 009, scene `118F`) show three to four times more water than the April 15 and May 6 scenes (pass 522, scene `037F`). Two lessons follow:
 
-1. **A granule in your search results is not a guaranteed observation of your site.** The November 21 and December 12 scenes (pass 552) intersect the search box in their metadata, but neither has a single observed pixel within 5 km of the gage. Unfortunately, December 12 was the day of the flood peak (USGS daily mean discharge of about 112,000 ft³/s). SWOT did not see the gage reach that day.
-2. **Compare like with like.** The gage sits in the overlap of two different passes: pass 246 (scene `035F`; Dec 1 and Dec 22) and pass 345 (scene `120F`; Dec 4 and Dec 25). The pass-345 scenes show far more water and many more bad-flagged pixels. On December 4, USGS reported a daily mean of about 13,600 ft³/s, slightly *less* than on December 1 (about 14,200 ft³/s), yet that scene shows 64 km² of water against 18 km² on December 1. Within pass 246, water area roughly doubles from December 1 to December 22, when discharge was about 36,400 ft³/s on the falling limb of the flood.
-3. **Check satellite numbers against an independent source.** A gage, an aerial image, or simply the other pass will tell you when a value is physically implausible.
+1. **Compare like with like.** Different passes view the area from different geometries and cover different parts of the box, so compare water area within the same pass and scene, and check `pixels_observed` before comparing totals.
+2. **Check satellite numbers against an independent source.** A gage, an aerial image, or the other pass will tell you when a change is not physically plausible. The USGS lesson shows how to get the discharge record used here.
 
-USGS discharge values are from the [USGS Water Data API](https://api.waterdata.usgs.gov/ogcapi/v0/) daily values for 12200500 (approved). Module 3's USGS lesson shows how to retrieve them.
-[PARTNER REVIEW: NASA] Why do the pass-345 (scene 120F) Raster and RiverSP values over the lower Skagit read so much higher than pass 246 at similar discharge, e.g. layover, near-nadir geometry, or wet floodplain soils? Is there a recommended way to screen this beyond `water_area_qual`?
+[PARTNER REVIEW: NASA] Why do pass 009 (scene 118F) and pass 522 (scene 037F) give such different water areas around Aitkin at similar discharge, and what is the recommended way to compare water extent across passes?
 
-[PARTNER REVIEW: NASA] Confirm the interpretation of `water_area` values far above pixel area when `water_area_qual` = 3, and whether `water_area_qual <= 1` is the recommended filter for flood-extent work.
-
-Module 4 returns to the Skagit flood with all three agencies' data. [TODO: confirm with Lane B whether Module 4 maps these Raster scenes]
+[PARTNER REVIEW: NASA] Confirm the interpretation of `water_area` values far above pixel area when `water_area_qual` = 3, and whether `water_area_qual <= 1` is the recommended filter for water-extent work.
 
 ### `hydrocron`
 
-While a user can access SWOT data through `earthaccess`, if timeseries data for specific rivers are the desired outcome, then the `hydrocron` API is the tool for the job. As the [`hydrocron` documentation](https://podaac.github.io/hydrocron) states, 
+While a user can access SWOT data through `earthaccess`, if timeseries data for specific rivers are the desired outcome, then the `hydrocron` API is the tool for the job. As the [`hydrocron` documentation](https://podaac.github.io/hydrocron) states,
 
 > SWOT data is archived as individually timestamped shapefiles, which would otherwise require users to perform potentially thousands of file IO operations per river feature to view the data as a timeseries. Hydrocron makes this possible with a single API call.
 
@@ -335,8 +368,8 @@ While a user can access SWOT data through `earthaccess`, if timeseries data for 
 | Parameter | Example | Notes |
 |---|---|---|
 | `feature` | `Reach` | `Reach`, `Node` or `PriorLake` |
-| `feature_id` | `78310800031` | SWORD reach or node ID (the **Location Identifier**) |
-| `start_time`, `end_time` | `2025-11-01T00:00:00Z` | UTC |
+| `feature_id` | `74289700111` | SWORD reach or node ID (the **Location Identifier**) |
+| `start_time`, `end_time` | `2026-03-01T00:00:00Z` | UTC |
 | `fields` | `reach_id,time_str,wse,wse_u,width,reach_q` | Only the columns you need |
 | `output` | `csv` | `csv` or `geojson`, returned inside a JSON response |
 | `collection_name` | `SWOT_L2_HR_RiverSP_D` | Optional; defaults to Version D. Version C (`2.0`) reach IDs can differ |
@@ -345,7 +378,6 @@ The function below, adapted from the CUAHSI longitudinal-profile notebook (see F
 
 ```python
 import io
-import pandas as pd
 import requests
 
 HYDROCRON_URL = "https://soto.podaac.earthdatacloud.nasa.gov/hydrocron/v1/timeseries"
@@ -369,29 +401,48 @@ def get_reach_timeseries(reach_id, start, end, fields="reach_id,time_str,wse,wse
     df["time"] = pd.to_datetime(df["time_str"])
     return df
 
-skagit = get_reach_timeseries("78310800031", "2025-11-01T00:00:00Z", "2026-01-15T00:00:00Z")
-skagit[["time_str", "wse", "wse_u", "width", "reach_q"]]
+aitkin_reach = get_reach_timeseries("74289700111", "2026-03-01T00:00:00Z", "2026-07-31T00:00:00Z")
+print(len(aitkin_reach), "observations;", aitkin_reach["reach_q"].value_counts().sort_index().to_dict())
+aitkin_reach[["time_str", "wse", "wse_u", "width", "reach_q"]]
 ```
 
 ```
-               time_str      wse    wse_u       width  reach_q
-0  2025-11-10T13:52:55Z   5.7195  0.10003  204.727292        2
-1  2025-11-14T03:14:43Z   8.9412  0.25796  423.549286        2
-3  2025-12-01T10:37:59Z   5.4848  0.09484  189.069678        2
-4  2025-12-04T23:59:47Z  17.2989  0.66000  648.645378        2
-6  2025-12-22T07:23:03Z   7.9524  0.09502  340.979469        2
-7  2025-12-25T20:44:52Z   8.7892  0.32216  381.462596        2
-9  2026-01-12T04:08:08Z   6.0671  0.11089  242.501993        2
+22 observations; {1: 15, 2: 7}
+                time_str       wse    wse_u      width  reach_q
+0   2026-03-04T18:18:19Z  361.3576  0.11020  22.158395        2
+1   2026-03-07T07:38:25Z  361.4130  0.13219  16.726829        1
+2   2026-03-14T16:40:33Z  363.4491  0.17728   5.955160        1
+4   2026-03-25T15:03:24Z  361.7851  0.09722  39.063225        1
+5   2026-03-28T04:23:30Z  361.6605  0.09878  67.644206        1
+6   2026-04-04T13:25:36Z  363.0315  0.20770  12.528737        1
+8   2026-04-15T11:48:30Z  361.5908  0.22554   3.333258        2
+9   2026-04-18T01:08:35Z  361.7071  0.09536  94.875687        1
+10  2026-04-25T10:10:43Z  362.6727  0.25572   1.683885        1
+12  2026-05-06T08:33:34Z  362.3976  0.10424  16.826053        1
+13  2026-05-08T21:53:40Z  362.1075  0.09628  83.190460        1
+14  2026-05-16T06:55:46Z  361.5462  0.31004   2.148680        1
+16  2026-05-27T05:18:38Z  361.3725  0.21452   3.368566        2
+17  2026-05-29T18:38:43Z  361.1404  0.09993  34.073105        1
+18  2026-06-06T03:40:50Z  361.7221  0.61913   3.423401        1
+20  2026-06-17T02:03:43Z  361.1029  0.27695   3.176168        2
+21  2026-06-19T15:23:49Z  360.4889  0.11741  39.218237        2
+22  2026-06-27T00:25:56Z  362.1417  0.56198   3.645788        1
+24  2026-07-07T22:48:47Z  361.5381  0.16648  11.238259        2
+25  2026-07-10T12:08:53Z  361.6257  0.15038  32.341170        2
+26  2026-07-17T21:10:59Z  360.7636  0.10550  22.531951        1
+28  2026-07-28T19:33:50Z  360.4434  0.14849   5.672208        1
 ```
 
-Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertainty) and `width` in meters. Hydrocron also adds a `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as a timestamp for plotting. Hydrocron also returns a row for each overpass that produced no valid measurement. Those rows have `time_str` = `no_data`, a fill value for `wse` and `reach_q` = 3; the function drops them, which is why the index skips 2, 5 and 8.
+Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertainty) and `width` in meters. Hydrocron also adds a `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as a timestamp for plotting. Hydrocron also returns a row for each overpass that produced no valid measurement. Those rows have `time_str` = `no_data`, a fill value for `wse` and `reach_q` = 3; the function drops them, which is why the index skips some numbers.
 
-Two things stand out:
+SWOT saw this reach 22 times in five months, several times a week in some stretches, because the reach sits where several passes overlap. Three things stand out:
 
-- **Every observation of this reach is flagged `reach_q` = 2 (degraded).** If you had filtered to `reach_q <= 1`, as many tutorials do (`get_reach_timeseries(..., max_reach_q=1)`), you would get an empty table. Quality flags are reach-specific. For a narrow (~200 m) reach like this one, "degraded" may be the best SWOT offers. Keep the flag in your analysis and decide what to trust, rather than silently filtering everything away. The Raster results above for the same overpasses are a helpful cross-check.
-- **The December 4 value (17.3 m, ±0.66 m) is about 12 m higher than December 1 at almost the same discharge.** It is the same pass-345 overpass whose Raster scene over-detected water. Its uncertainty, `wse_u`, is also the largest in the table. Treat it as an outlier.
+- **The broad pattern follows the river.** Water surface elevation is higher around the snowmelt peak (362.4 m on May 6, when USGS reported about 3,900 ft³/s) than in late July (360.4 m on July 28, about 490 ft³/s).
+- **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s, and the river was likely ice-covered (USGS marks March values as estimated). Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
+- **No observation is flagged good.** Fifteen are suspect (`reach_q` = 1) and seven degraded (2). A strict `reach_q == 0` filter (`get_reach_timeseries(..., max_reach_q=0)`) would return an empty table. Quality flags are reach-specific, so keep the flag in your analysis and decide what to trust rather than silently filtering everything away.
 
-[PARTNER REVIEW: NASA] Confirm why this reach is consistently `reach_q` = 2 and how NASA recommends researchers use degraded observations.
+[PARTNER REVIEW: NASA] Confirm how researchers should use suspect and degraded observations on narrow rivers, and whether screening on `width` versus `p_width` is a reasonable extra check.
+[POLISH: plot the SWOT WSE series against the USGS NAVD88 stream level (parameter 63160) at 05227500]
 
 If a reach ID does not exist in the collection, `hydrocron` answers with an HTTP 400 and a message such as `Results with the specified Feature ID ... were not found`. The function raises that as an error, so a typo doesn't pass silently.
 
@@ -430,7 +481,7 @@ If I am working on improving efficiency of my code through parallelization, what
 
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/), including the [authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
 - [`hydrocron` documentation](https://podaac.github.io/hydrocron/) and the [timeseries endpoint reference](https://podaac.github.io/hydrocron/timeseries).
-- [PO.DAAC Cookbook: SWOT tutorials](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) by Nikki Tebaldi, Cassandra Nickles and Brandi Downs, which uses the same Skagit River reaches.
+- [PO.DAAC Cookbook: SWOT tutorials](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) by Nikki Tebaldi, Cassandra Nickles and Brandi Downs, which works through Skagit River reaches in Washington.
 - [SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf) (PO.DAAC).
 - [Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis) (NASA Earthdata).
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
