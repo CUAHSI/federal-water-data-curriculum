@@ -89,7 +89,7 @@ The `2.0` vs `D` distinction is referring to the _version_ of the data. `2.0` re
 In our example here, we are interested in the most up-to-date, reach-level data so we would use the `search_data` method to find files within the `SWOT_L2_HR_RiverSP_reach_D` dataset:
 
 ```python
-# Find available granules (aka "files") in June 2026 that cover the headwaters of the Mississippi River
+# Find available granules (aka "files") in June 2026 whose footprint intersects a box at the Mississippi headwaters
 mississippi_headwaters_2026 = earthaccess.search_data(
     short_name="SWOT_L2_HR_RiverSP_reach_D",
     bounding_box=(-95.26, 47.17, -95.15, 47.25),
@@ -147,15 +147,15 @@ print(int(reaches.intersects(box(-95.26, 47.17, -95.15, 47.25)).sum()), "reaches
 0 reaches inside the headwaters box
 ```
 
-None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The reason is not SWOT's orbit: the SWOT River Database (SWORD) does not include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN. [TODO: verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer]
+None of the reaches in this granule are in the box, and the same is true for every June 2026 granule. The most likely reason is not SWOT's orbit: the SWOT River Database (SWORD) does not appear to include the narrow headwater channels near Lake Itasca. Along the Mississippi, SWORD reaches begin farther downstream, near Aitkin, MN. [TODO: verify the upstream end of SWORD's Mississippi River reaches with SWORD Explorer]
 
-For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the USGS lesson uses too. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example]
+For the rest of this lesson we move downstream to **USGS 05227500, Mississippi River at Aitkin, MN**, during the spring 2026 snowmelt rise. This is a river SWOT does observe, and a gage the [USGS lesson](03_access_usgs_nwis.md) uses too. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example]
 
 The water-area product is discovered the same way. Here we search the 100 m Raster product in a small box around the gage, for the weeks around the snowmelt peak:
 
 ```python
 # USGS 05227500, Mississippi River at Aitkin, MN (coordinates from its USGS monitoring-location record),
-# plus or minus 0.02 degrees: a box about 3 km across
+# plus or minus 0.02 degrees: a box about 3 x 4 km
 aitkin_lon, aitkin_lat = -93.7074, 46.5407
 aitkin_bbox = (aitkin_lon - 0.02, aitkin_lat - 0.02, aitkin_lon + 0.02, aitkin_lat + 0.02)
 
@@ -261,7 +261,7 @@ reaches_utm.nsmallest(3, "dist_to_gage_m")[["reach_id", "river_name", "dist_to_g
 
 The gage sits on reach **`74289700111`**, about 40 m from its centerline. The granule itself holds every reach SWOT observed along this pass across North America, 1,371 in total. RiverSP granules carry many more columns than shown here (about 130); the product description documents (PDDs), linked from the [PO.DAAC Cookbook SWOT page](https://podaac.github.io/tutorials/quarto_text/SWOT.html), define them all.
 
-Notice `p_width`: SWORD expects this reach to be about 36 m wide. That is a narrow river for SWOT, close to the size it can resolve (see Module 2), and the measured `width` of 3 m on this overpass is not believable. Keep that in mind when we look at the time series below.
+Notice `p_width`: SWORD expects this reach to be about 36 m wide. That is narrower than the roughly 50–100 m rivers SWOT reliably resolves (Module 2), and the measured `width` of 3 m on this overpass is not believable. Keep that in mind when we look at the time series below.
 
 Each row is one SWORD reach seen on this overpass. Key columns:
 - `reach_id` is the **Location Identifier**.
@@ -348,10 +348,10 @@ pd.DataFrame([water_area_near(f) for f in raster_files])
 4  2026-05-08T21:53                6255                   0            15.3
 ```
 
-The 10 km box holds 10,000 pixels, but no overpass observed all of them (`pixels_observed`). The numbers also jump between overpasses in a way discharge can't explain. USGS daily mean discharge at Aitkin rose from about 2,100 ft³/s on April 15 to a peak of 4,950 ft³/s on May 1, then fell to about 3,500 ft³/s by May 8. Yet the April 18 and May 8 scenes (pass 009, scene `118F`) show three to four times more water than the April 15 and May 6 scenes (pass 522, scene `037F`). Two lessons follow:
+The 10 km box holds about 10,000 pixels, but no overpass observed all of them (`pixels_observed`). The numbers also jump between overpasses in a way discharge can't explain. USGS daily mean discharge at Aitkin ([USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31), approved as of October 2026) rose from about 2,100 ft³/s on April 15 to a peak of 4,950 ft³/s on May 1, then fell to about 3,500 ft³/s by May 8. Yet the April 18 and May 8 scenes (pass 009, scene `118F`) show roughly two and a half to four times more water than the April 15 and May 6 scenes (pass 522, scene `037F`). Two lessons follow:
 
 1. **Compare like with like.** Different passes view the area from different geometries and cover different parts of the box, so compare water area within the same pass and scene, and check `pixels_observed` before comparing totals.
-2. **Check satellite numbers against an independent source.** A gage, an aerial image, or the other pass will tell you when a change is not physically plausible. The USGS lesson shows how to get the discharge record used here.
+2. **Check satellite numbers against an independent source.** A gage, an aerial image, or the other pass will tell you when a change is not physically plausible. The [USGS lesson](03_access_usgs_nwis.md) shows how to get the discharge record used here.
 
 [PARTNER REVIEW: NASA] Why do pass 009 (scene 118F) and pass 522 (scene 037F) give such different water areas around Aitkin at similar discharge, and what is the recommended way to compare water extent across passes?
 
@@ -435,10 +435,10 @@ aitkin_reach[["time_str", "wse", "wse_u", "width", "reach_q"]]
 
 Every row is one SWOT overpass of the reach, with `wse`, `wse_u` (its uncertainty) and `width` in meters. Hydrocron also adds a `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as a timestamp for plotting. Hydrocron also returns a row for each overpass that produced no valid measurement. Those rows have `time_str` = `no_data`, a fill value for `wse` and `reach_q` = 3; the function drops them, which is why the index skips some numbers.
 
-SWOT saw this reach 22 times in five months, several times a week in some stretches, because the reach sits where several passes overlap. Three things stand out:
+SWOT saw this reach 22 times in five months, often in pairs a few days apart, because the reach sits where several passes overlap. Three things stand out:
 
 - **The broad pattern follows the river.** Water surface elevation is higher around the snowmelt peak (362.4 m on May 6, when USGS reported about 3,900 ft³/s) than in late July (360.4 m on July 28, about 490 ft³/s).
-- **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s, and the river was likely ice-covered (USGS marks March values as estimated). Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
+- **Some values are clearly off.** On March 14, SWOT reports 363.4 m, the highest in the table, when USGS reported only about 900 ft³/s (USGS marks its March discharge values as estimated; see [USGS daily mean discharge for 05227500](https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-05227500&parameter_code=00060&statistic_id=00003&time=2026-03-01/2026-07-31)) [TODO: verify whether the March 2026 record at 05227500 is ice-affected]. Most suspicious values share a sign: a measured `width` far below SWORD's expected 36 m (6 m on March 14, 1.7 m on April 25). For a narrow river like this one, comparing `width` with `p_width` is a useful extra screen.
 - **No observation is flagged good.** Fifteen are suspect (`reach_q` = 1) and seven degraded (2). A strict `reach_q == 0` filter (`get_reach_timeseries(..., max_reach_q=0)`) would return an empty table. Quality flags are reach-specific, so keep the flag in your analysis and decide what to trust rather than silently filtering everything away.
 
 [PARTNER REVIEW: NASA] Confirm how researchers should use suspect and degraded observations on narrow rivers, and whether screening on `width` versus `p_width` is a reasonable extra check.
