@@ -129,7 +129,7 @@ q_meas = measurements[measurements["parameter_code"] == "00060"]
 print(q_meas[["time", "time_of_day", "value", "unit_of_measure", "measurement_rated", "observing_procedure"]])
 ```
 
-Field measurements come back as one row per reading, with gage-height readings and discharge readings from the same `field_visit_id`. `time` holds the date and `time_of_day` the UTC timestamp. `measurement_rated` is the hydrographer's rating of the measurement's accuracy (for example `Good` or `Fair`), and `observing_procedure` records how it was made.
+Field measurements come back as one row per reading, with gage-height readings and discharge readings from the same `field_visit_id`. `time` holds only the date, and `time_of_day` only the time of day in UTC (for example `17:07:50+00:00`). To place a measurement on a timeline, join the two; converting `time_of_day` on its own would fill in today's date. `measurement_rated` is the hydrographer's rating of the measurement's accuracy (for example `Good` or `Fair`), and `observing_procedure` records how it was made.
 
 USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely. [TODO: verify whether the 12200500 rating has measurements above 111,000 ft³/s from earlier floods, e.g. via `waterdata.get_ratings`.] [PARTNER REVIEW: USGS] wording on rating extrapolation and out-of-bank flow at this site.
 
@@ -141,8 +141,10 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(10, 4))
 ax.plot(discharge["time"], discharge["value"], lw=1, label="Continuous (15-minute)")
 ax.step(pd.to_datetime(daily["time"]).dt.tz_localize("UTC"), daily["value"], where="post", label="Daily mean")
-dec_meas = q_meas[q_meas["time"].astype(str).str.startswith("2025-12")]
-ax.plot(pd.to_datetime(dec_meas["time_of_day"]), dec_meas["value"], "ko", label="Field measurement")
+dec_meas = q_meas[(q_meas["time"] >= "2025-12-01") & (q_meas["time"] < "2026-01-01")]
+# Join the date (time) and the UTC time of day (time_of_day) into one timestamp
+meas_time = pd.to_datetime(dec_meas["time"].dt.strftime("%Y-%m-%d") + "T" + dec_meas["time_of_day"])
+ax.plot(meas_time, dec_meas["value"], "ko", label="Field measurement")
 ax.set_ylabel("Discharge (ft³/s)")
 ax.set_title("USGS 12200500 Skagit River near Mount Vernon, WA")
 ax.legend()
@@ -167,16 +169,16 @@ from kerchunk.combine import MultiZarrToZarr
 
 gcs = fsspec.filesystem("gcs", token="anon")  # public bucket: no account or key
 
+def index_one(path):
+    """Scan one NetCDF file's internal layout and return its kerchunk references."""
+    with gcs.open(path, "rb") as f:
+        url = "https://storage.googleapis.com/" + path  # read the data later over plain HTTPS
+        return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
+
 def build_refs(day, hour):
     """Index the 18 hourly files of one NWM short-range forecast and return combined kerchunk references."""
     files = sorted(gcs.glob(f"national-water-model/nwm.{day}/short_range/"
                             f"nwm.t{hour}z.short_range.channel_rt.f*.conus.nc"))
-
-    def index_one(path):
-        with gcs.open(path, "rb") as f:
-            url = "https://storage.googleapis.com/" + path  # read the data later over plain HTTPS
-            return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
-
     with ThreadPoolExecutor(8) as pool:  # many small metadata requests: run them in parallel
         singles = list(pool.map(index_one, files))
     return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
@@ -217,6 +219,7 @@ obs = discharge.set_index("time")["value"]["2025-12-10":"2025-12-13"]
 ax.plot(obs.index, obs.values, "k", lw=2, label="USGS observed")
 for issued, series in forecasts.items():
     ax.plot(series.index.tz_localize("UTC"), series.values, lw=1.5, label=f"NWM short range, issued {issued}")
+
 ax.set_ylabel("Discharge (ft³/s)")
 ax.set_title(f"NWM forecasts at COMID {comid} vs. USGS 12200500")
 ax.legend()
@@ -376,6 +379,7 @@ for ax, ds, title in [(axes[0], b, "1 Dec 2025 (before)"), (axes[1], p, "12 Dec 
     ds["water_frac"].where(good).clip(0, 1).plot(ax=ax, vmin=0, vmax=1, cmap="Blues")
     ax.set_title(title)
     ax.set_aspect("equal")
+
 plt.show()
 ```
 
