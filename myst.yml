@@ -31,5 +31,7 @@ project:
         - file: '04-federal-water-data-synthesis/01_comparative_overview.md'
         - file: '04-federal-water-data-synthesis/02_synthesize_river_data.md'
         - file: '04-federal-water-data-synthesis/03_additional_data.md'
+    - file: glossary.md
+    - file: references.md
 site:
   template: book-theme

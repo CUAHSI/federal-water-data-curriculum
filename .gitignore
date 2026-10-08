@@ -1,3 +1,4 @@
 # Ignore local build artifacts
 _build/*
 .vscode/*
+__pycache__/

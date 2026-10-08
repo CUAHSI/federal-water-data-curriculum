@@ -87,6 +87,21 @@ side example of a river with no SWOT reaches.
 - Every example is run before it's committed, in the lesson's environment.
 - Code is commented to explain exactly what is happening in the chunk and follows reproducible techniques.
 
+**Figure example.** Images live in `images/m02/`, `images/m03/` or `images/m04/`. From a page in a module folder,
+the path starts with `../`. Every figure has `alt` text (what the image shows, for a screen reader), a caption
+(what to notice) and, for data figures, the data source and access date. Credit images you did not make, with a link.
+
+````markdown
+:::{figure} ../images/m03/example-ohio-louisville-discharge.png
+:alt: Line chart of daily mean discharge at the Ohio River at Louisville, KY, from 15 March to 15 May 2025. Flow rises from about 100,000 to a crest of 712,000 cubic feet per second on 9 April 2025, then falls back below 200,000 by late April.
+:width: 100%
+
+Daily mean discharge at USGS 03294500, Ohio River at Louisville, KY, during the April 2025 flood. Data: USGS Water Data
+for the Nation daily values (parameter `00060`, statistic `00003`), accessed 2026-10-08; values from April 2025 onward
+were provisional at access.
+:::
+````
+
 ## 5. Environments
 
 One conda environment per lesson that has code, named `m<module>-<product>`:
@@ -143,6 +158,22 @@ The specific claim or recommendation the agency should confirm or correct.
 - **References page:** one course-wide References page at the end lists every external source cited anywhere,
   as a proper citation: author or organization, year, title, URL, and a DOI for datasets and software. It's
   kept in sync with the links in the pages, and the check fails if a link has no reference entry.
+- **How it works.** Each page has its own reference file, `references/<page-key>.md`, so lanes never edit the same
+  file. The key is `m` + the module number + the page's file name, e.g. `03-…/01_access_nasa_swot.md` →
+  `references/m03-01_access_nasa_swot.md` (top-level pages: `references/index.md`, `references/glossary.md`).
+  `references.md` (last in the toc) includes every file under a heading for its page. A new page needs a new
+  reference file and an `{include}` line in `references.md`.
+- **Entry format.** One list item per source, alphabetical by author: author or organization, year (`n.d.` if none),
+  *title*, publisher or repository if different, URL, and a DOI for datasets and software. Add the access date for
+  pages that change. The URL must match the link used on the page (the check ignores `#fragments` and trailing slashes).
+
+  ```markdown
+  - NOAA Office of Water Prediction. (n.d.). *About the National Water Model*. https://water.noaa.gov/about/nwm (accessed 2026-10-08).
+  - Hodson, T. O., & Hariharan, J. A. (2023). *dataretrieval (python): a Python package for discovering and retrieving water data available from Federal hydrologic web services* (software). U.S. Geological Survey. https://doi.org/10.5066/P94I5TX3
+  ```
+- **Check.** `python3 references/check_references.py --changed` (or pass page paths; no arguments checks every page).
+  It lists each external link outside code blocks that has no entry in that page's reference file and exits 1 if any
+  are missing. Entries no longer linked from the page are listed as "unused" (warning only).
 - **Glossary page:** one course-wide Glossary page. Define each term once there. On each page, link the first
   use of a term to its glossary entry (the MyST `{term}` role).
 
@@ -152,10 +183,28 @@ Not part of this round. We'll add "Check your understanding" sections after the 
 
 ## 10. Course example rivers
 
-*Filled in during roadmap task P6.0.8.*
+Chosen in roadmap task P6.0.8 (2026-10-08) from real queries. SWOT counts are Version D RiverSP reach observations
+from `hydrocron`, 2025-01-01 to 2026-10-01; Raster scenes are 100 m Raster Version D scenes whose footprint contains the gage.
 
 | Role | River / basin | SWOT reach IDs | NWM COMIDs | WDFN monitoring location | Date window |
 |---|---|---|---|---|---|
-| Main example (Module 3) | | | | | |
-| Now you try it (Module 3) | | | | | |
+| Main example (Module 3) | Ohio River at Louisville, KY (Ohio basin) | `74267300251` (gage reach, ~170 m away); neighbors `74267300241`, `74267300261` | `10164004` | USGS-03294500 | 2025-03-15 to 2025-05-15 (April 2025 flood; daily-mean crest 712,000 ft³/s on 2025-04-09) |
+| Now you try it (Module 3) | Willamette River at Salem, OR (Willamette basin) | `78220000131` (gage reach, ~30 m away); neighbor `78220000141` | `23791093` | USGS-14191000 | 2026-02-01 to 2026-03-31 (winter high flows; February daily-mean max 62,200 ft³/s) |
 | Module 4 case study | Skagit River, WA (Dec 2025 flood) | — | — | USGS-12200500 | Dec 2025 |
+
+**What we checked**
+
+| | Ohio at Louisville (main) | Willamette at Salem (try it) |
+|---|---|---|
+| SWOT reach prior width (`p_width`) | 720 m | 150 m |
+| SWOT passes over the gage | 4 (160, 175, 466, 481) | 3 (039, 274, 345) |
+| Reach observations, `reach_q` ≤ 1 / all valid | 114 / 118 (every month has 3–6 good ones; 5 in April 2025) | 62 / 91 (2–4 good ones per month) |
+| Raster scenes over the gage, 2025–2026 | 113 | 83 |
+| NWM | NLDI indexes the gage to COMID `10164004` (Ohio River); the NOAA NWM API returns short-range forecasts; archived short-range files exist for 2025-04-09 (Google Cloud and AWS) | NLDI indexes the gage to COMID `23791093` (reach code `17090007000072`); the NOAA NWM API returns short-range forecasts (the API's `name` field is blank for this reach) |
+| WDFN | Continuous discharge 2009–present, daily values 1928–present; active | Continuous discharge 1986–present, daily values 1909–present; active |
+
+Notes for lesson authors:
+- No reach had `reach_q` = 0 in this period; good observations are `reach_q` = 1 ("suspect" in the summary flag). Explain this rather than filtering on `reach_q == 0`.
+- The Willamette also peaked on 2025-12-20 (97,700 ft³/s), during the same December 2025 storms as the Module 4 Skagit flood. The February–March 2026 window avoids overlapping the case study.
+- The NOAA NWM API `streamflow` endpoint reported units of ft³/s for these reaches on 2026-10-08.
+- Candidates considered and why they were not chosen: Connecticut at Thompsonville (NLDI indexes the gage to a tributary COMID, "Rawlins Brook"); Susquehanna at Marietta (the gage reach had no `reach_q` ≤ 1 observations); Missouri at Hermann and Mississippi at St. Louis (only 12/61 and 20/60 good observations); Sacramento at Freeport (good SWOT data, but tidal and with no daily values after 2015); Columbia at The Dalles (dam-controlled, 33/59 good); Mississippi at St. Paul (50/90 good, 190 m wide; acceptable backup).

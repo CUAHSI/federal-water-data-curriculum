@@ -18,6 +18,9 @@ This module builds on Module 2 (what each product is) and Module 3 (how to get i
 ## Learning objectives
 
 By the end of this module, learners should be able to:
+- Compare and describe the capabilities and limitations of NASA SWOT, NOAA NWM, and USGS WDFN data for a single flood event at the appropriate scales and resolutions.
+
+In practice, this means you will be able to:
 - Compare USGS, NWM and SWOT river data by spatial coverage, temporal availability, accuracy and quality information, using the shared vocabulary (Location Identifier, Variable, Variable unit, Data Quality Flag(s)).
 - Link the same river location across agencies: a USGS monitoring location, an NWM `feature_id` (NHDPlus COMID; `nwm_feature_id` in `hydrotools`) and a SWOT SWORD reach.
 - Retrieve and line up observations, forecasts and satellite measurements for a single event, accounting for differences in units, vertical reference, time zone and sampling.
