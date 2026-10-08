@@ -78,7 +78,7 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
 - [ ] **P3.2 04/01 "Comparative overview"** (branch `content/04-comparative-overview`, PR #2): NWM spatial/temporal
       bullets, accuracy section, comparison table (shared terminology), "Data provider recommendations" drafted
       from agency sources, each cited and marked `[PARTNER REVIEW: NASA|NOAA|USGS]`.
-- [ ] **P3.3 04/00 overview + 04/03 additional data** (branch `content/04-overview-additional`, PR #3): objectives and
+- [x] **P3.3 04/00 overview + 04/03 additional data** (branch `content/04-overview-additional`, [PR #50](https://github.com/CUAHSI/federal-water-data-curriculum/pull/50), draft): objectives and
       concepts; short tours of SWOT SoS discharge, AORC precipitation, NGEN hydrofabric.
 
 ## Phase 4 — Module 3 alignment drafts
