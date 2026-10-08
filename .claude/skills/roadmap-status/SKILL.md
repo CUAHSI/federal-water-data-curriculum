@@ -8,7 +8,8 @@ description: Summarize progress on ROADMAP.md — milestones done/in progress/ne
 1. Read `ROADMAP.md`. Count checked vs. unchecked tasks per milestone.
 2. `git fetch upstream --quiet` then `git branch -r --no-merged upstream/dev` for in-flight branches,
    and `gh pr list --repo CUAHSI/federal-water-data-curriculum --state open` (skip quietly if `gh` isn't installed or authenticated; list pushed branches instead).
-3. `rg -c "\[TODO|\[describe|\[add |\[details|\[PARTNER REVIEW" --glob "0[234]*/**/*.md"` for placeholders per page.
+3. `rg -c "TODO \(dev team\)|Partner review \(|\[TODO|\[PARTNER REVIEW|\[POLISH" --glob "0[234]*/**/*.md"` for open callouts per page
+   (new callouts plus any old bracket flags not yet converted).
 4. Report in at most ~10 lines:
    - Overall: X of Y tasks done; where we are against the ROADMAP schedule table.
    - Per milestone: ✅ done / 🔄 in progress (branch/PR) / ⏳ not started.

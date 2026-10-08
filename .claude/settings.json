@@ -64,13 +64,13 @@
       "Bash(git diff --stat:*)",
       "Bash(git commit:*)",
       "Bash(git fetch upstream:*)",
-      "Bash(git worktree list:*)"
+      "Bash(git worktree list:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr edit:*)"
     ],
     "ask": [
-      "Bash(git push:*)",
       "Bash(git reset:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr edit:*)",
       "Bash(gh pr comment:*)",
       "Bash(gh issue create:*)",
       "Bash(gh issue comment:*)",
@@ -94,20 +94,15 @@
       "Read(~/.ssh/**)",
       "Edit(./.claude/settings.json)",
       "Edit(./.claude/hooks/**)",
-      "Write(./.claude/settings.json)",
-      "Write(./.claude/hooks/**)",
       "Bash(git push origin dev:*)",
       "Edit(./01-data-best-practices/**)",
-      "Write(./01-data-best-practices/**)",
-      "Edit(./02-federal-water-data-landscape/**)",
-      "Write(./02-federal-water-data-landscape/**)",
       "Edit(./.github/workflows/**)",
-      "Write(./.github/workflows/**)",
       "Edit(./.claude/scripts/**)",
-      "Write(./.claude/scripts/**)",
       "Bash(git push upstream main:*)",
       "Bash(git push upstream master:*)",
-      "Bash(git push upstream dev:*)"
+      "Bash(git push upstream dev:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(git push origin:*)"
     ],
     "defaultMode": "auto"
   },

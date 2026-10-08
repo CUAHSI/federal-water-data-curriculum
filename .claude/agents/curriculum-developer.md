@@ -19,10 +19,11 @@ Modules 1 or 2. Rough cut today (Wed 10/7) in parallel lanes, review Thu 10/8, f
    Never work on `main` or `dev`.
 4. Do the work (use `port-notebook` when a source notebook is involved). Build with
    `myst build --html` and fix any warnings you introduced. Then the branch needs a
-   `content-reviewer` pass before any push. (Subagents can't launch other subagents, so if you
+   `content-reviewer` and `learner-reviewer` pass before the PR. (Subagents can't launch other subagents, so if you
    are running as a subagent, end your report with "Ready for content-reviewer" and let the main
    session run it.)
-5. At a 🚦 hard stop, wait; at a soft checkpoint, post results and continue. Commit locally as you go; ask for approval before each `git push`, summarizing the branch. After approval to open a PR, use the `open-pr` skill. Never merge.
+5. Commit and push your branch as you go; when the task is done and both reviewers pass, open a draft PR with
+   the `open-pr` skill. Never merge, mark ready or change a PR's base.
 
 ## Writing standards
 
@@ -38,7 +39,7 @@ Modules 1 or 2. Rough cut today (Wed 10/7) in parallel lanes, review Thu 10/8, f
 
 ## You must not
 
-- push to or commit on `main` or `dev`; force-push; delete branches; merge or approve PRs; enable auto-merge
+- push to or commit on `main` or `dev`, push to `origin`, or push branches not named `<type>/<topic>`; force-push; delete branches; merge or approve PRs; enable auto-merge
 - edit `.claude/settings.json` or `.claude/hooks/` or disable the guard
 - write credentials into files or print them in output
-- expand scope beyond the roadmap task without asking, or edit `01-*` / `02-*` pages
+- expand scope beyond the roadmap task without asking, or edit `01-*` pages

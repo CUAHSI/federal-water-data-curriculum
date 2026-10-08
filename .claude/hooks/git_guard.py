@@ -17,6 +17,8 @@ import subprocess
 import sys
 
 PROTECTED = {"main", "master", "dev", "develop"}
+ALLOWED_REMOTES = {"upstream"}
+BRANCH_PATTERN = re.compile(r"^(content|chore|env|fix|docs)/[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$")
 
 
 def block(msg: str) -> None:
@@ -72,25 +74,27 @@ def check_push(args, cwd):
             re.fullmatch(r"-[a-zA-Z]+", f) and "f" in f[1:]
         ):
             block(f"`git push {f}` is not allowed. Push a feature branch normally.")
-    refspecs = positional[1:]  # first positional is the remote
+    # Pushes must name the remote and the branch: `git push -u upstream <branch>`.
+    if not positional:
+        block("name the remote and branch explicitly: `git push -u upstream <branch>`.")
+    remote, refspecs = positional[0], positional[1:]
+    if remote not in ALLOWED_REMOTES:
+        block(f"pushes go only to {', '.join(sorted(ALLOWED_REMOTES))} (the CUAHSI repo), not '{remote}'.")
     if not refspecs:
-        branch = current_branch(cwd)
-        if branch in PROTECTED or branch == "HEAD" or not branch:
-            block(f"implicit push while on '{branch or 'unknown'}'. "
-                  "Switch to a feature branch and push it by name.")
-        return
+        block("name the branch explicitly: `git push -u upstream <branch>`.")
     for spec in refspecs:
         spec = spec.lstrip("+")
         if spec.startswith(":"):
             block("deleting remote branches is not allowed.")
-        dest = spec.split(":", 1)[-1]
-        dest = dest.removeprefix("refs/heads/")
-        src = spec.split(":", 1)[0]
+        src, _, dest = spec.partition(":")
+        dest = (dest or src).removeprefix("refs/heads/")
+        if dest in ("HEAD", "@"):
+            dest = current_branch(cwd)
         if dest in PROTECTED:
             block(f"pushing to '{dest}' is never allowed. Open a PR from a feature branch.")
-        if src in ("HEAD", "@") and ":" not in spec:
-            if current_branch(cwd) in PROTECTED:
-                block("pushing HEAD while on a protected branch.")
+        if not BRANCH_PATTERN.match(dest or ""):
+            block(f"'{dest}' isn't an agent branch name. Use <type>/<topic> with type one of "
+                  "content, chore, env, fix, docs (e.g. content/p6-m03-swot).")
 
 
 def main():
@@ -119,6 +123,21 @@ def main():
                 block("merging or moving refs through the GitHub API is not allowed.")
             if re.search(r"\bpr\s+(create|edit)\b.*--auto", joined):
                 block("auto-merge is not allowed.")
+            if re.search(r"\bpr\s+ready\b", joined):
+                block("marking a PR ready for review is Lindsay's call; leave it as a draft.")
+            if re.search(r"\bpr\s+create\b", joined):
+                if "--draft" not in tokens and "-d" not in tokens:
+                    block("open pull requests as drafts: add --draft.")
+                base = None
+                for i, tok in enumerate(tokens):
+                    if tok in ("--base", "-B") and i + 1 < len(tokens):
+                        base = tokens[i + 1]
+                    elif tok.startswith("--base="):
+                        base = tok.split("=", 1)[1]
+                if base != "dev":
+                    block("pull requests target dev: add --base dev.")
+            if re.search(r"\bpr\s+edit\b", joined) and re.search(r"(--base|-B)[ =](?!dev\b)", joined):
+                block("PRs stay based on dev.")
             continue
 
         if prog != "git":

@@ -118,6 +118,114 @@ text; don't rewrite sections that are already filled in.
 - [ ] L2 Full `content-reviewer` pass and execute every example on `dev`.
 - [ ] L3 Status summary for the 10/13 sweep.
 
+## Phase 6 — Consistency and enrichment pass (Thu 10/8, lanes done by 21:00)
+
+**Goal:** by Friday morning, Modules 2–4 read as one course. Every lesson follows `STYLE_GUIDE.md`: shared
+framework and lesson structure, NASA → NOAA → USGS order (04/02 excepted), WDFN naming, Module 3 lessons
+that stand alone on shared example rivers, rendered figures and maps, consistent callouts, reproducibility woven
+in, glossary links, References entries, and learning objectives from issue #36. Module 1 stays read-only.
+"Check your understanding" waits until after the internal review.
+
+**How work flows:** agents commit, push their own `<type>/<topic>` branches to `upstream` and open **draft PRs into
+`dev`** without asking. Lindsay reviews and merges. Lane branches don't edit `ROADMAP.md`; each PR lists the task
+IDs it completed, and Lindsay ticks the boxes.
+
+| When | What |
+|---|---|
+| Thu ~16:30 | Lindsay merges the kit update (`STYLE_GUIDE.md`, `CLAUDE.md`, settings/guard, agents, skills) |
+| Thu ~16:45–17:45 | **P6.0 setup**, one session → draft PR → Lindsay merges |
+| Thu ~17:45–21:00 | **Lanes A–D** in parallel → draft PRs; Lindsay merges as each lands |
+| Thu ~21:00 | **P6.5 integration** kicked off; runs overnight → draft PR ready for Lindsay Fri morning |
+| Fri–Mon | EDS and ODS review on `dev` (separate instructions) |
+
+### P6.0 — Setup (one session, before the lanes) · branch `chore/p6-setup` · time box ~1 hour
+- [ ] P6.0.1 Rename environments per STYLE_GUIDE §5 (`m03-swot`, `m03-nwm`, `m03-wdfn`, `m04-synthesis`), with
+      matching `name:` fields; recreate each and run a smoke-test import. Update env names in setup sections (find/replace only).
+- [ ] P6.0.2 WDFN renames: `02-…/03_meet_usgs_nwis.md` → `03_meet_usgs_wdfn.md` and `03-…/03_access_usgs_nwis.md` →
+      `03_access_usgs_wdfn.md`; titles "Meet USGS WDFN" and "Retrieve USGS WDFN data"; update `myst.yml` toc and internal links.
+- [ ] P6.0.3 Convert every existing `[TODO …]`, `[POLISH …]`, `[PARTNER REVIEW: X …]` and other bracket placeholder in
+      Modules 2–4 to STYLE_GUIDE §7 callouts. Mechanical only; keep the wording; report before/after counts.
+- [ ] P6.0.4 Scaffold `glossary.md` (MyST `glossary`), seeded from the Module 2 terminology tables, the STYLE_GUIDE §1 shared
+      concepts and obvious jargon; add it to the toc after Module 4. Confirm `{term}` links render.
+- [ ] P6.0.5 References system: a course-wide `references.md` at the end of the toc, built from one reference file per page
+      (so lanes don't conflict), with proper citations (author/org, year, title, URL, DOI for datasets and software), plus a
+      check script that lists external links with no entry. Wire it into `content-reviewer`. Document the mechanism in STYLE_GUIDE §8.
+- [ ] P6.0.6 Create `images/m02/`, `images/m03/`, `images/m04/` and add one working `figure` example to STYLE_GUIDE §4.
+- [ ] P6.0.7 Course and module objectives from issue #36 (latest comment), placed verbatim:
+      - Course landing page (`index.md`): all six objectives.
+      - Module 2 `00_introduction.md`: *Characterize the river data products from NASA SWOT, NOAA NWM, and USGS WDFN, including
+        relevant variables, derivation, spatial and temporal resolution, and known limitations.*
+      - Module 3 `00_introduction.md`: *Adapt provided Python scripts to retrieve data from NASA SWOT, NOAA NWM, and USGS WDFN
+        using their recommended APIs and libraries.* and *Select the most appropriate programmatic approach for downloading data
+        at large temporal and spatial scales for different hydrologic applications.*
+      - Module 4 `00_introduction.md`: *Compare and describe the capabilities and limitations of NASA SWOT, NOAA NWM, and USGS
+        WDFN data for a single flood event at the appropriate scales and resolutions.*
+      - Module 1 (read-only): the open science/FAIR/reproducibility and data management/publishing objectives go in the PR
+        description as a suggested edit for the Module 1 authors.
+- [ ] P6.0.8 **Choose the shared example rivers** for Module 3 (STYLE_GUIDE §2 and §10): one main river/basin and one
+      "Now you try it" river, each with (a) SWOT RiverSP reaches and Raster coverage with good-quality passes in 2025–2026,
+      (b) NWM reaches (COMIDs found via NLDI), and (c) an active WDFN monitoring location with continuous discharge. Not the
+      Skagit. Check coverage with real queries; report the candidates considered and why. Fill in the STYLE_GUIDE §10 table.
+      Time box 30 minutes; if nothing clean turns up, pick the best and add a `TODO (dev team)` callout.
+
+### Lane A — Module 3 SWOT · branch `content/p6-m03-swot` · owns `03-…/01_access_nasa_swot.md`, `images/m03/swot-*`, its reference file
+- [ ] P6.A1 Rebuild the main thread on the §10 main river. Keep the Mississippi headwaters as a short "a river with no SWOT
+      reaches" side example; retire the Aitkin walkthrough.
+- [ ] P6.A2 Stand-alone lesson: no NOAA/NWM, USGS/WDFN data or Module 4 mentions. Describe locations without other agencies' products.
+- [ ] P6.A3 Module 3 lesson structure (STYLE_GUIDE §2), incl. "Choosing an access route" (`earthaccess` vs `hydrocron`)
+      and "Understanding what you downloaded" (shared concepts).
+- [ ] P6.A4 "Now you try it" on the §10 second river: a short task with the steps to change and expected result, plus a collapsed answer.
+- [ ] P6.A5 Rendered figures for every plotting block, a location map, and a "what the data looks like" visual.
+- [ ] P6.A6 Reproducibility woven in (STYLE_GUIDE §6), glossary links, references.
+- [ ] P6.A7 `content-reviewer` + `learner-reviewer`; fix must-fixes and blockers; push; draft PR; lane report.
+
+### Lane B — Module 3 NWM and WDFN · branch `content/p6-m03-nwm-wdfn` · owns `03-…/00_introduction.md`, `02_access_noaa_nwm.md`, `03_access_usgs_wdfn.md`, `images/m03/nwm-*`, `images/m03/wdfn-*`, their reference files
+- [ ] P6.B1 NWM: rebuild the examples on the §10 main river (replaces the Skagit; resolves the existing callout). No Module 4,
+      SWOT or USGS-data mentions. NLDI/NHDPlus stay as COMID-finding tools; a gage ID may be used only to locate a reach,
+      and the text says so.
+- [ ] P6.B2 WDFN: "WDFN" throughout; examples on the §10 main river; remove "same site the SWOT lesson uses" and any SWOT/NWM
+      mentions; legacy `nwis` only as a short contrast.
+- [ ] P6.B3 Both pages to the Module 3 lesson structure, incl. "Choosing an access route" (align the NWM table's format) and
+      "Understanding what you downloaded".
+- [ ] P6.B4 "Now you try it" on the §10 second river, per page.
+- [ ] P6.B5 Rendered figures; a location map and data visual per page.
+- [ ] P6.B6 03/00 overview: NASA → NOAA → USGS order, the shared-concepts framework, the shared rivers, links to each lesson.
+- [ ] P6.B7 Reproducibility, glossary links, references.
+- [ ] P6.B8 `content-reviewer` + `learner-reviewer`; fix; push; draft PR; lane report.
+
+### Lane C — Module 4 · branch `content/p6-m04` · owns `04-…/*`, `images/m04/*`, their reference files
+- [ ] P6.C1 NASA → NOAA → USGS order in 04/00, 04/01 (every section and table) and 04/03. **04/02 keeps its storyline order.**
+- [ ] P6.C2 04/03: add SWOTViz (https://swotviz.cuahsi.io/) as an exploration option, with a `TODO (dev team)` callout:
+      "SWOTViz is in development; confirm it's ready to point learners to".
+- [ ] P6.C3 Every link to CUAHSI/notebooks `Science Examples` or the `develop` branch gets the STYLE_GUIDE §7 link-confirmation
+      callout (attribution lines stay).
+- [ ] P6.C4 Rendered figures for every plotting block in 04/02 and 04/03; a study-area map early in 04/02.
+- [ ] P6.C5 Shared-concepts framing in 04/01's comparison table; reproducibility, glossary links, references (04/00–04/03).
+- [ ] P6.C6 `content-reviewer` + `learner-reviewer`; fix; push; draft PR; lane report.
+
+### Lane D — Module 2 and glossary · branch `content/p6-m02` · owns `02-…/*`, `glossary.md`, `images/m02/*`, their reference files
+- [ ] P6.D1 Module 2 pages to the lesson structure; terminology tables with the full shared-concept set (add Time,
+      Version/provenance, Data unit) in NASA → NOAA → USGS order; WDFN naming.
+- [ ] P6.D2 02/00 overview: the objective from P6.0.7, the shared-concepts framework, links to each "Meet" page.
+- [ ] P6.D3 A light visual per Module 2 page (coverage map or example data plot).
+- [ ] P6.D4 Reproducibility hooks (data versions, provenance, citation) and glossary links; references.
+- [ ] P6.D5 Grow `glossary.md` with the terms Module 2 introduces.
+- [ ] P6.D6 `content-reviewer` + `learner-reviewer`; fix; push; draft PR; lane report.
+
+### P6.5 — Integration (overnight, after lane PRs merge) · branch `chore/p6-integration`
+- [ ] P6.5.1 Add glossary terms requested in lane reports; fix `{term}` build warnings.
+- [ ] P6.5.2 References check passes course-wide; the References page reads cleanly.
+- [ ] P6.5.3 Course-wide checks: no "NWIS" in titles/headings; NASA → NOAA → USGS (except 04/02); no cross-agency or
+      Module 4 mentions in Module 3; Module 3 uses the §10 rivers; no old bracket flags; env names match files; objectives in place.
+- [ ] P6.5.4 `learner-reviewer` on Modules 2–4 in order; fix blockers; leave friction items as `TODO (dev team)` callouts.
+- [ ] P6.5.5 Draft PR plus a report for Lindsay: callout counts by owner (dev team / NASA / NOAA / USGS), what changed,
+      open questions, and anything EDS/ODS should know before reviewing.
+
+### Parked
+- [ ] "Check your understanding" in Modules 2–4 (after the internal review).
+- [ ] Slides built from the repo plus a course narration guide (after partner review). Keep lesson sections self-contained
+      with one key figure each so slides can be generated later.
+
 ---
 
 ## Source material and credit
@@ -154,3 +262,16 @@ USGS Water Data OGC APIs, API key signup, `dataRetrieval` API-limit notes, 2026 
 | 2026-10-07 | **Proposed — confirm:** agent commits locally on feature branches without asking (keeps one branch per PR moving without waiting on you); pushes/PRs still need approval. | Claude |
 | 2026-10-08 | Reserve the Skagit River / December 2025 flood for the Module 4 case study. Module 3 lessons will switch to other examples (the NWM page currently uses Skagit; flagged with a TODO, to change later). | Lindsay |
 | 2026-10-08 | List the CIROH NWM BigQuery API in the 03/02 access-route table as an option for researchers on CIROH projects (access by request, linked to CIROH), not as a general recommendation. Narrows the 2026-10-07 BigQuery decision. | Lindsay |
+| 2026-10-08 | `STYLE_GUIDE.md` is the source of truth for structure, voice and terms (shared framework across SWOT/NWM/WDFN). | Lindsay |
+| 2026-10-08 | USGS product is called WDFN (NWIS only as history or the legacy module). | Lindsay |
+| 2026-10-08 | Agency order NASA → NOAA → USGS course-wide; 04/02 keeps its storyline order. | Lindsay |
+| 2026-10-08 | Environments named `m<module>-<product>` (`m03-swot`, `m03-nwm`, `m03-wdfn`, `m04-synthesis`). | Lindsay |
+| 2026-10-08 | Module 3 lessons stand alone (no cross-agency or Module 4 mentions) and share one main river plus one "Now you try it" river; Mississippi headwaters kept as a "no SWOT data" side example. | Lindsay |
+| 2026-10-08 | Open items use two callout types: `TODO (dev team)` and `Partner review (AGENCY)`. | Lindsay |
+| 2026-10-08 | Reproducibility/open science woven through the text, not separate exercises. | Lindsay |
+| 2026-10-08 | Course-wide References and Glossary pages; rendered figures/maps shown; location and data visuals added. | Lindsay |
+| 2026-10-08 | Learning objectives from issue #36 (latest comment) mapped to modules; Module 1's suggested only. | Lindsay |
+| 2026-10-08 | Links to CUAHSI/notebooks `Science Examples` or the `develop` branch flagged for a dev-team decision. | Lindsay |
+| 2026-10-08 | Module 2 unlocked; Module 1 stays read-only. | Lindsay |
+| 2026-10-08 | Agents push their own `<type>/<topic>` branches and open draft PRs into `dev` without asking; Lindsay reviews and merges. | Lindsay |
+| 2026-10-08 | "Check your understanding", slides and narration guide parked. | Lindsay |
