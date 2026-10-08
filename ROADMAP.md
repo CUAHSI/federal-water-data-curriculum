@@ -66,8 +66,8 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
 - [ ] **P1.4 Spike report** (`spike/REPORT.md` + figures): results table for P1.3, plots for P1.1–P1.2, problems hit.
 
 ## Phase 2 — Environments
-- [ ] P2.1 `environments/synthesis.yml`, `swot.yml`, `nwm.yml`, `nwis.yml` (conda-forge, minimal pins). Create each
-      in a fresh env and run the relevant spike scripts in it. Branch: `env/course-environments`.
+- [x] P2.1 `environments/synthesis.yml`, `swot.yml`, `nwm.yml`, `nwis.yml` (conda-forge, minimal pins). Create each
+      in a fresh env and run the relevant spike scripts in it. Branch: `env/course-environments`. *(Ticked for Lane B per Lindsay, 2026-10-08; env files were created on each lane's content branch.)*
 
 ## Phase 3 — Module 4 drafts — every code block executed
 - [x] **P3.1 04/02 "Synthesizing Federal data products"** (branch `content/04-synthesis`, PR [#53](https://github.com/CUAHSI/federal-water-data-curriculum/pull/53), draft rough cut):
@@ -108,10 +108,10 @@ text; don't rewrite sections that are already filled in.
       02_meet_noaa_nwm to the new access-route guidance. Open the issue only with Lindsay's approval.
 
 ## Phase 5 — Wrap-up (each lane)
-- [ ] P5.1 Run `content-reviewer` on every branch; fix all "Must fix".
-- [ ] P5.2 **Lane report** (`spike/<lane>/REPORT.md`, also printed in the session): per branch — what changed,
+- [x] P5.1 Run `content-reviewer` on every branch; fix all "Must fix". *(Ticked for Lane B per Lindsay, 2026-10-08.)*
+- [x] P5.2 **Lane report** (`spike/<lane>/REPORT.md`, also printed in the session): per branch — what changed,
       what ran (with versions), reviewer summary, `[TODO]`/`[PARTNER REVIEW]` markers, decisions taken on Lindsay's
-      behalf, and the push/PR requests ready to approve.
+      behalf, and the push/PR requests ready to approve. *(Ticked for Lane B per Lindsay, 2026-10-08.)*
 
 ## Later — first cut complete (Fri–Mon)
 - [ ] L1 `LICENSE` (GPL-3.0 text from gnu.org) + "Sources and credits" page listing every notebook and agency resource.
