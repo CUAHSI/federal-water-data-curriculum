@@ -10,7 +10,7 @@ If you already know your COMID(s), you can skip programmatic data discovery.
 (nwm-access-routes)=
 ## Which access route for which use case?
 
-NWM output is big: every forecast hour is a file covering all ~2.7 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an API key.
+NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an API key.
 
 | Use case | Recommended route | Key? | Caveat |
 |---|---|---|---|
@@ -191,7 +191,7 @@ Each medium-range run had 6 ensemble members in the API response (member 1 runs 
 (nwm-hydrotools)=
 ### `hydrotools`: past forecasts from the cloud archive
 
-For anything older than a few days, such as the December 2025 Skagit flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.7 million reaches (about 13 MB for a short-range `channel_rt` file).
+For anything older than a few days, such as the December 2025 Skagit flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches (about 13 MB for a short-range `channel_rt` file).
 
 `hydrotools` (OWPHydroTools, from NOAA-OWP) finds those files, downloads them, and hands you a `pandas.DataFrame` for just the COMIDs you asked for. You never need to open a NetCDF file yourself.
 
