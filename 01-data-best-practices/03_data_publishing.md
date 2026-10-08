@@ -26,7 +26,25 @@
 
 ## Water domain repositories
 
-[Compare/contrast water-specific repositories, including HydroShare and EDI. Spend a bit more time on HydroShare since we are the ones building this course.]
+A very important decision that members of the water science community have to make is where to publish their data and workflows. Let's dive into what should be considered when deciding on a repository, some possible options, and the strengths and weaknesses of them.
+
+**What should be considered when deciding on a repository?**
+
+Broadly, there are two categories of repositories; generalist and domain-specific. Generalist repositories accept data regardless of data type, format, content, or disciplinary focus. They tend to be less FAIR and have more lenient publication processes. You are probably familiar with some generalist repositories, such as Zenodo, Dataverse (Harvard Dataverse Repository), or Figshare. Domain-specific repositories are what they sound like, repositories that host data related to a specific discipline/domain. These tend to prioritize FAIR principles more than generalist repositories, and may have strict guidelines for their publication processes. Some examples of domain-specific repositories for environmental science include the [EDI (Environmental Data Initiative) Data Portal](https://portal.edirepository.org/nis/home.jsp) and [HydroShare](https://www.hydroshare.org/landingPage/). 
+
+People often wait until their research is publication ready before searching for a repository to publish their data and code to. By this point, it's tempting to go with a recommendation from the journal they're trying to publish to, or to publish on a generalist repository with a low barrier to publication. A more appropriate approach that would be more aligned with FAIR principles would be to create a data management plan at the start of the project. The best way to find a repository is to ask members of the community in your discipline, water science in our case, to see which domain-specific repository would be the best fit.
+
+**Comparison of water-specific repositories**
+[More explicit comparison of water-specific repositories, including HydroShare and EDI]
+
+**Introduction to HydroShare**
+HydroShare is a CUAHSI hosted, domain-specific repository that hosts diverse types of data, models, scripts, and applications related to water research projects and manuscripts. Some core capabilities of HydroShare are as follows:
+
+- Free and open source platform for data sharing, publishing, and discovery
+- Enables collaboration on data preparation, analysis, and management though the data life cycle
+- Share and run workflows through built in cloud computing capabilities
+
+
 
 ## Publishing derivative data
 
@@ -39,3 +57,5 @@
 ## Further reading
 
 [links out to some of the tools/people/orgs referenced along the way]
+
+- [Generalist Repository Comparison Chart](https://zenodo.org/records/17315963)
