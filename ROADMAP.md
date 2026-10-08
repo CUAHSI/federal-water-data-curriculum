@@ -48,7 +48,7 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
   - Confirm which passes truly cover the gage reach (CMR search on 10/7 suggested UTM 10U tiles on Dec 1, Dec 4,
     **Dec 12 ~09:00 UTC**, Dec 14 — that search also returned false matches near the antimeridian, so verify).
   - Show a pre-event vs. near-peak water-extent comparison; note what RiverSP does and does not capture out of bank.
-- [ ] **P1.3 NWM forecasts — measure each access route** for the gage reach (COMID via NLDI). Record for each:
+- [x] **P1.3 NWM forecasts — measure each access route** (report in `~/fwdc-spike/nwm/REPORT.md`; findings in [PR #54](https://github.com/CUAHSI/federal-water-data-curriculum/pull/54), draft) for the gage reach (COMID via NLDI). Record for each:
       works for Dec 2025? key needed? files touched, **bytes transferred, wall time, peak memory**, lines of code.
   1. NOAA NWM API (api.water.noaa.gov/nwm/v1, no key): single reach, latest run + ~3-day archive. Expected to
      miss Dec 2025 — measure on *today's* forecast instead.
@@ -84,7 +84,7 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
 ## Phase 4 — Module 3 alignment drafts
 Cut from `upstream/dev`, which already includes the colleagues' Module 3 updates (PRs #40–#43). Build on their
 text; don't rewrite sections that are already filled in.
-- [ ] **P4.1 03/02 NWM** (branch `content/03-nwm-access-routes`, PR #4). Resolve the TODO at the top of the page
+- [x] **P4.1 03/02 NWM** (branch `content/03-nwm-access-routes`, [PR #54](https://github.com/CUAHSI/federal-water-data-curriculum/pull/54), draft). Resolve the TODO at the top of the page
       (kerchunk / a better option than hydrotools; **BigQuery is not suggested**). Fold the P1.3 findings into the
       page's existing *Temporal scaling*, *Spatial scaling* and *Parallelization* sections, and add a short
       **"Which access route for which use case?"** table near the top, for example:
