@@ -77,6 +77,8 @@ https://api.water.usgs.gov/nldi/linked-data/comid/position?coords=POINT(-71.1739
 
 **Example: what's the COMID for a USGS gage?**
 
+[TODO: switch example: per Lindsay (2026-10-08), the Skagit River / December 2025 flood is reserved for the Module 4 case study. Replace the Skagit gage, reaches and dates throughout this page (discovery, API, hydrotools, kerchunk, cost tables) with a Module 3 example, and re-run the measurements.]
+
 Throughout the rest of this page (and in Module 4) we use USGS gage 12200500, *Skagit River near Mount Vernon, WA*, which saw major flooding in December 2025. NLDI indexes USGS gages as the `nwissite` source, so you can ask for the reach the gage sits on directly:
 
 ```python
