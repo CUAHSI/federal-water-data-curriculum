@@ -24,6 +24,7 @@ dependencies:
   - s3fs
   - zarr
   - kerchunk
+  - dask
   # Tables, maps and plots
   - pandas
   - geopandas
