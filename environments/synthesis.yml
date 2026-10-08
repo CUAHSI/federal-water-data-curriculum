@@ -1,0 +1,32 @@
+# Conda environment for Module 4: Synthesizing Federal water data products.
+# Create with:  conda env create -f environments/synthesis.yml
+# Then:         conda activate fwdc-synthesis
+name: fwdc-synthesis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  # USGS observations (modernized Water Data OGC APIs)
+  - dataretrieval>=1.4
+  # NASA SWOT: Earthdata search/download; hydrocron is a web API reached with requests
+  - earthaccess
+  - requests
+  # Gridded / NetCDF data
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - h5py
+  - rioxarray
+  - pyproj
+  # NOAA NWM forecasts (kerchunk references over cloud storage) and NHD/NLDI reach lookups
+  - pynhd>=0.19
+  - fsspec
+  - gcsfs
+  - s3fs
+  - zarr
+  - kerchunk
+  - dask
+  # Tables, maps and plots
+  - pandas
+  - geopandas
+  - matplotlib

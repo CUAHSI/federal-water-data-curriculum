@@ -40,9 +40,9 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
 
 ## Phase 1 — Data spike (first) → `spike/` scratch folder outside the repo, plus a report
 
-- [ ] **P1.1 USGS 12200500, Dec 1–31 2025** (`dataretrieval.waterdata`): continuous discharge + gage height,
-      daily values, field measurements. Identify the peak (date/time, discharge, stage).
-- [ ] **P1.2 SWOT over the lower Skagit** — both products will be taught in Modules 3 and 4:
+- [x] **P1.1 USGS 12200500, Dec 1–31 2025** (`dataretrieval.waterdata`): continuous discharge + gage height,
+      daily values, field measurements. Identify the peak (date/time, discharge, stage). *Done (Lane B): `spike/usgs/REPORT.md`; PR [#53](https://github.com/CUAHSI/federal-water-data-curriculum/pull/53).*
+- [x] **P1.2 SWOT over the lower Skagit** *(done, Lane B: `spike/swot/REPORT.md`; PR [#53](https://github.com/CUAHSI/federal-water-data-curriculum/pull/53))* — both products will be taught in Modules 3 and 4:
   - `SWOT_L2_HR_RiverSP` via hydrocron: reach/node WSE (and width) time series for the SWORD reach(es) at the gage.
   - `SWOT_L2_HR_Raster_100m` via `earthaccess` + `xarray`: water area / water fraction for each pass.
   - Confirm which passes truly cover the gage reach (CMR search on 10/7 suggested UTM 10U tiles on Dec 1, Dec 4,
@@ -70,7 +70,7 @@ its own subfolder. Only the lane that owns an environment creates or updates it.
       in a fresh env and run the relevant spike scripts in it. Branch: `env/course-environments`.
 
 ## Phase 3 — Module 4 drafts — every code block executed
-- [ ] **P3.1 04/02 "Synthesizing Federal data products"** (branch `content/04-synthesis`, PR #1):
+- [x] **P3.1 04/02 "Synthesizing Federal data products"** (branch `content/04-synthesis`, PR [#53](https://github.com/CUAHSI/federal-water-data-curriculum/pull/53), draft rough cut):
       flood context (image with credit + alt text) · area of interest (USGS gage ↔ NWM COMID ↔ SWORD reach) ·
       USGS observations incl. out-of-bank measurement limits · NWM forecasts: how forecasts changed approaching
       the peak, using the no-key route, with a one-paragraph pointer to Module 3's access-route guidance ·
@@ -104,7 +104,7 @@ text; don't rewrite sections that are already filled in.
 - [x] **P4.3 03/03 NWIS + 03/00 overview** (branch `content/03-nwis-overview`, [PR #48](https://github.com/CUAHSI/federal-water-data-curriculum/pull/48), draft): continuous values + field
       measurements as used in 04/02; fix `get_reference_tablea`; modernized `waterdata` first; setup →
       `environments/nwis.yml`; 03/00 objectives + concepts (APIs, keys/rate limits, scaling, agency libraries).
-- [ ] **P4.4 Module 2 suggestions** — write the proposed issue text (no `02-*` edits), including a short pointer from
+- [x] **P4.4 Module 2 suggestions** ([issue #52](https://github.com/CUAHSI/federal-water-data-curriculum/issues/52)) — write the proposed issue text (no `02-*` edits), including a short pointer from
       02_meet_noaa_nwm to the new access-route guidance. Open the issue only with Lindsay's approval.
 
 ## Phase 5 — Wrap-up (each lane)
