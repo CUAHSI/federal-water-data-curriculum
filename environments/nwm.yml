@@ -1,0 +1,41 @@
+# Environment for Module 3, "Retrieve NOAA NWM streamflow data"
+# (03-federal-water-data-access-retrieval/02_access_noaa_nwm.md).
+#   conda env create -f environments/nwm.yml
+#   conda activate nwm
+name: nwm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  # discovery: NLDI / COMIDs
+  - pynhd
+  - geopandas
+  # reading NWM NetCDF files and kerchunk / virtual-Zarr references
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - h5py
+  - zarr>=3
+  - kerchunk
+  - fsspec
+  - gcsfs
+  - s3fs
+  - ujson
+  - dask
+  - pandas
+  - requests
+  - matplotlib
+  - nest-asyncio  # only needed when running hydrotools inside Jupyter
+  # dependencies of hydrotools.nwm_client, installed from conda-forge where possible
+  - pytables
+  - pint
+  - pyarrow
+  - google-cloud-storage
+  - beautifulsoup4
+  - aiohttp
+  - aiofiles
+  - adlfs
+  - planetary-computer
+  - pip
+  - pip:
+      - hydrotools.nwm_client
