@@ -7,6 +7,7 @@ NOAA National Water Model (NWM) streamflow data lives in a few different places 
 
 If you already know your COMID(s), you can skip programmatic data discovery.
 
+(nwm-access-routes)=
 ## Which access route for which use case?
 
 NWM output is big: every forecast hour is a file covering all ~2.7 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an API key.
