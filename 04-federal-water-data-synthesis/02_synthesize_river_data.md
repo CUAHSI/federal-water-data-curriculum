@@ -17,7 +17,7 @@ The December 2025 atmospheric river that drove the Skagit River flood, shown in 
 
 _The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT tutorial "Hydrocron API: Getting Started with SWOT Time Series"](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) authored by Nikki Tebaldi, Cassandra Nickles, and Brandi Downs._
 
-The sections below walk through the data you would collect for this flood, product by product. Each code block runs on its own in the order shown, using the Module 4 environment ([environments/synthesis.yml](../environments/synthesis.yml)):
+The sections below walk through the data you would collect for this flood, product by product. Run the code blocks in order, in one Python session (later blocks reuse variables from earlier ones), using the Module 4 environment ([environments/synthesis.yml](../environments/synthesis.yml)):
 
 ```bash
 conda env create -f environments/synthesis.yml
@@ -133,6 +133,8 @@ Field measurements come back as one row per reading, with gage-height readings a
 
 USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely. [TODO: verify whether the 12200500 rating has measurements above 111,000 ft³/s from earlier floods, e.g. via `waterdata.get_ratings`.] [PARTNER REVIEW: USGS] wording on rating extrapolation and out-of-bank flow at this site.
 
+Plot the continuous and daily discharge, with the December field measurement overlaid:
+
 ```python
 import matplotlib.pyplot as plt
 
@@ -201,7 +203,7 @@ print(dec[["reach_id", "time", "wse_change_m", "gage_change_m", "reach_q"]]
       .round({"wse_change_m": 2, "gage_change_m": 2}).to_string(index=False))
 ```
 
-Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.15 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change, with `reach_q` = 2. Treat single degraded values with caution. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach. [PARTNER REVIEW: NASA] confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
+Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change, with `reach_q` = 2. Treat single degraded values with caution. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach. [PARTNER REVIEW: NASA] confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
 
 ### Water extent before and near the peak (Raster)
 
@@ -230,10 +232,10 @@ import xarray as xr
 files = earthaccess.download(skagit, local_path="swot_raster")
 before = xr.open_dataset([f for f in files if "20251201T" in str(f)][0])
 peak = xr.open_dataset([f for f in files if "20251212T" in str(f)][0])
-print(peak[["water_frac", "water_area", "water_area_qual", "wse"]])
+print(peak[["water_frac", "water_area", "water_area_qual", "wse", "wse_qual"]])
 ```
 
-Each granule is a ~1,600 × 1,600 grid in UTM zone 10N meters (`x`, `y`). `water_frac` is the fraction of each 100 m cell covered by water (unitless), `water_area` is water area in m², and `water_area_qual` is the **Data Quality Flag** for both (0 good, 1 suspect, 2 degraded, 3 bad). Next we subset to the delta farmland west of Mount Vernon, keep cells that are good or suspect in *both* passes, and count cells that are more than half water:
+Each granule is a ~1,600 × 1,600 grid in UTM zone 10N meters (`x`, `y`). `water_frac` is the fraction of each 100 m cell covered by water (unitless), `water_area` is water area in m², and `water_area_qual` is the **Data Quality Flag** for both (0 good, 1 suspect, 2 degraded, 3 bad); `wse` and its flag `wse_qual` work the same way for water surface elevation. Next we subset to the delta farmland west of Mount Vernon, keep cells that are good or suspect in *both* passes, and count cells that are more than half water:
 
 ```python
 import pyproj
@@ -254,6 +256,8 @@ print("Wet in both:", int((wet_before & wet_peak).sum()),
 gage_cell = peak.sel(x=gage_x, y=gage_y, method="nearest")
 print("Near-peak pass at the gage: wse =", float(gage_cell["wse"]), "| wse_qual =", float(gage_cell["wse_qual"]))
 ```
+
+Map water fraction for the two passes, showing only cells that are good or suspect in both:
 
 ```python
 fig, axes = plt.subplots(1, 2, figsize=(11, 5), sharey=True)

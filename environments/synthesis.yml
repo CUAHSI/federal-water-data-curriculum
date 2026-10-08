@@ -7,7 +7,7 @@ channels:
 dependencies:
   - python=3.12
   # USGS observations (modernized Water Data OGC APIs)
-  - dataretrieval>=1.1
+  - dataretrieval>=1.4
   # NASA SWOT: Earthdata search/download; hydrocron is a web API reached with requests
   - earthaccess
   - requests
