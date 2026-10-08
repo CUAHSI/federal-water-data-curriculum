@@ -8,7 +8,7 @@ Now that you have gained a deep knowledge of NASA SWOT water surface elevation, 
 
 _Note that there are other Federal agencies producing or using water data, including the Environmental Protection Agency (EPA) and US Army Corps of Engineers (USACE)._
 
-Below are short tours of three related products. Each tour covers what the product is, how it connects to the three products in this course, and a first step for getting it. Each one points to a CUAHSI notebook with a full worked example. These products build on the skills from Module 3: the same `earthaccess` login and the same habit of discovering before downloading. The AORC example also introduces a new pattern, opening a cloud-optimized Zarr store lazily with `xarray`. The code runs in the Module 4 environment, `environments/synthesis.yml` (in the course repository) [TODO: confirm synthesis.yml includes earthaccess, xarray, fsspec, s3fs, zarr and pyproj].
+Below are short tours of three related products. Each tour covers what the product is, how it connects to the three products in this course, and a first step for getting it. Each one points to a CUAHSI notebook with a full worked example. These products build on the skills from Module 3: the same `earthaccess` login and the same habit of discovering before downloading. The AORC example also introduces a new pattern, opening a cloud-optimized Zarr store lazily with `xarray`. The code runs in the Module 4 environment, `environments/synthesis.yml` (in the course repository).
 
 ## NASA SWOT discharge: the SWORD of Science (SoS)
 
