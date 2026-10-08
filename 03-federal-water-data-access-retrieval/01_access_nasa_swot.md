@@ -196,6 +196,7 @@ latest = {}
 for g in sorted(covering, key=lambda g: g["umm"]["GranuleUR"]):
     scene = g["umm"]["GranuleUR"].rsplit("_", 2)[0]  # name without the processing counter
     latest[scene] = g
+
 aitkin_raster = list(latest.values())
 for g in aitkin_raster:
     print(g["umm"]["GranuleUR"], round(g.size, 1), "MB")
