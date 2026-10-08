@@ -87,7 +87,8 @@ Some repositories are also run by universities, funders, or governments. These c
  
 In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. Since HydroShare is the repository this course is built around, we will spend a bit more time there.
 
-**Introduction to HydroShare**
+### Introduction to HydroShare
+
 [HydroShare](https://www.hydroshare.org) is a domain-specific repository hosted by CUAHSI that holds diverse types of data, models, scripts, and applications related to water research projects and manuscripts. The unit of content is a **resource**, which can hold data, models, code, notebooks, and teaching materials along with metadata. It includes content types for things like time series, rasters, and NetCDF, which come with extra metadata and viewers.
  
 A few features make it particularly useful:
