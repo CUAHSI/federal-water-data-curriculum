@@ -29,7 +29,7 @@ Now that we have covered some of the reasons behind open science and adopting da
 
 Putting your code and data online can be revealing and intimidating. Sharing possible errors in your work is a real fear, but that is far outweighed by the feedback you may receive, and how you may help other scientists in their research. It is also a motivator to hold your work to a higher standard which benefits all who are involved and all who may learn from your work.
 
-It takes additional time and effort, especially at the start of a project. Things like a testing framework, setting up version control, and deciding with collaborators which parts may be open source and how they can be shared. However, the time spent on these initial tasks saves you more time in the long run. Say a change is requested when you've submitted your work for review, having reproducible and version controlled dta and code makes integrating that change much quicker.
+It takes additional time and effort, especially at the start of a project. Things like a testing framework, setting up version control, and deciding with collaborators which parts may be open source and how they can be shared. However, the time spent on these initial tasks saves you more time in the long run. Say a change is requested when you've submitted your work for review, having reproducible and version controlled data and code makes integrating that change much quicker.
 
 We know it is easy to talk about open science, and more difficult to pull these practices into your own work. There is a wider push towards adopting these open science workflows, and here are some tangible ways to work towards them:
 
