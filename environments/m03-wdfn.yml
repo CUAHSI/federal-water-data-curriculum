@@ -10,4 +10,5 @@ dependencies:
   - pandas
   - geopandas
   - matplotlib          # figures and maps in the lesson
+  - requests            # river line for the location map (NLDI)
   - ipykernel           # optional: run the lesson in Jupyter

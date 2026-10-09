@@ -1,6 +1,6 @@
 # Retrieve NOAA NWM data
 
-The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <Streamflow>` for about 2.7 million river {term}`reaches <Reach>` across the United States. This lesson shows you how to find the reach you care about and retrieve its forecasts in Python. If you haven't met the NWM yet, start with [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md), which covers how the model works, its {term}`configurations <Configuration>` and its known limitations.
+The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <Streamflow>` for about 2.8 million river {term}`reaches <Reach>` across the United States. This lesson shows you how to find the reach you care about and retrieve its forecasts in Python. If you haven't met the NWM yet, start with [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md), which covers how the model works, its {term}`configurations <Configuration>` and its known limitations.
 
 **Main example: the Ohio River at Louisville, Kentucky.** The Ohio is one of the largest rivers in the country, and at Louisville it carries the drainage of much of the Ohio Valley. In early April 2025, days of heavy rain sent it into a large spring flood. You will retrieve NWM forecasts for the reach of the Ohio at Louisville, both today's forecast and archived forecasts issued during the April 2025 flood. At the end, you will repeat the steps on a second river, the Willamette at Salem, Oregon.
 
@@ -45,9 +45,12 @@ The environment file [`environments/m03-nwm.yml`](../environments/m03-nwm.yml) l
 ```bash
 conda env create -f environments/m03-nwm.yml
 conda activate m03-nwm
+
+# Optional: register this environment as a Jupyter kernel, then pick "Python (m03-nwm)" in Jupyter
+python -m ipykernel install --user --name m03-nwm --display-name "Python (m03-nwm)"
 ```
 
-This installs everything for discovery (`pynhd`) and for all three download routes (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the figures. None of the routes on this page needs an API key or account.
+This installs everything for discovery (`pynhd`) and for all three download routes (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the figures and `ipykernel` for Jupyter. If you work in Jupyter, choose the `Python (m03-nwm)` kernel; otherwise your notebook runs in a different environment and imports such as `pynhd` fail. None of the routes on this page needs an API key or account.
 
 The environment file pins the Python version but lets most packages float to their latest release, so a year from now `conda env create` may give you newer versions than the ones we tested. When you finish an analysis, record exactly what you ran with `conda env export > environment-lock.yml` and keep that file with your results. [Data Management](../01-data-best-practices/02_data_management.md) (Module 1) explains why this matters for reproducibility. The examples on this page were tested with Python 3.14, `pynhd` 0.20.0, `hydrotools.nwm_client` 9.2.1, `kerchunk` 0.2.10, `xarray` 2026.9.0, `zarr` 3.4.0 and `fsspec` 2026.9.0.
 
@@ -180,14 +183,14 @@ Confirm: “All three return NWM's *Variable* `streamflow` in m³/s (the API lab
 
 Two terms you'll see in every route:
 
-* **{term}`Configuration`**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several ensemble members), `long_range`, or `analysis_assim` (the model's best estimate of current conditions).
+* **{term}`Configuration`**: which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour), `medium_range` (out to 10 days, issued every 6 hours, with several *ensemble members*: parallel runs from slightly different inputs, numbered by `member_id`, that show the spread of possible outcomes), `long_range`, or `analysis_assim` (the model's best estimate of current conditions).
 
   :::{admonition} Partner review (NOAA): Programmatic data downloads
   :class: important
   Confirm cadences, horizons and ensemble sizes for NWM v3.0.
   :::
 
-* **{term}`Reference time <Forecast reference time>`**: when a forecast was issued, in UTC. The time each forecast value applies to is its **{term}`valid time <Valid time>`** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
+* **{term}`Reference time <Forecast reference time>`**: when a forecast was issued, in UTC (Coordinated Universal Time). NWM shorthand writes the issue hour with a Z for UTC: `00Z` is 00:00 UTC, and file names write it as `t00z`. The time each forecast value applies to is its **{term}`valid time <Valid time>`** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
 
 (nwm-api)=
 ### NOAA NWM API: today's forecasts for a few reaches
@@ -281,7 +284,10 @@ For anything older than a few days, such as the April 2025 flood, you need NOAA'
 
 **Example: the short-range forecast issued at 00Z on 6 April 2025**
 
+Before you run this: `.get()` downloads all 18 files of the run (about 270 MB) and needs about 1.7 GB of memory, and took about 2–3 minutes on our home connection. Let it finish; interrupting it can leave a broken file behind (see "If `.get()` fails" below). **In Jupyter**, run `import nest_asyncio; nest_asyncio.apply()` once first (the first line of the block, commented out); plain Python scripts don't need it.
+
 ```python
+# import nest_asyncio; nest_asyncio.apply()   # uncomment in Jupyter only
 from hydrotools.nwm_client.NWMFileClient import NWMFileClient
 
 comid = 10164004  # from the discovery step
@@ -321,7 +327,7 @@ What happens behind `.get()` matters for cost: `hydrotools` downloads **every fi
 (nwm-kerchunk)=
 ### Kerchunk references: lazy, cloud-native reads with `xarray`
 
-NetCDF files aren't designed to be read piece by piece over the internet. {term}`Kerchunk <kerchunk>` fixes that without copying the data: it scans each file once and writes a small JSON "reference" file that records *where inside the original file* each chunk of each variable lives (byte offset and length). `xarray` can then open the references as if they were one Zarr dataset and fetch **only the chunks you touch**, straight from the cloud bucket. See the [kerchunk documentation](https://fsspec.github.io/kerchunk/) and Element 84's write-up, [Using Kerchunk to make NOAA's National Water Model dataset more accessible](https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/) (2023).
+First, two terms. Inside a NetCDF file, each variable is stored in compressed blocks called *chunks*; a reader has to fetch and decompress a whole chunk to get any value in it, like having to take a whole box off the shelf to get one book. *Zarr* is a storage format that keeps each chunk as a separate object, so cloud tools can fetch exactly the chunks they need. NetCDF files aren't designed to be read piece by piece over the internet. {term}`Kerchunk <kerchunk>` fixes that without copying the data: it scans each file once and writes a small JSON "reference" file that records *where inside the original file* each chunk of each variable lives (byte offset and length). `xarray` can then open the references as if they were one Zarr dataset and fetch **only the chunks you touch**, straight from the cloud bucket. See the [kerchunk documentation](https://fsspec.github.io/kerchunk/) and Element 84's write-up, [Using Kerchunk to make NOAA's National Water Model dataset more accessible](https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/) (2023).
 
 Two kinds of reference are available:
 
@@ -440,10 +446,15 @@ Name: streamflow, dtype: float64
 
 **Example: use NOAA's published references for a recent run**
 
-For runs since January 2026 you can skip the build step. NOAA's references are one JSON file per forecast hour and point at the AWS copy of the files (`s3://noaa-nwm-pds`). This example combines them the same way and reads them over HTTPS:
+For runs since January 2026 you can skip the build step. NOAA's references are one JSON file per forecast hour and point at the AWS copy of the files (`s3://noaa-nwm-pds`). This example combines them the same way and reads them over HTTPS. It uses `open_refs` from the previous example, so run that block first (you don't need to build any references yourself).
 
 ```python
 import json
+import fsspec
+import pandas as pd
+from kerchunk.combine import MultiZarrToZarr
+
+comid = 10164004                                # Ohio River at Louisville
 
 s3 = fsspec.filesystem("s3", anon=True)        # public bucket: no AWS account needed
 
@@ -518,17 +529,17 @@ fig.savefig("nwm-ohio-louisville-forecasts.png", dpi=150)
 ```
 
 :::{figure} ../images/m03/nwm-ohio-louisville-forecasts.png
-:alt: Line chart of NWM streamflow forecasts for the Ohio River at Louisville, 3 to 13 April 2025. A gray medium-range line issued on 3 April rises from about 3,000 to a peak near 13,900 cubic meters per second on 8 April, then eases to about 10,000. Three short colored lines, the short-range runs issued on 6 and 7 April, each start between 15,000 and 18,000 and fall steeply within 18 hours.
+:alt: Line chart of NWM streamflow forecasts for the Ohio River at Louisville, 3 to 13 April 2025. A gray medium-range line issued on 3 April rises from about 3,000 to a peak near 13,900 cubic meters per second on 8 April, then eases to about 10,000. Three short colored lines, the short-range runs issued on 6 and 7 April, each start between 15,000 and 18,000; the two from 6 April fall to about 8,000 to 9,000 within 18 hours, and the one from 7 April falls to about 13,000 and turns back up.
 :width: 100%
 
-NWM v3.0 streamflow forecasts for the Ohio River reach at Louisville (COMID 10164004): the medium-range forecast (member 1) issued 3 April 2025 00Z, and three short-range forecasts issued 6 April 00Z, 6 April 12Z and 7 April 00Z. Each line is a separate forecast run. Here they disagree a lot: every short-range run starts near 15,000–18,000 m³/s and falls steeply within 18 hours, while the medium-range run issued three days earlier peaks near 13,900 m³/s on 8 April. Data: NOAA NWM operational archive on Google Cloud, read with kerchunk references, accessed 2026-10-09.
+NWM v3.0 streamflow forecasts for the Ohio River reach at Louisville (COMID 10164004): the medium-range forecast (member 1) issued 3 April 2025 00Z, and three short-range forecasts issued 6 April 00Z, 6 April 12Z and 7 April 00Z. Each line is a separate forecast run. Here they disagree a lot: every short-range run starts near 15,000–18,000 m³/s and falls quickly (the two 6 April runs by about half within 18 hours, the 7 April run by about a quarter before turning up), while the medium-range run issued three days earlier peaks near 13,900 m³/s on 8 April. Data: NOAA NWM operational archive on Google Cloud, read with kerchunk references, accessed 2026-10-09.
 :::
 
-That disagreement is part of what you downloaded: the NWM gives you each run as issued, and different runs and configurations can tell different stories about the same river. Record exactly which runs you used, and look at several before drawing conclusions from one.
+If your plot looks like this, your code is right: these are model forecasts, not measurements, and this is what the archive holds (we've asked NOAA why the short-range runs drop so fast; see the note below). That disagreement is part of what you downloaded: the NWM gives you each run as issued, and different runs and configurations can tell different stories about the same river. Record exactly which runs you used, and look at several before drawing conclusions from one.
 
 :::{admonition} Partner review (NOAA): Short-range forecasts at the Ohio River at Louisville
 :class: important
-In the April 2025 short-range runs for COMID 10164004, each run starts at 15,000–18,000 m³/s and drops by about half within 18 hours, well below the medium-range forecast. Is this expected behavior at this reach (for example, from data assimilation in the initial conditions, or the McAlpine Locks and Dam), and how should learners interpret it?
+In the April 2025 short-range runs for COMID 10164004, each run starts at 15,000–18,000 m³/s and drops quickly (the 6 April 00Z and 12Z runs by about half within 18 hours, the 7 April 00Z run by about a quarter), while the medium-range run issued 3 April stays lower until 8 April. Is this expected behavior at this reach (for example, from data assimilation in the initial conditions, or the McAlpine Locks and Dam), and how should learners interpret it?
 :::
 
 **Keep raw and derived data apart.** The files in the NOAA archive are your raw data, and they stay where they are. What you create, the reference JSON and the table of values you extracted, is derived. Save it in a separate folder (for example `data/derived/`) together with the COMIDs, configuration and reference times you asked for, so anyone can rebuild it from the archive. See [Data Management](../01-data-best-practices/02_data_management.md) in Module 1.
@@ -712,7 +723,7 @@ Name: streamflow, dtype: float64
 
 * [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md) (Module 2): what the model is and how its configurations differ.
 * NLDI documentation: https://api.water.usgs.gov/docs/nldi
-* `pynhd` (HyRiver) documentation: https://docs.hyriver.io/readme/pynhd.html
+* `pynhd` (HyRiver) documentation: https://docs.hyriver.io/readme/pynhd.html; cite HyRiver as https://doi.org/10.21105/joss.03175
 * NOAA NWM API (experimental) documentation: https://api.water.noaa.gov/nwm/v1/docs
 * National Water Prediction Service API documentation: https://api.water.noaa.gov/nwps/v1/docs/
 * OWPHydroTools (hydrotools) GitHub repo: https://github.com/NOAA-OWP/hydrotools

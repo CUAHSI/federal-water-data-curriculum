@@ -78,7 +78,7 @@ The environment file lets most packages float to their latest release, so a year
 
 ### Codes: parameters and statistics
 
-The Water Data APIs use codes for many query arguments. A {term}`parameter code <Parameter code>` says what was measured (`00060` is discharge, `00065` is gage height), and a statistic code says how values were summarized (`00003` is the daily mean). `get_reference_table` returns each list of codes as a `pandas` DataFrame, so you can look them up in code rather than on a web page:
+The Water Data APIs use codes for many query arguments. A {term}`parameter code <Parameter code>` says what was measured (`00060` is discharge, `00065` is gage height), and a statistic code says how values were summarized (`00003` is the daily mean). `get_reference_table` returns each list of codes as a `pandas` DataFrame, so you can look them up in code rather than on a web page. Like every `waterdata` function, it returns a pair, `(DataFrame, metadata)`; `_` or `md` catches the metadata:
 
 ```python
 from dataretrieval import waterdata
@@ -133,11 +133,11 @@ print(site_info[["monitoring_location_id", "monitoring_location_name", "drainage
 4          USGS-02380006  STUDENT6 CREEK NEAR LOUISVILLE, KY            NaN
 ```
 
-This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't real gages: on 2026-10-08, ten "STUDENT" creeks and four "SANDY TEST" entries. This is one reason to look at discovery results before you download anything.
+This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't real gages: on 2026-10-08, ten "STUDENT" creeks and five "TEST" entries (such as "SANDY TEST NO 1" and "LOUISVILLE TEST SITE"). This is one reason to look at discovery results before you download anything.
 
 :::{admonition} Partner review (USGS): Test entries in monitoring-location results
 :class: important
-Confirm what the "STUDENT… CREEK" and "SANDY TEST" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out.
+Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out.
 :::
 
 **Example: which of those have daily mean discharge?**
@@ -170,7 +170,7 @@ Each row is one *time series*, not one location, so a location with two daily-di
 
 **Map: where these locations are**
 
-A quick map is a good check that discovery found what you meant. The river line on this map comes from the USGS NLDI web service, which returns the stream network up- and downstream of a monitoring location as GeoJSON:
+A quick map is a good check that discovery found what you meant. The river line on this map comes from the USGS {term}`NLDI` web service, which returns the stream network up- and downstream of a monitoring location as GeoJSON:
 
 ```python
 import pandas as pd
@@ -180,15 +180,15 @@ import matplotlib.pyplot as plt
 
 site = "USGS-03294500"   # Ohio River at Louisville, KY
 
-# leave out entries that are not real gages (names such as "STUDENT1 CREEK" or "SANDY TEST NO 1")
-real = site_info[~site_info["monitoring_location_name"].str.contains("STUDENT|TEST|SANY")]
+# leave out the 15 entries that are not real gages (names such as "STUDENT1 CREEK" or "SANDY TEST NO 1")
+real = site_info[~site_info["monitoring_location_name"].str.contains("STUDENT|TEST")]
 with_q = sites_with_q.drop_duplicates("monitoring_location_id")
 
 # the Ohio River, 60 km up- and downstream of the gage (UM = upstream mainstem, DM = downstream mainstem)
-url = f"https://api.water.usgs.gov/nldi/linked-data/nwissite/{site}/navigation/{{}}/flowlines"
 parts = []
 for nav in ["UM", "DM"]:
-    r = requests.get(url.format(nav), params={"distance": 60}, timeout=120)
+    url = f"https://api.water.usgs.gov/nldi/linked-data/nwissite/{site}/navigation/{nav}/flowlines"
+    r = requests.get(url, params={"distance": 60}, timeout=120)
     r.raise_for_status()
     parts.append(gpd.GeoDataFrame.from_features(r.json()["features"], crs="EPSG:4326"))
 
@@ -289,7 +289,7 @@ print(peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_sta
 4895          00065 2025-04-09 14:00:00+00:00      67.98              ft        Approved
 ```
 
-The Ohio crested at **719,000 ft³/s** at 14:30 UTC on 9 April 2025 (10:30 a.m. in Louisville), with a gage height of **67.98 ft** half an hour earlier. Times are in UTC: convert them before comparing with local records.
+The Ohio crested at **719,000 ft³/s** at 14:30 UTC on 9 April 2025 (10:30 a.m. in Louisville), with a gage height of **67.98 ft** half an hour earlier. Gage height is measured above the gage's own reference point (its datum), not from the riverbed, so it isn't the water depth. Times are in UTC: convert them before comparing with local records.
 
 Look at `approval_status`, too. On 2026-10-08, values up to 9 April 2025 17:15 UTC were `Approved`, and everything after that was still {term}`provisional <Provisional data>`. Provisional data can still be revised when USGS reviews them ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers, and expect values after the crest to change. No values in this window carry a `qualifier`.
 
@@ -467,7 +467,7 @@ value              1110000.0
 Name: 3314, dtype: object
 ```
 
-On 2026-10-08 this one request returned 36,054 rows, one per day from 1 January 1928 to the day before, in about 6 seconds. The largest daily mean in the record is 1,110,000 ft³/s on 27 January 1937. Look at the `qualifier` column on long records: about 1,100 of these days are marked `[ESTIMATED]`, some together with `[ICE]` or `[EQUIP]` (equipment problems).
+On 2026-10-08 this one request returned 36,054 rows, one per day from 1 January 1928 to the day before, in about 6 seconds. The largest daily mean in the record is 1,110,000 ft³/s on 27 January 1937. Look at the `qualifier` column on long records: about 1,100 of these days are marked `[ESTIMATED]` (count them with `daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()`), some together with `[ICE]` or `[EQUIP]` (equipment problems).
 
 Continuous values are limited to three years per call, so request a long continuous record in three-year windows (the Louisville record starts in 2009, so that's six requests). Approved data rarely change, so save each window to a file and only request new data next time.
 
