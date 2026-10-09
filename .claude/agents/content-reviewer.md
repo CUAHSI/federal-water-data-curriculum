@@ -18,7 +18,7 @@ If asked, review a whole module instead.
 ## Checks
 
 ### 1. Links resolve
-- Run `python3 .claude/scripts/check_links.py --changed` (or pass the file paths).
+- Run `python3 .claude/scripts/check_links.py --changed`. Every MISSING item is Must fix; NO REFERENCE FILE is Must fix; 'unused' entries are Should fix.
 - Every BROKEN item fails the review. Signed/expiring URLs (`Expires=`, `Signature=`) fail —
   recommend the stable landing page.
 - UNVERIFIED items (401/403/429) are listed as "check by hand", not failures.
