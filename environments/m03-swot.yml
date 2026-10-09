@@ -18,3 +18,4 @@ dependencies:
   - pyproj
   - requests
   - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter

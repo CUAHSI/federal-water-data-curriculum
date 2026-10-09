@@ -24,18 +24,18 @@ All the routes below use the same Water Data APIs, so the choice is mostly about
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and the [NWIS Mapper](https://apps.usgs.gov/nwismapper/) | No | Manual; not reproducible on its own |
-| Find monitoring locations and what they record | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (recommended) | Results come in pages; each page is one request |
-| Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (recommended) | The whole record for a site in one call (paged for you) |
-| The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (recommended) | Up to three years per call |
-| Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (recommended) | About one measurement a month per site |
-| One day (or a short window) at many sites | `waterdata.get_daily` with no site, optionally a `bbox` | No (recommended) | One request instead of thousands; mind the page count |
+| Find monitoring locations and what they record | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages; each page is one request |
+| Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one call (paged for you) |
+| The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per call |
+| Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (key recommended) | About one measurement a month per site |
+| One day (or a short window) at many sites | `waterdata.get_daily` with no site, optionally a `bbox` | No (key recommended) | One request instead of thousands; mind the page count |
 | Code that uses the legacy Water Services | `dataretrieval.nwis` | No | Being retired; port it to `waterdata` (see [the note below](#wdfn-legacy)) |
 
 ## Tools and environment setup
 
 ### USGS Water Data API key
 
-The Water Data APIs work without a key, but USGS recommends one (USGS calls it a token) for higher rate limits, so this lesson uses one.
+The Water Data APIs work without a key, but USGS recommends one (USGS calls it a token) for higher rate limits, so this lesson uses one. If you don't have a key yet, skip this step: every example on this page runs without one, just with lower rate limits.
 
 1. Request a key at the [USGS Water Data API signup page](https://api.waterdata.usgs.gov/signup/).
 2. Save it in a safe place, such as a password manager.
@@ -113,6 +113,8 @@ Keep what you're asking for (place, site type, codes, dates) in variables at the
 ```python
 # what we're asking for
 STATE, COUNTY = "Kentucky", "Jefferson County"
+site = "USGS-03294500"                    # Ohio River at Louisville, KY (found below)
+START, END = "2025-03-15", "2025-05-15"   # the April 2025 flood
 
 site_info, md = waterdata.get_monitoring_locations(
     state_name=STATE,
@@ -178,7 +180,7 @@ import geopandas as gpd
 import requests
 import matplotlib.pyplot as plt
 
-site = "USGS-03294500"   # Ohio River at Louisville, KY
+# site (Ohio River at Louisville) is set in the query block above
 
 # leave out the 15 entries that are not real gages (names such as "STUDENT1 CREEK" or "SANDY TEST NO 1")
 real = site_info[~site_info["monitoring_location_name"].str.contains("STUDENT|TEST")]
@@ -253,8 +255,7 @@ Every `waterdata` function returns a `(DataFrame, metadata)` pair. The DataFrame
 **{term}`Continuous values <Continuous values>`** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
 
 ```python
-START, END = "2025-03-15", "2025-05-15"   # the April 2025 flood
-
+# START and END (the April 2025 flood) are set in the query block above
 cont, md = waterdata.get_continuous(
     monitoring_location_id=site,
     parameter_code=["00060", "00065"],    # discharge and gage height

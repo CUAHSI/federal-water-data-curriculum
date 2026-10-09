@@ -46,13 +46,13 @@ There are two ways to get these products with code, and they scale differently:
 - **`earthaccess`** is NASA's Python library for logging in to NASA Earthdata, searching for data, and downloading or
   streaming the files. It works for every SWOT product. It replaced what used to be several different access patterns
   ([earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/)).
-**Only need a time series for one reach?** Find its reach ID in [SWORD Explorer](https://www.swordexplorer.com/), run the
-setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
-Earthdata login or any downloads.
-
 - **`hydrocron`** is a web API from NASA's {term}`PO.DAAC` that returns a RiverSP time series for one reach or node in a
   single request. SWOT files are archived one per overpass, so without it you would open one file per overpass to build a
   time series ([Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis)).
+
+**Only need a time series for one reach?** Find its reach ID in [SWORD Explorer](https://www.swordexplorer.com/), run the
+setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
+Earthdata login or any downloads.
 
 :::{admonition} Partner review (NASA): Choosing an access route
 :class: important
@@ -68,15 +68,22 @@ You need a free account and a Python environment.
 2. **Create the lesson's environment.** The course provides a {term}`conda environment <Conda environment>` file,
    `environments/m03-swot.yml` (in the course repository), with every package this lesson uses: `earthaccess` for login,
    search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and `pandas`
-   for `hydrocron`; and `matplotlib` for plots. A pinned environment means your results don't change because a package
-   updated (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
+   for `hydrocron`; and `matplotlib` for plots. The file pins the Python version but lets most packages float to their latest
+   release, so you may get newer versions than the ones we tested; record what you actually ran (below) and keep it with
+   your results (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
    Module 1). `mamba` is faster, but `conda` works the same way.
 
 ```bash
 # From the root of the course repository
 mamba env create -f environments/m03-swot.yml   # or: conda env create -f environments/m03-swot.yml
 conda activate m03-swot
+
+# Optional: register this environment as a Jupyter kernel, then pick "Python (m03-swot)" in Jupyter
+python -m ipykernel install --user --name m03-swot --display-name "Python (m03-swot)"
 ```
+
+If you work in Jupyter, choose the `Python (m03-swot)` kernel; otherwise your notebook runs in a different environment and
+imports such as `earthaccess` fail.
 
 Record the versions you actually ran with, so you (or a reviewer) can rebuild the same setup later. This prints the ones that
 matter most here:
@@ -102,6 +109,8 @@ variables (or use a `.netrc` file); `earthaccess.login()` finds them automatical
 or notebook. If you're not sure how to set environment variables, let it prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
 
 ```python
+import earthaccess
+
 # Log in to NASA Earthdata. Uses EARTHDATA_USERNAME/EARTHDATA_PASSWORD or .netrc if set, otherwise prompts.
 auth = earthaccess.login()
 auth.authenticated  # True once you are logged in
@@ -372,6 +381,9 @@ pass 175), near the flood crest, and find the SWORD reach closest to the example
 [SWORD Explorer](https://www.swordexplorer.com/).)
 
 ```python
+import geopandas as gpd
+from shapely.geometry import Point
+
 flood_granule = [g for g in louisville_reach_granules if "_031_175_" in g["umm"]["GranuleUR"]]
 files = earthaccess.download(flood_granule, local_path=data_dir)
 reaches = gpd.read_file(files[0])
