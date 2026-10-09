@@ -665,6 +665,14 @@ error. Search the page's code for `2025-12`, `202512` and `_UTM10U_` after your 
 6. **For NWM**, pick `nwm_issue_times` before your crest and change the observation window in the forecast plot
    (`obs = ...["2025-12-10":"2025-12-13"]`). Past events come from the cloud archive, as here; for the last few days, the NOAA NWM API is simpler ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Move the remaining event literals (baseline date, December filters, Raster tile and file dates, forecast-plot window) into the query block; the adaptation checklist lists them for now (needs a re-run).
+- Add a short, reproducible check that the gage sits on SWORD reach `78310800031` (distance from the gage to each reach), for learners adapting the case study (needs a run).
+- Explain or source "Category 5 atmospheric river"; replace the generic opening paragraph with what the learner will do; link statistic code and qualifier; comment that `zip` drops reaches beyond the four colors; use "gage" except in names and quotes.
+:::
+
 ## Further reading
 
 - Adapted from [Notebook to Demonstrate Collecting USGS Data (collect-usgs-streamflow.ipynb)](https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval/collect-usgs-streamflow.ipynb), CUAHSI notebooks (GPL-3.0); ported from the legacy `nwis` module to `waterdata`.

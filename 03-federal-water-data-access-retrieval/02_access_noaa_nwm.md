@@ -718,6 +718,16 @@ Name: streamflow, dtype: float64
 ```
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Decision for Lindsay: the NLDI lookup by gage ID (`USGS-03294500`) is the one other-agency mention in Module 3. Either drop it (the point lookup already finds the COMID) or record it as an allowed exception in STYLE_GUIDE §2.
+- Move the environments TODO callout to the end of "Tools and environment setup" so learners don't read it as "skip this step".
+- Add one query block (`POINT`, reference day, cycle) and stop re-typing `comid = 10164004` in later blocks (needs a re-run).
+- Add an "Explore by clicking" row (NWPS map) to the access-route table; `json.dump` with `with open(...)` and an explicit `import json`; explain `nudge`.
+- Link first uses of glossary terms: ensemble member, long-format table, chunk, lead time.
+:::
+
 ## Further reading
 
 * [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md) (Module 2): what the model is and how its configurations differ.

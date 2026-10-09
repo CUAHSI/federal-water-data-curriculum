@@ -55,3 +55,9 @@ Confirm the module objectives and concept descriptions.
 Confirm the module objectives and concept descriptions.
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- The objective "take a first step to access each" can't be met for the hydrofabric (no anonymous access now); reword if the objective isn't fixed by issue #36.
+- Link {term}`Lead time`, {term}`Gage datum` and say "EGM2008 geoid" to match Modules 2–3.
+:::

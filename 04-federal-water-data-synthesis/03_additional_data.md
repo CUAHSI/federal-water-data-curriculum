@@ -168,6 +168,13 @@ Verify Lynker Spatial's role and the NHDPlus/hydrolocation links described above
 The hydrofabric notebook link points to a folder on the CUAHSI/notebooks `develop` branch. Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Link each "(Module 2)" to the specific Meet page.
+- Gloss "Prior Lake Database", "Level 4 product", "Confluence" and "DAWG" at first use; split the four-idea SoS bullet; source "about 27 TB" and the chunk size.
+:::
+
 ## Further reading
 
 - [PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including the [SoS discharge tutorial](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_L4_DAWG_SOS_DISCHARGE.html).

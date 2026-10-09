@@ -141,6 +141,15 @@ fig.savefig("01_meet_nasa_swot-ohio-reach-wse.png", dpi=150)
 - SWODLR is an on-demand PO.DAAC tool for custom-resolution raster output beyond the standard 100 m/250 m products.
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Temporal coverage: replace "mid-2023" with the exact science-orbit start once NASA confirms it (Module 3 says 21 July 2023); update the glossary's "Science orbit" entry too.
+- Data content: lead the discharge-maturity paragraph with the key fact (only fill values at the example reach for 2025–2026).
+- Split the ~170-word opening paragraph after "It exists to…".
+- Figure dropdown: add "You don't need to run this now; Module 3 sets up the environment."
+:::
+
 ## Further reading
 
 - [SWOT Documentation and Resources (NASA Earthdata)](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources)

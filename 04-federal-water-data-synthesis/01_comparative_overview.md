@@ -170,6 +170,14 @@ _Course note (not agency guidance):_ NWM output can be reached several ways, and
 - Confirm this recommendation: *Cite the data with the publication year, access date and DOI.*
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Link each "(Module 2)" / "(see Module 2)" to the specific Meet page.
+- Use one reach count course-wide ("over 2.7 million" here and in Module 2; "~2.8 million" in Module 3 and 04/02; 03/02 measured 2,776,734).
+- Align the medium-range wording with Module 3 ("out to 10 days, every 6 hours" vs. "8.5–10 days, four times per day"); give the science-orbit start date once confirmed; source "about 9,000 stream gages" (Module 2: 9,011).
+:::
+
 ## Further reading
 
 - [PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html)

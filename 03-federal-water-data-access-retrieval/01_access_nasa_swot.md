@@ -958,6 +958,13 @@ salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 ```
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Link first uses of glossary terms: cycle/pass, bounding box, UTM zone, CRID, product counter, swath, bitwise quality flag, science orbit.
+- Align across the three lessons: FAQ question wording and style, "Understanding what you downloaded" table columns, version recording (printing versions vs. `conda env export`), and `conda` vs. `mamba` first in setup.
+:::
+
 ## Further reading
 
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/), including the

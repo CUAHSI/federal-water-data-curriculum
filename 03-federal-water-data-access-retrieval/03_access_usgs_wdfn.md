@@ -568,6 +568,15 @@ Name: 24, dtype: object
 ```
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- "Now you try it": add a discovery step (`get_time_series_metadata` for `USGS-14191000`) and the expected record lengths (continuous since 1986, daily since 1909).
+- Continuous windows end at `{END}T00:00:00Z`, which drops the last day; use `T23:59:59Z` in the main example and the answer (needs a re-run).
+- Note that the reference table says `ft3/s` but the data say `ft^3/s`.
+- Link first uses of glossary terms: statistic code, water year, qualifier, gage datum.
+:::
+
 ## Further reading
 
 * [Meet USGS WDFN](../02-federal-water-data-landscape/03_meet_usgs_wdfn.md) (Module 2): what these data are and how they're collected.

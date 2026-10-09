@@ -115,6 +115,15 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 - **Change over time:** The USGS Water Data APIs will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So a new API version does not by itself change the data. Values change for a different reason: provisional data are revised when they are approved, and approved data are occasionally revised too. Still, it is a good idea to check the [Water Data Blog](https://waterdata.usgs.gov/blog/) regularly for important updates.
 - **Contact:** For questions about WDFN data, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments/).
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Dataset derivation: add a bold "Key point:" line, as on the SWOT and NWM pages.
+- The provisional-data partner-review callout quotes the old "120 days" claim; keep the question, drop the history.
+- Say how big the no-key hourly limit is, or that it is fine for this module's examples; add the "you don't need to run this now" note to the figure dropdown.
+- "Daily data is usually available same-day": revisit once USGS answers the partner review.
+:::
+
 ## Further reading
 
 - [WDFN home page](https://waterdata.usgs.gov/) - home page for Water Data For the Nation
