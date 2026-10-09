@@ -71,7 +71,7 @@ The **Analysis of Record for Calibration (AORC)** is a gridded, hourly record of
 Verify native AORC resolution.
 :::
 
-Zarr lets `xarray` open the whole dataset _lazily_: only metadata is read until you ask for values. This example pulls hourly precipitation for December 2022 (the last full December in this copy, which ends in January 2023) at the grid cell nearest USGS 12200500. The gage coordinates come from its [USGS monitoring-location record](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-12200500).
+Zarr lets `xarray` open the whole dataset _lazily_: only metadata is read until you ask for values. This example pulls hourly precipitation for December 2022 (the last full December in this copy, which ends in January 2023) at the grid cell nearest USGS 12200500. The month isn't tied to a particular flood; it simply demonstrates access. To look at what caused a hydrograph, choose a high-flow event inside the record (1979 to January 2023) and plot it next to the gage's discharge. The gage coordinates come from its [USGS monitoring-location record](https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items/USGS-12200500).
 
 ```python
 import fsspec
