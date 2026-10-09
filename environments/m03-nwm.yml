@@ -26,6 +26,7 @@ dependencies:
   - requests
   - matplotlib
   - nest-asyncio  # only needed when running hydrotools inside Jupyter
+  - ipykernel     # optional: run the lesson in Jupyter
   # dependencies of hydrotools.nwm_client, installed from conda-forge where possible
   - pytables
   - pint
