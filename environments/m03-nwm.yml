@@ -6,7 +6,7 @@ name: m03-nwm
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
+  - python=3.14
   # discovery: NLDI / COMIDs
   - pynhd
   - geopandas

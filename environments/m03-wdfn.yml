@@ -5,8 +5,9 @@ name: m03-wdfn
 channels:
   - conda-forge
 dependencies:
-  - python>=3.12
+  - python=3.14
   - dataretrieval>=1.4   # modernized `waterdata` module (USGS Water Data APIs)
   - pandas
   - geopandas
+  - matplotlib          # figures and maps in the lesson
   - ipykernel           # optional: run the lesson in Jupyter
