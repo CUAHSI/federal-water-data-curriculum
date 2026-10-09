@@ -1,2 +1,32 @@
 % References for 04-federal-water-data-synthesis/02_synthesize_river_data.md. One list item per external source cited on that page, in the
 % STYLE_GUIDE section 8 format. Included by references.md; checked by references/check_references.py.
+
+- Chegini, T., Li, H.-Y., & Leung, L. R. (2021). *HyRiver: Hydroclimate Data Retriever* (software; `pynhd` is part of HyRiver). Journal of Open Source Software, 6(66), 3175. https://docs.hyriver.io/readme/pynhd.html https://doi.org/10.21105/joss.03175
+- CIROH. (n.d.). *NWMURL library* (CIROH DocuHub). https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library (accessed 2026-10-08).
+- CIROH-UA. (n.d.). *nwmurl* (software). GitHub. https://github.com/CIROH-UA/nwmurl (accessed 2026-10-08).
+- CUAHSI. (n.d.). *Notebook to demonstrate collecting USGS data (collect-usgs-streamflow.ipynb)* (CUAHSI notebooks, GPL-3.0). GitHub. https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval/collect-usgs-streamflow.ipynb (accessed 2026-10-08).
+- Durand, M., & Yadav, B. (n.d.). *Notebook to visualize SWOT longitudinal profile data (LongProfileVerticalDatum.ipynb)* (CUAHSI notebooks, GPL-3.0). GitHub. https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources/LongProfileVerticalDatum.ipynb (accessed 2026-10-08).
+- earthaccess contributors. (n.d.). *earthaccess* (software). https://earthaccess.readthedocs.io/ https://doi.org/10.5281/zenodo.8365009
+- fsspec contributors. (n.d.). *kerchunk* (software documentation). https://fsspec.github.io/kerchunk/ (accessed 2026-10-08).
+- Hodson, T. O., & Hariharan, J. A. (2023). *dataretrieval (python): a Python package for discovering and retrieving water data available from Federal hydrologic web services* (software). U.S. Geological Survey. https://doi-usgs.github.io/dataretrieval-python/ https://doi.org/10.5066/P94I5TX3
+- Jet Propulsion Laboratory. (2025). *SWOT product description: Level 2 KaRIn high rate river single pass vector product (L2_HR_RiverSP)*, JPL D-56413, Rev C. https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf
+- NASA Jet Propulsion Laboratory. (n.d.). *SWOT: Surface Water and Ocean Topography* (mission site). https://swot.jpl.nasa.gov/ (accessed 2026-10-08).
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *Hydrocron API: getting started with SWOT time series* (PO.DAAC Cookbook; by N. Tebaldi, C. Nickles and B. Downs). https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html (accessed 2026-10-08).
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *Hydrocron documentation*. https://podaac.github.io/hydrocron/ (accessed 2026-10-08).
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *PO.DAAC* (archive home; SWOT collection landing pages and DOIs). https://podaac.jpl.nasa.gov/ (accessed 2026-10-08).
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (2025). *SWOT Version D KaRIn products release note*. https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf
+- NASA Scientific Visualization Studio. (2025). *December 2025 Pacific Northwest flooding* (image). NASA Global Modeling and Assimilation Office and NASA Scientific Visualization Studio. https://svs.gsfc.nasa.gov/vis/a000000/a005500/a005596/PacificNorthwestFlooding_Dec2025_1920x1080.png
+- NASA Scientific Visualization Studio. (2025). *Tracking weather extremes: December 2025 Pacific Northwest flooding*. https://svs.gsfc.nasa.gov/5596 (accessed 2026-10-08).
+- NOAA National Water Model. (n.d.). *NOAA National Water Model short-range forecast* (dataset). Registry of Open Data on AWS. https://registry.opendata.aws/noaa-nwm-pds/ (accessed 2026-10-08).
+- NOAA National Water Prediction Service. (n.d.). *Skagit River near Mount Vernon (MVEW1)*. https://water.noaa.gov/gauges/MVEW1 (accessed 2026-10-08).
+- Northwest Public Broadcasting. (2025, December 11). *100,000 evacuated in historic Skagit Valley flood in Washington state*. https://www.nwpb.org/local/2025-12-11/100-000-evacuated-in-historic-skagit-valley-flood-in-washington-state
+- SWOT Project. (n.d.). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset; accessed through `hydrocron`). NASA PO.DAAC. https://doi.org/10.5067/SWOT-RIVERSP-D (accessed 2026-10-08).
+- SWOT Project. (n.d.). *SWOT Level 2 Water Mask Raster Image 100m Data Product, Version D* (dataset). NASA PO.DAAC. https://doi.org/10.5067/SWOT-RASTER-D (accessed 2026-10-08).
+- SWORD-Global. (n.d.). *SWORD Explorer*. https://www.swordexplorer.com/ (accessed 2026-10-08).
+- U.S. Census Bureau. (2023). *Cartographic boundary files* (states, 1:500,000). https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *How should I cite USGS Water Data for the Nation data?* https://waterdata.usgs.gov/citation/ (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *How streamflow is measured* (USGS Water Science School). https://www.usgs.gov/water-science-school/science/how-streamflow-measured (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *Network Linked Data Index (NLDI) API*. https://api.water.usgs.gov/nldi/swagger-ui/index.html (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *USGS 12200500 Skagit River near Mount Vernon, WA* (Water Data for the Nation monitoring-location page). https://waterdata.usgs.gov/monitoring-location/USGS-12200500/ (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *USGS Water Data APIs*. https://api.waterdata.usgs.gov/ (accessed 2026-10-08).
+- U.S. Geological Survey. (2026). *USGS water data for the Nation* (continuous values, daily values and field measurements for USGS-12200500, December 2025). U.S. Geological Survey National Water Information System database. https://doi.org/10.5066/F7P55KJN (accessed 2026-10-08).

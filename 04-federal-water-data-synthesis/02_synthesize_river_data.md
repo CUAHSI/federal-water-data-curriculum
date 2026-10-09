@@ -25,9 +25,13 @@ The sections below walk through the data you would collect for this flood, produ
 ```bash
 conda env create -f environments/m04-synthesis.yml
 conda activate m04-synthesis
+# Record the exact package versions next to your results, so you (or a reviewer) can rebuild this environment later
+conda env export > m04-synthesis-versions.yml
 ```
 
-You will need the same credentials as in Module 3: a USGS Water Data API key stored in the `API_USGS_PAT` environment variable (optional, but it raises your rate limit), and an Earthdata Login stored in `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` (required for the SWOT raster download).
+A pinned {term}`conda environment <Conda environment>` is what lets someone re-run this analysis next year and get the same answer; Module 1's [reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) explain why. The outputs on this page came from `dataretrieval` 1.4.0, `pynhd` 0.20.0, `earthaccess` 0.19.0, `xarray` 2026.9.0 and `kerchunk` 0.2.10 on Python 3.14.
+
+You will need the same credentials as in Module 3: a USGS Water Data {term}`API key` stored in the `API_USGS_PAT` environment variable (optional, but it raises your rate limit), and an Earthdata Login stored in `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` (required for the SWOT raster download). Keep both in environment variables, never in your code.
 
 :::{admonition} TODO (dev team): Informational sections vs. lab assignment
 :class: attention
@@ -36,21 +40,39 @@ Maybe the following sections are just informational and then the coded more pres
 
 ## Defining the area of interest
 
-Each agency describes "the river at Mount Vernon" with its own **Location Identifier**:
+This lesson follows the flood in the order you would meet it: the gage on the ground first, then the forecasts, then the satellite. (Elsewhere the course lists agencies NASA → NOAA → USGS; this page keeps its storyline order.)
 
-| Agency | Product | Location Identifier for this lesson | What it represents |
+Each agency describes "the river at Mount Vernon" with its own {term}`location identifier <Location identifier>`:
+
+| Agency | Product | Location identifier for this lesson | What it represents |
 |---|---|---|---|
-| USGS | Water Data (NWIS) | `USGS-12200500` | A single gage on the riverbank |
-| NOAA | National Water Model | feature ID / NHDPlus COMID `24270288` | A stream segment (reach) in the NHDPlus network |
-| NASA | SWOT RiverSP | SWORD reach `78310800031` | A ~10 km reach of the SWOT River Database (SWORD) centerline |
+| USGS | Water Data for the Nation ({term}`WDFN`) | {term}`monitoring location ID <Monitoring location ID>` `USGS-12200500` | A single gage on the riverbank |
+| NOAA | National Water Model ({term}`NWM`) | {term}`feature_id` / {term}`NHDPlus` {term}`COMID` `24270288` | A stream segment (reach) in the NHDPlus network |
+| NASA | SWOT RiverSP | {term}`SWORD` {term}`reach <Reach>` `78310800031` | A ~10 km reach of the SWOT River Database (SWORD) centerline |
 
-Before we can compare anything, we need to link these identifiers. We start from the gage because its location is surveyed and fixed. The modernized USGS Water Data API returns the gage's coordinates along with metadata such as drainage area and the vertical datum of the gage.
+Before we start, we write the whole query down in one place: the identifiers, time windows and product choices this page uses. Keeping them in variables, rather than scattered through the code, means you can record exactly what you asked for next to your results, and rerun the analysis for another event by changing one block (Module 1, [reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques)).
+
+```python
+# The query for this case study, in one place. Save a copy of these values with your results.
+site = "USGS-12200500"                                     # USGS monitoring location: Skagit River near Mount Vernon, WA
+usgs_window = "2025-12-01T00:00:00Z/2025-12-31T23:59:59Z"  # continuous values, UTC
+daily_window = "2025-12-01/2025-12-31"                     # daily values (local calendar days)
+measurement_window = "2025-11-01/2026-01-31"               # field measurements
+nwm_issue_times = [("20251211", "00"), ("20251211", "12"), ("20251211", "18")]  # short-range forecasts (YYYYMMDD, HH in UTC)
+sword_reaches = ["78310800041", "78310800031", "78310800021", "78310800015"]   # lowest four SWORD reaches, upstream to downstream
+swot_window = ("2025-11-01T00:00:00Z", "2026-01-15T00:00:00Z")                # RiverSP time series (UTC)
+raster_window = ("2025-11-25", "2025-12-20")                                   # SWOT Raster granule search
+raster_short_name = "SWOT_L2_HR_Raster_100m_D"                                 # Raster product, 100 m grid, version D
+```
+
+Nothing is downloaded yet; the sections below explain where each value comes from.
+
+We need to link these identifiers before we can compare anything. We start from the gage because its location is surveyed and fixed. The modernized USGS Water Data API returns the gage's coordinates along with metadata such as drainage area and the vertical datum of the gage.
 
 ```python
 import pandas as pd
 from dataretrieval import waterdata
 
-site = "USGS-12200500"
 gage, _ = waterdata.get_monitoring_locations(monitoring_location_id=site)
 gage_lon, gage_lat = gage.geometry.iloc[0].x, gage.geometry.iloc[0].y
 print(gage[["monitoring_location_name", "drainage_area", "altitude", "vertical_datum"]])
@@ -64,7 +86,7 @@ The result is a one-row GeoDataFrame. `drainage_area` is in square miles (3,093 
 Verify unit of `altitude` in the monitoring-locations collection.
 :::
 
-The USGS [Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) indexes gages to the NHDPlus network that the National Water Model uses. The `pynhd` package wraps it; the NWM `feature_id` for a reach is its NHDPlus COMID.
+The USGS [Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) ({term}`NLDI`) indexes gages to the NHDPlus network that the National Water Model uses. The `pynhd` package wraps it; the NWM `feature_id` for a reach is its NHDPlus COMID.
 
 ```python
 from pynhd import NLDI
@@ -77,7 +99,7 @@ print("NWM feature_id (NHDPlus COMID):", comid)
 
 This returns COMID `24270288`. NOAA's own gauge page for the same site ([MVEW1](https://water.noaa.gov/gauges/MVEW1)) lists the same NWM reach, which is a useful cross-check.
 
-SWOT river products are organized by the [SWOT River Database (SWORD)](https://www.swordexplorer.com/). We used the reach IDs from the [PO.DAAC Hydrocron Skagit tutorial](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) and looked for the one nearest the gage. The small helper below queries the PO.DAAC `hydrocron` API (no login needed) for one reach at a time. We'll reuse it in the SWOT section.
+SWOT river products are organized by the [SWOT River Database (SWORD)](https://www.swordexplorer.com/). We took the reach IDs in `sword_reaches` from the [PO.DAAC Hydrocron Skagit tutorial](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) and looked for the one nearest the gage. The small helper below queries the PO.DAAC {term}`hydrocron` API (no login needed) for one reach at a time. We'll reuse it in the SWOT section.
 
 ```python
 import io
@@ -95,34 +117,84 @@ def get_swot_reach(reach_id, start, end,
     csv_text = response.json()["results"]["csv"]
     return pd.read_csv(io.StringIO(csv_text), dtype={"reach_id": str})
 
-# Lowest four SWORD reaches on the Skagit, upstream to downstream
-sword_reaches = ["78310800041", "78310800031", "78310800021", "78310800015"]
-swot = pd.concat([get_swot_reach(r, "2025-11-01T00:00:00Z", "2026-01-15T00:00:00Z")
-                  for r in sword_reaches], ignore_index=True)
+# One request per reach in sword_reaches (set in the query block), stacked into one table
+swot = pd.concat([get_swot_reach(r, *swot_window) for r in sword_reaches], ignore_index=True)
 print(swot.groupby("reach_id")[["p_lat", "p_lon"]].first())
 ```
 
 `p_lat`/`p_lon` are the reach's prior (SWORD) center point, which isn't enough on its own to tell which reach holds the gage. We compared the reach centerlines instead (hydrocron returns them when you request `output=geojson` with the `geometry` field). The centerline of reach `78310800031` passes within a few tens of meters of the gage, about 1.2 km above the reach's downstream end, so that is the gage's reach. Reaches `…021` and `…015` continue downstream to Skagit Bay.
 
-:::{admonition} TODO (dev team): SWORD spatial lookup and map
+:::{admonition} TODO (dev team): SWORD spatial lookup
 :class: attention
-Replace the hard-coded reach list with a SWORD spatial lookup, and add a small map of the gage, NWM reach and SWORD reaches.
+Replace the hard-coded reach list with a SWORD spatial lookup.
+:::
+
+A map makes the crosswalk concrete. The block below draws the three identifiers on one map: the Skagit main stem from the NLDI (the NHDPlus network the NWM runs on, 40 km up- and downstream of the gage), the NWM reach for our COMID, the four SWORD reach centerlines from `hydrocron` (asking for `output="geojson"` adds each reach's geometry), and the gage. A Washington State outline from the U.S. Census Bureau's [cartographic boundary files](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html) gives the shoreline of Skagit Bay for context.
+
+```python
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Skagit main stem on the NHDPlus network: 40 km upstream and 40 km downstream of the gage
+river = pd.concat([nldi.navigate_byid("nwissite", site, nav, "flowlines", distance=40)
+                   for nav in ("upstreamMain", "downstreamMain")], ignore_index=True)
+nwm_reach = river[river["nhdplus_comid"].astype(int) == comid]
+
+def get_swot_reach_line(reach_id):
+    """Return one SWORD reach centerline (the same on every pass) as a one-row GeoDataFrame."""
+    params = {"feature": "Reach", "feature_id": reach_id, "start_time": swot_window[0],
+              "end_time": swot_window[1], "output": "geojson", "fields": "reach_id,geometry"}
+    response = requests.get(HYDROCRON, params=params, timeout=60)
+    response.raise_for_status()
+    features = response.json()["results"]["geojson"]["features"]
+    return gpd.GeoDataFrame.from_features(features[:1], crs="EPSG:4326")
+
+sword_lines = pd.concat([get_swot_reach_line(r) for r in sword_reaches], ignore_index=True)
+
+# Washington State outline (U.S. Census Bureau cartographic boundary file, 1:500,000, 2023)
+states = gpd.read_file("https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_state_500k.zip")
+wa = states[states["STUSPS"] == "WA"].to_crs("EPSG:4326")
+
+fig, ax = plt.subplots(figsize=(8, 7))
+wa.plot(ax=ax, color="#f2f1ec", edgecolor="#9a988f", lw=0.8)
+river.plot(ax=ax, color="#9a988f", lw=1.5, label="NHDPlus main stem")
+colors = ["#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7"]  # one color per SWORD reach, upstream to downstream
+for (_, row), color in zip(sword_lines.iterrows(), colors):
+    gpd.GeoSeries([row.geometry], crs="EPSG:4326").plot(ax=ax, color=color, lw=4, alpha=0.8,
+                                                        label=f"SWORD reach {row['reach_id']}")
+nwm_reach.plot(ax=ax, color="black", lw=1.5, linestyle="--", label=f"NWM reach (COMID {comid})")
+ax.plot(gage_lon, gage_lat, marker="^", color="black", markersize=10, linestyle="none", label=site)
+xmin, ymin, xmax, ymax = sword_lines.total_bounds
+ax.set_xlim(xmin - 0.05, xmax + 0.05)
+ax.set_ylim(ymin - 0.04, ymax + 0.04)
+ax.set_xlabel("Longitude")
+ax.set_ylabel("Latitude")
+ax.set_title("Skagit River near Mount Vernon, WA: one river, three location identifiers")
+ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), fontsize=8)  # legend outside the map
+plt.show()
+```
+
+:::{figure} ../images/m04/synthesize-study-area.png
+:alt: Map of the lower Skagit River in Washington State from Mount Vernon to Skagit Bay. A gray line traces the river main stem from the NHDPlus network, and the Washington shoreline is drawn in the upper left. Four thick colored lines mark the four lowest SWOT SWORD reaches, from reach 78310800041 above Mount Vernon to reach 78310800015 at the river mouth. A short dashed black line marks the NWM reach, COMID 24270288, and a black triangle marks the USGS gage 12200500, which sits on SWORD reach 78310800031.
+:width: 100%
+
+The study area. The USGS gage (triangle), the NWM reach that NLDI indexes it to (dashed) and the SWORD reach that holds it (`…031`) all describe "the Skagit at Mount Vernon", but at different sizes: a point, one NHDPlus segment and a ~10 km SWOT reach. Below the point where the river splits, the two networks also part ways: SWORD reach `…015` follows the western branch to Skagit Bay, while NLDI's downstream main stem follows the southern branch. Data: USGS NLDI flowlines and monitoring location; SWOT RiverSP reach centerlines from PO.DAAC `hydrocron`; U.S. Census Bureau cartographic boundary file (2023). Accessed 2026-10-08.
 :::
 
 ## Starting on the ground: observations from USGS
 
-The USGS gage is our reference: it records continuously, and USGS staff periodically measure the flow directly to check it. You can explore the same data in the [USGS Water Data viewer for 12200500](https://waterdata.usgs.gov/monitoring-location/USGS-12200500/#dataTypeId=continuous-00060-0&showFieldMeasurements=true&startDT=2025-12-01&endDT=2025-12-31). Here we request December 2025 **continuous** discharge (parameter code `00060`) and gage height (`00065`), plus **daily** mean discharge (statistic code `00003` = mean), using the modernized `waterdata` module (see [Module 3](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md) for setup and API keys).
+The USGS gage is our reference: it records continuously, and USGS staff periodically measure the flow directly to check it. You can explore the same data in the [USGS Water Data viewer for 12200500](https://waterdata.usgs.gov/monitoring-location/USGS-12200500/#dataTypeId=continuous-00060-0&showFieldMeasurements=true&startDT=2025-12-01&endDT=2025-12-31). Here we request December 2025 {term}`continuous <Continuous values>` {term}`discharge <Discharge>` ({term}`parameter code <Parameter code>` `00060`) and {term}`gage height <Gage height>` (`00065`), plus {term}`daily <Daily values>` mean discharge (statistic code `00003` = mean), using the modernized `waterdata` module (see [Module 3](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md) for setup and API keys).
 
 ```python
-time_window = "2025-12-01T00:00:00Z/2025-12-31T23:59:59Z"
-discharge, _ = waterdata.get_continuous(monitoring_location_id=site, parameter_code="00060", time=time_window)
-stage, _ = waterdata.get_continuous(monitoring_location_id=site, parameter_code="00065", time=time_window)
+# 15-minute discharge (00060) and gage height (00065), and daily mean (00003) discharge, for December 2025
+discharge, _ = waterdata.get_continuous(monitoring_location_id=site, parameter_code="00060", time=usgs_window)
+stage, _ = waterdata.get_continuous(monitoring_location_id=site, parameter_code="00065", time=usgs_window)
 daily, _ = waterdata.get_daily(monitoring_location_id=site, parameter_code="00060",
-                               statistic_id="00003", time="2025-12-01/2025-12-31")
+                               statistic_id="00003", time=daily_window)
 print(discharge[["time", "value", "unit_of_measure", "approval_status", "qualifier"]].head())
 ```
 
-Each row is one 15-minute value. The **Variable** is identified by `parameter_code`, the **Variable unit** is in `unit_of_measure` (`ft^3/s` for discharge, `ft` for gage height), and the **Data Quality Flags** are `approval_status` (`Provisional` or `Approved`) and `qualifier` (for example, estimated or ice-affected values). At the time of writing, all December 2025 values at this gage are `Approved` with no qualifiers. Times are in UTC.
+Each table is a pandas DataFrame with one row per value (every 15 minutes for the continuous tables). In the course's shared vocabulary: the {term}`variable <Variable>` is identified by `parameter_code`, the {term}`variable unit <Variable unit>` is in `unit_of_measure` (`ft^3/s` for discharge, `ft` for gage height), and the {term}`data quality flags <Data quality flag(s)>` are `approval_status` (`Provisional` or `Approved`; see {term}`approval status <Approval status>`) and `qualifier` (for example, estimated or ice-affected values). The {term}`time <Time>` is in `time`, in UTC. When we accessed these data (2026-10-08), all December 2025 values at this gage were `Approved` with no qualifiers. Had they been {term}`provisional <Provisional data>`, they could change after you downloaded them, so record the approval status and your access date with any result (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)).
 
 Finding the peak is a one-liner on each table:
 
@@ -142,17 +214,17 @@ Confirm interpretation of record stage vs. non-record discharge at 12200500.
 
 ### Field measurements and the limits of out-of-bank flow
 
-USGS doesn't measure discharge continuously. It records stage and converts it to discharge with a **rating curve** built from occasional field measurements of flow ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). So during a flood, check which field measurements support the numbers.
+USGS doesn't measure discharge continuously. It records stage and converts it to discharge with a {term}`rating curve <Rating curve>` built from occasional {term}`field measurements <Field measurement>` of flow ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). So during a flood, check which field measurements support the numbers.
 
 ```python
-measurements, _ = waterdata.get_field_measurements(monitoring_location_id=site, time="2025-11-01/2026-01-31")
+measurements, _ = waterdata.get_field_measurements(monitoring_location_id=site, time=measurement_window)
 q_meas = measurements[measurements["parameter_code"] == "00060"]
 print(q_meas[["time", "time_of_day", "value", "unit_of_measure", "measurement_rated", "observing_procedure"]])
 ```
 
 Field measurements come back as one row per reading, with gage-height readings and discharge readings from the same `field_visit_id`. `time` holds only the date, and `time_of_day` only the time of day in UTC (for example `17:07:50+00:00`). To place a measurement on a timeline, join the two; converting `time_of_day` on its own would fill in today's date. `measurement_rated` is the hydrographer's rating of the measurement's accuracy (for example `Good` or `Fair`), and `observing_procedure` records how it was made.
 
-USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely..
+USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely.
 
 :::{admonition} TODO (dev team): Rating measurements above 111,000 ft³/s
 :class: attention
@@ -167,26 +239,29 @@ Wording on rating extrapolation and out-of-bank flow at this site.
 Plot the continuous and daily discharge, with the December field measurement overlaid:
 
 ```python
-import matplotlib.pyplot as plt
-
 fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(discharge["time"], discharge["value"], lw=1, label="Continuous (15-minute)")
-ax.step(pd.to_datetime(daily["time"]).dt.tz_localize("UTC"), daily["value"], where="post", label="Daily mean")
+ax.plot(discharge["time"], discharge["value"], color="#2a78d6", lw=1.5, label="Continuous (15-minute)")
+ax.step(pd.to_datetime(daily["time"]).dt.tz_localize("UTC"), daily["value"], where="post",
+        color="#eb6834", lw=1.5, label="Daily mean")
 dec_meas = q_meas[(q_meas["time"] >= "2025-12-01") & (q_meas["time"] < "2026-01-01")]
 # Join the date (time) and the UTC time of day (time_of_day) into one timestamp
 meas_time = pd.to_datetime(dec_meas["time"].dt.strftime("%Y-%m-%d") + "T" + dec_meas["time_of_day"])
 ax.plot(meas_time, dec_meas["value"], "ko", label="Field measurement")
 ax.set_ylabel("Discharge (ft³/s)")
+ax.set_xlabel("Time (UTC)")
 ax.set_title("USGS 12200500 Skagit River near Mount Vernon, WA")
 ax.legend()
+fig.autofmt_xdate()  # tilt the date labels so they don't overlap
 plt.show()
 ```
 
 The plot shows the flood rising from about 14,000 ft³/s in early December, the sharp crest on 12 December and a second, smaller rise around 17 December. The daily mean for 12 December is 112,000 ft³/s. That is well below the 15-minute peak, so daily values understate flood peaks. Daily values are computed over local (Pacific) calendar days, so plotting them at UTC midnight shifts the steps about 8 hours early; that's fine for a quick look.
 
-:::{admonition} TODO (dev team): Static copy of the hydrograph figure
-:class: attention
-Commit a static copy of this figure with alt text.
+:::{figure} ../images/m04/synthesize-usgs-hydrograph.png
+:alt: Line chart of discharge at USGS gage 12200500, Skagit River near Mount Vernon, through December 2025. The 15-minute line rises from about 14,000 cubic feet per second in early December to a sharp crest of 133,000 on 12 December, falls, and rises again to a smaller peak around 17 December. Daily-mean steps follow the same shape but peak lower, at 112,000. Black dots mark field measurements, including one of 111,000 cubic feet per second just after the crest.
+:width: 100%
+
+December 2025 discharge at USGS 12200500, Skagit River near Mount Vernon, WA: 15-minute continuous values, daily means and field measurements. The daily mean flattens the crest, and the highest field measurement sits well below the 15-minute peak. Data: USGS Water Data for the Nation (continuous and daily parameter `00060`, field measurements), all values `Approved`, accessed 2026-10-08.
 :::
 
 ## Looking ahead: forecasts from NOAA NWM
@@ -198,19 +273,14 @@ The gage tells us what happened. The National Water Model (NWM) tells us what wa
 Confirm this description of the NWPS gauge forecast vs. NWM.
 :::
 
-**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building **kerchunk references** instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key.
+**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building {term}`kerchunk` references instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key.
 
-:::{admonition} TODO (dev team): Module 3 NWM access-route comparison
+:::{admonition} TODO (dev team): Recheck against the rebuilt Module 3 NWM lesson
 :class: attention
-Confirm 03/02 contains the access-route comparison and kerchunk example once ROADMAP P4.1 merges.
+The 235 MB and 7× figures match 03/02 on `dev` (2026-10-08). Lane B is rebuilding 03/02 in Phase 6; recheck these figures, and link the access-route section directly once its heading is final.
 :::
 
-:::{admonition} TODO (dev team): Access-route figures
-:class: attention
-Confirm figures against the final 03/02 table before publishing.
-:::
-
-The first block builds references for three short-range forecasts issued on 11 December, at 00Z, 12Z and 18Z (UTC). Only the 18Z forecast's 18-hour window reaches past the crest. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test all three took about 15 seconds together.
+The first block builds references for three short-range forecasts (the `short_range` {term}`configuration <Configuration>`) issued on 11 December, at 00Z, 12Z and 18Z (UTC): the `nwm_issue_times` from the query block. Each issue time is a {term}`forecast reference time <Forecast reference time>`. Only the 18Z forecast's 18-hour window reaches past the crest. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test all three took about 15 seconds together.
 
 :::{admonition} TODO (dev team): Re-time the forecast build
 :class: attention
@@ -243,9 +313,8 @@ def build_refs(day, hour):
     return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
                            identical_dims=["feature_id", "reference_time", "crs"]).translate()
 
-# Three short-range forecasts issued before the 08:00 UTC 12 Dec crest (YYYYMMDD, HH in UTC)
-issue_times = [("20251211", "00"), ("20251211", "12"), ("20251211", "18")]
-refs = {f"{day} {hour}Z": build_refs(day, hour) for day, hour in issue_times}
+# The short-range forecasts in nwm_issue_times, all issued before the 08:00 UTC 12 Dec crest
+refs = {f"{day} {hour}Z": build_refs(day, hour) for day, hour in nwm_issue_times}
 print({k: len(v["refs"]) for k, v in refs.items()})
 ```
 
@@ -262,13 +331,15 @@ def open_refs(r):
 
 forecasts = {}
 for issued, r in refs.items():
-    q = open_refs(r)["streamflow"].sel(feature_id=comid).load()
+    nwm = open_refs(r)
+    nwm_version = nwm.attrs.get("NWM_version_number")  # provenance: which model version made this forecast
+    q = nwm["streamflow"].sel(feature_id=comid).load()
     forecasts[issued] = q.to_series() * 35.3147  # m³/s -> ft³/s, to match USGS
-    print(issued, "| units:", q.attrs.get("units"), "| max:", f"{forecasts[issued].max():,.0f} ft³/s",
-          "at", forecasts[issued].idxmax())
+    print(issued, "| model version:", nwm_version, "| units:", q.attrs.get("units"),
+          "| max:", f"{forecasts[issued].max():,.0f} ft³/s", "at", forecasts[issued].idxmax())
 ```
 
-The **Variable** is `streamflow`, the **Variable unit** is `m3 s-1` (we convert to ft³/s to match USGS), and the time index is the forecast's valid time in UTC. NWM output has no per-value **Data Quality Flags** like USGS's `approval_status` or SWOT's `reach_q`.
+Each entry in `forecasts` is a pandas Series of 18 hourly values. The {term}`variable <Variable>` is `streamflow`, the {term}`variable unit <Variable unit>` is `m3 s-1` (we convert to ft³/s to match USGS), and the index is each value's {term}`valid time <Valid time>` in UTC. NWM output has no per-value {term}`data quality flag <Data quality flag(s)>` like USGS's `approval_status` or SWOT's `reach_q`. What it does have is {term}`provenance <Version / provenance>`: the file attribute `NWM_version_number` says these forecasts came from NWM `v3.0`. Record it with your results, because a later model version would forecast the same storm differently.
 
 :::{admonition} Partner review (NOAA): Looking ahead: forecasts from NOAA NWM
 :class: important
@@ -280,15 +351,25 @@ Finally, we overlay the three forecasts on the USGS observations from earlier:
 ```python
 fig, ax = plt.subplots(figsize=(10, 4))
 obs = discharge.set_index("time")["value"]["2025-12-10":"2025-12-13"]
-ax.plot(obs.index, obs.values, "k", lw=2, label="USGS observed")
-for issued, series in forecasts.items():
-    ax.plot(series.index.tz_localize("UTC"), series.values, lw=1.5, label=f"NWM short range, issued {issued}")
+ax.plot(obs.index, obs.values, "k", lw=2, label="USGS observed (15-minute)")
+forecast_colors = ["#2a78d6", "#eb6834", "#1baf7a"]  # one color per issue time, in order
+for (issued, series), color in zip(forecasts.items(), forecast_colors):
+    ax.plot(series.index.tz_localize("UTC"), series.values, color=color, lw=2,
+            label=f"NWM short range, issued {issued}")
 
 ax.set_ylabel("Discharge (ft³/s)")
+ax.set_xlabel("Time (UTC)")
 ax.set_title(f"NWM forecasts at COMID {comid} vs. USGS 12200500")
 ax.legend()
 plt.show()
 ```
+
+:::{figure} ../images/m04/synthesize-nwm-forecasts.png
+:alt: Line chart from 10 to 13 December 2025 comparing observed discharge at USGS 12200500 (black) with three NWM short-range forecasts issued at 00Z, 12Z and 18Z on 11 December. The observed line rises to a crest of 133,000 cubic feet per second early on 12 December. Each forecast line rises faster and peaks higher, between 142,000 and 160,000, several hours before the observed crest.
+:width: 100%
+
+Three NWM short-range forecasts for the Skagit at Mount Vernon (COMID 24270288), issued on 11 December 2025, against the USGS 15-minute record. Each forecast covers the 18 hours after it was issued. Data: NOAA National Water Model v3.0 short-range forecasts (`channel_rt`, CONUS) from the Google Cloud `national-water-model` archive; USGS Water Data for the Nation continuous discharge (`00060`, `Approved`). Accessed 2026-10-08.
+:::
 
 All three forecasts called for a bigger flood, sooner, than the gage recorded:
 
@@ -307,15 +388,17 @@ Interpretation of the short-range forecasts against the observed hydrograph for 
 
 :::{admonition} TODO (dev team): Medium-range forecast member
 :class: attention
-Add a medium-range member to show multi-day lead time; commit a static copy of the figure with alt text.
+Add a medium-range member to show multi-day lead time.
 :::
 
 ## A view from above: surface water from NASA SWOT
 
 SWOT doesn't measure the river continuously. It passes over a given spot a few times in each 21-day orbit cycle, so the first question is always *which passes saw the river during the flood?* We'll use the two SWOT products introduced in [Module 3](../03-federal-water-data-access-retrieval/01_access_nasa_swot.md), which answer different questions:
 
-- **RiverSP (via `hydrocron`)**: water surface elevation (WSE), width and slope per SWORD reach. It answers "how high was the river?"
-- **Raster 100 m (via `earthaccess`)**: gridded water surface elevation, water area and water fraction. It answers "where was the water?"
+- **RiverSP (via `hydrocron`)**: {term}`water surface elevation <Water surface elevation>` (WSE), width and slope per SWORD reach. It answers "how high was the river?"
+- **Raster 100 m (via {term}`earthaccess`)**: gridded water surface elevation, water area and water fraction. It answers "where was the water?"
+
+Both are **Version D** products, each with its own DOI to cite: RiverSP [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D) and Raster 100 m [10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RASTER-D). Version D replaced Version C in 2025, and some reach IDs and values differ between versions, so note the version you used alongside your results ([SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)).
 
 ### River water surface elevation through the event (RiverSP)
 
@@ -323,7 +406,7 @@ We already downloaded the RiverSP reach time series with `get_swot_reach()` whil
 
 Before using any values, decide which passes to trust. RiverSP gives three quality fields per reach and pass, all defined in the [RiverSP product description, JPL D-56413 Rev C](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf):
 
-- **`reach_q`**, the summary **Data Quality Flag** (§4.1.7, p. 28):
+- **`reach_q`**, the summary {term}`data quality flag <Data quality flag(s)>` (§4.1.7, p. 28):
   - **0 = good**
   - **1 = suspect:** "may have large errors"
   - **2 = degraded:** "very likely do have large errors"
@@ -403,6 +486,32 @@ print(dec[["reach_id", "time", "wse_change_m", "gage_change_m", "reach_q", "wse_
       .round({"wse_change_m": 2, "gage_change_m": 2}).to_string(index=False))
 ```
 
+The printed table has one row per reach and pass: the SWOT change and the gage's change at the same moment, both in meters, with `reach_q` and `wse_u` alongside. It is easier to read as a picture. The plot below draws the gage's rise as a continuous line and each SWOT reach-pass as a point, with `wse_u` as an error bar and the same reach colors as the study-area map:
+
+```python
+fig, ax = plt.subplots(figsize=(10, 4.5))
+gage_change = (stage_series - gage_baseline)["2025-12-01":"2025-12-31"]
+ax.plot(gage_change.index, gage_change.values, color="black", lw=1.5, label=f"{site} gage height change")
+for reach_id, color in zip(sword_reaches, colors):  # colors: from the study-area map
+    r = dec[dec["reach_id"] == reach_id]
+    ax.errorbar(r["time"], r["wse_change_m"], yerr=r["wse_u"], fmt="o", ms=8, color=color,
+                capsize=3, label=f"SWOT reach {reach_id}")
+ax.axhline(0, color="#9a988f", lw=0.8)
+ax.set_ylabel("Change since the 1 Dec pass (m)")
+ax.set_xlabel("Time (UTC)")
+ax.set_title("SWOT water surface elevation change vs. USGS gage height change, December 2025")
+ax.legend(fontsize=8, loc="upper right")
+fig.autofmt_xdate()
+plt.show()
+```
+
+:::{figure} ../images/m04/synthesize-swot-wse-change.png
+:alt: Chart of water-level change since 1 December 2025, in meters. A black line shows the USGS gage rising about 7 meters to a peak on 12 December, then falling with a second smaller rise. Colored points with error bars show SWOT reach changes on five passes. On 12 December two downstream reaches show rises of about 6 and 3 meters. On 4 December the gage's own reach sits about 12 meters above zero while the gage line is near zero, and on 25 December two reaches sit about 2 meters above the gage line.
+:width: 100%
+
+Change in water level since the 1 December 2025 SWOT pass: USGS gage height (line) and SWOT RiverSP reach water surface elevation (points, error bars = `wse_u`). Points close to the line agree with the gage; the 4 and 25 December outliers are the passes flagged `few_wse_observations`. Data: SWOT RiverSP Version D via PO.DAAC `hydrocron` (`reach_q` ≤ 2); USGS Water Data for the Nation gage height (`00065`, `Approved`). Accessed 2026-10-08.
+:::
+
 Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change. Those are the passes flagged `few_wse_observations` (and `partially_observed`), and the gage reach's `wse_u` (0.32 m) is about three times its usual value. Treat single degraded values with caution, and let `wse_u` and `reach_q_b` tell you which ones to doubt first. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach.
 
 :::{admonition} Partner review (NASA): River water surface elevation through the event (RiverSP)
@@ -412,15 +521,15 @@ Confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
 
 ### Water extent before and near the peak (Raster)
 
-The Raster product maps water across the whole swath on a 100 m grid. Granules are searched and downloaded with `earthaccess` (Earthdata Login required). A point search at the gage over late November to mid-December returns dozens of granules. Most are **false matches from tiles near the antimeridian** (UTM zones 60 and 1). We keep only granules in UTM zone 10, latitude band U (`UTM10U` in the granule name), which is where the Skagit is.
+The Raster product maps water across the whole swath on a 100 m grid. {term}`Granules <Granule>` are searched and downloaded with `earthaccess` (Earthdata Login required). A point search at the gage over late November to mid-December returns dozens of granules. Most are **false matches from tiles near the antimeridian** (UTM zones 60 and 1). We keep only granules in UTM zone 10, latitude band U (`UTM10U` in the granule name), which is where the Skagit is.
 
 ```python
 import earthaccess
 
 earthaccess.login()  # reads EARTHDATA_USERNAME / EARTHDATA_PASSWORD if set
 results = earthaccess.search_data(
-    short_name="SWOT_L2_HR_Raster_100m_D",  # Raster product, 100 m grid, collection version D
-    temporal=("2025-11-25", "2025-12-20"),
+    short_name=raster_short_name,  # SWOT_L2_HR_Raster_100m_D: Raster product, 100 m grid, version D
+    temporal=raster_window,        # late November to mid-December 2025
     point=(gage_lon, gage_lat),  # (longitude, latitude)
 )
 print(len(results), "granules returned")
@@ -429,16 +538,16 @@ for g in skagit:
     print(g["umm"]["GranuleUR"])
 ```
 
-Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass):
+Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass). The files go to `data/raw/swot_raster/` and are never edited: anything we compute from them is a derived result, kept separately (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)). The granule names include the product version and processing counter, so they also document exactly which files you used.
 
 ```python
-files = earthaccess.download(skagit, local_path="swot_raster")
+files = earthaccess.download(skagit, local_path="data/raw/swot_raster")  # raw downloads: keep unchanged
 before = xr.open_dataset([f for f in files if "20251201T" in str(f)][0])
 peak = xr.open_dataset([f for f in files if "20251212T" in str(f)][0])
 print(peak[["water_frac", "water_area", "water_area_qual", "wse", "wse_qual"]])
 ```
 
-Each granule is a ~1,600 × 1,600 grid in UTM zone 10N meters (`x`, `y`). `water_frac` is the fraction of each 100 m cell covered by water (unitless), `water_area` is water area in m², and `water_area_qual` is the **Data Quality Flag** for both (0 good, 1 suspect, 2 degraded, 3 bad); `wse` and its flag `wse_qual` work the same way for water surface elevation. Next we subset to the delta farmland west of Mount Vernon, keep cells that are good or suspect in *both* passes, and count cells that are more than half water:
+Each granule is a ~1,600 × 1,600 grid in UTM zone 10N meters (`x`, `y`). `water_frac` is the fraction of each 100 m cell covered by water (unitless), `water_area` is water area in m², and `water_area_qual` is the data quality flag for both (0 good, 1 suspect, 2 degraded, 3 bad); `wse` and its flag `wse_qual` work the same way for water surface elevation. Next we subset to the delta farmland west of Mount Vernon, keep cells that are good or suspect in *both* passes, and count cells that are more than half water:
 
 ```python
 import pyproj
@@ -465,12 +574,21 @@ Map water fraction for the two passes, showing only cells that are good or suspe
 ```python
 fig, axes = plt.subplots(1, 2, figsize=(11, 5), sharey=True)
 for ax, ds, title in [(axes[0], b, "1 Dec 2025 (before)"), (axes[1], p, "12 Dec 2025 09:00 UTC (near peak)")]:
-    ds["water_frac"].where(good).clip(0, 1).plot(ax=ax, vmin=0, vmax=1, cmap="Blues")
+    ds["water_frac"].where(good).clip(0, 1).plot(ax=ax, vmin=0, vmax=1, cmap="Blues",
+                                                 cbar_kwargs={"label": "Water fraction"})
     ax.set_title(title)
     ax.set_aspect("equal")
+    ax.xaxis.set_major_locator(plt.MaxNLocator(4))  # fewer easting labels, so they don't overlap
 
 plt.show()
 ```
+
+:::{figure} ../images/m04/synthesize-swot-water-extent.png
+:alt: Two side-by-side maps of SWOT water fraction over the Skagit delta west of Mount Vernon, on 1 December 2025 (before the flood) and 12 December 2025 at 09:00 UTC (near the peak). Dark blue cells are mostly water and pale cells mostly land; blank areas are cells that were not good or suspect in both passes. Open water in the bays to the north and southwest and the river channels look nearly the same in both maps, with no broad new area of water on the farmland.
+:width: 100%
+
+SWOT Raster water fraction over the Skagit delta before the flood and about one hour after the crest, showing only cells whose `water_area_qual` is good or suspect in both passes. Data: SWOT Level 2 KaRIn high-rate Raster, 100 m, Version D (`SWOT_L2_HR_Raster_100m_D`) via `earthaccess`, accessed 2026-10-08.
+:::
 
 The results are a lesson in what a single satellite pass can and can't show:
 
@@ -484,10 +602,35 @@ The results are a lesson in what a single satellite pass can and can't show:
 
 - **Quality flags matter.** Only about a third of the cells in the box (about 9,300 of 27,000) are good or suspect in both passes. The 4 December scene (not plotted) shows striped false "water" across dry land near the gage, and `water_area_qual` flags most of it.
 
-:::{admonition} TODO (dev team): Static copy of the water-extent figure
+:::{admonition} TODO (dev team): 4 December Raster scene
 :class: attention
-Commit a static copy of the before/near-peak figure with alt text; consider adding the 4 Dec scene to illustrate quality flags.
+Consider adding the 4 Dec scene to illustrate how `water_area_qual` flags false water.
 :::
+
+### Saving what you derived
+
+Before moving on, save the comparison you built, separately from the raw downloads, with the identifiers and versions that produced it. This is the "recipe plus snapshot" idea from Module 1's [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data): someone can rerun the query block, or check your numbers against the saved table.
+
+```python
+from pathlib import Path
+
+derived = Path("data/derived")
+derived.mkdir(parents=True, exist_ok=True)
+# SWOT reach changes alongside the gage's change at each overpass (meters)
+dec.drop(columns="time_str").to_csv(derived / "skagit_swot_vs_gage_dec2025.csv", index=False)
+# The NWM forecasts, one column per issue time (ft³/s, valid time in UTC)
+pd.DataFrame(forecasts).to_csv(derived / "skagit_nwm_short_range_dec2025.csv", index_label="valid_time")
+# Provenance: what was asked for, which versions came back, and when
+(derived / "provenance.txt").write_text(
+    f"Accessed {pd.Timestamp.now(tz='UTC'):%Y-%m-%d} UTC\n"
+    f"USGS {site}: continuous {usgs_window}; approval status {sorted(discharge['approval_status'].unique())}\n"
+    f"NWM {nwm_version} short_range, COMID {comid}, issued {list(forecasts)}\n"
+    f"SWOT RiverSP (hydrocron) reaches {sword_reaches}, {swot_window}; Raster {raster_short_name}: "
+    f"{[g['umm']['GranuleUR'] for g in skagit]}\n")
+print(sorted(p.name for p in derived.iterdir()))
+```
+
+The folder now holds two small CSV files and a `provenance.txt` that names the gage, approval status, NWM model version and SWOT granules. Cite the sources when you share results: USGS asks for the publication year, access date and DOI ([citing Water Data for the Nation](https://waterdata.usgs.gov/citation/); the DOI is [10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN)), each SWOT collection has its own DOI (above, and on each collection's [PO.DAAC](https://podaac.jpl.nasa.gov/) landing page), and the NWM forecasts are cited by product, model version and access date ([NOAA NWM on AWS](https://registry.opendata.aws/noaa-nwm-pds/)).
 
 ## Conclusions
 
@@ -499,11 +642,16 @@ Tighten prose.
 - **USGS** gives the most reliable, highest-frequency record *at a point*: the crest timing (08:00–08:15 UTC on 12 Dec), stage and discharge. Its field measurements show how far the flood peak was extrapolated beyond direct measurement.
 - **NOAA NWM** short-range forecasts gave many hours' warning of an exceptional flood. At this reach they ran high and early, peaking at 142,000–160,000 ft³/s against an observed 133,000. They cover every reach, including reaches with no gage, and past forecasts can be read cheaply from the cloud with kerchunk references.
 - **NASA SWOT** adds a spatial view. RiverSP's WSE changes matched the gage's rise and showed it shrinking toward the bay. The Raster product can map water extent, but only when a pass lines up with the flood. Here the one near-peak pass stopped short of Mount Vernon.
-- Linking the products takes deliberate work: three Location Identifiers (gage ID, COMID, SWORD reach), different vertical references (gage datum vs. geoid), different time steps (15-minute, hourly forecasts, a few passes per cycle) and different Data Quality Flags. Each product fills gaps the others leave.
+- Linking the products takes deliberate work: three location identifiers (gage ID, COMID, SWORD reach), different vertical references (gage datum vs. geoid), different time steps (15-minute, hourly forecasts, a few passes per cycle) and different data quality flags. Each product fills gaps the others leave.
 
 ## Further reading
 
 - Adapted from [Notebook to Demonstrate Collecting USGS Data (collect-usgs-streamflow.ipynb)](https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval/collect-usgs-streamflow.ipynb), CUAHSI notebooks (GPL-3.0); ported from the legacy `nwis` module to `waterdata`.
+
+  :::{admonition} TODO (dev team): confirm this link
+  :class: attention
+  This link points to the CUAHSI/notebooks `develop` branch (collect-usgs-streamflow.ipynb). Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
+  :::
 
   :::{admonition} TODO (dev team): Notebook authors
   :class: attention
@@ -511,6 +659,14 @@ Tighten prose.
   :::
 
 - Adapted from [Notebook to visualize SWOT longitudinal profile data (LongProfileVerticalDatum.ipynb)](https://github.com/CUAHSI/notebooks/blob/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources/LongProfileVerticalDatum.ipynb) by Mike Durand with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0); hydrocron request pattern and quality-flag filtering.
+
+  :::{admonition} TODO (dev team): confirm this link
+  :class: attention
+  This link points to the CUAHSI/notebooks `develop` branch (LongProfileVerticalDatum.ipynb). Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
+  :::
+
+- [SWOT Version D KaRIn products release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), PO.DAAC: what changed from Version C.
+- [PO.DAAC](https://podaac.jpl.nasa.gov/), NASA's archive for SWOT data, where each collection's landing page gives its DOI.
 - [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html), PO.DAAC: Skagit River SWORD reach IDs.
 - [Hydrocron documentation](https://podaac.github.io/hydrocron/), PO.DAAC.
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/).
@@ -518,9 +674,12 @@ Tighten prose.
 - [SWOT Product Description: Level 2 KaRIn high rate river single pass vector product (L2_HR_RiverSP), JPL D-56413 Rev C, 24 Feb 2025](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf): `reach_q`, `reach_q_b`, `wse_u` and geoid definitions.
 - [`dataretrieval-python` documentation](https://doi-usgs.github.io/dataretrieval-python/) and the [USGS Water Data APIs](https://api.waterdata.usgs.gov/).
 - [USGS Water Science School: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured).
+- [How should I cite USGS Water Data for the Nation data?](https://waterdata.usgs.gov/citation/), USGS.
 - [USGS Network Linked Data Index (NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) and [`pynhd`](https://docs.hyriver.io/readme/pynhd.html).
 - [NOAA National Water Prediction Service: Skagit River near Mount Vernon (MVEW1)](https://water.noaa.gov/gauges/MVEW1).
 - NWM forecast archive on Google Cloud: the public `national-water-model` bucket, readable without an account at `https://storage.googleapis.com/national-water-model/<path>` (the code above reads it this way); also on AWS as [NOAA National Water Model Short-Range Forecast (`noaa-nwm-pds`)](https://registry.opendata.aws/noaa-nwm-pds/), Registry of Open Data on AWS.
 - [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) (CIROH), which builds the NWM file URLs used above ([source](https://github.com/CIROH-UA/nwmurl)).
 - [`kerchunk` documentation](https://fsspec.github.io/kerchunk/). The reference-building pattern follows Module 3's NWM lesson ([03/02](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 - [Tracking Weather Extremes: December 2025 Pacific Northwest Flooding](https://svs.gsfc.nasa.gov/5596), NASA Scientific Visualization Studio.
+- [Cartographic Boundary Files](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html), U.S. Census Bureau: the state outline in the study-area map.
+- Module 1: [reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) and [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data).
