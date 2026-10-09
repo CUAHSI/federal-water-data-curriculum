@@ -11,9 +11,11 @@ dependencies:
   - netcdf4
   - h5netcdf
   - rioxarray
+  - numpy               # imported directly in the lesson
   - pandas
   - geopandas
   - shapely
   - pyproj
   - requests
   - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter

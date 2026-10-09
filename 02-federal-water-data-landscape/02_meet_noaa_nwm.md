@@ -68,7 +68,7 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 | Retrospective | Long historical record, ungaged reaches | Feb 1979 – Jan 2023 (v3.0) | hourly | one-off run per model version |
 | Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last few hours | hourly | hourly |
 | Short-Range (`short_range`) | Next-day forecasts | 18 hours | hourly | hourly |
-| Medium-Range (`medium_range`) | Forecasts for the coming week; six ensemble members | 10 days (member 1); 8.5 days (members 2–6) | hourly in the NOAA NWM API (see note below) | four times a day |
+| Medium-Range (`medium_range`) | Forecasts for the coming week; six ensemble members | 10 days (member 1); 8.5 days (members 2–6) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
 
 :::{admonition} Partner review (NOAA): Retrospective period and output intervals
@@ -146,9 +146,19 @@ The `print` line shows the run's configuration, reference time and units, for ex
 
 - **Citation:** NOAA publishes a standard format on each dataset's AWS Registry of Open Data listing, e.g. for the Short-Range Forecast: *"NOAA National Water Model Short-Range Forecast was accessed on [DATE] from https://registry.opendata.aws/noaa-nwm-pds."* Swap in the specific product name, version, and dataset URL you actually used (e.g. the [Retrospective archive](https://registry.opendata.aws/nwm-archive/) instead of the Short-Range Forecast).
 - **License/access:** NWM output is open data, distributed through the NOAA Open Data Dissemination ({term}`NODD`) program via AWS and Google Cloud, as well as a 48-hour rolling window on NOAA's {term}`NOMADS` server.
-- **Which access route should I use?** NWM output can be reached several ways: the NOAA NWM API for current forecasts, {term}`hydrotools` for past forecasts, and {term}`kerchunk`/{term}`virtual Zarr <Virtual Zarr>` references for many reaches. They differ a lot in cost as your question grows. The Module 3 lesson [Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md) compares them.
+- **Which access route should I use?** NWM output can be reached several ways: the NOAA NWM API for current forecasts, {term}`hydrotools` for past forecasts, and {term}`kerchunk`/{term}`virtual Zarr <Virtual Zarr>` references for many reaches. They differ a lot in cost as your question grows. The Module 3 lesson [Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-access-routes) compares them.
 - **Change over time:** Values can shift not just with new observations (in Analysis & Assimilation) but with model version upgrades — treat any long time series spanning a version change as non-homogeneous. Forecasts also *expire* from some services: the NOAA NWM API and NOMADS keep only the last few days. If your work depends on a specific forecast, record its configuration, reference time and model version, and keep a copy of the values you used; Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) discusses exactly this case.
 - **Contact:** For questions about data content, quality, or model methodology, contact NOAA's Office of Water Prediction (contacts listed on the [NWM about page](https://water.noaa.gov/about/nwm)). For questions specifically about data delivery via NODD (AWS/Google Cloud access), email nodd@noaa.gov.
+
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Terminology: say that `feature_id` = COMID holds for the CONUS domain (the glossary already does); Alaska, Hawaii and Puerto Rico domains need a NOAA check before stating what they use.
+- CRS bullet: the Albers claim for NHDPlus needs a check (NHDPlusV2 is often distributed in NAD83 geographic); add that the Module 3 tools take and return EPSG:4326.
+- Partner-review callouts still describe earlier drafts ("an earlier draft said 3-hourly", "1979–present"); keep the questions, drop the history.
+- Mention `nwm_feature_id` (the NOAA NWM API's name for the ID); make the NOMADS window wording match the glossary (about 48 hours); give the Analysis & Assimilation lookback in hours.
+- Split the opening paragraph; add the "you don't need to run this now" note to the figure dropdown.
+:::
 
 ## Further reading
 

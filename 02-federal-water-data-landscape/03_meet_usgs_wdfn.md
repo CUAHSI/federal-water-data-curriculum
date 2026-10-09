@@ -13,7 +13,7 @@ This table maps WDFN's own vocabulary onto the course's [shared concepts](00_int
 | {term}`Location identifier` | `monitoring_location_id` | Geographical location where data is collected, usually a USGS {term}`streamgage <Streamgage>`. Can be plotted as points on a map. The ID combines the agency and site number, for example `USGS-03294500`. See {term}`monitoring location ID <Monitoring location ID>`. |
 | {term}`Variable` | Discharge, also referred to as streamflow by USGS | Stream discharge at a monitoring location, offered as continuous or daily values. Referred to with the {term}`parameter code <Parameter code>` `00060`. {term}`Gage height` (`00065`) is measured at the same locations. |
 | {term}`Variable unit` | ft³/s | Cubic feet per second (`ft^3/s` in the `unit_of_measure` column). Gage height is in feet. |
-| {term}`Time` | timestamp (continuous or daily) | {term}`Continuous values <Continuous values>` have a timestamp, usually every 15 minutes, in UTC. {term}`Daily values <Daily values>` have a date and a statistic, such as the daily mean (statistic code `00003`). The day is the monitoring location's local day, not a UTC day (see the partner-review note below). |
+| {term}`Time` | timestamp (continuous or daily) | {term}`Continuous values <Continuous values>` have a timestamp, usually every 15 minutes, in UTC. {term}`Daily values <Daily values>` have a date and a statistic, such as the daily mean ({term}`statistic code <Statistic code>` `00003`). The day is the monitoring location's local day, not a UTC day. |
 | {term}`Data quality flag(s)` | `approval_status`, `qualifier` | `approval_status` is either `Provisional` or `Approved` (see {term}`approval status <Approval status>`). The {term}`qualifier <Qualifier>` column adds remarks about individual values, for example `['ESTIMATED']` when USGS had to estimate a value, such as during ice or equipment problems (it is empty, `None`, for most values). The possible codes are listed in the USGS Water Data APIs reference lists (see Further reading). Field measurements carry their own rating, `measurement_rated` (for example Poor, Fair or Good). |
 | {term}`Version / provenance` | service and retrieval date | The data have no version number. Instead, record which service you used (for example the daily-values collection of the USGS Water Data APIs), the date you retrieved the data, and the approval status at that time. Each row also has a `last_modified` timestamp. |
 | {term}`Data unit` | one time series per location + parameter | Every combination of monitoring location, parameter and statistic is a separate time series with its own `time_series_id`. |
@@ -114,6 +114,15 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 - **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have an hourly limit.
 - **Change over time:** The USGS Water Data APIs will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So a new API version does not by itself change the data. Values change for a different reason: provisional data are revised when they are approved, and approved data are occasionally revised too. Still, it is a good idea to check the [Water Data Blog](https://waterdata.usgs.gov/blog/) regularly for important updates.
 - **Contact:** For questions about WDFN data, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments/).
+
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Dataset derivation: add a bold "Key point:" line, as on the SWOT and NWM pages.
+- The provisional-data partner-review callout quotes the old "120 days" claim; keep the question, drop the history.
+- Say how big the no-key hourly limit is, or that it is fine for this module's examples; add the "you don't need to run this now" note to the figure dropdown.
+- "Daily data is usually available same-day": revisit once USGS answers the partner review.
+:::
 
 ## Further reading
 
