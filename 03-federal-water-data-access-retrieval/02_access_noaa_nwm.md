@@ -697,7 +697,14 @@ print(q_feb.iloc[[0, 8, 17]])
 ```
 
 ```text
-TRY_OUTPUT
+COMID: 23791093
+2026-10-09T02:00:00Z CMS 18 values
+18 reference files
+time
+2026-02-25 13:00:00    1717.849962
+2026-02-25 21:00:00    1807.389960
+2026-02-26 06:00:00    1816.159959
+Name: streamflow, dtype: float64
 ```
 :::
 
