@@ -6,7 +6,7 @@ SWOT, its products and its quality flags in [Meet NASA SWOT](../02-federal-water
 you put that into code.
 
 **The example river.** The main example is the **Ohio River at Louisville, Kentucky**, from 15 March to 15 May 2025. The Ohio
-is about 700 m wide here, well above the width SWOT observes reliably, and SWOT passes over Louisville several times in each
+is about 700 m wide here, well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
 21-day cycle. The window includes the large April 2025 flood, so you can watch the river's water surface rise and fall in
 SWOT's own data. At the end you repeat the steps on a second river, the Willamette River at Salem, Oregon.
 
@@ -15,13 +15,13 @@ SWOT's own data. At the end you repeat the steps on a second river, the Willamet
 :width: 100%
 
 Where the lesson's data come from. **Left:** every SWORD river reach in one SWOT RiverSP granule (cycle 031, pass 175,
-13 April 2025). One granule covers a whole pass across a continent. **Right:** the three reaches nearest the example point on
+13 April 2025; a *cycle* is one 21-day repeat of SWOT's orbit and a *pass* is one numbered track within it). One granule covers a whole pass across a continent. **Right:** the three reaches nearest the example point on
 the Ohio River at Louisville (red star). The point lies on reach `74267300251`. Data: NASA SWOT Level 2 River Single-Pass
 Vector product, Version D ([doi:10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D)), accessed 2026-10-08.
 :::
 
 (swot-access-routes)=
-### Choosing an access route
+## Choosing an access route
 
 SWOT has two hydrology products you will use. They answer different questions, so pick the product before you pick the tool:
 
@@ -46,6 +46,10 @@ There are two ways to get these products with code, and they scale differently:
 - **`earthaccess`** is NASA's Python library for logging in to NASA Earthdata, searching for data, and downloading or
   streaming the files. It works for every SWOT product. It replaced what used to be several different access patterns
   ([earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/)).
+**Only need a time series for one reach?** Find its reach ID in [SWORD Explorer](https://www.swordexplorer.com/), run the
+setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
+Earthdata login or any downloads.
+
 - **`hydrocron`** is a web API from NASA's {term}`PO.DAAC` that returns a RiverSP time series for one reach or node in a
   single request. SWOT files are archived one per overpass, so without it you would open one file per overpass to build a
   time series ([Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis)).
@@ -95,7 +99,7 @@ xarray 2026.9.0
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it prompts for your Earthdata
 username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment
 variables (or use a `.netrc` file); `earthaccess.login()` finds them automatically. Never write your password into a script
-or notebook. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
+or notebook. If you're not sure how to set environment variables, let it prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
 
 ```python
 # Log in to NASA Earthdata. Uses EARTHDATA_USERNAME/EARTHDATA_PASSWORD or .netrc if set, otherwise prompts.
@@ -119,9 +123,13 @@ the dates means editing only this block, and saving it records exactly what you 
 site_name = "Ohio River at Louisville, KY"
 site_lon, site_lat = -85.799, 38.280          # a point on the river (decimal degrees, WGS84)
 site_bbox = (site_lon - 0.02, site_lat - 0.02, site_lon + 0.02, site_lat + 0.02)  # (west, south, east, north), ~3.5 x 4.4 km
-start, end = "2025-03-15", "2025-05-15T23:59:59"   # UTC; the April 2025 flood falls inside
+start, end = "2025-03-15T00:00:00Z", "2025-05-15T23:59:59Z"   # UTC; the April 2025 flood falls inside
+reach_id = "74267300251"                      # SWORD reach at the point (found below, or look it up in SWORD Explorer)
 data_dir = "data/swot/raw"                    # downloads go here and are never edited
 ```
+
+The dates are full UTC timestamps (`Z` means UTC) because both `earthaccess` and `hydrocron` accept that form. You won't
+know `reach_id` for a new river yet: the RiverSP download below shows how to find it.
 
 ## Programmatic data discovery
 
@@ -170,9 +178,9 @@ you read the list:
   Use Version D ([SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), section 4.1).
 - **Sub-collections.** `SWOT_L2_HR_RiverSP_D` holds both reach and node files; `_reach_D` and `_node_D` are sub-collections
   with one kind each.
-- **Raster isn't here** because its catalog entry doesn't use the keyword "river". Searching for `keyword="SWOT"` would find it.
+- **Raster isn't here**: it doesn't match this keyword search. Searching for `keyword="SWOT"` finds it.
 
-### Find granules for a river that SWOT doesn't observe
+### A river with no SWOT reaches: the Mississippi headwaters
 
 `search_data` finds the granules inside one collection. A quick lesson first: **a granule in your results is not a
 guaranteed observation of your site.** Each RiverSP granule covers a whole pass across a continent, so its footprint can
@@ -232,7 +240,7 @@ print(sorted({g["umm"]["GranuleUR"].split("_")[5] for g in louisville_raster})) 
 ```
 
 That is far more than SWOT could have seen over one point in two months. The UTM zone in each granule name gives the problem
-away. Louisville is in UTM zone **16**, but most results are in zones 01 and 60, on either side of the 180° meridian. The
+away. (UTM, the Universal Transverse Mercator system, divides the globe into 60 numbered zones, each 6° of longitude wide, with a flat x/y grid in meters.) Louisville is in UTM zone **16**, but most results are in zones 01 and 60, on either side of the 180° meridian. The
 metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost any box. Downloading
 them all would waste gigabytes on scenes from the other side of the planet.
 
@@ -312,6 +320,7 @@ louisville_reach_granules = earthaccess.search_data(
     bounding_box=site_bbox,
     temporal=(start, end),
 )
+# Raster name split on "_": [5] UTM zone, [10] cycle, [11] pass, [12] scene. RiverSP: [5] cycle, [6] pass.
 # (cycle, pass) of each Raster scene that covers the point, e.g. ("031", "175")
 seen_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in louisville_raster}
 louisville_reach_granules = keep_best_version_d(
@@ -368,9 +377,10 @@ files = earthaccess.download(flood_granule, local_path=data_dir)
 reaches = gpd.read_file(files[0])
 print(len(reaches), "reaches in this granule")
 
-# Distance from each reach to the point, in meters (UTM zone 16N, EPSG:32616)
-site = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").to_crs(32616).iloc[0]
-reaches_utm = reaches.to_crs(32616)
+# Distance from each reach to the point, in meters, in the UTM zone around the point (here zone 16N)
+utm_crs = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").estimate_utm_crs()
+site = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").to_crs(utm_crs).iloc[0]
+reaches_utm = reaches.to_crs(utm_crs)
 reaches_utm["dist_to_site_m"] = reaches_utm.distance(site).round()
 reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_site_m", "p_width", "wse", "width", "reach_q", "time_str"]]
 ```
@@ -490,7 +500,7 @@ For each 100 m pixel:
 - `water_area_qual` is the **Data quality flag** for `water_area`: 0 = good, 1 = suspect, 2 = degraded, 3 = bad. `wse_qual`
   and the other `_qual` variables work the same way.
 
-Pixels outside the swath are `NaN`. The `x` and `y` coordinates are UTM meters, and the full projection is in the `crs`
+Pixels outside the swath (the strip of ground the radar imaged on this overpass) are `NaN`. The `x` and `y` coordinates are UTM meters, and the full projection is in the `crs`
 variable's `crs_wkt` attribute.
 
 To compare overpasses, add up `water_area` in a 10 km × 10 km box around the point in each file. Two details matter:
@@ -541,8 +551,9 @@ the observed pixels). Two things stand out:
    see that in the `hydrocron` time series below). Water area in a fixed box is a blunt measure on a large river whose
    banks hold most of the rise.
 
+:::{dropdown} Optional: decode why the 13 April scene is degraded
 The flag says *that* the 13 April pixels are degraded. The bitwise flag, `water_area_qual_bitwise`, says *why*: each bit is
-one reason, and the variable's attributes name them. This block counts, across the whole 13 April scene, how many observed
+one reason, and the variable's attributes name them. `values & mask` (bitwise AND) is non-zero when that reason's bit is set. This block counts, across the whole 13 April scene, how many observed
 pixels have each "degraded" reason set:
 
 ```python
@@ -560,6 +571,7 @@ print(len(values), "observed pixels in the scene")
 684605 observed pixels in the scene
 {'classification_qual_degraded': 0, 'geolocation_qual_degraded': 684605}
 ```
+:::
 
 Every observed pixel in the scene carries `geolocation_qual_degraded`: the whole overpass was flagged because its
 geolocation (where each pixel sits on the ground) is less certain, not because of anything about the river. Whether to use
@@ -611,6 +623,7 @@ product, Version D ([doi:10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RAS
 The 13 April 2025 pass-175 scene (`..._031_175_111F_..._PGD0_01`) has `geolocation_qual_degraded` set on every observed pixel. What causes a scene-wide geolocation flag, and is it reasonable to use such a scene for water extent, as this lesson does, after checking it against neighboring scenes? Which `water_area_qual` threshold do you recommend for water-extent work, and is a fixed 10 km box a reasonable way to compare overpasses from one pass?
 :::
 
+(swot-hydrocron)=
 ### RiverSP time series with `hydrocron`
 
 If what you want is a time series for one reach, `hydrocron` is the tool for the job. As the
@@ -641,6 +654,7 @@ Pass `max_reach_q` to also drop observations whose quality flag is worse than yo
 
 ```python
 import io
+import pandas as pd
 import requests
 
 HYDROCRON_URL = "https://soto.podaac.earthdatacloud.nasa.gov/hydrocron/v1/timeseries"
@@ -658,16 +672,14 @@ def get_reach_timeseries(reach_id, start, end, fields=FIELDS, max_reach_q=3):
         "fields": fields,
     }
     response = requests.get(HYDROCRON_URL, params=params, timeout=120)
-    body = response.json()
     if response.status_code != 200:
-        raise RuntimeError(body.get("error", response.text))
-    df = pd.read_csv(io.StringIO(body["results"]["csv"]))
+        raise RuntimeError(f"hydrocron returned HTTP {response.status_code}: {response.text[:300]}")
+    df = pd.read_csv(io.StringIO(response.json()["results"]["csv"]))
     df = df[(df["wse"] != FILL_VALUE) & (df["reach_q"] <= max_reach_q)].copy()
     df["time"] = pd.to_datetime(df["time_str"])
     return df
 
-reach_id = "74267300251"
-louisville = get_reach_timeseries(reach_id, "2025-03-15T00:00:00Z", "2025-05-15T23:59:59Z")
+louisville = get_reach_timeseries(reach_id, start, end)   # reach_id, start and end come from the query block
 print(len(louisville), "observations; reach_q counts:", louisville["reach_q"].value_counts().sort_index().to_dict())
 louisville[["time_str", "wse", "wse_u", "width", "reach_q", "crid"]]
 ```
@@ -698,6 +710,8 @@ for `wse` and `reach_q` = 3; the function drops those.
 A plot shows the flood clearly:
 
 ```python
+import matplotlib.pyplot as plt
+
 fig, ax = plt.subplots(figsize=(9, 4))
 for q, color, label in [(1, "#2a78d6", "suspect (reach_q = 1)"), (2, "#eb6834", "degraded (reach_q = 2)")]:
     rows = louisville[louisville["reach_q"] == q]
@@ -754,12 +768,18 @@ retrieved:
 | {term}`Version / provenance` | Version D; CRID in the file name (`PGD0`); collection DOI [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D) | Version D; CRID in the file name; collection DOI [10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RASTER-D) | `crid` field; collection name (default Version D) |
 | {term}`Data unit` | one granule = one pass over one continent, all reaches | one granule = one ~150 km scene from one pass | one response = one reach over your time range |
 
-Three things are worth keeping in mind:
+Four things are worth keeping in mind:
 
+- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) lists discharge as a
+  SWOT variable. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
+  estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete
+  ([release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
+  section 4.1). Expect fill values in those columns, and check the current release notes before relying on them.
 - **Quality flags are rarely 0.** For RiverSP, "nearly all reach-level quality flags … are non-zero" in Version D, because
   node-level flags are propagated up to the reach ([Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), table 8).
-  A strict `reach_q == 0` filter would usually return an empty table. Keep the flag, look at the values and decide what to
-  trust.
+  A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
+  `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
+  write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
 - **Uncertainties are estimates.** The same release note says the reported uncertainties "have not been validated and should
   not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
@@ -770,7 +790,7 @@ Three things are worth keeping in mind:
 
 :::{admonition} Partner review (NASA): Citing SWOT data
 :class: important
-Confirm the recommended dataset citation format for Version D RiverSP and Raster.
+Confirm the recommended dataset citation format for Version D RiverSP and Raster, and whether Version D RiverSP discharge (`dschg_*`) is now populated.
 :::
 
 ## Best practices FAQs
@@ -785,9 +805,9 @@ See the sections below for answers to these questions:
 
 *What is the recommended way to download data for one location but the full period of record?*
 
-Use `hydrocron`, one request per reach or node. Set `start_time` to the start of SWOT's science orbit (21 July 2023; the
+Use `hydrocron`, one request per reach or node. Set `start_time` to the start of SWOT's science orbit (21 July 2023; usable data begin 26 July, and the
 [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
-table 2, notes no useful data from 21 to 26 July) and `end_time` to today, and ask only for the `fields` you need. Fewer
+table 2, notes no useful data before then) and `end_time` to today (the code below uses a fixed end date so the result can be reproduced), and ask only for the `fields` you need. Fewer
 fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach,
 each holding a whole continental pass, only to keep one row from each.
 
@@ -798,7 +818,7 @@ print(len(full_record), "observations from", full_record["time"].min().date(), "
 print("CRIDs:", full_record["crid"].value_counts().to_dict())
 fig, ax = plt.subplots(figsize=(10, 3.8))
 ax.plot(full_record["time"], full_record["wse"], marker="o", markersize=3, linewidth=0.8, color="#2a78d6")
-ax.set_ylabel("Water surface elevation (m)")
+ax.set_ylabel("WSE (m above the geoid)")
 ax.set_title(f"SWOT reach {reach_id}, full record")
 ax.grid(alpha=0.3)
 plt.show()
@@ -862,13 +882,14 @@ wet winter season. The Willamette here is much narrower than the Ohio (SWORD exp
 **Your task:** find the SWORD reach at Salem and retrieve its water surface elevation time series with `hydrocron`.
 
 1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
-   and the dates to `start, end = "2026-02-01", "2026-03-31T23:59:59"`. Re-run it.
+   and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.
 2. Search the Raster collection for the new box and dates, then screen the results with `footprint_covers` and
    `keep_best_version_d`, as you did for Louisville. Salem is in UTM zone **10**, so the real matches are `UTM10T` scenes.
    Collect their `(cycle, pass)` pairs in `seen_passes`.
 3. Search the RiverSP collection (`granule_name="*Reach*"`), keep the granules from those passes, download **one** of them,
-   and find the reach nearest the point. Use EPSG **32610** (UTM zone 10N) instead of 32616 for the distances.
-4. Call `get_reach_timeseries` for that reach and the new dates.
+   and find the reach nearest the point. Any one of them will do: every pass you kept sees the point. `estimate_utm_crs()` picks
+the right UTM zone for Salem by itself.
+4. Set `reach_id` to that reach and call `get_reach_timeseries(reach_id, start, end)`.
 
 Give the new results new names (for example `salem_raster`), so you can still compare them with the Louisville ones.
 
@@ -884,7 +905,7 @@ as a stream gage or imagery, would tell you.
 site_name = "Willamette River at Salem, OR"
 site_lon, site_lat = -123.043, 44.944
 site_bbox = (site_lon - 0.02, site_lat - 0.02, site_lon + 0.02, site_lat + 0.02)
-start, end = "2026-02-01", "2026-03-31T23:59:59"
+start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"
 
 # Step 2: Raster scenes that really cover the point
 salem_raster = earthaccess.search_data(short_name="SWOT_L2_HR_Raster_100m_D", bounding_box=site_bbox, temporal=(start, end))
@@ -895,13 +916,15 @@ seen_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in salem_ras
 salem_reach_granules = earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_D", granule_name="*Reach*", bounding_box=site_bbox, temporal=(start, end))
 salem_reach_granules = keep_best_version_d([g for g in salem_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in seen_passes])
 files = earthaccess.download(salem_reach_granules[:1], local_path=data_dir)
-reaches_utm = gpd.read_file(files[0]).to_crs(32610)
-site = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").to_crs(32610).iloc[0]
+utm_crs = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").estimate_utm_crs()   # zone 10N here
+reaches_utm = gpd.read_file(files[0]).to_crs(utm_crs)
+site = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").to_crs(utm_crs).iloc[0]
 reaches_utm["dist_to_site_m"] = reaches_utm.distance(site).round()
 print(reaches_utm.nsmallest(1, "dist_to_site_m")[["reach_id", "river_name", "dist_to_site_m", "p_width"]])
 
 # Step 4: the time series
-salem = get_reach_timeseries("78220000131", "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z")
+reach_id = "78220000131"   # the nearest reach printed above
+salem = get_reach_timeseries(reach_id, start, end)
 print(len(salem), "observations; reach_q counts:", salem["reach_q"].value_counts().sort_index().to_dict())
 salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 ```
