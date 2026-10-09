@@ -23,15 +23,18 @@ _The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT 
 The sections below walk through the data you would collect for this flood, product by product. Run the code blocks in order, in one Python session (later blocks reuse variables from earlier ones), using the Module 4 environment ([environments/m04-synthesis.yml](../environments/m04-synthesis.yml)):
 
 ```bash
+# From the root of the course repository
 conda env create -f environments/m04-synthesis.yml
 conda activate m04-synthesis
+# Optional: register this environment as a Jupyter kernel, then pick "Python (m04-synthesis)" in Jupyter
+python -m ipykernel install --user --name m04-synthesis --display-name "Python (m04-synthesis)"
 # Record the exact package versions next to your results, so you (or a reviewer) can rebuild this environment later
 conda env export > m04-synthesis-versions.yml
 ```
 
 A pinned {term}`conda environment <Conda environment>` is what lets someone re-run this analysis next year and get the same answer; Module 1's [reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) explain why. The outputs on this page came from `dataretrieval` 1.4.0, `pynhd` 0.20.0, `earthaccess` 0.19.0, `xarray` 2026.9.0 and `kerchunk` 0.2.10 on Python 3.14.
 
-You will need the same credentials as in Module 3: a USGS Water Data {term}`API key` stored in the `API_USGS_PAT` environment variable (optional, but it raises your rate limit), and an Earthdata Login stored in `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` (required for the SWOT raster download). Keep both in environment variables, never in your code.
+You will need the same credentials as in Module 3: a USGS Water Data {term}`API key` stored in the `API_USGS_PAT` environment variable (optional, but it raises your rate limit), and an Earthdata Login stored in `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` (required for the SWOT raster download). Keep both in environment variables, never in your code. If you stored the USGS key with `conda env config vars set` in Module 3, it belongs to the `m03-wdfn` environment only: repeat that step after `conda activate m04-synthesis`, then re-activate. If the Earthdata variables aren't set, `earthaccess.login()` prompts you, as in Module 3.
 
 :::{admonition} TODO (dev team): Informational sections vs. lab assignment
 :class: attention
@@ -275,14 +278,9 @@ The gage tells us what happened. The National Water Model (NWM) tells us what wa
 Confirm this description of the NWPS gauge forecast vs. NWM.
 :::
 
-**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 235 MB per short-range forecast, even for one reach. Building {term}`kerchunk` references instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key.
+**Choosing an access route.** Module 3 compares the ways to get NWM forecasts ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-access-routes)). Two facts decide it for a past event. First, the no-key NOAA NWM API only keeps the last few days of forecasts, so it can't reach December 2025. Second, past forecasts are kept as NetCDF files in public cloud buckets (Google Cloud's `national-water-model` and AWS's `noaa-nwm-pds`). Each hourly file covers all ~2.8 million reaches. `hydrotools` downloads those whole files: about 250–280 MB per short-range forecast in Module 3's measurements, even for one reach. Building {term}`kerchunk` references instead indexes where each variable sits inside each file. `xarray` can then read only the `streamflow` chunks it needs, directly from the cloud. In Module 3's measurements this read about 7× fewer bytes with far less memory, and it needs no key.
 
-:::{admonition} TODO (dev team): Recheck against the rebuilt Module 3 NWM lesson
-:class: attention
-The 235 MB and 7× figures match 03/02 on `dev` (2026-10-08). Lane B is rebuilding 03/02 in Phase 6; recheck these figures, and link the access-route section directly once its heading is final.
-:::
-
-The first block builds references for three short-range forecasts (the `short_range` {term}`configuration <Configuration>`) issued on 11 December, at 00Z, 12Z and 18Z (Z means UTC): the `nwm_issue_times` from the query block. Each issue time is a {term}`forecast reference time <Forecast reference time>`. We chose three issue times spread across the day before the crest, so you can see how the forecast changed as the flood approached; only the 18Z forecast's 18-hour window reaches past the crest. The two blocks below follow the Module 3 kerchunk pattern; most arguments (`inline_threshold`, `concat_dims`, `zarr_format` and so on) are explained there, and to reuse them you only change `nwm_issue_times` and `comid`. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test (2026-10-08, home connection) all three took about 20 seconds together; expect it to vary with your connection.
+The first block builds references for three short-range forecasts (the `short_range` {term}`configuration <Configuration>`) issued on 11 December, at 00Z, 12Z and 18Z (Z means UTC): the `nwm_issue_times` from the query block. Each issue time is a {term}`forecast reference time <Forecast reference time>`. We chose three issue times spread across the day before the crest, so you can see how the forecast changed as the flood approached; only the 18Z forecast's 18-hour window reaches past the crest. The two blocks below follow the [Module 3 kerchunk pattern](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-kerchunk); most arguments (`inline_threshold`, `concat_dims`, `zarr_format` and so on) are explained there, and to reuse them you only change `nwm_issue_times` and `comid`. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test (2026-10-08, home connection) all three took about 20 seconds together; expect it to vary with your connection.
 
 ```python
 import fsspec
@@ -649,14 +647,23 @@ Tighten prose.
 
 ### Adapting this case study to another river
 
-The query block holds the main choices, but a new event needs a few more decisions. In order:
+The query block holds the main choices, but a new event needs a few more decisions. Event dates also appear as literals in
+later blocks; if you miss one, the code still runs but gives an empty baseline (`NaN` changes) or the wrong window, with no
+error. Search the page's code for `2025-12`, `202512` and `_UTM10U_` after your edits. In order:
 
 1. **Find the gage** and set `site` and the USGS windows. Check `approval_status`: a recent event will be provisional.
+   In "Field measurements and the limits of out-of-bank flow", change the December filter on `q_meas` (`dec_meas`).
 2. **Get the COMID** from the NLDI (the `getfeature_byid` block needs no changes).
 3. **Find the SWORD reaches** near the gage: [SWORD Explorer](https://www.swordexplorer.com/), SWOTViz (see [Additional Federal water data](03_additional_data.md)) or the reach-finding steps in [Retrieve NASA SWOT data](../03-federal-water-data-access-retrieval/01_access_nasa_swot.md). Then confirm them with the study-area map.
-4. **Check that SWOT passes exist** before and during the event, and change the baseline date (`"2025-12-01"`) and the December filters in the SWOT blocks to match.
-5. **For the Raster**, change the tile filter (`"_UTM10U_"`, the UTM zone and latitude band of your river), the two file dates and the `delta` box.
-6. **For NWM**, pick `nwm_issue_times` before your crest and change the observation window in the forecast plot. Past events come from the cloud archive, as here; for the last few days, the NOAA NWM API is simpler ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
+4. **Check that SWOT passes exist** before and during the event. In the RiverSP section, change the December filters
+   (the two `december = ...` lines and `dec = ...`), the baseline date (`"2025-12-01"`, used twice: `baseline` and
+   `first_pass`) and the gage window in `gage_change`.
+5. **For the Raster**, change the tile filter (`"_UTM10U_"`), the two file dates (`"20251201T"`, `"20251212T"`) and the
+   `delta` box. To find your tile, print the `GranuleUR` of every search result first: your river's tile is the
+   `_UTM<zone><band>_` code in the granules over your area (see {term}`UTM zone`), and the EPSG code in `to_utm` (just above the `delta` box)
+   changes with the zone.
+6. **For NWM**, pick `nwm_issue_times` before your crest and change the observation window in the forecast plot
+   (`obs = ...["2025-12-10":"2025-12-13"]`). Past events come from the cloud archive, as here; for the last few days, the NOAA NWM API is simpler ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)).
 
 ## Further reading
 
