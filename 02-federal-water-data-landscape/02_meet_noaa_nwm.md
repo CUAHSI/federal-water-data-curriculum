@@ -68,7 +68,7 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 | Retrospective | Long historical record, ungaged reaches | Feb 1979 – Jan 2023 (v3.0) | hourly | one-off run per model version |
 | Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last few hours | hourly | hourly |
 | Short-Range (`short_range`) | Next-day forecasts | 18 hours | hourly | hourly |
-| Medium-Range (`medium_range`) | Forecasts for the coming week; six ensemble members | 10 days (member 1); 8.5 days (members 2–6) | hourly in the NOAA NWM API (see note below) | four times a day |
+| Medium-Range (`medium_range`) | Forecasts for the coming week; six ensemble members | 10 days (member 1); 8.5 days (members 2–6) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
 
 :::{admonition} Partner review (NOAA): Retrospective period and output intervals

@@ -177,8 +177,8 @@ Reach
 
 RiverSP
 : SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
-  overpass, with water surface elevation, width, slope, discharge and quality flags. Collection short names
-  look like `SWOT_L2_HR_RiverSP_reach_D`.
+  overpass, with water surface elevation, width, slope, discharge and quality flags. The Version D collection is
+  `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` for one each.
 
 Science orbit
 : SWOT's 21-day repeat orbit, used since 2023 for routine observations. It followed a 1-day repeat
