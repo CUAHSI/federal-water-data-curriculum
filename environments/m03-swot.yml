@@ -11,6 +11,7 @@ dependencies:
   - netcdf4
   - h5netcdf
   - rioxarray
+  - numpy               # imported directly in the lesson
   - pandas
   - geopandas
   - shapely

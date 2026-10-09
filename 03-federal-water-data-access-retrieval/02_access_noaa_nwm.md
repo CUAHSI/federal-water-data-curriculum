@@ -7,7 +7,7 @@ The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <S
 NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on Google Cloud and AWS. Two NOAA services serve slices of it:
 
 * NOAA's experimental [NWM API](https://api.water.noaa.gov/nwm/v1/docs) serves individual reaches, but only the most recent few days of forecasts.
-* The [National Water Prediction Service (NWPS) API](https://api.water.noaa.gov/nwps/v1/docs/) serves NWM output only at NWPS's ~4,000 established forecast locations, not the full domain, so this lesson doesn't use it.
+* The [National Water Prediction Service (NWPS) API](https://api.water.noaa.gov/nwps/v1/docs/) serves NWM output only at NWPS's established forecast locations, not the full domain, so this lesson doesn't use it.
 
 The steps are:
 
