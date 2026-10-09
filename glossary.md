@@ -56,35 +56,85 @@ Conda environment
 : An isolated set of Python packages, defined by a file such as `environments/m03-swot.yml`, so a lesson's code
   runs with known package versions.
 
+CONUS
+: The contiguous United States: the 48 adjoining states and the District of Columbia, without Alaska, Hawaii
+  or the territories.
+
+CRS
+: Coordinate reference system: how coordinates map to places on Earth, for example longitude and latitude on the
+  WGS84 datum (EPSG:4326) or a projected grid such as UTM. Data from different sources must share a CRS before you overlay them.
+
 Discharge
 : The volume of water flowing past a point per unit time, for example in ft³/s or m³/s. Also called streamflow.
 
+DOI
+: Digital Object Identifier: a permanent link (`https://doi.org/...`) to a dataset, paper or piece of software. Cite
+  datasets by DOI where one exists, with the version and the date you accessed them.
+
+Geoid
+: The shape the ocean surface would take under gravity alone, extended under the land; the reference for heights
+  "above sea level". SWOT water surface elevations are given relative to a geoid model (EGM2008).
+
+Lead time
+: How far ahead a forecast value is: its {term}`valid time <Valid time>` minus its
+  {term}`forecast reference time <Forecast reference time>`.
+
 Streamflow
 : See {term}`Discharge`.
+
+Virtual Zarr
+: A small reference file that lets software read existing files (such as NetCDF) as if they were one Zarr
+  dataset, fetching only the pieces needed from cloud storage. Built with tools such as {term}`kerchunk`.
 ```
 
 ## NASA SWOT
 
 ```{glossary}
+Cycle and pass
+: SWOT's orbit repeats every 21 days; each repeat is a *cycle*. Within a cycle, each numbered *pass* is one
+  half-orbit (ascending or descending). A place on the ground is seen by one or more passes per cycle.
+
 earthaccess
 : A Python library for logging in to NASA Earthdata and searching, downloading or streaming NASA data granules.
 
 Granule
-: The smallest unit of data NASA distributes for a product, usually one file: for SWOT, one product covering
-  part of one satellite pass.
+: The smallest unit of data NASA distributes for a product, usually one file. For SWOT, one granule covers one
+  stretch of one satellite pass: a whole continent for RiverSP, one scene for the Raster product.
 
 hydrocron
 : A PO.DAAC web API that returns time series of SWOT river reach and node data (and lake data) as CSV or GeoJSON,
   without downloading whole granules.
 
+KaRIn
+: The Ka-band Radar Interferometer, SWOT's main instrument. It measures the height of water surfaces across two
+  swaths, one on each side of the satellite's path.
+
 Node
 : A point about every 200 m along a SWORD reach. SWOT river data are reported for nodes and reaches.
+
+Pixel cloud (PIXC)
+: SWOT's lower-level product of individual radar pixels classified as water or land, with their heights. The river
+  ({term}`RiverSP`) and {term}`Raster <SWOT Raster product>` products are built from it.
 
 PO.DAAC
 : NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data.
 
+Product description document (PDD)
+: The technical document for one SWOT product and version, defining every variable, unit and quality flag.
+  Check it before interpreting a flag value.
+
 Reach
-: A river segment, typically about 10 km long, defined in SWORD. SWOT river data are reported per reach (`reach_id`).
+: A river segment. In SWOT data, a reach is a segment of about 10 km defined in SWORD (`reach_id`). In the NWM, a reach
+  is an NHDPlus segment with its own COMID, often much shorter. The two networks are separate and don't match one to one.
+
+RiverSP
+: SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
+  overpass, with water surface elevation, width, slope, discharge and quality flags. Collection short names
+  look like `SWOT_L2_HR_RiverSP_reach_D`.
+
+Science orbit
+: SWOT's 21-day repeat orbit, used since 2023 for routine observations. It followed a 1-day repeat
+  calibration ("fast-sampling") orbit used after launch.
 
 SWORD
 : The SWOT River Database: a global river network, built before launch, that defines the reaches and nodes
@@ -94,9 +144,13 @@ SWOT
 : The Surface Water and Ocean Topography satellite mission (NASA and CNES), which measures water surface elevation,
   width and extent of rivers and lakes from space.
 
+SWOT Raster product
+: A gridded SWOT product (100 m or 250 m UTM grid) with water surface elevation, water area and water fraction
+  per cell, for one scene of one pass. Collection short names look like `SWOT_L2_HR_Raster_100m_D`.
+
 Water surface elevation
-: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`), relative to a geoid
-  model (see the SWOT lessons for the exact reference).
+: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`), relative to a
+  {term}`geoid <Geoid>` model (EGM2008; see the Meet NASA SWOT page).
 ```
 
 ## NOAA NWM
@@ -110,8 +164,27 @@ Configuration
 : One of the NWM's standard model runs, for example `short_range`, `medium_range`, `long_range`
   or `analysis_assim`, each with its own length (forecast horizon or lookback) and issue schedule.
 
+Data assimilation
+: Adjusting a model while it runs so it stays close to observations. The NWM analysis configuration
+  assimilates USGS streamflow observations, among others.
+
+Ensemble member
+: One of several runs of the same forecast with slightly different inputs. The NWM medium-range forecast has
+  six members; their spread is a rough guide to forecast uncertainty.
+
 feature_id
 : NWM's name for a reach identifier. In CONUS it is the same number as the NHDPlus {term}`COMID`.
+
+Forcing
+: The weather inputs that drive a hydrologic model, such as precipitation, temperature and radiation.
+
+Forecast reference time
+: When an NWM forecast was issued (UTC). Also called the reference time. Each forecast value also has a
+  {term}`valid time <Valid time>`.
+
+hydrotools
+: A Python package from NOAA's Office of Water Prediction for retrieving NWM output (including past forecasts)
+  and other hydrologic data as `pandas` DataFrames.
 
 kerchunk
 : A Python library that builds reference files describing where each variable sits inside existing files
@@ -125,20 +198,24 @@ NLDI
 : The Network Linked Data Index, a USGS web service that links features such as monitoring locations to NHDPlus
   reaches (COMIDs) and navigates up- or downstream along the network.
 
+NODD
+: NOAA Open Data Dissemination, the program that publishes NOAA data, including NWM output, on commercial
+  clouds such as AWS and Google Cloud.
+
+NOMADS
+: NOAA Operational Model Archive and Distribution System, a NOAA server that keeps the most recent NWM output
+  (about the last two days).
+
 NWM
 : The National Water Model, NOAA's hydrologic model that simulates and forecasts streamflow for millions of
   river reaches across the United States.
 
-Forecast reference time
-: When an NWM forecast was issued (UTC). Also called the reference time. Each forecast value also has a
-  {term}`valid time <Valid time>`.
-
-Valid time
-: The time an NWM forecast value applies to (UTC). Valid time minus reference time is the forecast's lead time.
-
 Retrospective simulation
 : A long NWM run over historical weather, used for reach-level streamflow records where there is no gage.
   It is a simulation, not archived forecasts.
+
+Valid time
+: The time an NWM forecast value applies to (UTC). Valid time minus reference time is the forecast's lead time.
 ```
 
 ## USGS WDFN
@@ -161,6 +238,11 @@ Field measurement
 : A direct measurement of discharge (or gage height) made by USGS staff at a monitoring location,
   used to build and check the rating curve.
 
+Gage datum
+: The local reference level that {term}`gage height <Gage height>` is measured from at a monitoring location. It is
+  chosen for each site, so gage heights from different sites (or a gage height and a satellite elevation) can't be
+  compared without converting to a common vertical datum.
+
 Gage height
 : The height of the water surface above a local reference point (the gage datum) at a monitoring location.
   Also called stage.
@@ -178,9 +260,17 @@ Parameter code
 Provisional data
 : Recent USGS data that have not yet been reviewed and approved, and can change.
 
+Qualifier
+: A remark attached to an individual USGS value, for example `ESTIMATED` when ice affected the gage. In
+  `dataretrieval` output it is the `qualifier` column, often empty.
+
 Rating curve
 : The relationship between gage height and discharge at a monitoring location, fitted to field measurements.
   USGS computes continuous discharge from gage height with it.
+
+Streamgage
+: A monitoring location on a stream or river that records {term}`gage height <Gage height>` continuously and
+  reports discharge computed from it.
 
 WDFN
 : Water Data for the Nation, the USGS website and APIs that publish USGS water data (data stored in NWIS).
