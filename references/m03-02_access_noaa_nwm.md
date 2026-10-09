@@ -5,6 +5,7 @@
 - Amazon Web Services. (n.d.). *NOAA National Water Model CONUS Retrospective Dataset*. Registry of Open Data on AWS. https://registry.opendata.aws/nwm-archive/ (accessed 2026-10-09).
 - Amazon Web Services. (n.d.). *NOAA National Water Model Short-Range Forecast* (operational NWM output, `s3://noaa-nwm-pds`). Registry of Open Data on AWS. https://registry.opendata.aws/noaa-nwm-pds/ (accessed 2026-10-09).
 - Chegini, T., Li, H.-Y., & Leung, L. R. (2021). *HyRiver: Hydroclimate Data Retriever* (software; includes `pynhd`). Journal of Open Source Software, 6(66), 3175. https://docs.hyriver.io/readme/pynhd.html. https://doi.org/10.21105/joss.03175
+- CIROH. (n.d.). *NWM BigQuery API*. CIROH DocuHub. https://hub.ciroh.org/docs/products/data-management/bigquery-api/ (accessed 2026-10-09).
 - CIROH. (n.d.). *NWMURL Library*. CIROH DocuHub. https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library (accessed 2026-10-09).
 - CIROH-UA. (n.d.). *nwmurl* (software). GitHub. https://github.com/CIROH-UA/nwmurl
 - fsspec developers. (n.d.). *kerchunk documentation* (software). https://fsspec.github.io/kerchunk/ (accessed 2026-10-09).

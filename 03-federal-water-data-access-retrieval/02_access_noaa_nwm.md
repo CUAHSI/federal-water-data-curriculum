@@ -19,7 +19,7 @@ This lesson focuses on NWM **forecasts** (short, medium and long range), because
 (nwm-access-routes)=
 ## Choosing an access route
 
-NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an {term}`API key`.
+NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. Except for the CIROH BigQuery API (last row), none of these routes needs an {term}`API key`.
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
@@ -27,6 +27,7 @@ NWM output is big: every forecast hour is a file covering all ~2.8 million reach
 | Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
 | Past forecasts for many reaches or a region, or many issue times | [Kerchunk references](#nwm-kerchunk) + `xarray`/`dask`, ideally run in the cloud | No | Reads only the `streamflow` chunk (~7× fewer bytes than whole files) with less memory, but each read is still a CONUS-wide chunk; building references is a one-time step per run |
 | Long historical record (simulation, not forecasts) | NWM {term}`retrospective simulation <Retrospective simulation>` (cloud Zarr) | No | A different product (see [Temporal scaling](#nwm-temporal-scaling)) |
+| Researchers working on CIROH projects | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
 
 The numbers behind these recommendations are in [Why NWM downloads cost what they cost](#nwm-cost).
 
@@ -721,7 +722,6 @@ Name: streamflow, dtype: float64
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Decision for Lindsay: the NLDI lookup by gage ID (`USGS-03294500`) is the one other-agency mention in Module 3. Either drop it (the point lookup already finds the COMID) or record it as an allowed exception in STYLE_GUIDE §2.
 - Move the environments TODO callout to the end of "Tools and environment setup" so learners don't read it as "skip this step".
 - Add one query block (`POINT`, reference day, cycle) and stop re-typing `comid = 10164004` in later blocks (needs a re-run).
 - Add an "Explore by clicking" row (NWPS map) to the access-route table; `json.dump` with `with open(...)` and an explicit `import json`; explain `nudge`.

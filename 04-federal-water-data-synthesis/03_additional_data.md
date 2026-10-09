@@ -5,11 +5,11 @@ Now that you have worked with NASA Surface Water and Ocean Topography (SWOT) wat
 - NASA SWOT data in the browser: SWOTViz, a CUAHSI viewer (in development)
 - NASA SWOT discharge (in development)
 - NOAA AORC precipitation
-- NOAA NextGen hydrofabric
+- Other agencies' water data: USDA and USACE (placeholder)
 
-_Note that there are other Federal agencies producing or using water data, including the Environmental Protection Agency (EPA) and US Army Corps of Engineers (USACE)._
+_Note that other Federal agencies also produce or use water data, including the U.S. Department of Agriculture (USDA), the U.S. Army Corps of Engineers (USACE) and the Environmental Protection Agency (EPA)._
 
-Below is a short pointer to SWOTViz, then short tours of three related products. Each tour covers what the product is, how it connects to the three products in this course, and a first step for getting it. Each one points to a CUAHSI notebook with a full worked example. These products build on the skills from Module 3: the same `earthaccess` login and the same habit of discovering before downloading. The AORC example also introduces a new pattern, opening a cloud-optimized Zarr store lazily with `xarray`. The code runs in the Module 4 {term}`conda environment <Conda environment>`, `environments/m04-synthesis.yml` (in the course repository); the outputs below came from `earthaccess` 0.19.0, `xarray` 2026.9.0 and `zarr` 3.4.0 on Python 3.14.
+Below is a short pointer to SWOTViz, then short tours of two related products and a placeholder for USDA and USACE data. Each tour covers what the product is, how it connects to the three products in this course, and a first step for getting it. Each one points to a CUAHSI notebook with a full worked example. These products build on the skills from Module 3: the same `earthaccess` login and the same habit of discovering before downloading. The AORC example also introduces a new pattern, opening a cloud-optimized Zarr store lazily with `xarray`. The code runs in the Module 4 {term}`conda environment <Conda environment>`, `environments/m04-synthesis.yml` (in the course repository); the outputs below came from `earthaccess` 0.19.0, `xarray` 2026.9.0 and `zarr` 3.4.0 on Python 3.14.
 
 ## Exploring SWOT data in the browser: SWOTViz
 
@@ -140,32 +140,18 @@ Confirm the AORC description, its role in NWM calibration and retrospective forc
 The AORC notebook link points to a folder on the CUAHSI/notebooks `develop` branch. Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
 :::
 
-## NOAA NextGen hydrofabric
+## Other agencies' water data: USDA and USACE
 
-The National Water Model routes water over the NHDPlus river network (Module 2). NOAA's **Next Generation Water Resources Modeling Framework (NextGen)** uses a new network, the **hydrofabric**: a consistent set of catchments (_divides_), flowpaths, nexus points, lakes and attributes, built so that different models can run on the same river network. If you work with NextGen output, or need catchment boundaries and flowpath attributes that line up with future NOAA products, the hydrofabric is where you start. It also links back to NHDPlus COMIDs and to gage locations (_hydrolocations_), which is how you would connect it to the USGS and NWM data in this course.
+NASA, NOAA and USGS are not the only Federal sources of water data. The U.S. Department of Agriculture (USDA) and the
+U.S. Army Corps of Engineers (USACE) also publish water data that can complement the products in this course.
 
-The hydrofabric is distributed as GeoPackage files by Lynker Spatial. **At time of writing, the files at the public path used in the CUAHSI notebook (`s3://lynker-spatial/hydrofabric/v2.2/conus/conus_nextgen.gpkg`) are listed but no longer readable anonymously**, and the v2.2 data carry a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 license (per `license.txt` in `s3://lynker-spatial/hydrofabric/v2.2/`). Check the [Lynker Spatial data page](https://www.lynker-spatial.com/data) for current access terms before building a workflow on it.
-
-:::{admonition} TODO (dev team): NextGen hydrofabric access route
+:::{admonition} TODO (dev team): USDA and USACE water data
 :class: attention
-Confirm the current public access route for the NextGen hydrofabric (NOAA-hosted copy? registration?) and add a runnable discovery example.
-:::
-
-:::{admonition} Partner review (NOAA): NOAA NextGen hydrofabric
-:class: important
-Confirm the description of the hydrofabric and the recommended source for researchers.
-:::
-
-:::{admonition} TODO (dev team): Lynker Spatial and hydrolocations
-:class: attention
-Verify Lynker Spatial's role and the NHDPlus/hydrolocation links described above.
-:::
-
-**Go further:** the CUAHSI notebook [Accessing the NGEN HydroFabric on S3](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/NGEN%20-%20Hydrofabric%20Exploration) by Tony Castronova and Irene Garousi-Nejad shows how to read hydrofabric layers for a bounding box with `geopandas`, without downloading the whole file. Its data path currently returns a permission error (see the note above).
-
-:::{admonition} TODO (dev team): confirm this link
-:class: attention
-The hydrofabric notebook link points to a folder on the CUAHSI/notebooks `develop` branch. Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
+Placeholder for short tours of USDA and USACE water data as additional options, in the same pattern as the sections above:
+what the product is, how it connects to SWOT, NWM and WDFN, and a first access step. Choose which products to cover and
+confirm their access routes before writing. Candidates to evaluate (not yet checked): USDA NRCS snow and water supply
+data (SNOTEL), and USACE Corps Water Management System (CWMS) reservoir and river data. Add partner-review callouts if
+USDA or USACE become reviewers.
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
@@ -179,7 +165,6 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 
 - [PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including the [SoS discharge tutorial](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_L4_DAWG_SOS_DISCHARGE.html).
 - [NWM retrospective archive, including AORC forcing (AWS Registry of Open Data)](https://registry.opendata.aws/nwm-archive/).
-- [NextGen framework (NOAA-OWP on GitHub)](https://github.com/NOAA-OWP/ngen).
 - Adapted from [Collecting and Manipulating AORC Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/AORC%20-%20Data%20Collection%20and%20Manipulation%20Primer) by Tony Castronova, Irene Garousi-Nejad, Danielle Tijerina-Kreuzer and Abner Bogan, CUAHSI notebooks (GPL-3.0).
 - Adapted from [SWOT - Visualizing SOS Discharge with Xarray](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Visualizing%20SOS%20Discharge%20with%20Xarray), CUAHSI notebooks (GPL-3.0).
 - Adapted from [SWOT - Compare Observed and SoS Discharge](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Compare%20Observed%20and%20SoS%20Discharge), CUAHSI notebooks (GPL-3.0).
@@ -189,11 +174,10 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
   Verify authors of both SoS notebooks (shallow clone shows no author list).
   :::
 
-- [Accessing the NGEN HydroFabric on S3](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/NGEN%20-%20Hydrofabric%20Exploration) by Tony Castronova and Irene Garousi-Nejad, CUAHSI notebooks (GPL-3.0).
 - [SWOTViz](https://swotviz.cuahsi.io/) (CUAHSI), source code at [CUAHSI/SWOT-Data-Viewer](https://github.com/CUAHSI/SWOT-Data-Viewer) (GPL-3.0).
 
 :::{admonition} TODO (dev team): confirm this link
 :class: attention
-The four CUAHSI notebook links in this list (AORC, both SoS notebooks and the hydrofabric notebook) point on the CUAHSI/notebooks `develop` branch. Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
+The three CUAHSI notebook links in this list (AORC and both SoS notebooks) point on the CUAHSI/notebooks `develop` branch. Confirm it is the link learners should use (branch, path and notebook name); keep the attribution either way.
 :::
 

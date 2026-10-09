@@ -7,7 +7,7 @@ The module has three lessons:
 1. **[Comparative overview](01_comparative_overview.md):** how NASA Surface Water and Ocean Topography (SWOT) observations, NOAA National Water Model (NWM) output and USGS Water Data for the Nation (WDFN) observations differ in spatial coverage, temporal availability and accuracy, and what each agency recommends about using its data.
 2. **[Synthesizing Federal data products](02_synthesize_river_data.md):** a case study of the **December 2025 Skagit River flood** in Washington. An atmospheric river drove the river near Mount Vernon (USGS 12200500) to a record crest (the highest stage on record). We look at the flood from the ground (USGS gage observations and field measurements), ahead in time (NWM forecasts issued as the flood approached), and from above (SWOT water surface elevation and water extent). This lesson tells the story in the order you would meet the flood, so unlike the rest of the course it starts with USGS.
 
-3. **[Additional Federal water data](03_additional_data.md):** a pointer to SWOTViz, a CUAHSI browser viewer for SWOT data, then short tours of related products (SWOT discharge, AORC precipitation and the NextGen hydrofabric) and where to go next.
+3. **[Additional Federal water data](03_additional_data.md):** a pointer to SWOTViz, a CUAHSI browser viewer for SWOT data, then short tours of related products (SWOT discharge and AORC precipitation), a placeholder for USDA and USACE water data, and where to go next.
 
 This module builds on Module 2 (what each product is) and Module 3 (how to get it). Code examples reuse the Module 3 access patterns, in one Module 4 {term}`conda environment <Conda environment>`, `m04-synthesis` (`environments/m04-synthesis.yml`); the case study shows how to create it.
 
@@ -22,7 +22,7 @@ These break down into:
 - Retrieve and line up observations, forecasts and satellite measurements for a single event, accounting for differences in units, vertical reference, time zone and sampling.
 - Explain what each product can and cannot show during a flood, for example gage ratings at out-of-bank flows, forecast changes with lead time, and satellite overpass timing.
 - Summarize each agency's recommendations for using its data, and choose the product, or combination of products, that fits a research question.
-- Identify related Federal products (SWOT SoS discharge, AORC precipitation, the NextGen hydrofabric) and take a first step to access each.
+- Identify related Federal products (SWOT SoS discharge, AORC precipitation) and take a first step to access each, and know that other agencies, such as USDA and USACE, also publish water data.
 
 ## Important concepts and terminology
 
@@ -58,6 +58,5 @@ Confirm the module objectives and concept descriptions.
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
-- The objective "take a first step to access each" can't be met for the hydrofabric (no anonymous access now); reword if the objective isn't fixed by issue #36.
 - Link {term}`Lead time`, {term}`Gage datum` and say "EGM2008 geoid" to match Modules 2–3.
 :::
