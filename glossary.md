@@ -81,6 +81,10 @@ Lead time
 
 Streamflow
 : See {term}`Discharge`.
+
+Virtual Zarr
+: A small reference file that lets software read existing files (such as NetCDF) as if they were one Zarr
+  dataset, fetching only the pieces needed from cloud storage. Built with tools such as {term}`kerchunk`.
 ```
 
 ## NASA SWOT
@@ -94,8 +98,8 @@ earthaccess
 : A Python library for logging in to NASA Earthdata and searching, downloading or streaming NASA data granules.
 
 Granule
-: The smallest unit of data NASA distributes for a product, usually one file: for SWOT, one product covering
-  part of one satellite pass.
+: The smallest unit of data NASA distributes for a product, usually one file. For SWOT, one granule covers one
+  stretch of one satellite pass: a whole continent for RiverSP, one scene for the Raster product.
 
 hydrocron
 : A PO.DAAC web API that returns time series of SWOT river reach and node data (and lake data) as CSV or GeoJSON,
@@ -120,7 +124,8 @@ Product description document (PDD)
   Check it before interpreting a flag value.
 
 Reach
-: A river segment, typically about 10 km long, defined in SWORD. SWOT river data are reported per reach (`reach_id`).
+: A river segment. In SWOT data, a reach is a segment of about 10 km defined in SWORD (`reach_id`). In the NWM, a reach
+  is an NHDPlus segment with its own COMID, often much shorter. The two networks are separate and don't match one to one.
 
 RiverSP
 : SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
@@ -144,8 +149,8 @@ SWOT Raster product
   per cell, for one scene of one pass. Collection short names look like `SWOT_L2_HR_Raster_100m_D`.
 
 Water surface elevation
-: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`), relative to a geoid
-  model (see the SWOT lessons for the exact reference).
+: The height of the water surface above a reference surface. SWOT reports it in meters (`wse`), relative to a
+  {term}`geoid <Geoid>` model (EGM2008; see the Meet NASA SWOT page).
 ```
 
 ## NOAA NWM
@@ -177,6 +182,10 @@ Forecast reference time
 : When an NWM forecast was issued (UTC). Also called the reference time. Each forecast value also has a
   {term}`valid time <Valid time>`.
 
+hydrotools
+: A Python package from NOAA's Office of Water Prediction for retrieving NWM output (including past forecasts)
+  and other hydrologic data as `pandas` DataFrames.
+
 kerchunk
 : A Python library that builds reference files describing where each variable sits inside existing files
   (such as NWM NetCDF files), so `xarray` can read only the parts it needs from cloud storage.
@@ -192,6 +201,10 @@ NLDI
 NODD
 : NOAA Open Data Dissemination, the program that publishes NOAA data, including NWM output, on commercial
   clouds such as AWS and Google Cloud.
+
+NOMADS
+: NOAA Operational Model Archive and Distribution System, a NOAA server that keeps the most recent NWM output
+  (about the last two days).
 
 NWM
 : The National Water Model, NOAA's hydrologic model that simulates and forecasts streamflow for millions of
@@ -224,6 +237,11 @@ dataretrieval
 Field measurement
 : A direct measurement of discharge (or gage height) made by USGS staff at a monitoring location,
   used to build and check the rating curve.
+
+Gage datum
+: The local reference level that {term}`gage height <Gage height>` is measured from at a monitoring location. It is
+  chosen for each site, so gage heights from different sites (or a gage height and a satellite elevation) can't be
+  compared without converting to a common vertical datum.
 
 Gage height
 : The height of the water surface above a local reference point (the gage datum) at a monitoring location.

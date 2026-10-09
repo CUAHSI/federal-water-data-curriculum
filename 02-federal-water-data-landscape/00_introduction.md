@@ -33,11 +33,17 @@ table that maps the agency's terms onto them.
 | {term}`Version / provenance` | Which release, from where? | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
 | {term}`Data unit` | What is one "file" or record? | granule | one output file per timestep | one time series per location + parameter |
 
-Two rows deserve a closer look before you start:
+A few points deserve a closer look before you start:
 
 - **Data quality flags mean different things for each product.** A SWOT flag describes one satellite observation. A USGS
   approval status says whether a person has reviewed the value yet. NWM output has no per-value flag at all, because it is
   a model: its quality depends on the model version and how well the basin is calibrated.
+- **Units and reference points differ, so values don't compare directly.** NWM streamflow is in m³/s and USGS
+  discharge in ft³/s (1 m³/s ≈ 35.31 ft³/s). SWOT water surface elevation is in meters above a global {term}`geoid <Geoid>`,
+  while USGS {term}`gage height <Gage height>` is in feet above a local {term}`gage datum <Gage datum>`, so a SWOT elevation of
+  120 m and a gage height of 20 ft can describe the same water surface. Module 4 returns to this when it compares the products.
+- **"Reach" means different things.** A SWOT {term}`reach <Reach>` (about 10 km, from SWORD) and an NWM reach (an NHDPlus
+  segment with a {term}`COMID`, often much shorter) come from two separate river networks. They don't match one to one.
 - **Version / provenance is what makes your work repeatable.** Satellite products are reprocessed, models are upgraded and
   provisional observations are revised, so the same query can return different numbers next year. Writing down the version
   you used and the date you retrieved it is the first step toward the provenance record described in Module 1's
@@ -94,6 +100,7 @@ SITES = {
     "USGS-12200500": "Skagit River near Mount Vernon, WA\n(Module 4 case study)",
 }
 # Coordinates come from each site's USGS monitoring-location record (a GeoDataFrame of points)
+# md is a metadata object about the request, not used here
 sites, md = waterdata.get_monitoring_locations(monitoring_location_id=list(SITES))
 
 # U.S. state outlines: Census Bureau cartographic boundary file (1:20,000,000), contiguous states only
