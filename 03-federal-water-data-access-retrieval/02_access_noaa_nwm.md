@@ -272,7 +272,7 @@ Name: member, dtype: int64
 (nwm-hydrotools)=
 ### `hydrotools`: past forecasts from the cloud archive
 
-For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches (about 13–16 MB for a short-range {term}`channel_rt` file (the channel-routing output, which holds `streamflow`)).
+For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches. A short-range {term}`channel_rt` file (the channel-routing output, which holds `streamflow`) is about 13–16 MB.
 
 `hydrotools` (OWPHydroTools, from NOAA's Office of Water Prediction) finds those files, downloads them, and hands you a `pandas.DataFrame` for just the COMIDs you asked for. You never open a NetCDF file yourself.
 

@@ -127,7 +127,7 @@ CMR
 : NASA's Common Metadata Repository, the catalog behind Earthdata Search. `earthaccess` searches it to find granules.
 
 CRID
-: Composite release identifier: the code near the end of a SWOT granule name (for example `PGD0`) that says which
+: Composite release identifier: the code near the end of a SWOT granule name, just before the product counter (for example `PGD0`) that says which
   processing release made it. With the {term}`product counter <Product counter>`, it tells you which copy of an overpass to keep.
 
 Cycle and pass
@@ -164,7 +164,7 @@ PO.DAAC
 : NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data.
 
 Product counter
-: The two-digit number at the end of a SWOT granule name (`01`, `02`, …). A higher counter is a newer copy of the same
+: The two-digit number after the {term}`CRID`, near the end of a SWOT granule name (`01`, `02`, …). A higher counter is a newer copy of the same
   granule; keep the highest one.
 
 Product description document (PDD)
