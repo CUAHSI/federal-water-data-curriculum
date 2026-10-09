@@ -101,7 +101,7 @@ Verify RiverSP latency.
 
 Sources: Module 2 agency pages, [NOAA OWP](https://water.noaa.gov/about/nwm), and the Module 3 lessons.
 
-## Data Providers Recommendations
+## Data provider recommendations
 
 Each agency publishes guidance on how its data should and should not be used. The recommendations below are drafted from those sources, each one linked to its source, and are waiting for confirmation from the agencies.
 

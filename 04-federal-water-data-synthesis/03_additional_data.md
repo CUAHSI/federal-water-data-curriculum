@@ -35,7 +35,7 @@ for g in sos:
     print(g["umm"]["GranuleUR"], round(g.size / 1024, 1), "GB")  # g.size is in MB
 ```
 
-```
+```text
 na_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T163700 9.2 GB
 af_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T163700 4.1 GB
 eu_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T163700 6.9 GB
@@ -44,11 +44,11 @@ as_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T
 oc_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T163700 1.9 GB
 ```
 
-Two things to notice before you download:
+Three things to notice before you download:
 
 - **One file per continent, and they are large.** The North America file alone is about 9 GB, and Asia's about 27 GB. If you work outside the cloud, read only the groups and reaches you need (see the notebooks below), or work on a cloud JupyterHub in AWS `us-west-2`.
 - **Know what is inside.** Each file is NetCDF with one group per algorithm (plus the priors and validation data), indexed by SWORD `reach_id`, with discharge in m³/s. `unconstrained` in the name means the algorithms ran without using gage data; Module 2 describes the gauge-constrained alternative.
-- **Check the time period and version.** These Version 3 files cover May 2023 to May 2025 (it's in the file name), so they do not include the December 2025 Skagit flood used in this module. `hydrocron` can also return SoS discharge fields (for example `sos_consensus_q`) for a single reach, using `collection_name=SWOT_L2_HR_RiverSP_2.0` ([Hydrocron timeseries docs](https://podaac.github.io/hydrocron/timeseries)). Cite the collection by its DOI ([10.5067/SWOT-SOS-RD3](https://doi.org/10.5067/SWOT-SOS-RD3)), and record the collection short name (it carries the version) and the file name with any SoS results, since each new version reprocesses the whole record.
+- **Check the time period and version.** These Version 3 files cover May 2023 to May 2025 (it's in the file name), so they do not include the December 2025 Skagit flood used in this module. `hydrocron` can also return SoS discharge fields (for example `sos_consensus_q`) for a single reach, using `collection_name=SWOT_L2_HR_RiverSP_2.0` ([Hydrocron timeseries docs](https://podaac.github.io/hydrocron/timeseries)). That is the Version C collection, a different version from the Version D data in the case study, so don't mix values from the two without checking. Cite the collection by its DOI ([10.5067/SWOT-SOS-RD3](https://doi.org/10.5067/SWOT-SOS-RD3)), and record the collection short name (it carries the version) and the file name with any SoS results, since each new version reprocesses the whole record.
 
 :::{admonition} Partner review (NASA): NASA SWOT discharge: the SWORD of Science (SoS)
 :class: important
@@ -84,14 +84,16 @@ print(aorc.sizes, aorc.time.values[[0, -1]])
 
 # The grid is Lambert Conformal Conic; convert the gage location into grid coordinates
 lcc = pyproj.CRS.from_proj4(aorc["RAINRATE"].attrs["proj4"])
-x, y = pyproj.Transformer.from_crs("EPSG:4326", lcc, always_xy=True).transform(-122.3354, 48.4448)
+# USGS 12200500 (Skagit River near Mount Vernon), from its USGS monitoring-location record
+gage_lon, gage_lat = -122.3354, 48.4448
+x, y = pyproj.Transformer.from_crs("EPSG:4326", lcc, always_xy=True).transform(gage_lon, gage_lat)
 
 rain = aorc["RAINRATE"].sel(x=x, y=y, method="nearest").sel(time=slice("2022-12-01", "2022-12-31"))
 mm_per_hour = (rain * 3600).load()  # RAINRATE is in mm/s
 print(mm_per_hour.size, "hours, total", round(float(mm_per_hour.sum()), 1), "mm")
 ```
 
-```
+```text
 Frozen({'time': 385704, 'y': 3840, 'x': 4608}) ['1979-02-01T00:00:00.000000000' '2023-01-31T23:00:00.000000000']
 744 hours, total 151.1 mm
 ```
