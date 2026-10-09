@@ -17,7 +17,7 @@ This lesson uses the modernized APIs through the {term}`dataretrieval` Python pa
 If you already know your monitoring location ID(s), you can skip discovery.
 
 (wdfn-access-routes)=
-### Choosing an access route
+## Choosing an access route
 
 All the routes below use the same Water Data APIs, so the choice is mostly about *which function* matches your question. None of them needs a key, but USGS recommends one for repeated or large requests.
 

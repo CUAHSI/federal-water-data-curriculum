@@ -17,7 +17,7 @@ The steps are:
 This lesson focuses on NWM **forecasts** (short, medium and long range), because forecasting is what sets the NWM apart: it predicts what rivers will do, everywhere, rather than recording what they did at a few places. If you already know your COMID(s), you can skip discovery.
 
 (nwm-access-routes)=
-### Choosing an access route
+## Choosing an access route
 
 NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. None of these routes needs an {term}`API key`.
 
