@@ -1,19 +1,19 @@
-# Retrieve USGS NWIS streamflow data
- 
+# Retrieve USGS WDFN data
+
 USGS's National Water Information System (NWIS) is the authoritative source for observed, gauged streamflow.
- 
+
 USGS currently has two generations of that service running side by side:
- 
+
 1. **Legacy NWIS Water Services** (waterservices.usgs.gov): the original, stable API most existing tutorials and packages are built around.
 2. **Modernized Water Data APIs** (api.waterdata.usgs.gov): USGS's newer replacement, covering daily values, instantaneous values, field measurements, and water quality (Samples database). USGS is actively encouraging migration to this one, and it supports API keys for higher rate limits.
 This module uses the `dataretrieval` Python package, which wraps both generations.
- 
+
 1. **Programmatic data discovery**: before pulling values, you typically need a site number (an 8 to 15 digit USGS site ID). Discovery here means searching by region, HUC, or parameter rather than looking up a single known ID.
 1. **Programmatic data downloads**: once you have site number(s), `dataretrieval` retrieves the actual values, daily, instantaneous, statistical, or peak-flow, depending on what you need.
 If you already know your site number(s), you can skip programmatic data discovery.
- 
+
 ## Tools and environment setup
- 
+
 ### USGS Water Data API Token
 NWIS is public and doesn't require an account for the legacy service. The modernized Water Data API works without a key too, but USGS recommends getting one for higher rate limits, so we will demonstrate that.
 
@@ -21,24 +21,24 @@ NWIS is public and doesn't require an account for the legacy service. The modern
 2. Save it in a safe place (KeyPass or other password management tool)
 3. Add it as environment variable
 4. Restart
- 
+
 USGS documents how keys work on its [API keys page](https://api.waterdata.usgs.gov/docs/ogcapi/keys/). Requests over the limit get an HTTP `429 Too Many Requests` error, and a key raises how many requests you can make per hour. `dataretrieval` reads the key from the `API_USGS_PAT` environment variable and sends it for you, so it never needs to appear in your code.
 
 ### Create a Conda environment
 
-The course provides an environment file, `environments/nwis.yml` (in the course repository), with `dataretrieval` and the other packages this lesson uses:
+The course provides an environment file, `environments/m03-wdfn.yml` (in the course repository), with `dataretrieval` and the other packages this lesson uses:
 
 ```bash
 # From the root of the course repository
-conda env create -f environments/nwis.yml   # or: mamba env create -f environments/nwis.yml
-conda activate fwdc-nwis
+conda env create -f environments/m03-wdfn.yml   # or: mamba env create -f environments/m03-wdfn.yml
+conda activate m03-wdfn
 
 # Store your token in the environment. We'll pretend the token you created is 'abc123'.
 conda env config vars set API_USGS_PAT="abc123"
-conda activate fwdc-nwis   # re-activate so the variable takes effect
+conda activate m03-wdfn   # re-activate so the variable takes effect
 
 # Optional: register this environment as a Jupyter kernel
-python -m ipykernel install --user --name fwdc-nwis --display-name "Python (fwdc-nwis)"
+python -m ipykernel install --user --name m03-wdfn --display-name "Python (m03-wdfn)"
 ```
 
 You can check that the token is available. Check only that it exists; don't print the token itself, because printed output ends up in notebooks, logs and screenshots.
@@ -73,13 +73,13 @@ time_zone_codes, _ = waterdata.get_reference_table("time-zone-codes")
 counties, _ = waterdata.get_reference_table("counties")
 states, _ = waterdata.get_reference_table("states")
 ```
- 
+
 Before downloading values, a common first step is to *discover* which site(s) match your question, by location, HUC, or the parameter you care about, rather than assuming you already know the exact site number.
- 
+
 A GUI approach exists here too: the [NWIS Mapper](https://maps.waterdata.usgs.gov/mapper/) lets you click around, search by location name, street address, state/territory, or even watershed regions to find sites visually. This is fine for exploring, but a programmatic discovery step keeps your work reproducible.
- 
+
 **Example: What are the USGS stream sites in the Suffolk County, MA area?**
- 
+
 ```python
 from dataretrieval import waterdata
 
@@ -93,20 +93,20 @@ site_info
 ```
 
 This returns a GeoDataFrame with one row per monitoring location (156 at time of writing), including inactive sites. Key columns are `monitoring_location_id` (the **Location Identifier**), `monitoring_location_name`, `site_type`, `drainage_area` and `geometry` (a point you can map).
-  
+
 Once you have site number(s), move on to downloads below.
- 
+
 ## Programmatic data downloads
- 
+
 ### `dataretrieval`
- 
+
 **Key pieces**
 
 * `dataretrieval.waterdata` (modernized, API key recommended for heavier use): the actively developed replacement, covering the same data types plus discrete water quality (Samples database).
 * Canonical outputs are `pandas.DataFrame`s alongside a metadata object describing the query, similar in spirit to hydrotools' canonical columns for NWM/NWIS joins.
 
 **Example: Which Suffolk County, MA stream sites have daily mean discharge?**
- 
+
 ```python
 sites_available, md = waterdata.get_combined_metadata(
   state_name = "Massachusetts",
@@ -121,7 +121,7 @@ sites_available, md = waterdata.get_combined_metadata(
 
 **Example: Spring snowmelt on the upper Mississippi River at USGS 05227500**
 
-USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses [TODO: confirm after content/03-swot-raster merges]. Spring snowmelt raised the river there in April and May 2026. Here is how to get its observations for spring 2026. [CHOOSE EXAMPLE: confirm the Aitkin site and spring 2026 period, or name another Module 3 example] Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
+USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses. Spring snowmelt raised the river there in April and May 2026. Here is how to get its observations for spring 2026. Every function below returns a `(DataFrame, metadata)` pair. The data services (continuous values, daily values, field measurements) share these core columns, which map onto the course's shared vocabulary:
 
 | Column | Shared term | Notes |
 |---|---|---|
@@ -129,7 +129,22 @@ USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT les
 | `parameter_code` | **Variable** | `00060` = discharge, `00065` = gage height |
 | `unit_of_measure` | **Variable unit** | e.g. `ft^3/s`, `ft` |
 | `approval_status`, `qualifier` | **Data Quality Flags** | `Provisional` data can still change; `Approved` data have been reviewed. `qualifier` flags special conditions, for example estimated values (`[ESTIMATED]`) |
-| `time`, `value` | | Continuous timestamps are in UTC; daily `time` is a calendar date [TODO: verify whether daily dates are local-standard-time days] |
+| `time`, `value` | | Continuous timestamps are in UTC; daily `time` is a calendar date |
+
+:::{admonition} TODO (dev team): Same site as the SWOT lesson
+:class: attention
+Confirm after content/03-swot-raster merges. (Refers to: “USGS 05227500 is the Mississippi River at Aitkin, MN, the same site the SWOT lesson uses”)
+:::
+
+:::{admonition} TODO (dev team): Aitkin example site
+:class: attention
+Confirm the Aitkin site and spring 2026 period, or name another Module 3 example.
+:::
+
+:::{admonition} TODO (dev team): Daily-value dates and time zone
+:class: attention
+Verify whether daily dates are local-standard-time days.
+:::
 
 First, ask which time series the gage records. This is discovery for a single site:
 
@@ -150,7 +165,17 @@ series[["parameter_code", "parameter_name", "statistic_id", "computation_period_
 6          00060             Discharge        00011                        Points 2013-10-01 05:00:00+00:00 2026-10-07 05:30:00+00:00
 ```
 
-Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous record (here gage height since 2007 and discharge since 2013), and `00003` with period `Daily` is the daily mean (discharge since 1945). This gage also reports `63160`, stream level relative to the NAVD88 vertical datum, which is handy for comparisons with other elevation data. Comparing it with SWOT water surface elevation needs a datum conversion, because SWOT heights are relative to a geoid model rather than NAVD88. [PARTNER REVIEW: NASA|USGS] Confirm the conversion needed to compare parameter 63160 (NAVD88) with SWOT `wse`. The `Water Year` rows are annual summaries that end in 2025, and `00045` is a precipitation record added in June 2026.
+Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous record (here gage height since 2007 and discharge since 2013), and `00003` with period `Daily` is the daily mean (discharge since 1945). This gage also reports `63160`, stream level relative to the NAVD88 vertical datum, which is handy for comparisons with other elevation data. Comparing it with SWOT water surface elevation needs a datum conversion, because SWOT heights are relative to a geoid model rather than NAVD88. The `Water Year` rows are annual summaries that end in 2025, and `00045` is a precipitation record added in June 2026.
+
+:::{admonition} Partner review (NASA): dataretrieval
+:class: important
+Confirm the conversion needed to compare parameter 63160 (NAVD88) with SWOT `wse`.
+:::
+
+:::{admonition} Partner review (USGS): dataretrieval
+:class: important
+Confirm the conversion needed to compare parameter 63160 (NAVD88) with SWOT `wse`.
+:::
 
 **Continuous (instantaneous) values** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
 
@@ -187,7 +212,12 @@ peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]]
 5721          00065 2026-05-02 02:15:00+00:00     9.58              ft        Approved
 ```
 
-The continuous record first reached its peak of **5,000 ft³/s**, with a gage height of **9.58 ft**, at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps: during the estimated period in early April, discharge is reported every 4 hours rather than every 15 minutes. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve [TODO: verify that the April estimates at 05227500 are ice-related]. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
+The continuous record first reached its peak of **5,000 ft³/s**, with a gage height of **9.58 ft**, at 02:15 UTC on May 2, 2026, which is the evening of May 1 in Minnesota. Note that times are in UTC: convert them before comparing with local records. Two other things are visible above. First, the discharge and gage-height rows don't always share timestamps: during the estimated period in early April, discharge is reported every 4 hours rather than every 15 minutes. Second, discharge on April 1 is flagged `[ESTIMATED]` while gage height is not. When ice affects the relationship between stage and flow, USGS estimates discharge instead of computing it from the rating curve. The whole period is already `Approved`. Recent data are `Provisional` until USGS reviews them and may be revised ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers.
+
+:::{admonition} TODO (dev team): April estimates at 05227500
+:class: attention
+Verify that the April estimates at 05227500 are ice-related.
+:::
 
 **Daily values** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. Note that the `time` argument can be a plain date range. We start in March to see what late-winter values look like:
 
@@ -239,27 +269,39 @@ discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "measur
 26 2026-08-26   394.0          ft^3/s  Acoustic Doppler Current Profiler              Good     Provisional
 ```
 
-Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. Hydrographers visited about once a month. `observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice) [TODO: verify], and the later ones used an acoustic Doppler current profiler (ADCP). `measurement_rated` is each measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy, from `Poor` in February to `Good` in April and July. The April 15 measurement (2,170 ft³/s) agrees closely with that day's daily mean from the continuous record (2,100 ft³/s). The August measurement is still `Provisional`, like the continuous record from that time.
+Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. Hydrographers visited about once a month. `observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice), and the later ones used an acoustic Doppler current profiler (ADCP). `measurement_rated` is each measurement's **Data Quality Flag**: the hydrographer's own rating of its accuracy, from `Poor` in February to `Good` in April and July. The April 15 measurement (2,170 ft³/s) agrees closely with that day's daily mean from the continuous record (2,100 ft³/s). The August measurement is still `Provisional`, like the continuous record from that time.
 
-[PARTNER REVIEW: USGS] Confirm the description of field measurements, measurement ratings and rating curves, including how under-ice measurements are made and rated.
+:::{admonition} TODO (dev team): February measurement method
+:class: attention
+Verify. (Refers to: “`observing_procedure` records how each measurement was made: the February measurements used the mid-section method (likely through the ice)”)
+:::
+
+:::{admonition} Partner review (USGS): dataretrieval
+:class: important
+Confirm the description of field measurements, measurement ratings and rating curves, including how under-ice measurements are made and rated.
+:::
 
 **A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. You can recognize it by bare site numbers (`05227500` instead of `USGS-05227500`) and function names such as `nwis.get_dv`. `dataretrieval` now warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, as in this lesson.
-[PARTNER REVIEW: USGS] Confirm the retirement timeline for the legacy Water Services to cite here.
- 
+
+:::{admonition} Partner review (USGS): dataretrieval
+:class: important
+Confirm the retirement timeline for the legacy Water Services to cite here.
+:::
+
 ## Best practices FAQs
- 
+
 See sections below for answers and code examples to the following questions.
- 
+
 * What is the recommended way to download data for **one location across the full period of record**?
 * What is the recommended way to download data across **all locations for a small time range**?
 * If I am working on improving efficiency through **code parallelization**, what should I do vs avoid?
 
 ### Temporal scaling
- 
+
 **What is the recommended way to access data for one location but the full period of record?**
 
 Make one request per site and leave out `time`. For daily values, `get_daily` then returns the whole record, and `dataretrieval` handles the paging. Continuous values are limited to three years per call, so request a long continuous record in three-year windows. The example below uses USGS 05427930, Dorn (Spring) Creek near Waunakee, WI, a small stream with a record that starts in 2012:
- 
+
 ```python
 daily_data, md = waterdata.get_daily(
     monitoring_location_id= "USGS-05427930", # Dorn (Spring) Creek at CT Highway M near Waunakee, WI
@@ -273,11 +315,11 @@ daily_data
 At time of writing, this one request returns about 5,190 rows: one per day from July 2012 to the present. Note the `qualifier` column, where some values are marked `[ESTIMATED]`.
 
 ### Spatial scaling
- 
+
 **What is the recommended way to download data across all locations but a small time range?**
 
 Leave out `monitoring_location_id` and set a short `time` instead. One request for one day returns that day's value for every site with daily mean discharge. Looping over thousands of site IDs one request at a time would send thousands of requests and quickly use up your rate limit. To narrow the area, add `bbox` or a list of sites rather than looping.
- 
+
 ```python
 nonspecific_location, md = waterdata.get_daily(
     parameter_code="00060",
@@ -291,7 +333,7 @@ nonspecific_location
 At time of writing, this returns about 8,700 rows, one per site, from a single request.
 
 ### Parallelization
- 
+
 If I am working on improving efficiency of my code through parallelization, what should I do vs avoid?
 
 - **Do** ask for more in each request before reaching for parallel code. Most `waterdata` functions accept lists (several `monitoring_location_id`s or `parameter_code`s), a `bbox`, or a time interval. One request that returns 10,000 rows is cheaper for you and for USGS than 100 requests that return 100 rows each.
@@ -300,13 +342,21 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you. Use that sparingly, and only for pulls you know are large.
 - **Avoid** re-downloading the same historical record every time you run your code. Approved data rarely change, so save results to a file and only request what is new (the `last_modified` argument helps).
 
-[PARTNER REVIEW: USGS] Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
-  
+:::{admonition} Partner review (USGS): Parallelization
+:class: important
+Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
+:::
+
 ## Further reading
- 
+
 * `dataretrieval` (Python) GitHub repo: https://github.com/DOI-USGS/dataretrieval-python
 * `dataretrieval` documentation: https://doi-usgs.github.io/dataretrieval-python/
 * Modernized Water Data API docs: https://api.waterdata.usgs.gov/
 * NWIS Mapper (GUI): https://maps.waterdata.usgs.gov/mapper/
 * USGS Water Data API keys: https://api.waterdata.usgs.gov/docs/ogcapi/keys/
-* Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here. [TODO: verify notebook author(s) for credit]
+* Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here.
+
+  :::{admonition} TODO (dev team): Notebook authors
+  :class: attention
+  Verify notebook author(s) for credit.
+  :::

@@ -16,6 +16,10 @@ The examples in this module use the upper Mississippi River in Minnesota (and a 
 ## Learning objectives
 
 By the end of this module, learners should be able to:
+- Adapt provided Python scripts to retrieve data from NASA SWOT, NOAA NWM, and USGS WDFN using their recommended APIs and libraries.
+- Select the most appropriate programmatic approach for downloading data at large temporal and spatial scales for different hydrologic applications.
+
+These break down into:
 - Explain what a web API is, and why agency-maintained Python libraries (`earthaccess`, `dataretrieval`, `hydrotools`) are usually a better starting point than calling the API directly.
 - Set up credentials (NASA Earthdata login, USGS API key) safely, using environment variables rather than writing secrets into code.
 - Use each agency's discovery tools to find which datasets, sites, river reaches or files cover a place and time, and check that the results are what you expect before downloading.
@@ -32,4 +36,18 @@ By the end of this module, learners should be able to:
 - **Files vs. services.** Some data are best retrieved as whole files (SWOT granules, NWM output files) and some through a query service that returns only the rows you ask for (`hydrocron`, the USGS Water Data API). Knowing which one you are using tells you how cost grows: with the number of files touched, or with the number of requests sent.
 - **Scaling and cloud-native access.** Very large analyses often run fastest _next to the data_: on a cloud computer in the same region as the archive, streaming only the needed parts of files instead of downloading them. The SWOT and NWM lessons point out when this is worth it. Service-based access, such as the USGS Water Data API, returns only the rows you ask for, so where your code runs matters much less.
 
-[PARTNER REVIEW: NASA|NOAA|USGS] Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::{admonition} Partner review (NASA): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
+
+:::{admonition} Partner review (NOAA): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
+
+:::{admonition} Partner review (USGS): Important concepts and terminology
+:class: important
+Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
+:::
+
