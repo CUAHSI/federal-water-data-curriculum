@@ -519,7 +519,7 @@ Confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
 
 ### Water extent before and near the peak (Raster)
 
-The Raster product maps water across the whole swath on a 100 m grid. {term}`Granules <Granule>` are searched and downloaded with `earthaccess` (Earthdata Login required). A point search at the gage over late November to mid-December returns dozens of granules. Most are **false matches from tiles near the antimeridian** (UTM zones 60 and 1). We keep only granules in UTM zone 10, latitude band U (`UTM10U` in the granule name), which is where the Skagit is.
+The Raster product maps water across the whole swath on a 100 m grid. {term}`Granules <Granule>` are searched and downloaded with `earthaccess` (Earthdata Login required). A point search at the gage over late November to mid-December returns dozens of granules. Most are **false matches**: tiles that straddle the antimeridian (the 180° longitude line, {term}`UTM zones <UTM zone>` 60 and 1) have metadata footprints that wrap around the globe, so they wrongly match a point search, as in Module 3. We keep only granules in UTM zone 10, latitude band U (`UTM10U` in the granule name), which is where the Skagit is.
 
 ```python
 import earthaccess

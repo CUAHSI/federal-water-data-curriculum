@@ -1,6 +1,6 @@
 # Additional Federal water data
 
-Now that you have gained a deep knowledge of NASA Surface Water and Ocean Topography (SWOT) water surface elevation, NOAA National Water Model (NWM) streamflow, and USGS Water Data for the Nation (WDFN) discharge data products, you are more equipped to broaden your use of other Federal water data products and tools. Consider the following:
+Now that you have worked with NASA Surface Water and Ocean Topography (SWOT) water surface elevation, NOAA National Water Model (NWM) streamflow, and USGS Water Data for the Nation (WDFN) discharge data products, you are more equipped to broaden your use of other Federal water data products and tools. Consider the following:
 
 - NASA SWOT data in the browser: SWOTViz, a CUAHSI viewer (in development)
 - NASA SWOT discharge (in development)
