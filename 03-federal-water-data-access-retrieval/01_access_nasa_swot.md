@@ -779,8 +779,8 @@ retrieved:
 
 Four things are worth keeping in mind:
 
-- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) lists discharge as a
-  SWOT variable. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
+- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) notes that SWOT discharge
+  estimates are still in development. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
   estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete
   ([release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
   section 4.1). Expect fill values in those columns, and check the current release notes before relying on them.
