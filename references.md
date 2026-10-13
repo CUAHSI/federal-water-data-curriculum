@@ -3,11 +3,6 @@
 Every external source cited in the course, grouped by the page that cites it. Each page's list lives in its own
 file under `references/` and is included here (see the style guide, section 8).
 
-:::{admonition} TODO (dev team): Fill in the reference lists
-:class: attention
-The per-page lists are being filled in during Phase 6. Until then, some pages below have no entries.
-:::
-
 ## Module 2: Federal Water Data Landscape
 
 ### [Module overview](02-federal-water-data-landscape/00_introduction.md)
@@ -37,12 +32,12 @@ The per-page lists are being filled in during Phase 6. Until then, some pages be
 ```{include} references/m03-00_introduction.md
 ```
 
-### [Retrieve NASA SWOT water surface elevation data](03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
+### [Retrieve NASA SWOT data](03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
 
 ```{include} references/m03-01_access_nasa_swot.md
 ```
 
-### [Retrieve NOAA NWM streamflow data](03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)
+### [Retrieve NOAA NWM data](03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)
 
 ```{include} references/m03-02_access_noaa_nwm.md
 ```
@@ -76,8 +71,12 @@ The per-page lists are being filled in during Phase 6. Until then, some pages be
 
 ## Course pages
 
+### [Course home](index.md)
+
 ```{include} references/index.md
 ```
+
+### [Glossary](glossary.md)
 
 ```{include} references/glossary.md
 ```

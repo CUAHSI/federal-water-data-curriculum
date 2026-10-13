@@ -7,7 +7,7 @@ The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <S
 NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on Google Cloud and AWS. Two NOAA services serve slices of it:
 
 * NOAA's experimental [NWM API](https://api.water.noaa.gov/nwm/v1/docs) serves individual reaches, but only the most recent few days of forecasts.
-* The [National Water Prediction Service (NWPS) API](https://api.water.noaa.gov/nwps/v1/docs/) serves NWM output only at NWPS's ~4,000 established forecast locations, not the full domain, so this lesson doesn't use it.
+* The [National Water Prediction Service (NWPS) API](https://api.water.noaa.gov/nwps/v1/docs/) serves NWM output only at NWPS's established forecast locations, not the full domain, so this lesson doesn't use it.
 
 The steps are:
 
@@ -17,14 +17,14 @@ The steps are:
 This lesson focuses on NWM **forecasts** (short, medium and long range), because forecasting is what sets the NWM apart: it predicts what rivers will do, everywhere, rather than recording what they did at a few places. If you already know your COMID(s), you can skip discovery.
 
 (nwm-access-routes)=
-### Choosing an access route
+## Choosing an access route
 
 NWM output is big: every forecast hour is a file covering all ~2.8 million reaches. How you should access it depends mostly on **how many forecast runs (issue times) you need**, and much less on how many reaches. Except for the CIROH BigQuery API (last row), none of these routes needs an {term}`API key`.
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Today's or the last few days' forecasts for a few reaches | [NOAA NWM API](#nwm-api) | No | Keeps only ~3–5 days of runs; labelled experimental; built for a few reaches per request |
-| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole CONUS files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
+| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
 | Past forecasts for many reaches or a region, or many issue times | [Kerchunk references](#nwm-kerchunk) + `xarray`/`dask`, ideally run in the cloud | No | Reads only the `streamflow` chunk (~7× fewer bytes than whole files) with less memory, but each read is still a CONUS-wide chunk; building references is a one-time step per run |
 | Long historical record (simulation, not forecasts) | NWM {term}`retrospective simulation <Retrospective simulation>` (cloud Zarr) | No | A different product (see [Temporal scaling](#nwm-temporal-scaling)) |
 | Researchers working on CIROH projects | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
@@ -273,7 +273,7 @@ Name: member, dtype: int64
 (nwm-hydrotools)=
 ### `hydrotools`: past forecasts from the cloud archive
 
-For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches (about 13–16 MB for a short-range `channel_rt` file).
+For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches. A short-range {term}`channel_rt` file (the channel-routing output, which holds `streamflow`) is about 13–16 MB.
 
 `hydrotools` (OWPHydroTools, from NOAA's Office of Water Prediction) finds those files, downloads them, and hands you a `pandas.DataFrame` for just the COMIDs you asked for. You never open a NetCDF file yourself.
 
@@ -562,14 +562,14 @@ The sections below answer these questions, with code examples. All three answers
 (nwm-cost)=
 ### Why NWM downloads cost what they cost
 
-One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 2 MB compressed). There is no way to read "just my reach" from a file: any tool that reads the files has to fetch at least that whole chunk. Services such as the NOAA NWM API and the CIROH BigQuery API are different: they return just the reaches you ask for, and whatever reading of the underlying data that takes happens on their side (CIROH asks BigQuery users to estimate each query's cost before running it). For the files themselves:
+One fact about the files explains almost every recommendation below. Inside each NWM `channel_rt` file, `streamflow` is stored as **one compressed chunk per forecast hour that contains all 2,776,734 reaches** (about 2 MB compressed). There is no way to read "just my reach" from a file: any tool that reads the files has to fetch at least that whole chunk. A service such as the NOAA NWM API is different: it returns just the reaches you ask for, and whatever reading of the underlying data that takes happens on its side. For the files themselves:
 
 * **Cost grows with the number of forecast hours (files) you touch, not with the number of reaches.**
 * `hydrotools` downloads whole files (~13–16 MB each, every variable). Kerchunk references fetch only the `streamflow` chunk you need (~2 MB per hour), so they move fewer bytes, but the bytes are still CONUS-sized.
 
 :::{admonition} TODO (dev team): How the NWM API stores data
 :class: attention
-Verify how the NWM API and BigQuery store NWM data.
+Verify how the NOAA NWM API stores NWM data.
 :::
 
 We measured this for the Louisville reach, using three short-range runs before the April 2025 crest (issued 6 April 00Z and 12Z and 7 April 00Z: 54 hourly files), from a home internet connection, on 2026-10-08:
@@ -719,6 +719,15 @@ Name: streamflow, dtype: float64
 ```
 :::
 
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Move the environments TODO callout to the end of "Tools and environment setup" so learners don't read it as "skip this step".
+- Add one query block (`POINT`, reference day, cycle) and stop re-typing `comid = 10164004` in later blocks (needs a re-run).
+- Add an "Explore by clicking" row (NWPS map) to the access-route table; `json.dump` with `with open(...)` and an explicit `import json`; explain `nudge`.
+- Link first uses of glossary terms: ensemble member, long-format table, chunk, lead time.
+:::
+
 ## Further reading
 
 * [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md) (Module 2): what the model is and how its configurations differ.
@@ -735,7 +744,6 @@ Name: streamflow, dtype: float64
 * `nwmurl` (CIROH), builds NWM file URLs: https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library and source: https://github.com/CIROH-UA/nwmurl
 * Tuhinanshu, T. (2023), *Using Kerchunk to make NOAA's National Water Model dataset more accessible*, Element 84: https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/
 * NWM retrospective archive (Zarr, AWS): https://registry.opendata.aws/nwm-archive/
-* CIROH NWM BigQuery API (CIROH members and partners with active CIROH projects; access by request): https://hub.ciroh.org/docs/products/data-management/bigquery-api/
 * Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP).
 
   :::{admonition} TODO (dev team): hydrotools attribution

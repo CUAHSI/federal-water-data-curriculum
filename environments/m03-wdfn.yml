@@ -1,4 +1,4 @@
-# Environment for Module 3, "Retrieve USGS water data" (03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md)
+# Environment for Module 3, "Retrieve USGS WDFN data" (03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md)
 # Create:   mamba env create -f environments/m03-wdfn.yml   (or: conda env create -f environments/m03-wdfn.yml)
 # Activate: conda activate m03-wdfn
 name: m03-wdfn

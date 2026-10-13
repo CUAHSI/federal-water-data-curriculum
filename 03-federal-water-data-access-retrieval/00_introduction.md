@@ -21,7 +21,7 @@ These break down into:
 
 The lessons stand alone: each one covers one product, with its own examples and its own software environment, so you can take them in any order or only the one you need.
 
-1. [Retrieve NASA SWOT data](01_access_nasa_swot.md): river reach and node time series with PO.DAAC's `hydrocron` service, and whole data files (granules) with `earthaccess`. Environment: `environments/m03-swot.yml`.
+1. [Retrieve NASA SWOT data](01_access_nasa_swot.md): river reach time series with PO.DAAC's `hydrocron` service (nodes work the same way), and whole data files (granules) with `earthaccess`. Environment: `environments/m03-swot.yml`.
 2. [Retrieve NOAA NWM data](02_access_noaa_nwm.md): finding reach IDs (COMIDs) with the NLDI, and streamflow forecasts through the NOAA NWM API, `hydrotools` and kerchunk references. Environment: `environments/m03-nwm.yml`.
 3. [Retrieve USGS WDFN data](03_access_usgs_wdfn.md): monitoring locations, continuous values, daily values and field measurements with `dataretrieval`'s `waterdata` module. Environment: `environments/m03-wdfn.yml`.
 

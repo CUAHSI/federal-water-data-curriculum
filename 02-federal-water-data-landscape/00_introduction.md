@@ -38,7 +38,7 @@ A few points deserve a closer look before you start:
 - **Data quality flags mean different things for each product.** A SWOT flag describes one satellite observation. A USGS
   approval status says whether a person has reviewed the value yet. NWM output has no per-value flag at all, because it is
   a model: its quality depends on the model version and how well the basin is calibrated.
-- **Units and reference points differ, so values don't compare directly.** NWM streamflow is in m³/s and USGS
+- **Units and reference points differ, so values don't compare directly.** NWM "streamflow" and USGS "discharge" are the same quantity, the volume of water passing per second, but NWM streamflow is in m³/s and USGS
   discharge in ft³/s (1 m³/s ≈ 35.31 ft³/s). SWOT water surface elevation is in meters above a global {term}`geoid <Geoid>`,
   while USGS {term}`gage height <Gage height>` is in feet above a local {term}`gage datum <Gage datum>`, so a SWOT elevation of
   120 m and a gage height of 20 ft can describe the same water surface. Module 4 returns to this when it compares the products.
@@ -133,3 +133,9 @@ Module 3 turns each "Meet" page into code: one lesson per product, in the same N
 find and retrieve the data with each agency's recommended tools. Module 4 then compares the three products for a single
 flood event, which is where the differences you read about here (measured vs. modeled, snapshot vs. continuous, reviewed
 vs. provisional) start to matter.
+
+:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
+:class: attention
+From the integration-pass learner review (2026-10-09). Not yet fixed:
+- Shared-concept table: label the SWOT flags by product, e.g. `reach_q` (RiverSP), `wse_qual` (Raster) (same in the glossary's "Data quality flag(s)" entry).
+:::
