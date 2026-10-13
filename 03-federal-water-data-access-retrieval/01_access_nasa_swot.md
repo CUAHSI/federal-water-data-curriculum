@@ -783,7 +783,8 @@ Four things are worth keeping in mind:
   estimates are still in development. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
   estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete
   ([release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
-  section 4.1). Expect fill values in those columns, and check the current release notes before relying on them.
+  section 4.1). Expect fill values in those columns, and check the current release notes before relying on them. Module 4's
+  [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) introduces the in-development SWOT discharge product.
 - **Quality flags are rarely 0.** For RiverSP, "nearly all reach-level quality flags … are non-zero" in Version D, because
   node-level flags are propagated up to the reach ([Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), table 8).
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep

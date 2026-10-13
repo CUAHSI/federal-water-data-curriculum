@@ -23,7 +23,7 @@ SWOTViz is in development; confirm it's ready to point learners to. If it is, ad
 ## NASA SWOT discharge: the SWORD of Science (SoS)
 
 :::{note} In development
-SoS discharge estimates are still being developed and validated. The collection shown here is Version 3 (`SWOT_L4_HR_DAWG_SOS_DISCHARGE_V3`), covering May 2023 to May 2025. This course does not yet recommend it for research use: treat it as a preview of where SWOT discharge is heading, not as a data source for your analysis.
+SoS discharge estimates are still being developed and validated. The collection shown here is Version 3 (`SWOT_L4_HR_DAWG_SOS_DISCHARGE_V3`), covering May 2023 to May 2025. This course does not yet recommend it for research use: treat it as a preview of where SWOT discharge is heading, not as a data source for your analysis. It is fine to explore the files and learn their structure; don't use SoS values as results or as inputs in research until NASA marks them validated.
 :::
 
 SWOT measures water surface elevation, width and slope, not discharge. Discharge is estimated afterwards by the SWOT Discharge Algorithm Working Group (DAWG), which runs several discharge algorithms over SWORD reaches in a cloud workflow called Confluence. The **SWORD of Science (SoS)** collects the results: the prior information each algorithm used (for example, gage records and model estimates) and the discharge estimates themselves, for every reach, organized by continent ([PO.DAAC SoS tutorial](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_L4_DAWG_SOS_DISCHARGE.html)). It is a Level 4 product: model or algorithm output built from lower-level data.
@@ -56,7 +56,7 @@ Three things to notice before you download:
 
 :::{admonition} Partner review (NASA): NASA SWOT discharge: the SWORD of Science (SoS)
 :class: important
-Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`).
+Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`). Also confirm: (1) whether SoS is the source of the RiverSP `dschg_*` fields (empty in Version D, populated via `hydrocron` for Version C); (2) whether gauge-constrained SoS results are published, since the Version 3 listing shows only `unconstrained` files; (3) the course's wording that SoS is not yet recommended for research use.
 :::
 
 **Go further:** the CUAHSI notebooks [SWOT - Visualizing SOS Discharge with Xarray](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Visualizing%20SOS%20Discharge%20with%20Xarray) and [SWOT - Compare Observed and SoS Discharge](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Compare%20Observed%20and%20SoS%20Discharge) open the SoS groups with `xarray` and compare SoS discharge with community gage data.

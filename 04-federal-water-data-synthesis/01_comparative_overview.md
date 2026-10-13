@@ -80,7 +80,7 @@ The table lines the three products up using the course's seven shared concepts (
 |---|---|---|---|
 | What it is | Satellite observation | Hydrologic model (analysis and forecasts) | In-stream observation |
 | {term}`Location identifier` | `reach_id` / `node_id` (SWORD) | `feature_id` (NHDPlus COMID) | monitoring location ID, `monitoring_location_id` (e.g. `USGS-12200500`) |
-| {term}`Variable` (rivers) | Water surface elevation, width, slope (water area in Raster) | Streamflow (plus land-surface variables) | Discharge (`00060`), gage height (`00065`) |
+| {term}`Variable` (rivers) | Water surface elevation, width, slope, water area (reaches, nodes and Raster) | Streamflow (plus land-surface variables) | Discharge (`00060`), gage height (`00065`) |
 | {term}`Variable unit` | m (WSE, width), m/km (slope) | m³/s | ft³/s (discharge), ft (gage height) |
 | {term}`Time` | Overpass time (UTC) | Forecast reference time and valid time (UTC) | Timestamp: continuous (typically 15-minute) or daily |
 | {term}`Data quality flag(s)` | `reach_q` / `node_q`, bitwise flags, `wse_u` uncertainty | None per value; depends on configuration and model version | `approval_status`, `qualifier`; `measurement_rated` for field measurements |

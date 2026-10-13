@@ -22,7 +22,7 @@ These break down into:
 - Retrieve and line up observations, forecasts and satellite measurements for a single event, accounting for differences in units, vertical reference, time zone and sampling.
 - Explain what each product can and cannot show during a flood, for example gage ratings at out-of-bank flows, forecast changes with lead time, and satellite overpass timing.
 - Summarize each agency's recommendations for using its data, and choose the product, or combination of products, that fits a research question.
-- Identify related Federal products (SWOT SoS discharge estimates, which are still in development and not yet recommended for research use, and AORC precipitation) and take a first step to access each, and know that other agencies, such as USDA and USACE, also publish water data.
+- Identify related Federal products: take a first step to access AORC precipitation, and know how to find SWOT SoS discharge estimates, which are still in development and not yet recommended for research use. Know that other agencies, such as USDA and USACE, also publish water data.
 
 ## Important concepts and terminology
 
