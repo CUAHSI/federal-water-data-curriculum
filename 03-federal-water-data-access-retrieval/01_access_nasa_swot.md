@@ -224,10 +224,7 @@ here is a small stream, far narrower than the rivers SWOT is built to measure
 ([Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md)). Always open one file and check before you
 download many.
 
-:::{admonition} TODO (dev team): SWORD upstream end on the Mississippi
-:class: attention
-Verify where SWORD's Mississippi River reaches begin (upstream end) with SWORD Explorer, and add it here.
-:::
+In SWORD Explorer, the Mississippi River reaches begin near Palisade, Minnesota. The most upstream reach (74289700146, about 46.69°N, 93.54°W) has no upstream neighbor, and no reaches are mapped around Bemidji or Lake Itasca to the northwest.
 
 ### Find Raster granules over the Ohio at Louisville
 
