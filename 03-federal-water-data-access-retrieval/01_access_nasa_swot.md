@@ -224,7 +224,7 @@ here is a small stream, far narrower than the rivers SWOT is built to measure
 ([Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md)). Always open one file and check before you
 download many.
 
-In SWORD Explorer, the Mississippi River reaches begin near Palisade, Minnesota. The most upstream reach (74289700146, about 46.69°N, 93.54°W) has no upstream neighbor, and no reaches are mapped around Bemidji or Lake Itasca to the northwest.
+In SWORD Explorer, the Mississippi River network begins near Palisade, Minnesota. The most upstream mapped reach (74289700146) is a type 6 (ghost reach). The first river reach (type 1) is 74289700131 (about 46.67°N, -93.59°W). No reaches are mapped around Bemidji or Lake Itasca to the northwest.
 
 ### Find Raster granules over the Ohio at Louisville
 
