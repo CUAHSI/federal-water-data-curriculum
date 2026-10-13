@@ -28,7 +28,7 @@ A **Data Management Plan (DMP; or DMSP for Data Management and Sharing Plan)** i
 
 Many funders now require a DMP or DMSP as part of a proposal. While the specifics differ by agency and program, most ask you to address a similar set of questions outlined in the table below.
 
-| A DMP or DMSP often provides answers to... | What that might look like in a water project |
+| A DMP or DMSP often provides answers to... | What that can look like in a water project |
 | --- | --- |
 | What data will you create or collect? | Continuous sensor records, grab samples, field notes, model output |
 | What formats and standards will you use? | CSV for tabular data, community units and parameter codes, a documented file naming scheme |
@@ -38,6 +38,7 @@ Many funders now require a DMP or DMSP as part of a proposal. While the specific
 | Who is responsible for what? | Named people for QA/QC, data release, and updates |
 | Are there access, privacy, or licensing considerations? | Sensitive locations, data-sharing agreements, an open license for what *can* be shared |
 
+_A summary table describing key elements of a Data Management Plan (DMP) or Data Management and Sharing Plan (DMSP) and what this can look like in a water project._
 
 
 ## Reproducibility techniques
