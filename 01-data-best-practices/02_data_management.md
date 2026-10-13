@@ -49,11 +49,20 @@ A few tips that make DMPs and DMSPs more useful than a box to check:
 
 ## Reproducibility techniques
 
-[define: reproducibility is fundamental for science, at the core of how we think of science and the peer review/publication process working; give additional definition of things being "rebuildable" throughout the project. Introduce "future you".]
+### What do we mean by "reproducible"?
 
-[barriers (time, publication bias, promotion incentives, skills gap) & benefits (reoding analyses, testing ideas, having confidence in results, writing papers faster, extending methods to others and future you)]
+Reproducibility is at the core of how we think science works. We trust a result because the people who produced it can show their work, and others can check it. Peer review and publication both rest on that idea. Adapting from existing definitions of reproducibility (e.g., [The Turing Way Community, 2025](https://zenodo.org/records/15213042)), we consider reproducibility to mean that **methods can be easily rebuilt using the same data to recreate results or new data to update an analysis** (Platt, 2026). Rebuildability also depends on something easy to overlook: the people most likely to need to rebuild your work includes **your future self**. If you have ever opened a project from six months ago and wondered what `final_v3_USE_THIS_ONE.xlsx` was, this message will hit home.
 
-[can be overwhelming to try to move towards total reproducibility all at once (see barriers); tiers of reproducibility figure and progression up to automation; introduce more advanced techniques for consideration: modular code/functions, version control, dependency management (`targets`/Snakemake/GNU Make), containerization, testing]
+This understanding of reproducibility also allows for _tiers of reproducibility_, which show that reproducibility is on a continuum rather than an all-or-nothing property:
+
+![](../figures/continuum_of_reproducibility.png)
+_Continuum of reproducibility, where more time and techincal skill is required as you go up each tier._
+
+It all starts with documentation and capturing data transformations in scripts. As projects become more data-intensive and our skills grow more technical, the next step is often to track code changes with a version control tool like Git (hosted on platforms like [GitHub](https://github.com/)) and commit modular code and functions across the codebase. Eventually, we may adopt automation and dependency-tracking tools (e.g., [`targets`](https://docs.ropensci.org/targets/) or [`Snakemake`](https://snakemake.readthedocs.io/en/stable/)) to build full data pipelines that reliably and efficiently execute workflows in encapsulated, pre-configured environments.
+
+
+The barriers to reproducible research are real and non-trivial: added time, extra effort, and potential lack of recognition ([Gomes, 2022](https://doi.org/10.1098/rspb.2022.1113); [Whitaker, 2019](https://doi.org/10.5281/zenodo.2669547)). Still, the payoff is worth it: reproducibility is an investment in yourself and your work, and the journey can begin in a meaningful way **today**.
+
 
 ## Improving data management with three simple approaches
 
