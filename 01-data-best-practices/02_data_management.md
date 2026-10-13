@@ -47,7 +47,7 @@ A few tips that make DMPs and DMSPs more useful than a box to check:
 - **Use existing tools and resources to help get you started.** There are many existing materials and services dedicated to helping you get your Data Management Plan started. Many university library and research offices offer their own data management plan tools, templates, and one-on-one support.
 
 ![](../figures/dmp_guide.png)
-_Visual guide with links to help build a DMP_
+_Visual guide that explains the importance of a DMP with helpful places to start._
 
 ## Reproducibility techniques
 
