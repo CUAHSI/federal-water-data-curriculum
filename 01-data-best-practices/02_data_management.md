@@ -24,7 +24,21 @@ This page covers three things, in order: planning for your data up front with a 
 
 ## Data Management Plans
 
-[Introduce what a DMP is and common requirements from funders. See some of our existing DMP content, including Kimmy's figure from Nov 2025]
+A **Data Management Plan (DMP; or DMSP for Data Management and Sharing Plan)** is a short document that describes what data your project will create or use and how you will handle them from start to finish ([Wong, 2026](https://www.cuahsi.org/uploads/pages/doc/DMP_guide_digital.pdf)). Think of it as a roadmap you write *before* the work starts so that decisions about file formats, storage, documentation, and sharing aren't made in a panic at the end of the project.
+
+Many funders now require a DMP or DMSP as part of a proposal. While the specifics differ by agency and program, most ask you to address a similar set of questions outlined in the table below.
+
+| A DMP or DMSP often provides answers to... | What that might look like in a water project |
+| --- | --- |
+| What data will you create or collect? | Continuous sensor records, grab samples, field notes, model output |
+| What formats and standards will you use? | CSV for tabular data, community units and parameter codes, a documented file naming scheme |
+| How will you document and describe the data? | A data dictionary, site metadata table, and a README |
+| Where will data be stored and backed up during the project? | A project folder with a single source of truth, version-controlled code, and a backup plan |
+| How will data be shared and preserved? | A data repository such as HydroShare, with a DOI |
+| Who is responsible for what? | Named people for QA/QC, data release, and updates |
+| Are there access, privacy, or licensing considerations? | Sensitive locations, data-sharing agreements, an open license for what *can* be shared |
+
+
 
 ## Reproducibility techniques
 
