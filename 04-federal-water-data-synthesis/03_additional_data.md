@@ -56,7 +56,7 @@ Three things to notice before you download:
 
 :::{admonition} Partner review (NASA): NASA SWOT discharge: the SWORD of Science (SoS)
 :class: important
-Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`). Also confirm: (1) whether SoS is the source of the RiverSP `dschg_*` fields (empty in Version D, populated via `hydrocron` for Version C); (2) whether gauge-constrained SoS results are published, since the Version 3 listing shows only `unconstrained` files; (3) the course's wording that SoS is not yet recommended for research use.
+Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`). Also confirm: (1) whether SoS is the source of the RiverSP `dschg_*` fields (fill values in Version D; `hydrocron` returns SoS fields such as `sos_consensus_q` for Version C); (2) whether gauge-constrained SoS results are published, since the Version 3 listing shows only `unconstrained` files; (3) the course's wording that SoS is not yet recommended for research use.
 :::
 
 **Go further:** the CUAHSI notebooks [SWOT - Visualizing SOS Discharge with Xarray](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Visualizing%20SOS%20Discharge%20with%20Xarray) and [SWOT - Compare Observed and SoS Discharge](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Compare%20Observed%20and%20SoS%20Discharge) open the SoS groups with `xarray` and compare SoS discharge with community gage data.
