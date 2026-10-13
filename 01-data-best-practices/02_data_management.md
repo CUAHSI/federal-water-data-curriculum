@@ -40,6 +40,12 @@ Many funders now require a DMP or DMSP as part of a proposal. While the specific
 
 _A summary table describing key elements of a Data Management Plan (DMP) or Data Management and Sharing Plan (DMSP) and what this can look like in a water project._
 
+A few tips that make DMPs and DMSPs more useful than a box to check:
+
+- **Treat it as a living document.** Projects change. Revisit your plan when your sensors, collaborators, or questions change.
+- **Plan for the sharing step early.** Choosing a repository and a license at the *start* of a project means you can organize and document with the end in mind. [Rosenberg et al. (2020)](https://doi.org/10.1061/(ASCE)WR.1943-5452.0001215) recommend building reproducibility into a project from the beginning, including budgeting the time and storage it takes.
+- **Use existing tools and resources to help get you started.** There are many existing materials and services dedicated to helping you get your Data Management Plan started. Many university library and research offices offer their own data management plan tools, templates, and one-on-one support.
+
 
 ## Reproducibility techniques
 
