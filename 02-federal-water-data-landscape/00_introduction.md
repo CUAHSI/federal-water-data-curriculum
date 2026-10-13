@@ -1,9 +1,6 @@
 # Module overview
 
-Three Federal agencies publish open river data that researchers use every day, and each one answers a different
-question. The *NASA Surface Water and Ocean Topography (SWOT)* satellite measures rivers from space. The *NOAA National
-Water Model (NWM)* simulates and forecasts streamflow for millions of river reaches. *USGS Water Data for the Nation
-(WDFN)* publishes measurements from thousands of monitoring locations on the ground.
+In this course, we cover three open river datasets published from Federal agencies. The *NASA Surface Water and Ocean Topography (SWOT)* satellite measures rivers from space. The *NOAA National Water Model (NWM)* simulates and forecasts streamflow for millions of river reaches. *USGS Water Data for the Nation (WDFN)* publishes measurements from thousands of monitoring locations on the ground.
 
 Before you write any code to retrieve these data (Module 3) or combine them (Module 4), it helps to know what each product
 *is*: what it measures or models, how the values are made, where and when they exist, and what can go wrong. That is the
@@ -23,15 +20,14 @@ about {term}`COMIDs <COMID>` and model {term}`configurations <Configuration>`, a
 answer the same seven questions. This course calls these the **shared concepts**, and every "Meet" page starts with a
 table that maps the agency's terms onto them.
 
-| Shared concept | Question it answers | NASA SWOT | NOAA NWM | USGS WDFN |
+| Shared concept | Question it answers |
 |---|---|---|---|---|
-| {term}`Location identifier` | *Where* is this value? | `reach_id`, `node_id` (SWORD) | COMID / `feature_id` (NHDPlus) | monitoring location ID (`USGS-03294500`) |
-| {term}`Variable` | *What* was measured or modeled? | water surface elevation, width, … | streamflow | discharge, gage height, … |
-| {term}`Variable unit` | In what units? | m, m/km, m³/s | m³/s | ft³/s, ft |
-| {term}`Time` | *When*, and how often? | overpass time | forecast reference time + valid time | timestamp (continuous / daily) |
-| {term}`Data quality flag(s)` | How much should I trust it? | `reach_q`, `wse_qual`, … | none per value (model output) | approval status (provisional / approved), qualifiers |
-| {term}`Version / provenance` | Which release, from where? | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
-| {term}`Data unit` | What is one "file" or record? | granule | one output file per timestep | one time series per location + parameter |
+| {term}`Location identifier` | *Where* is this value? |
+| {term}`Variable` | *What* was measured or modeled? |
+| {term}`Time` | *When*, and how often? |
+| {term}`Data quality flag(s)` | How much should I trust it? |
+| {term}`Version / provenance` | Which release, from where? |
+| {term}`Data unit` | What is one "file" or record? | granule |
 
 A few points deserve a closer look before you start:
 
@@ -133,9 +129,3 @@ Module 3 turns each "Meet" page into code: one lesson per product, in the same N
 find and retrieve the data with each agency's recommended tools. Module 4 then compares the three products for a single
 flood event, which is where the differences you read about here (measured vs. modeled, snapshot vs. continuous, reviewed
 vs. provisional) start to matter.
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Shared-concept table: label the SWOT flags by product, e.g. `reach_q` (RiverSP), `wse_qual` (Raster) (same in the glossary's "Data quality flag(s)" entry).
-:::
