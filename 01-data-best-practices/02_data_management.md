@@ -66,7 +66,49 @@ The barriers to reproducible research are real and non-trivial: added time, extr
 
 ## Improving data management with three simple approaches
 
-[three simple ways to start: 1. Project organization (ordered folders, naming conventions, single source of truth);  2. Machine-readable / tidy data (avoid merged cells, color-as-data, mixed types);  3. Documentation (README, in-line comments, metadata, "future you" framing)]
+Thankfully, you don't need to consider yourself as a programmer, or to adopt every tool mentioned above, to make real progress on reproducibility. The three approaches described in this section target the first tier of the continuum: documentation and well-organized, well-structured files. Each one takes some thought and a little time, not advanced technical skill, and each pays off both for you and for anyone who later reuses your work (including your future self).
+
+### 1. Project organization
+
+Good organization makes it easier for you and others to find files and products later. The goal is to be intentional: even if you land on a different pattern than the one below, spend some time thinking through how your project is structured and how your files are named.
+
+**Define an ordered folder structure.** Think about your project in terms of steps or phases, and create a numbered folder for each so it is clear what order they run in and what happens in each one. Inside each phase folder, use consistent subfolders to keep code, input data, output data, and intermediate files separated.
+
+**Converge on file naming conventions.** A good naming convention lets you understand a file without opening it. One approach is to prefix input and output files with a date (e.g., `YYMMDD`) so you can track when a file was generated from the filename alone. Matching output file names to the code that produced them (e.g., `regression_model_v1.R` creates `regression_model_v1_output.csv`) makes it easy to trace a result back to its source.
+
+![](../figures/project_organization.png)
+_An example folder structure organized by numbered project phases (left), where each phase contains subfolders for inputs (`in`), outputs (`out`), code (`src`), and intermediate files (`tmp`) (right). Example file names within the folders using a `YYMMDD` date prefix and matching code and output names, so that each output can be traced back to the script that created it._
+
+### 2. Machine-readable data
+
+Spreadsheet software like Excel is intuitive and keeps your data right at your fingertips. But it also gives you a lot of freedom to customize how your data look, which can make the data difficult for others to publish or reuse. **Machine-readable** data are structured so that code can easily load them into a usable state. Here are some commonly used spreadsheet features to avoid that work against that:
+
+- **Merged cells:** these break the one-value-per-cell structure that code expects.
+- **Color as the only indicator of information:** a color (e.g., blue to flag a data point collected during a storm) is lost as soon as the file is read by code or converted to a plain-text format.
+- **Mixing data types in the same column:** combining text and numbers (e.g., `12.4 cfs`) means the column is read as text rather than as numbers.
+- **Including metadata in the same sheet as the data:** notes, site descriptions, and other context above or beside your data make it hard to tell where the data actually start.
+
+![](../figures/excel_poor_practices.png)
+_An example spreadsheet with several common practices that make data publishing and reuse challenging: merged cells (indicating a site visit), color as the indicator of information (blue means the data point occurred during a storm), units in the same column as the values, and metadata above the data._
+
+A more reusable approach is to store the data in a tidy, rectangular table where every column holds one type of information and every row is one observation. Information that was previously encoded by color gets its own column (e.g., `storm_day` as a TRUE/FALSE value), and the site metadata move to a separate sheet or file. You can still add fill colors with conditional formatting, but the information lives in the data itself and the color is just a bonus. Keeping site metadata separate also means you can add new sites in the future without restructuring anything.
+
+![](../figures/excel_recommended_practices.png)
+_The same data stored in a machine-readable format: one table with columns for `site`, `Date`, `streamflow_cfs`, `stream_temperature_degC`, `specific_conductance_uSpercm`, `site_visit`, and `storm_day` (left), and a separate table of site metadata (right)._
+
+Setting up these habits early in a project helps you avoid headaches later when it is time to analyze or publish your data.
+
+### 3. Documentation
+
+Documenting your code and process in detail is wonderful when you share it with others, but it is helpful even if you are the only person who will ever use it. Below is a list of helpful tips for documneting your code:
+
+- **Add helpful in-line comments.** Guide a reader through what your code is doing. Not every line needs a comment, but there should be enough information for someone to understand the code and troubleshoot issues, especially around clever or complex lines.
+- **Describe your data with metadata.** Metadata describe the contents of a data file, such as units, definitions, and sources, so that the values can be interpreted correctly without needing to ask you.
+- **Include a `README.md` file.** A README is a documentation file that gives an overview of the project, workflow, and code. Think of it as the front page of your project. It can include instructions for running the code, required external packages and their versions, scenarios where your model can be applied, and other notes.
+- **Test the usability of your code with a colleague.** Ask a friend or colleague to try running your code and use their feedback to improve your instructions. There is nothing more humbling than watching someone else try to follow the run instructions you thought were perfectly clear, and it is much better to find those issues while you are still in the middle of the project than to be caught by surprises at the very end.
+
+Many of us start with standalone scripts for tasks like data cleaning or modeling. As a project grows, though, you may find yourself juggling dozens of scripts that need to run in a specific order, and keeping track of what to run and when can quickly become overwhelming. That is why it is important to commit to documentation early. Simple steps like these make your work more accessible and reduce the likelihood of confusion months down the line.
+
 
 ## Further reading
 
