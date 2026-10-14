@@ -228,12 +228,12 @@ IDs it completed, and Lindsay ticks the boxes.
 variable. It stays in Module 4 only as an in-development "additional" dataset (04/03), and Module 2 mentions it
 once, briefly, as in development, pointing to 04/03.
 
-One session, one branch: `content/p7-rm-swot-discharge`. Draft PR into `dev`.
+One session, one branch: `content/p7-rm-swot-discharge`. Draft PR into `dev`. *(done, PR [#70](https://github.com/CUAHSI/federal-water-data-curriculum/pull/70))*
 
-- [ ] P7.1 Inventory first: list every mention of SWOT discharge in Modules 2–4, `glossary.md`, `STYLE_GUIDE.md`
+- [x] P7.1 Inventory first: list every mention of SWOT discharge in Modules 2–4, `glossary.md`, `STYLE_GUIDE.md`
       and `references/` (`rg -n -i "discharge|dschg|SoS|DAWG" ...`), and classify each as *remove*, *reword to
       in-development*, or *keep* (non-SWOT discharge, e.g. USGS/NWM, stays as is). Put the table in the PR description.
-- [ ] P7.2 Module 2, Meet NASA SWOT (`02-…/01_meet_nasa_swot.md`):
+- [x] P7.2 Module 2, Meet NASA SWOT (`02-…/01_meet_nasa_swot.md`):
       - Terminology table: Variable = water surface elevation, width, slope (and water area for Raster);
         Variable unit = m (WSE, width), m/km (slope). Drop discharge and m³/s.
       - "Key point" box and Dataset derivation: SWOT measures WSE, width and slope. Replace the discharge
@@ -241,9 +241,9 @@ One session, one branch: `content/p7-rm-swot-discharge`. Draft PR into `dev`.
         recommended research product, see Module 4 → Additional data.
       - Data content: remove discharge from "Primary variables"; one "In development" bullet pointing to 04/03.
       - Update any Module 2 figure, caption or callout that features SWOT discharge.
-- [ ] P7.3 Module 2 overview (`02-…/00_introduction.md`): SWOT column of the shared-concepts table and the units
+- [x] P7.3 Module 2 overview (`02-…/00_introduction.md`): SWOT column of the shared-concepts table and the units
       note no longer imply SWOT discharge. The NWM/USGS streamflow/discharge comparison stays.
-- [ ] P7.4 Module 4:
+- [x] P7.4 Module 4:
       - `01_comparative_overview.md`: SWOT Variable/unit rows show WSE, width, slope (+ water area); no
         "derived discharge". Check the accuracy and recommendations text for SWOT discharge claims.
       - `00_introduction.md`: reword the objective/bullet that names SoS discharge so it's clearly an
@@ -251,12 +251,12 @@ One session, one branch: `content/p7-rm-swot-discharge`. Draft PR into `dev`.
       - `02_synthesize_river_data.md`: confirm the case study doesn't use or imply SWOT discharge.
       - `03_additional_data.md`: keep SoS, with an "In development" label up front (status, version and date
         range, not recommended for research use yet). Keep its `Partner review (NASA)` callout.
-- [ ] P7.5 Consistency: `glossary.md` (RiverSP entry; any SoS term marked in development) and `STYLE_GUIDE.md` §1
+- [x] P7.5 Consistency: `glossary.md` (RiverSP entry; any SoS term marked in development) and `STYLE_GUIDE.md` §1
       (SWOT units: m, m/km). In Module 3 (`03-…/01_access_nasa_swot.md`), check only that the existing
       "no discharge here yet" note doesn't contradict the new framing; adjust wording minimally if it does.
-- [ ] P7.6 References: drop entries no longer cited; keep SoS/PO.DAAC entries used in 04/03. Build passes;
+- [x] P7.6 References: drop entries no longer cited; keep SoS/PO.DAAC entries used in 04/03. Build passes;
       references check passes.
-- [ ] P7.7 `content-reviewer` + `learner-reviewer` on the changed pages; fix must-fixes and blockers; push;
+- [x] P7.7 `content-reviewer` + `learner-reviewer` on the changed pages; fix must-fixes and blockers; push;
       draft PR listing every changed sentence/table cell (before → after) for Lindsay's review.
 
 ## Parked
