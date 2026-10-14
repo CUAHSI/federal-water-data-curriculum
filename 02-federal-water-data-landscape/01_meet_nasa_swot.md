@@ -1,8 +1,6 @@
 # Meet NASA SWOT
 
-The *NASA Surface Water and Ocean Topography ({term}`SWOT`)* mission is a satellite jointly developed by NASA and Centre National D'Etudes Spatiales (CNES), with contributions from the Canadian Space Agency (CSA) and United Kingdom Space Agency (UKSA). Rather than measuring streamflow at fixed points, SWOT uses a Ka-band Radar Interferometer ({term}`KaRIn`) to make the first global survey of surface water — measuring the elevation, width, and slope of rivers, lakes, and reservoirs worldwide. 
-
-It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [SWOT resources page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/).
+The *NASA Surface Water and Ocean Topography ({term}`SWOT`)* mission is a satellite jointly developed by NASA and Centre National D'Etudes Spatiales (CNES), with contributions from the Canadian Space Agency (CSA) and United Kingdom Space Agency (UKSA). Rather than measuring streamflow at fixed points, SWOT uses a Ka-band Radar Interferometer ({term}`KaRIn`) to make the first global survey of surface water — measuring the elevation, width, and slope of rivers, lakes, and reservoirs worldwide. It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [SWOT resources page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/).
 
 (swot-terminology)=
 ## Terminology
@@ -82,7 +80,7 @@ SWOT water surface elevation for SWORD reach `74267300251`, Ohio River at Louisv
 :::
 
 :::{dropdown} How this figure was made
-This script asks PO.DAAC's [`hydrocron` API](https://podaac.github.io/hydrocron/) for every observation of one reach in a date range, as CSV, and plots it. `hydrocron` needs no login. The query (reach ID, dates and fields) is kept in variables at the top so you can see exactly what was asked for. It runs in the course's `m03-swot` environment (`environments/m03-swot.yml`); Module 3 covers `hydrocron` in detail. You don’t need to run this now; Module 3 sets up the environment.
+This script asks PO.DAAC's [`hydrocron` API](https://podaac.github.io/hydrocron/) for every observation of one reach in a date range, as CSV, and plots it. `hydrocron` needs no login. The query (reach ID, dates and fields) is kept in variables at the top so you can see exactly what was asked for. It runs in the course's `m03-swot` environment (`environments/m03-swot.yml`); Module 3 covers `hydrocron` in detail.
 
 ```python
 import io
@@ -147,6 +145,8 @@ fig.savefig("01_meet_nasa_swot-ohio-reach-wse.png", dpi=150)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
 - Temporal coverage: replace "mid-2023" with the exact science-orbit start once NASA confirms it (Module 3 says 21 July 2023); update the glossary's "Science orbit" entry too.
+- Split the ~170-word opening paragraph after "It exists to…".
+- Figure dropdown: add "You don't need to run this now; Module 3 sets up the environment."
 :::
 
 ## Further reading
