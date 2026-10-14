@@ -3,11 +3,13 @@
 Imagine you finished an analysis months ago for a paper currently in review, and the associated data products are archived. Then you get a message: one of your monitoring sites had a sensor malfunction, and the provider has corrected the record. How you feel about that message depends almost entirely on how you managed your data, workflows, and documentation along the way.
 
 ![](../figures/scenario_sensor_malfunction.png)
+
 _Your colleague informs you of an unfortunate scenario where you are required to reproduce your analyses that you finished months ago using corrected data._
 
 That is what this page is about. **Data management** is the set of actions you take *during* a research project (not just at the end) so that your methods are credible and you (including your future self), and everyone else, can have confidence in your results. These practices are also what make the data publishing step in the next module possible. Tidy data, solid documentation, and complete metadata don't appear at publication time. They get built in as you go.
 
 ![](../figures/reproducibility_overview.jpg)
+
 _An illustration demonstrating the value of documenting at each stage of the data lifecycle for improving research reproducibility ([The Turing Way Community and Scriberia, 2024](https://zenodo.org/records/13882307))._
 
 ## It's really data *and* information management
@@ -59,6 +61,7 @@ Reproducibility is at the core of how we think science works. We trust a result 
 This understanding of reproducibility also allows for _tiers of reproducibility_, which show that reproducibility is on a continuum rather than an all-or-nothing property:
 
 ![](../figures/continuum_of_reproducibility.png)
+
 _Continuum of reproducibility, where more time and techincal skill is required as you go up each tier._
 
 It all starts with documentation and capturing data transformations in scripts. As projects become more data-intensive and our skills grow more technical, the next step is often to track code changes with a version control tool like Git (hosted on platforms like [GitHub](https://github.com/)) and commit modular code and functions across the codebase. Eventually, we may adopt automation and dependency-tracking tools (e.g., [`targets`](https://docs.ropensci.org/targets/) or [`Snakemake`](https://snakemake.readthedocs.io/en/stable/)) to build full data pipelines that reliably and efficiently execute workflows in encapsulated, pre-configured environments.
@@ -80,6 +83,7 @@ Good organization makes it easier for you and others to find files and products 
 **Converge on file naming conventions.** A good naming convention lets you understand a file without opening it. One approach is to prefix input and output files with a date (e.g., `YYMMDD`) so you can track when a file was generated from the filename alone. Matching output file names to the code that produced them (e.g., `regression_model_v1.R` creates `regression_model_v1_output.csv`) makes it easy to trace a result back to its source.
 
 ![](../figures/project_organization.png)
+
 _An example folder structure organized by numbered project phases (left), where each phase contains subfolders for inputs (`in`), outputs (`out`), code (`src`), and intermediate files (`tmp`) (right). Example file names within the folders using a `YYMMDD` date prefix and matching code and output names, so that each output can be traced back to the script that created it._
 
 ### 2. Machine-readable data
@@ -92,11 +96,13 @@ Spreadsheet software like Excel is intuitive and keeps your data right at your f
 - **Including metadata in the same sheet as the data:** notes, site descriptions, and other context above or beside your data make it hard to tell where the data actually start.
 
 ![](../figures/excel_poor_practices.png)
+
 _An example spreadsheet with several common practices that make data publishing and reuse challenging: merged cells (indicating a site visit), color as the indicator of information (blue means the data point occurred during a storm), units in the same column as the values, and metadata above the data._
 
 A more reusable approach is to store the data in a tidy, rectangular table where every column holds one type of information and every row is one observation. Information that was previously encoded by color gets its own column (e.g., `storm_day` as a TRUE/FALSE value), and the site metadata move to a separate sheet or file. You can still add fill colors with conditional formatting, but the information lives in the data itself and the color is just a bonus. Keeping site metadata separate also means you can add new sites in the future without restructuring anything.
 
 ![](../figures/excel_recommended_practices.png)
+
 _The same data stored in a machine-readable format: one table with columns for `site`, `Date`, `streamflow_cfs`, `stream_temperature_degC`, `specific_conductance_uSpercm`, `site_visit`, and `storm_day` (left), and a separate table of site metadata (right)._
 
 Setting up these habits early in a project helps you avoid headaches later when it is time to analyze or publish your data.
