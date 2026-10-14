@@ -21,7 +21,7 @@ answer the same seven questions. This course calls these the **shared concepts**
 table that maps the agency's terms onto them.
 
 | Shared concept | Question it answers |
-|---|---|---|---|---|
+|---|---|
 | {term}`Location identifier` | *Where* is this value? |
 | {term}`Variable` | *What* was measured or modeled? |
 | {term}`Time` | *When*, and how often? |
