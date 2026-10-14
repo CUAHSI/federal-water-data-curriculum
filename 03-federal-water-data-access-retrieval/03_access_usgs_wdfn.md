@@ -23,7 +23,7 @@ All the routes below use the same Water Data APIs, so the choice is mostly about
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
-| Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and the [NWIS Mapper](https://apps.usgs.gov/nwismapper/) | No | Manual; not reproducible on its own |
+| Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) | No | Manual; not reproducible on its own |
 | Find monitoring locations and what they record | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages; each page is one request |
 | Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one call (paged for you) |
 | The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per call |
@@ -104,7 +104,7 @@ print(statistic_codes.loc[statistic_codes["statistic_code"].isin(["00003", "0001
 
 ### Finding monitoring locations
 
-**The point-and-click way.** The [WDFN website](https://waterdata.usgs.gov/) and the [NWIS Mapper](https://apps.usgs.gov/nwismapper/) let you search by place name, address, state or watershed and click on sites. That's fine for exploring. A programmatic discovery step keeps your search reproducible, so capture it in code too.
+**The point-and-click way.** The [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) let you search by place name, address, state or watershed and click on sites. That's fine for exploring. A programmatic discovery step keeps your search reproducible, so capture it in code too.
 
 Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each call. Your query is then recorded in one spot and easy to change.
 
@@ -585,7 +585,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 * USGS Water Data APIs documentation: https://api.waterdata.usgs.gov/
 * USGS Water Data API keys: https://api.waterdata.usgs.gov/docs/ogcapi/keys/
 * USGS Water Data for the Nation: https://waterdata.usgs.gov/
-* NWIS Mapper (GUI): https://apps.usgs.gov/nwismapper/
+* Water Data For The Nation - Explore (GUI): https://waterdata.usgs.gov/explore/
 * USGS provisional data statement: https://waterdata.usgs.gov/provisional-data-statement/
 * Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here.
 
