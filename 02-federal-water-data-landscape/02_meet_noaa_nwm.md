@@ -53,7 +53,7 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 - **Extent:** CONUS + hydrologically-contributing areas, plus separate domains for Hawaii, Puerto Rico/USVI, and southern Alaska (Cook Inlet, Copper River Basin, Prince William Sound)
 - **Type:** Point/vector network output for streamflow and reservoirs (one value per `feature_id`, over 2.7 million reaches); paired with 1 km gridded NetCDF for land-surface variables and 100–250 m gridded NetCDF for ponded water depth and soil saturation
 - **Resolution:** Reach-based routing follows NHDPlus (medium-resolution, 1:100,000-scale network); grids are 1 km (land surface) and 100/250 m (near-surface hydrology)
-- **{term}`CRS`:** Streamflow output has no coordinates: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area Conic (USGS version); the gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files.
+- **{term}`CRS`:** Streamflow output has no coordinates: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide introduction](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
 
 ## Temporal coverage
 
@@ -154,7 +154,6 @@ The `print` line shows the run's configuration, reference time and units, for ex
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
 - Terminology: say that `feature_id` = COMID holds for the CONUS domain (the glossary already does); Alaska, Hawaii and Puerto Rico domains need a NOAA check before stating what they use.
-- CRS bullet: the Albers claim for NHDPlus needs a check (NHDPlusV2 is often distributed in NAD83 geographic); add that the Module 3 tools take and return EPSG:4326.
 - Partner-review callouts still describe earlier drafts ("an earlier draft said 3-hourly", "1979–present"); keep the questions, drop the history.
 - Mention `nwm_feature_id` (the NOAA NWM API's name for the ID); make the NOMADS window wording match the glossary (about 48 hours); give the Analysis & Assimilation lookback in hours.
 - Split the opening paragraph; add the "you don't need to run this now" note to the figure dropdown.
