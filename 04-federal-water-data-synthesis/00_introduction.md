@@ -42,17 +42,17 @@ These break down into:
 
 :::{admonition} Partner review (NASA): Important concepts and terminology
 :class: important
-Confirm the module objectives and concept descriptions.
+Review the important concept descriptions.
 :::
 
 :::{admonition} Partner review (NOAA): Important concepts and terminology
 :class: important
-Confirm the module objectives and concept descriptions.
+Review the important concept descriptions.
 :::
 
 :::{admonition} Partner review (USGS): Important concepts and terminology
 :class: important
-Confirm the module objectives and concept descriptions.
+Review the important concept descriptions.
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)

@@ -62,7 +62,7 @@ Before you download anything, *discover* the reach (or reaches) you need. You do
 
 :::{admonition} Partner review (NOAA): Programmatic data discovery
 :class: important
-Confirm the map's reach ID is the NWM `feature_id`.
+Confirm the map's reach ID is the NWM `feature_id`, which are both the COMID.
 :::
 
 ### Finding COMIDs with the NLDI
@@ -187,7 +187,7 @@ Two terms you'll see in every route:
 
   :::{admonition} Partner review (NOAA): Programmatic data downloads
   :class: important
-  Confirm cadences, horizons and ensemble sizes for NWM v3.0.
+  Confirm cadences, horizons and ensemble sizes for NWM v3.0. Note that we are pivoting to referencing the following figures developed by CUAHSI's Irene Garousi-Nejad for the configurations, so confirmation that these are correct is also useful: https://www.hydroshare.org/resource/33634cbd65db47329435e510e75b8d08/
   :::
 
 * **{term}`Reference time <Forecast reference time>`**: when a forecast was issued, in UTC (Coordinated Universal Time). NWM shorthand writes the issue hour with a Z for UTC: `00Z` is 00:00 UTC, and file names write it as `t00z`. The time each forecast value applies to is its **{term}`valid time <Valid time>`** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
@@ -539,7 +539,7 @@ If your plot looks like this, your code is right: these are model forecasts, not
 
 :::{admonition} Partner review (NOAA): Short-range forecasts at the Ohio River at Louisville
 :class: important
-In the April 2025 short-range runs for COMID 10164004, each run starts at 15,000–18,000 m³/s and drops quickly (the 6 April 00Z and 12Z runs by about half within 18 hours, the 7 April 00Z run by about a quarter), while the medium-range run issued 3 April stays lower until 8 April. Is this expected behavior at this reach (for example, from data assimilation in the initial conditions, or the McAlpine Locks and Dam), and how should learners interpret it?
+In the April 2025 short-range runs for COMID 10164004 (see the figure above), each run starts at 15,000–18,000 m³/s and drops quickly (the 6 April 00Z and 12Z runs by about half within 18 hours, the 7 April 00Z run by about a quarter), while the medium-range run issued 3 April stays lower until 8 April. Is this expected behavior at this reach (for example, from data assimilation in the initial conditions, or the McAlpine Locks and Dam), and how should learners interpret it?
 :::
 
 **Keep raw and derived data apart.** The files in the NOAA archive are your raw data, and they stay where they are. What you create, the reference JSON and the table of values you extracted, is derived. Save it in a separate folder (for example `data/derived/`) together with the COMIDs, configuration and reference times you asked for, so anyone can rebuild it from the archive. See [Data Management](../01-data-best-practices/02_data_management.md) in Module 1.
