@@ -53,7 +53,7 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 - **Extent:** CONUS + hydrologically-contributing areas, plus separate domains for Hawaii, Puerto Rico/USVI, and southern Alaska (Cook Inlet, Copper River Basin, Prince William Sound)
 - **Type:** Point/vector network output for streamflow and reservoirs (one value per `feature_id`, over 2.7 million reaches); paired with 1 km gridded NetCDF for land-surface variables and 100–250 m gridded NetCDF for ponded water depth and soil saturation
 - **Resolution:** Reach-based routing follows NHDPlus (medium-resolution, 1:100,000-scale network); grids are 1 km (land surface) and 100/250 m (near-surface hydrology)
-- **{term}`CRS`:** Streamflow output has no coordinates: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide introduction](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
+- **{term}`CRS`:** Streamflow output has no coordinates: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide for NHDPlus](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
 
 ## Temporal coverage
 
@@ -170,3 +170,4 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [CIROH Hydrofabric documentation](https://hub.ciroh.org/docs/products/Hydrofabric/) — background on the reach/catchment network NWM routes over
 - [CIROH RIVR App](https://hub.ciroh.org/docs/products/mobile-apps/RIVR/#background-of-the-us-nwm-streamflow-forecasts) - tool for real-time and forecast riverflow information
 - Comparison of NWM v2.1 and v3.0 in Texas: [Journal of Hydrology: Regional Studies (2025)](https://doi.org/10.1016/j.ejrh.2025.102196)
+- [USGS user guide for the National Hydrography Dataset](https://pubs.usgs.gov/publication/sir20255031/full)
