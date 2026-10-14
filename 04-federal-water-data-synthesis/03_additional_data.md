@@ -22,7 +22,11 @@ SWOTViz is in development; confirm it's ready to point learners to. If it is, ad
 
 ## NASA SWOT discharge: the SWORD of Science (SoS)
 
-SWOT measures water surface elevation, width and slope, not discharge. Discharge is estimated afterwards by the SWOT Discharge Algorithm Working Group (DAWG), which runs several discharge algorithms over SWORD reaches in a cloud workflow called Confluence. The **SWORD of Science (SoS)** collects the results: the prior information each algorithm used (for example, gage records and model estimates) and the discharge estimates themselves, for every reach, organized by continent ([PO.DAAC SoS tutorial](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_L4_DAWG_SOS_DISCHARGE.html)). It is a Level 4 product, and the discharge estimates are still being developed and validated.
+:::{note} In development
+SoS discharge estimates are still being developed and validated. The collection shown here is Version 3 (`SWOT_L4_HR_DAWG_SOS_DISCHARGE_V3`), covering May 2023 to May 2025. This course does not yet recommend it for research use: treat it as a preview of where SWOT discharge is heading, not as a data source for your analysis. It is fine to explore the files and learn their structure; don't use SoS values as results or as inputs in research until NASA marks them validated.
+:::
+
+SWOT measures water surface elevation, width and slope, not discharge. Discharge is estimated afterwards by the SWOT Discharge Algorithm Working Group (DAWG), which runs several discharge algorithms over SWORD reaches in a cloud workflow called Confluence. The **SWORD of Science (SoS)** collects the results: the prior information each algorithm used (for example, gage records and model estimates) and the discharge estimates themselves, for every reach, organized by continent ([PO.DAAC SoS tutorial](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_L4_DAWG_SOS_DISCHARGE.html)). It is a Level 4 product: model or algorithm output built from lower-level data.
 
 SoS files are found with {term}`earthaccess`, like every other SWOT product. `earthaccess.login()` reads `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` from the environment (see the Module 3 SWOT lesson for setup). The short name below is the Version 3 collection, as listed by `earthaccess.search_datasets(keyword="SWOT SoS discharge")`; older notebooks use the earlier name `SWOT_L4_DAWG_SOS_DISCHARGE`.
 
@@ -47,12 +51,12 @@ oc_sword_v16_SOS_results_unconstrained_20230502T204408_20250502T204408_20251219T
 Three things to notice before you download:
 
 - **One file per continent, and they are large.** The North America file alone is about 9 GB, and Asia's about 27 GB. If you work outside the cloud, read only the groups and reaches you need (see the notebooks below), or work on a cloud JupyterHub in AWS `us-west-2`.
-- **Know what is inside.** Each file is NetCDF with one group per algorithm (plus the priors and validation data), indexed by SWORD `reach_id`, with discharge in m³/s. `unconstrained` in the name means the algorithms ran without using gage data; Module 2 describes the gauge-constrained alternative.
+- **Know what is inside.** Each file is NetCDF with one group per algorithm (plus the priors and validation data), indexed by SWORD `reach_id`, with discharge in m³/s. `unconstrained` in the name means the algorithms ran without using gage data; "gauge-constrained" results (SWOT documents spell it "gauge") use historical gage records to calibrate the algorithms.
 - **Check the time period and version.** These Version 3 files cover May 2023 to May 2025 (it's in the file name), so they do not include the December 2025 Skagit flood used in this module. `hydrocron` can also return SoS discharge fields (for example `sos_consensus_q`) for a single reach, using `collection_name=SWOT_L2_HR_RiverSP_2.0` ([Hydrocron timeseries docs](https://podaac.github.io/hydrocron/timeseries)). That is the Version C collection, a different version from the Version D data in the case study, so don't mix values from the two without checking. Cite the collection by its DOI ([10.5067/SWOT-SOS-RD3](https://doi.org/10.5067/SWOT-SOS-RD3)), and record the collection short name (it carries the version) and the file name with any SoS results, since each new version reprocesses the whole record.
 
 :::{admonition} Partner review (NASA): NASA SWOT discharge: the SWORD of Science (SoS)
 :class: important
-Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`).
+Confirm the description of SoS, its development status, and the recommended way to get discharge for a few reaches (SoS files vs. `hydrocron`). Also confirm: (1) whether SoS is the source of the RiverSP `dschg_*` fields (fill values in Version D; `hydrocron` returns SoS fields such as `sos_consensus_q` for Version C); (2) whether gauge-constrained SoS results are published, since the Version 3 listing shows only `unconstrained` files; (3) the course's wording that SoS is not yet recommended for research use.
 :::
 
 **Go further:** the CUAHSI notebooks [SWOT - Visualizing SOS Discharge with Xarray](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Visualizing%20SOS%20Discharge%20with%20Xarray) and [SWOT - Compare Observed and SoS Discharge](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20Compare%20Observed%20and%20SoS%20Discharge) open the SoS groups with `xarray` and compare SoS discharge with community gage data.

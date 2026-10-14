@@ -55,7 +55,7 @@ Each agency has its own vocabulary: a SWOT *granule*, an NWM *COMID*, a USGS *mo
 |---|---|---|---|---|
 | {term}`Location identifier` | *Where* is this value? | `reach_id`, `node_id` (from {term}`SWORD`) | {term}`COMID` / `feature_id` (from {term}`NHDPlus`) | {term}`monitoring location ID <Monitoring location ID>` (e.g. `USGS-03294500`) |
 | {term}`Variable` | *What* was measured or modeled? | water surface elevation, width, … | streamflow | discharge, gage height, … |
-| {term}`Variable unit` | In what units? | m, m/km, m³/s | m³/s | ft³/s, ft |
+| {term}`Variable unit` | In what units? | m, m/km | m³/s | ft³/s, ft |
 | {term}`Time` | *When*, and how often? | overpass time | forecast reference time + valid time | timestamp (continuous / daily) |
 | {term}`Data quality flag(s)` | How much should I trust it? | `reach_q`, `wse_qual`, … | none per value (model output) | approval status (provisional / approved), qualifiers |
 | {term}`Version / provenance` | Which release, from where? | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
