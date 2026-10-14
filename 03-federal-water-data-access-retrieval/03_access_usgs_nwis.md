@@ -68,7 +68,7 @@ states = waterdata.get_reference_table("states")
  
 Before downloading values, a common first step is to *discover* which site(s) match your question, by location, HUC, or the parameter you care about, rather than assuming you already know the exact site number.
  
-A GUI approach exists here too: the [NWIS Mapper](https://maps.waterdata.usgs.gov/mapper/) lets you click around, search by location name, street address, state/territory, or even watershed regions to find sites visually. This is fine for exploring, but a programmatic discovery step keeps your work reproducible.
+A GUI approach exists here too: [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) lets you click around, search by location name, street address, state/territory, or even watershed regions to find sites visually. This is fine for exploring, but a programmatic discovery step keeps your work reproducible.
  
 **Example: What are the USGS stream sites in the Suffolk County, MA area?**
  
@@ -152,4 +152,4 @@ If I am working on improving efficiency of my code through parallelization, what
 * `dataretrieval` (Python) GitHub repo: https://github.com/DOI-USGS/dataretrieval-python
 * `dataretrieval` documentation: https://doi-usgs.github.io/dataretrieval-python/
 * Modernized Water Data API docs: https://api.waterdata.usgs.gov/
-* NWIS Mapper (GUI): https://maps.waterdata.usgs.gov/mapper/
+* Water Data For The Nation - Explore (GUI): https://waterdata.usgs.gov/explore/
