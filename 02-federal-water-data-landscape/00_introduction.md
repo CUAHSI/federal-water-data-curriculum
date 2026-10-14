@@ -29,7 +29,7 @@ table that maps the agency's terms onto them.
 | {term}`Variable` | *What* was measured or modeled? | water surface elevation, width, … | streamflow | discharge, gage height, … |
 | {term}`Variable unit` | In what units? | m, m/km | m³/s | ft³/s, ft |
 | {term}`Time` | *When*, and how often? | overpass time | forecast reference time + valid time | timestamp (continuous / daily) |
-| {term}`Data quality flag(s)` | How much should I trust it? | `reach_q`, `wse_qual`, … | none per value (model output) | approval status (provisional / approved), qualifiers |
+| {term}`Data quality flag(s)` | How much should I trust it? | `reach_q` (RiverSP), `wse_qual` (Raster), … | none per value (model output) | approval status (provisional / approved), qualifiers |
 | {term}`Version / provenance` | Which release, from where? | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
 | {term}`Data unit` | What is one "file" or record? | granule | one output file per timestep | one time series per location + parameter |
 
@@ -133,9 +133,3 @@ Module 3 turns each "Meet" page into code: one lesson per product, in the same N
 find and retrieve the data with each agency's recommended tools. Module 4 then compares the three products for a single
 flood event, which is where the differences you read about here (measured vs. modeled, snapshot vs. continuous, reviewed
 vs. provisional) start to matter.
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Shared-concept table: label the SWOT flags by product, e.g. `reach_q` (RiverSP), `wse_qual` (Raster) (same in the glossary's "Data quality flag(s)" entry).
-:::

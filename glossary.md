@@ -12,7 +12,7 @@ Every data product in the course is introduced with these seven concepts (see th
 
 ```{glossary}
 Data quality flag(s)
-: A value attached to a measurement that says how much to trust it. Examples: SWOT's `reach_q` and `wse_qual`,
+: A value attached to a measurement that says how much to trust it. Examples: SWOT's `reach_q` (RiverSP) and `wse_qual` (Raster),
   and USGS's approval status and qualifiers. NWM model output has no per-value quality flag.
 
 Data unit
