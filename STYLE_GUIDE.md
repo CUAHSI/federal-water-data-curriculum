@@ -16,7 +16,7 @@ to the shared framework the first time it appears on a page.
 |---|---|---|---|---|
 | Location identifier | *Where* is this value? | `reach_id`, `node_id` (SWORD) | COMID / `feature_id` (NHDPlus) | monitoring location ID (`USGS-12200500`) |
 | Variable | *What* was measured or modeled? | water surface elevation, width, … | streamflow | discharge, gage height, … |
-| Variable unit | In what units? | m, m/km, m³/s | m³/s | ft³/s, ft |
+| Variable unit | In what units? | m, m/km | m³/s | ft³/s, ft |
 | Time | *When*, and how often? | overpass time | forecast reference time + valid time | timestamp (continuous / daily) |
 | Data quality flag(s) | How much should I trust it? | `reach_q`, `wse_qual`, … | none per value (model output) | approval status (provisional / approved), qualifiers |
 | Version / provenance | Which release, from where? | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |

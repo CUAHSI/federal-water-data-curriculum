@@ -177,7 +177,7 @@ Reach
 
 RiverSP
 : SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
-  overpass, with water surface elevation, width, slope, discharge and quality flags. The Version D collection is
+  overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is
   `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` for one each.
 
 Science orbit
@@ -192,8 +192,13 @@ SWORD
 : The SWOT River Database: a global river network, built before launch, that defines the reaches and nodes
   SWOT river measurements are mapped to.
 
+SWORD of Science (SoS)
+: A Level 4 SWOT product (in development) that holds river discharge estimates from several algorithms, run by the
+  SWOT Discharge Algorithm Working Group over {term}`SWORD` reaches, with the prior information each used. Not yet
+  recommended for research use in this course; see Module 4, Additional Federal water data.
+
 SWOT
-: The Surface Water and Ocean Topography satellite mission (NASA and CNES), which measures water surface elevation,
+: The Surface Water and Ocean Topography satellite mission (NASA and CNES), which measures water surface elevation, slope,
   width and extent of rivers and lakes from space.
 
 SWOT Raster product
