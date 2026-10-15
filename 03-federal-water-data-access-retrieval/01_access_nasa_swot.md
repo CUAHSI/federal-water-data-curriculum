@@ -7,7 +7,7 @@ you put that into code.
 
 **The example river.** The main example is the **Ohio River at Louisville, Kentucky**, from 15 March to 15 May 2025. The Ohio
 is about 700 m wide here, well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
-21-day cycle. The window includes the large April 2025 flood, so you can watch the river's water surface rise and fall in
+21-day {term}`cycle<Cycle and pass>`. The window includes the large April 2025 flood, so you can watch the river's water surface rise and fall in
 SWOT's own data. At the end you repeat the steps on a second river, the Willamette River at Salem, Oregon.
 
 :::{figure} ../images/m03/swot-location-map.png
@@ -159,7 +159,7 @@ and can be re-run.
 
 If you don't yet know which dataset you need, search the catalog broadly with `search_datasets` (see the
 [`earthaccess` API docs](https://earthaccess.readthedocs.io/en/latest/api/) for every option). A keyword alone matches more
-than 1,500 datasets, so add your area and dates and keep only cloud-hosted ones:
+than 1,500 datasets, so add your area using a {term}`bounding box<Bounding box>` and dates (start and end), and keep only cloud-hosted ones:
 
 ```python
 # Datasets matching "river" that are in the cloud and cover the site during the window
@@ -255,8 +255,8 @@ any box. Downloading them all would waste gigabytes on scenes from the other sid
 A more reliable check is each granule's footprint *polygon* (`GPolygons` in its metadata). The false matches have no polygon,
 only a global rectangle. The first function below keeps the granules whose footprint polygon contains your point.
 
-The second function handles duplicates. A granule name ends in two codes: the **CRID** (composite release identifier, for
-example `PGD0`) and a **product counter** (`01`, `02`, …). The [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)
+The second function handles duplicates. A granule name ends in two codes: the **{term}`CRID`** (composite release identifier, for
+example `PGD0`) and a **{term}`product counter<Product counter>`** (`01`, `02`, …). The [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)
 (sections 3 and 4) explains them: `PGD0` is reprocessed Version D, `PID0` is forward-processed Version D, and codes ending in
 `C0`–`C2` are older Version C. Where both exist, use `PGD0`, and use the highest product counter. The same overpass can turn up
 under more than one CRID, so the function keeps one granule per overpass:
@@ -510,7 +510,7 @@ For each 100 m pixel:
 - `water_area_qual` is the **Data quality flag** for `water_area`: 0 = good, 1 = suspect, 2 = degraded, 3 = bad. `wse_qual`
   and the other `_qual` variables work the same way.
 
-Pixels outside the swath (the strip of ground the radar imaged on this overpass) are `NaN`. The `x` and `y` coordinates are UTM meters, and the full projection is in the `crs`
+Pixels outside the {term}`swath<Swath>` (the strip of ground the radar imaged on this overpass) are `NaN`. The `x` and `y` coordinates are UTM meters, and the full projection is in the `crs`
 variable's `crs_wkt` attribute.
 
 To compare overpasses, add up `water_area` in a 10 km × 10 km box around the point in each file. Two details matter:
@@ -562,7 +562,7 @@ the observed pixels). Two things stand out:
    banks hold most of the rise.
 
 :::{dropdown} Optional: decode why the 13 April scene is degraded
-The flag says *that* the 13 April pixels are degraded. The bitwise flag, `water_area_qual_bitwise`, says *why*: each bit is
+The flag says *that* the 13 April pixels are degraded. The {term}`bitwise quality flag<Bitwise quality flag>`, `water_area_qual_bitwise`, says *why*: each bit is
 one reason, and the variable's attributes name them. `values & mask` (bitwise AND) is non-zero when that reason's bit is set. This block counts, across the whole 13 April scene, how many observed
 pixels have each "degraded" reason set:
 
@@ -659,7 +659,7 @@ for every parameter. The main ones:
 | `collection_name` | `SWOT_L2_HR_RiverSP_D` | Optional; defaults to Version D. Version C (`2.0`) reach IDs can differ |
 
 The function below, adapted from the CUAHSI longitudinal-profile notebook (see Further reading), wraps one request and returns
-a `pandas` DataFrame. It drops overpasses with no valid measurement (fill values) and, by default, keeps everything else.
+a `pandas` DataFrame. It drops overpasses with no valid measurement ({term}`fill values<Fill value>`) and, by default, keeps everything else.
 Pass `max_reach_q` to also drop observations whose quality flag is worse than you can accept.
 
 ```python
@@ -714,8 +714,8 @@ louisville[["time_str", "wse", "wse_u", "width", "reach_q", "crid"]]
 Every row is one SWOT overpass of the reach. `wse`, `wse_u` and `width` are in meters; `hydrocron` also adds a
 `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as
 a timestamp for plotting. `crid` records which processing produced each value (here, all reprocessed Version D, `PGD0`).
-`hydrocron` also returns a row for each overpass that produced no valid measurement, with `time_str` = `no_data`, a fill value
-for `wse` and `reach_q` = 3; the function drops those.
+`hydrocron` also returns a row for each overpass that produced no valid measurement, with `time_str` = `no_data`, 
+`wse` = `-99999999` and `reach_q` = 3; the function drops those.
 
 A plot shows the flood clearly:
 
@@ -774,7 +774,7 @@ retrieved:
 | {term}`Variable` | `wse`, `width` (plus slope, area and ~130 other columns) | `water_area`, `water_frac`, `wse` | the `fields` you asked for |
 | {term}`Variable unit` | meters (`wse` above the EGM2008 geoid) | m² (`water_area`), unitless (`water_frac`), m (`wse`) | `<field>_units` columns |
 | {term}`Time` | `time_str`, the overpass time (UTC), one value per reach | `time_granule_start` attribute, one per scene | `time_str`, one row per overpass |
-| {term}`Data quality flag(s)` | `reach_q` (0–3) and its bitwise version `reach_q_b` | `water_area_qual`, `wse_qual` (0–3) | whichever flags you request (`reach_q`) |
+| {term}`Data quality flag(s)` | `reach_q` (0–3) and its {term}`bitwise<Bitwise quality flag>` version `reach_q_b` | `water_area_qual`, `wse_qual` (0–3) | whichever flags you request (`reach_q`) |
 | {term}`Version / provenance` | Version D; CRID in the file name (`PGD0`); collection DOI [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D) | Version D; CRID in the file name; collection DOI [10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RASTER-D) | `crid` field; collection name (default Version D) |
 | {term}`Data unit` | one granule = one pass over one continent, all reaches | one granule = one ~150 km scene from one pass | one response = one reach over your time range |
 
@@ -816,7 +816,7 @@ See the sections below for answers to these questions:
 
 *What is the recommended way to download data for one location but the full period of record?*
 
-Use `hydrocron`, one request per reach or node. Set `start_time` to the start of SWOT's science orbit (21 July 2023; usable data begin 26 July, and the
+Use `hydrocron`, one request per reach or node. Set `start_time` to the start of SWOT's {term}`science orbit<Science orbit>` (21 July 2023; usable data begin 26 July, and the
 [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
 table 2, notes no useful data before then) and `end_time` to today (the code below uses a fixed end date so the result can be reproduced), and ask only for the `fields` you need. Fewer
 fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach,
@@ -958,7 +958,6 @@ salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Link first uses of glossary terms: cycle/pass, bounding box, CRID, product counter, swath, bitwise quality flag, science orbit.
 - Align across the three lessons: FAQ question wording and style, "Understanding what you downloaded" table columns, version recording (printing versions vs. `conda env export`), and `conda` vs. `mamba` first in setup.
 :::
 
