@@ -149,10 +149,11 @@ you the exact granule names, which you can save as a record of your inputs.
 
 ### The point-and-click equivalent
 
-You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/): type a collection short name such as
-`SWOT_L2_HR_Raster_100m_D` in the search box, draw a rectangle around your river, set the dates, and the page lists the
-matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data. These are good ways to explore, but code is better for research because the search itself becomes part of
-your methods and can be re-run.
+You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/). Either type a collection short name such as
+`SWOT_L2_HR_Raster_100m_D` in the search box, or click on "Browse all Earth Science Data" to go straight to the mapper. Then draw a 
+rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data. 
+These are good ways to explore, but programmatic discovery is better for research, because the search itself becomes part of your methods 
+and can be re-run.
 
 ### Find datasets
 
@@ -246,10 +247,10 @@ print(sorted({g["umm"]["GranuleUR"].split("_")[5] for g in louisville_raster})) 
 ['UTM01C', 'UTM01W', 'UTM16S', 'UTM60C', 'UTM60V', 'UTM60W']
 ```
 
-That is far more than SWOT could have seen over one point in two months. The UTM zone in each granule name gives the problem
-away. (UTM, the Universal Transverse Mercator system, divides the globe into 60 numbered zones, each 6° of longitude wide, with a flat x/y grid in meters.) Louisville is in UTM zone **16**, but most results are in zones 01 and 60, on either side of the 180° meridian. The
-metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost any box. Downloading
-them all would waste gigabytes on scenes from the other side of the planet.
+That is far more than SWOT could have seen over one point in two months. The {term}`UTM zone (Universal Transverse Mercator system)<UTM zone>` 
+in each granule name gives the problem away. Louisville is in UTM zone **16**, but most results are in zones 01 and 60, on either 
+side of the 180° meridian. The metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost 
+any box. Downloading them all would waste gigabytes on scenes from the other side of the planet.
 
 A more reliable check is each granule's footprint *polygon* (`GPolygons` in its metadata). The false matches have no polygon,
 only a global rectangle. The first function below keeps the granules whose footprint polygon contains your point.
@@ -374,7 +375,7 @@ always tell raw data from derived data, and re-create the derived files from the
 ### RiverSP reaches with `earthaccess`
 
 RiverSP granules are zipped shapefiles, so you read them with `geopandas`. Download the granule from 13 April 2025 (cycle 031,
-pass 175), near the flood crest, and find the SWORD reach closest to the example point. This is also how you find a
+pass 175), close to the time of the flood crest, and find the SWORD reach closest to the example point. This is also how you find a
 `reach_id` to use with `hydrocron` if you don't have one. (You can also look up reach IDs interactively in
 [SWORD Explorer](https://www.swordexplorer.com/).)
 
@@ -406,8 +407,7 @@ reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_s
 The point sits on reach **`74267300251`**, about 200 m from its centerline (well inside a channel about 720 m wide). Its neighbors are `74267300241` (downstream) and `74267300261` (upstream). Reach
 IDs encode position in SWORD: in `74267300251`, the leading `7` is the North America region, and the last digit (`1`) is the
 reach type, `1` meaning a river reach. The granule itself holds every reach SWOT observed along this pass across North America.
-RiverSP files carry about 130 columns; the product description documents (PDDs), linked from the
-[PO.DAAC Cookbook SWOT page](https://podaac.github.io/tutorials/quarto_text/SWOT.html), define them all.
+RiverSP files carry about 130 columns; the product description documents (PDDs), linked in the table on the PO.DAAC [datasets information page](https://podaac.jpl.nasa.gov/SWOT?tab=datasets-information), define them all.
 
 :::{admonition} TODO (dev team): Reach ID structure
 :class: attention
@@ -890,7 +890,7 @@ Confirm these recommendations, in particular the guidance on parallel `hydrocron
 Repeat the main steps on a second river: the **Willamette River at Salem, Oregon**, in February and March 2026, during the
 wet winter season. The Willamette here is much narrower than the Ohio (SWORD expects about 150 m).
 
-**Your task:** find the SWORD reach at Salem and retrieve its water surface elevation time series with `hydrocron`.
+**Your task:** find the SWORD reach at Salem and retrieve its water surface elevation time series with `hydrocron`. Give the new results new names (for example `salem_raster`), so you can still compare them with the Louisville ones.
 
 1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
    and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.
@@ -901,8 +901,6 @@ wet winter season. The Willamette here is much narrower than the Ohio (SWORD exp
    and find the reach nearest the point. Any one of them will do: every pass you kept sees the point. `estimate_utm_crs()` picks
 the right UTM zone for Salem by itself.
 4. Set `reach_id` to that reach and call `get_reach_timeseries(reach_id, start, end)`.
-
-Give the new results new names (for example `salem_raster`), so you can still compare them with the Louisville ones.
 
 **What you should get:** the nearest reach is `78220000131`, about 40 m from the point, with `p_width` = 150 m. `hydrocron`
 returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
@@ -960,7 +958,7 @@ salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Link first uses of glossary terms: cycle/pass, bounding box, UTM zone, CRID, product counter, swath, bitwise quality flag, science orbit.
+- Link first uses of glossary terms: cycle/pass, bounding box, CRID, product counter, swath, bitwise quality flag, science orbit.
 - Align across the three lessons: FAQ question wording and style, "Understanding what you downloaded" table columns, version recording (printing versions vs. `conda env export`), and `conda` vs. `mamba` first in setup.
 :::
 
@@ -986,8 +984,3 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
   by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The
   `get_reach_timeseries` function in this lesson adapts the `PullReachTimeseries` from this source.
 - Three [CUAHSI developed notebooks](https://swotviz.cuahsi.io/#/notebooks?center={%22lat%22:0,%22lng%22:0}&zoom=3&activeOverlays=[%22Lakes%22,%22Reaches%22]) for interacting with SWOT data.
-
-:::{admonition} TODO (dev team): confirm this link
-:class: attention
-The CUAHSI notebook link above points to the `develop` branch. Confirm the branch and path before publication.
-:::
