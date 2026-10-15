@@ -137,6 +137,10 @@ Cycle and pass
 earthaccess
 : A Python library for logging in to NASA Earthdata and searching, downloading or streaming NASA data granules.
 
+Fill value
+: A placeholder value when there is no valid measurement. A variation of `-999` for integer data types depending 
+  on the number of characters. "no_data" for text data types.
+
 Granule
 : The smallest unit of data NASA distributes for a product, usually one file. For SWOT, one granule covers one
   stretch of one satellite pass: a whole continent for RiverSP, one scene for the Raster product.
