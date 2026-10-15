@@ -982,9 +982,10 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
 - [Earthdata Search](https://search.earthdata.nasa.gov/) and the [CMR search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
 - [SWORD Explorer](https://www.swordexplorer.com/) for finding reach and node IDs interactively.
-- Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources)
+- Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://www.hydroshare.org/resource/1e5dff3ab72440d2a4e3942326ada5a4/)
   by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The
-  `get_reach_timeseries` function adapts its `PullReachTimeseries` helper.
+  `get_reach_timeseries` function in this lesson adapts the `PullReachTimeseries` from this source.
+- Three [CUAHSI developed notebooks](https://swotviz.cuahsi.io/#/notebooks?center={%22lat%22:0,%22lng%22:0}&zoom=3&activeOverlays=[%22Lakes%22,%22Reaches%22]) for interacting with SWOT data.
 
 :::{admonition} TODO (dev team): confirm this link
 :class: attention
