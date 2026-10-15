@@ -1,11 +1,11 @@
 # Meet NASA SWOT
 
-The *NASA Surface Water and Ocean Topography ({term}`SWOT`)* mission is a satellite jointly developed by NASA and Centre National D'Etudes Spatiales (CNES), with contributions from the Canadian Space Agency (CSA) and United Kingdom Space Agency (UKSA). Rather than measuring streamflow at fixed points, SWOT uses a Ka-band Radar Interferometer ({term}`KaRIn`) to make the first global survey of surface water — measuring the elevation, width, and slope of rivers, lakes, and reservoirs worldwide. It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [SWOT resources page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/).
+The *NASA Surface Water and Ocean Topography ({term}`SWOT`)* mission is a satellite jointly developed by NASA and Centre National D'Etudes Spatiales (CNES), with contributions from the Canadian Space Agency (CSA) and United Kingdom Space Agency (UKSA). Rather than measuring streamflow at fixed points, SWOT uses a Ka-band Radar Interferometer ({term}`KaRIn`) to make the first global survey of surface water — measuring the elevation, width, and slope of rivers, lakes, and reservoirs worldwide. It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [SWOT resources page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/). 
 
 (swot-terminology)=
 ## Terminology
 
-This table maps SWOT's own vocabulary onto the course's [shared concepts](00_introduction.md#m02-shared-concepts). It describes the river product most hydrology work uses, the River Single-Pass Vector product ({term}`RiverSP`).
+This course only covers open surface and hydrology related measurements from SWOT (SWOT also measures ocean data). The table below maps SWOT's own vocabulary onto the course's [shared concepts](00_introduction.md#m02-shared-concepts). It describes the river product most hydrology work uses, the River Single-Pass Vector product ({term}`RiverSP`). 
 
 | Shared concept | SWOT equivalent | Notes |
 |---|---|---|
@@ -25,7 +25,7 @@ An earlier draft said WSE "is referenced to the WGS84 ellipsoid and corrected fo
 (swot-dataset-derivation)=
 ## Dataset derivation
 
-**Key point: SWOT measures water surface elevation, width and slope. It does not measure discharge, and SWOT discharge estimates are not yet ready for research use.**
+**Key point: SWOT measures water surface elevation, width, and slope from a hydrologic perspective. It does not measure discharge, and SWOT discharge estimates are not yet ready for research use.**
 
 SWOT launched December 16, 2022, and does not measure streamflow directly — it derives WSE, width, and slope from raw radar returns collected as the satellite passes overhead, then aggregates lower-level pixel detections (the {term}`PIXC <Pixel cloud (PIXC)>` product) up to reach- and node-scale values using the predefined SWORD network.
 
@@ -48,7 +48,7 @@ Confirm that the 21-day science orbit (and its data record) began on 21 July 202
 
 - **Extent:** Global — SWOT surveys at least 90% of Earth's surface, observing most lakes, rivers, reservoirs, and the ocean at least once every 21 days
 - **Type:** Vector (reach polylines and node points) for the hydrology river product (RiverSP), distributed as shapefiles; a separate gridded product, the {term}`Raster <SWOT Raster product>` product (`SWOT_L2_HR_Raster_100m_D` and `_250m_D`), gives water surface elevation (`wse`), water area (`water_area`) and water fraction (`water_frac`) on 100 m and 250 m UTM grids. The Module 3 lesson [Retrieve NASA SWOT data](../03-federal-water-data-access-retrieval/01_access_nasa_swot.md) shows when to use each.
-- **Is my river wide enough?** Plan on rivers **at least 100 m wide**, SWOT's stated requirement for observing rivers nearly everywhere on Earth. PO.DAAC staff have noted usable estimates for rivers as narrow as about 50 m, but that is not guaranteed; check your reach's observations and flags before relying on them.
+- **Is my river wide enough?** Plan on rivers **at least 100 m wide**, SWOT's stated requirement for observing rivers nearly everywhere on Earth. PO.DAAC staff have noted usable estimates for rivers as narrow as about 50 m, but that is not guaranteed; check your reach's observations and flags before relying on them. We cover how to do this in the Module 3 lesson that covers [Data discovery](../03-federal-water-data-access-retrieval/01_access_nasa_swot.md#SWOT-data-discovery).
 - **Resolution:** Reaches are ~10 km long; nodes are spaced ~200 m apart; SWORD (the underlying river network) includes rivers roughly 30 m wide and greater, but that is the network, not what SWOT can measure (see above)
 - **{term}`CRS`:** Vector product coordinates are geographic (latitude/longitude); Raster scenes are on UTM grids. Elevations are heights above the geoid (see [Terminology](#swot-terminology)).
 - **Coverage caveat:** A seasonal mask removes part of the Canadian Arctic Archipelago from collection each year (roughly December 1–March 1), so the satellite can prioritize sea ice observation there instead — worth knowing if your study area includes high-latitude basins
@@ -61,7 +61,7 @@ Confirm that the 21-day science orbit (and its data record) began on 21 July 202
 
 ## Data content
 
-- **Primary variables:** water surface elevation, width, slope and area, at both reach and node scale
+- **Primary variables:** Variables related to hydrology measurements; water surface elevation, width, slope, and area. Measured at both reach and node scale.
 - **Accuracy:** SWOT's commonly cited target is ~10 cm vertical (WSE) precision, though this is a mission-level target rather than a per-observation guarantee — actual performance varies by river width, roughness, and other local factors, and PO.DAAC staff have pointed users to the product description documents (PDDs) rather than a single number for rigorous accuracy claims
 - **Related products not covered here:** SWOT also produces lake (`LakeSP`) and ocean/sea-surface height products, plus lower-level pixel-cloud (`PIXC`) data that the river product is built from
 - **Known limitations:** Complex or braided river geometries (multiple channels) are not well represented by the standard reach/node product, since SWORD reaches assume a single centerline. `reach_q` summarizes the whole reach observation, but some variables also carry their own quality flags (listed in the PDD), so a reach observation can have usable WSE while another variable, such as width, is flagged. Filter on `reach_q` first, then check the flag for the variable you use, not just whether the reach "has data." Summary flags are also reach-specific: at some reaches *no* observation is flagged good (`reach_q` = 0), so a strict filter can remove every value. Look at the flag distribution for your reach before choosing a threshold.

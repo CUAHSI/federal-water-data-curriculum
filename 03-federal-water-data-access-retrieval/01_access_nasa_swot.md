@@ -140,6 +140,7 @@ data_dir = "data/swot/raw"                    # downloads go here and are never 
 The dates are full UTC timestamps (`Z` means UTC) because both `earthaccess` and `hydrocron` accept that form. You won't
 know `reach_id` for a new river yet: the RiverSP download below shows how to find it.
 
+(SWOT-data-discovery)=
 ## Programmatic data discovery
 
 Before downloading anything, find out what exists: which datasets cover your river, and which files (granules) fall in your
@@ -150,7 +151,7 @@ you the exact granule names, which you can save as a record of your inputs.
 
 You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/): type a collection short name such as
 `SWOT_L2_HR_Raster_100m_D` in the search box, draw a rectangle around your river, set the dates, and the page lists the
-matching granules. That is a good way to explore. Code is better for research, because the search itself becomes part of
+matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data. These are good ways to explore, but code is better for research because the search itself becomes part of
 your methods and can be re-run.
 
 ### Find datasets
