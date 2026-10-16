@@ -283,7 +283,7 @@ Confirm this description of the NWPS gauge forecast vs. NWM.
 The first block builds references for three short-range forecasts (the `short_range` {term}`configuration <Configuration>`) issued on 11 December, at 00Z, 12Z and 18Z (Z means UTC): the `nwm_issue_times` from the query block. Each issue time is a {term}`forecast reference time <Forecast reference time>`. We chose three issue times spread across the day before the crest, so you can see how the forecast changed as the flood approached; only the 18Z forecast's 18-hour window reaches past the crest. The two blocks below follow the [Module 3 kerchunk pattern](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-kerchunk); most arguments (`inline_threshold`, `concat_dims`, `zarr_format` and so on) are explained there, and to reuse them you only change `nwm_issue_times` and `comid`. As in Module 3, CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds the public HTTPS address of each hourly file, and building references reads about 1 MB of metadata from each of the 18 files per forecast. In our test (2026-10-08, home connection) all three took about 20 seconds together; expect it to vary with your connection.
 
 ```python
-mport fsspec
+import fsspec
 import nwmurl
 from concurrent.futures import ThreadPoolExecutor
 from kerchunk.hdf import SingleHdf5ToZarr
