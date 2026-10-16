@@ -529,17 +529,19 @@ Confirm these recommendations, especially the guidance on concurrency and on usi
 
 ## Now you try it
 
-Repeat the main steps on the course's second river: the **Willamette River at Salem, Oregon**, monitoring location `USGS-14191000`. The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+Repeat the main steps for accessing NWM data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task**
+**Your task:** Retrieve discharge from a monitoring location on the Willamette using `dataretrieval`.
 
-1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` and the dates (`START`, `END`) in the daily-values example.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
+
+1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` to `USGS-14191000` and the dates `START, END` to `"2026-02-01", "2026-03-31"`.
 2. Find the highest daily mean, and check its approval status.
 3. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
 **What you should see:** 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
-:::{dropdown} Answer
+:::{dropdown} Example answer
 ```python
 site = "USGS-14191000"                  # Willamette River at Salem, OR
 START, END = "2026-02-01", "2026-03-31"

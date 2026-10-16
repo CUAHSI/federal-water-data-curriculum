@@ -36,6 +36,7 @@ Each lesson follows the same structure, so once you know one, you can find your 
 7. **Now you try it:** the same steps on a second river, with the answer you should get.
 8. **Further reading.**
 
+(m03-example-rivers)=
 ## The example rivers
 
 All three lessons use the same two rivers, chosen because every product has good data there.
@@ -46,6 +47,12 @@ All three lessons use the same two rivers, chosen because every product has good
 | "Now you try it" | **Willamette River at Salem, Oregon** | February–March 2026, winter high flows |
 
 The Ohio at Louisville is a large, wide river (about 700 m across), which suits satellite measurements, model reaches and stream gages alike. The Willamette at Salem is much narrower (about 150 m), so it's a good test of how each product handles a smaller river.
+
+_storing lesson specific information that should be moved here_
+- Important to keep in mind regarding SWOT, the Willamette is much narrower than the Ohio (SWORD expects about 150 m).
+- In February and March 2026, during the wet winter season. 
+- The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+- The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
 
 ## One framework for three products
 

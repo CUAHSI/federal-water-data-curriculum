@@ -672,17 +672,19 @@ print(basin.shape)   # (forecast hours, reaches)
 
 ## Now you try it
 
-Repeat the main steps on the course's second river: the **Willamette River at Salem, Oregon**. The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+Repeat the main steps for accessing NWM data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task**
+**Your task:** Find the COMID for the Willamette and retrieve short-range forecasts using the NWM API and Kerchunk references. 
 
-1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`. Change `POINT` to `(-123.0429, 44.9443)`.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
+
+1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, by changing `POINT` to `(-123.0429, 44.9443)`.
 2. Get the latest short-range forecast for that COMID from the NOAA NWM API. Change `comid` in the API example.
 3. The Willamette ran high in late February 2026. Read the short-range forecast issued at 12Z on 25 February 2026 from NOAA's published references. Change `day` to `"20260225"` in the published-references example (keep `t12z`).
 
 **What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 published reference files for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
 
-:::{dropdown} Answer
+:::{dropdown} Example answer
 ```python
 from pynhd import NLDI
 import requests

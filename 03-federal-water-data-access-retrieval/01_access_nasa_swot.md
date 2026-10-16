@@ -887,10 +887,11 @@ Confirm these recommendations, in particular the guidance on parallel `hydrocron
 
 ## Now you try it
 
-Repeat the main steps on a second river: the **Willamette River at Salem, Oregon**, in February and March 2026, during the
-wet winter season. The Willamette here is much narrower than the Ohio (SWORD expects about 150 m).
+Repeat the main steps for accessing SWOT hydrologic data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task:** find the SWORD reach at Salem and retrieve its water surface elevation time series with `hydrocron`. Give the new results new names (for example `salem_raster`), so you can still compare them with the Louisville ones.
+**Your task:** Find the SWORD reach for the Willamette and retrieve its water surface elevation time series with `hydrocron`. 
+
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example `salem_raster`), so you can still compare them with the Ohio River at Louisville.
 
 1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
    and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.
@@ -903,12 +904,12 @@ the right UTM zone for Salem by itself.
 4. Set `reach_id` to that reach and call `get_reach_timeseries(reach_id, start, end)`.
 
 **What you should get:** the nearest reach is `78220000131`, about 40 m from the point, with `p_width` = 150 m. `hydrocron`
-returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
+returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (`reach_q` = 2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
 several meters higher, and their widths (196–253 m) are well above `p_width`. Before trusting those three, ask whether the
 river really rose that much or whether SWOT counted water outside the channel; an independent record for those dates, such
 as a stream gage or imagery, would tell you.
 
-:::{dropdown} Show an answer
+:::{dropdown} Example answer
 ```python
 # Step 1: the new query
 site_name = "Willamette River at Salem, OR"
