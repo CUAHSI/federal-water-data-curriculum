@@ -45,7 +45,34 @@ USGS explains how keys work on its [API keys page](https://api.waterdata.usgs.go
 
 ### Create the conda environment
 
-This lesson has its own {term}`conda environment <Conda environment>`, [`environments/m03-wdfn.yml`](../environments/m03-wdfn.yml), with `dataretrieval` and the other packages this lesson uses:
+You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, which contians `dataretrieval` and the other packages this lesson uses:
+
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m03-wdfn.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Environment for Module 3, "Retrieve USGS WDFN data" (03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md)
+# Create:   mamba env create -f environments/m03-wdfn.yml   (or: conda env create -f environments/m03-wdfn.yml)
+# Activate: conda activate m03-wdfn
+name: m03-wdfn
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  - dataretrieval>=1.4   # modernized `waterdata` module (USGS Water Data APIs)
+  - pandas
+  - geopandas
+  - matplotlib          # figures and maps in the lesson
+  - requests            # river line for the location map (NLDI)
+  - ipykernel           # optional: run the lesson in Jupyter
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 # From the root of the course repository

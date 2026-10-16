@@ -20,7 +20,56 @@ Consider adding a before/after photo of the Skagit valley with a reuse-cleared c
 
 _The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT tutorial "Hydrocron API: Getting Started with SWOT Time Series"](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) authored by Nikki Tebaldi, Cassandra Nickles, and Brandi Downs._
 
-The sections below walk through the data you would collect for this flood, product by product. Run the code blocks in order, in one Python session (later blocks reuse variables from earlier ones), using the Module 4 environment ([environments/m04-synthesis.yml](../environments/m04-synthesis.yml)):
+The sections below walk through the data you would collect for this flood, product by product. Run the code blocks in order, in one Python session (later blocks reuse variables from earlier ones), using the Module 4 environment `environments/m04-synthesis.yml` which you will create with the instructions below.
+
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m04-synthesis.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Conda environment for Module 4: Synthesizing Federal water data products.
+# Create with:  conda env create -f environments/m04-synthesis.yml
+# Then:         conda activate m04-synthesis
+name: m04-synthesis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  # USGS observations (modernized Water Data OGC APIs)
+  - dataretrieval>=1.4
+  # NASA SWOT: Earthdata search/download; hydrocron is a web API reached with requests
+  - earthaccess
+  - requests
+  # Gridded / NetCDF data
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - h5py
+  - rioxarray
+  - pyproj
+  # NOAA NWM forecasts (kerchunk references over cloud storage) and NHD/NLDI reach lookups
+  - pynhd>=0.19
+  - fsspec
+  - gcsfs
+  - s3fs
+  - zarr
+  - kerchunk
+  - dask
+  # Tables, maps and plots
+  - pandas
+  - geopandas
+  - matplotlib
+  - ipykernel   # optional: run the lesson in Jupyter
+  - pip
+  - pip:
+      - nwmurl   # CIROH: builds NWM file URLs
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 # From the root of the course repository

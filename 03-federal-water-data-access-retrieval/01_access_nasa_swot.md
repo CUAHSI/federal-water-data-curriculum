@@ -60,17 +60,53 @@ Confirm this "which product, which route" framing, the scaling limits in the tab
 
 ## Tools and environment setup
 
-You need a free account and a Python environment.
+### Make an Earthdata Login account
 
-1. **Make an Earthdata Login account.** Downloading SWOT files requires one. Register at
-   [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov). (`hydrocron` does not need it.)
-2. **Create the lesson's environment.** The course provides a {term}`conda environment <Conda environment>` file,
-   `environments/m03-swot.yml` (in the course repository), with every package this lesson uses: `earthaccess` for login,
-   search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and `pandas`
-   for `hydrocron`; and `matplotlib` for plots. The file pins the Python version but lets most packages float to their latest
-   release, so you may get newer versions than the ones we tested; record what you actually ran (below) and keep it with
-   your results (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
-   Module 1). `mamba` is faster, but `conda` works the same way.
+Downloading SWOT files requires a free earthdata account. Register at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov). (`hydrocron` does not need it.)
+
+### Create the lesson's environment
+
+You will create a {term}`conda environment <Conda environment>` file called
+`environments/m03-swot.yml`, with every package this lesson uses: `earthaccess` for login,
+search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and `pandas`
+for `hydrocron`; and `matplotlib` for plots. The file pins the Python version but lets most packages float to their latest
+release, so you may get newer versions than the ones we tested; record what you actually ran (below) and keep it with
+your results (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
+Module 1). `mamba` is faster, but `conda` works the same way.
+
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m03-swot.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Environment for Module 3, "Retrieve NASA SWOT data" (03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
+# Create:   mamba env create -f environments/m03-swot.yml   (or: conda env create -f environments/m03-swot.yml)
+# Activate: conda activate m03-swot
+name: m03-swot
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14         # 3.12+ avoids the earthaccess SSL import error noted on the page
+  - earthaccess
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - rioxarray
+  - numpy               # imported directly in the lesson
+  - pandas
+  - geopandas
+  - shapely
+  - pyproj
+  - requests
+  - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 # From the root of the course repository
@@ -83,6 +119,8 @@ python -m ipykernel install --user --name m03-swot --display-name "Python (m03-s
 
 If you work in Jupyter, choose the `Python (m03-swot)` kernel; otherwise your notebook runs in a different environment and
 imports such as `earthaccess` fail.
+
+**Record package versions**
 
 Record the versions you actually ran with, so you (or a reviewer) can rebuild the same setup later. This prints the ones that
 matter most here:
@@ -101,6 +139,8 @@ matplotlib 3.11.2
 pandas 3.0.6
 xarray 2026.9.0
 ```
+
+**Log in to earthaccess**
 
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it prompts for your Earthdata
 username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment
