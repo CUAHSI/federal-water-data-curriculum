@@ -39,20 +39,24 @@ Each lesson follows the same structure, so once you know one, you can find your 
 (m03-example-rivers)=
 ## The example rivers
 
-All three lessons use the same two rivers, chosen because every product has good data there.
+All the lessons in this module use the same two rivers, outlined below:
 
 | Role | River | Example period |
 |---|---|---|
 | Main example in each lesson | **Ohio River at Louisville, Kentucky** | Spring 2025, including a large flood in early April |
 | "Now you try it" | **Willamette River at Salem, Oregon** | February–March 2026, winter high flows |
 
-The Ohio at Louisville is a large, wide river (about 700 m across), which suits satellite measurements, model reaches and stream gages alike. The Willamette at Salem is much narrower (about 150 m), so it's a good test of how each product handles a smaller river.
+**Why these rivers were chosen**
 
-_storing lesson specific information that should be moved here_
-- Important to keep in mind regarding SWOT, the Willamette is much narrower than the Ohio (SWORD expects about 150 m).
-- In February and March 2026, during the wet winter season. 
-- The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
-- The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+Both of these rivers, the Ohio and Willamette, were chosen because every agency’s product has good data there. The Ohio River at Louisville is roughly 700 m across, which suits satellite measurements, model reaches and stream gages alike. The Willamette at Salem is much narrower at roughly 150 m across, so it’s a good test of how each product handles a smaller river.
+
+**The Ohio River at Louisville, Kentucky**
+
+The Ohio River is one of the largest rivers in the country, and at Louisville it carries the drainage of much of the Ohio Valley. In early April 2025, days of heavy rain sent it into a large spring flood. In each lesson of this module, you will be using the agency’s data products to take a closer look at what happened during this flood. This is the main case study that will make up the majority of each lesson.
+
+**The Willamette River at Salem, Oregon**
+
+The Willamette drains the valley between Oregon’s Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain. In the “Now you try it” section of each lesson in this module, you will be using the skills you learned from the Ohio River to investigate the wet winter season; February and March 2026.
 
 ## One framework for three products
 

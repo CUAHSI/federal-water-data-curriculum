@@ -2,7 +2,7 @@
 
 The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <Streamflow>` for about 2.8 million river {term}`reaches <Reach>` across the United States. This lesson shows you how to find the reach you care about and retrieve its forecasts in Python. If you haven't met the NWM yet, start with [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md), which covers how the model works, its {term}`configurations <Configuration>` and its known limitations.
 
-**Main example: the Ohio River at Louisville, Kentucky.** The Ohio is one of the largest rivers in the country, and at Louisville it carries the drainage of much of the Ohio Valley. In early April 2025, days of heavy rain sent it into a large spring flood. You will retrieve NWM forecasts for the reach of the Ohio at Louisville, both today's forecast and archived forecasts issued during the April 2025 flood. At the end, you will repeat the steps on a second river, the Willamette at Salem, Oregon.
+You will retrieve NWM forecasts for the reach of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers), both today's forecast and archived forecasts issued during the April 2025 flood.
 
 NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on Google Cloud and AWS. Two NOAA services serve slices of it:
 

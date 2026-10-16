@@ -5,10 +5,9 @@ the files that cover a river, download them, and pull a water surface elevation 
 SWOT, its products and its quality flags in [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md). Here
 you put that into code.
 
-**The example river.** The main example is the **Ohio River at Louisville, Kentucky**, from 15 March to 15 May 2025. The Ohio
-is about 700 m wide here, well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
-21-day {term}`cycle<Cycle and pass>`. The window includes the large April 2025 flood, so you can watch the river's water surface rise and fall in
-SWOT's own data. At the end you repeat the steps on a second river, the Willamette River at Salem, Oregon.
+You will be using SWOT data to investigate the 2025 spring flood of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers). It is well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
+21-day {term}`cycle<Cycle and pass>`. The window includes the flood, so you can watch the river's water surface rise and fall in
+SWOT's own data.
 
 :::{figure} ../images/m03/swot-location-map.png
 :alt: Two maps. Left, a map of thin gray lines tracing rivers across a diagonal strip of North America from Central America to northern Canada, with a red star at Louisville, Kentucky. Right, a close-up of about 40 km of the Ohio River around Louisville, with three river reaches drawn in color and labeled with their reach IDs, and the red star on the middle reach.
