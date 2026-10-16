@@ -5,10 +5,9 @@ the files that cover a river, download them, and pull a water surface elevation 
 SWOT, its products and its quality flags in [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md). Here
 you put that into code.
 
-**The example river.** The main example is the **Ohio River at Louisville, Kentucky**, from 15 March to 15 May 2025. The Ohio
-is about 700 m wide here, well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
-21-day {term}`cycle<Cycle and pass>`. The window includes the large April 2025 flood, so you can watch the river's water surface rise and fall in
-SWOT's own data. At the end you repeat the steps on a second river, the Willamette River at Salem, Oregon.
+You will be using SWOT data to investigate the 2025 spring flood of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers). It is well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
+21-day {term}`cycle<Cycle and pass>`. The window includes the flood, so you can watch the river's water surface rise and fall in
+SWOT's own data.
 
 :::{figure} ../images/m03/swot-location-map.png
 :alt: Two maps. Left, a map of thin gray lines tracing rivers across a diagonal strip of North America from Central America to northern Canada, with a red star at Louisville, Kentucky. Right, a close-up of about 40 km of the Ohio River around Louisville, with three river reaches drawn in color and labeled with their reach IDs, and the red star on the middle reach.
@@ -61,17 +60,53 @@ Confirm this "which product, which route" framing, the scaling limits in the tab
 
 ## Tools and environment setup
 
-You need a free account and a Python environment.
+### Make an Earthdata Login account
 
-1. **Make an Earthdata Login account.** Downloading SWOT files requires one. Register at
-   [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov). (`hydrocron` does not need it.)
-2. **Create the lesson's environment.** The course provides a {term}`conda environment <Conda environment>` file,
-   `environments/m03-swot.yml` (in the course repository), with every package this lesson uses: `earthaccess` for login,
-   search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and `pandas`
-   for `hydrocron`; and `matplotlib` for plots. The file pins the Python version but lets most packages float to their latest
-   release, so you may get newer versions than the ones we tested; record what you actually ran (below) and keep it with
-   your results (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
-   Module 1). `mamba` is faster, but `conda` works the same way.
+Downloading SWOT files requires a free earthdata account. Register at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov). (`hydrocron` does not need it.)
+
+### Create the lesson's environment
+
+You will create a {term}`conda environment <Conda environment>` file called
+`environments/m03-swot.yml`, with every package this lesson uses: `earthaccess` for login,
+search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and `pandas`
+for `hydrocron`; and `matplotlib` for plots. The file pins the Python version but lets most packages float to their latest
+release, so you may get newer versions than the ones we tested; record what you actually ran (below) and keep it with
+your results (see [Reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques) in
+Module 1). `mamba` is faster, but `conda` works the same way.
+
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m03-swot.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Environment for Module 3, "Retrieve NASA SWOT data" (03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
+# Create:   mamba env create -f environments/m03-swot.yml   (or: conda env create -f environments/m03-swot.yml)
+# Activate: conda activate m03-swot
+name: m03-swot
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14         # 3.12+ avoids the earthaccess SSL import error noted on the page
+  - earthaccess
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - rioxarray
+  - numpy               # imported directly in the lesson
+  - pandas
+  - geopandas
+  - shapely
+  - pyproj
+  - requests
+  - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 # From the root of the course repository
@@ -84,6 +119,8 @@ python -m ipykernel install --user --name m03-swot --display-name "Python (m03-s
 
 If you work in Jupyter, choose the `Python (m03-swot)` kernel; otherwise your notebook runs in a different environment and
 imports such as `earthaccess` fail.
+
+**Record package versions**
 
 Record the versions you actually ran with, so you (or a reviewer) can rebuild the same setup later. This prints the ones that
 matter most here:
@@ -102,6 +139,8 @@ matplotlib 3.11.2
 pandas 3.0.6
 xarray 2026.9.0
 ```
+
+**Log in to earthaccess**
 
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it prompts for your Earthdata
 username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment
@@ -887,10 +926,11 @@ Confirm these recommendations, in particular the guidance on parallel `hydrocron
 
 ## Now you try it
 
-Repeat the main steps on a second river: the **Willamette River at Salem, Oregon**, in February and March 2026, during the
-wet winter season. The Willamette here is much narrower than the Ohio (SWORD expects about 150 m).
+Repeat the main steps for accessing SWOT hydrologic data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task:** find the SWORD reach at Salem and retrieve its water surface elevation time series with `hydrocron`. Give the new results new names (for example `salem_raster`), so you can still compare them with the Louisville ones.
+**Your task:** Find the SWORD reach for the Willamette and retrieve its water surface elevation time series with `hydrocron`. 
+
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example `salem_raster`), so you can still compare them with the Ohio River at Louisville.
 
 1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
    and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.
@@ -903,12 +943,12 @@ the right UTM zone for Salem by itself.
 4. Set `reach_id` to that reach and call `get_reach_timeseries(reach_id, start, end)`.
 
 **What you should get:** the nearest reach is `78220000131`, about 40 m from the point, with `p_width` = 150 m. `hydrocron`
-returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
+returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (`reach_q` = 2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
 several meters higher, and their widths (196–253 m) are well above `p_width`. Before trusting those three, ask whether the
 river really rose that much or whether SWOT counted water outside the channel; an independent record for those dates, such
 as a stream gage or imagery, would tell you.
 
-:::{dropdown} Show an answer
+:::{dropdown} Example answer
 ```python
 # Step 1: the new query
 site_name = "Willamette River at Salem, OR"
