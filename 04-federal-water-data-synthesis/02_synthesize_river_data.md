@@ -354,8 +354,16 @@ def build_refs(day, hour):
     )
     with ThreadPoolExecutor(8) as pool:  # one request per file: run them in parallel
         singles = list(pool.map(index_one, urls))
-    return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
-                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+    # Run the combine step in its own thread: kerchunk starts its own event loop,
+    # which fails inside Jupyter's running loop.
+    def combine():
+        return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
+                               identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+    with ThreadPoolExecutor(1) as pool:
+        return pool.submit(combine).result()
+
 
 # The short-range forecasts in nwm_issue_times, all issued before the 08:00 UTC 12 Dec crest
 refs = {f"{day} {hour}Z": build_refs(day, hour) for day, hour in nwm_issue_times}
