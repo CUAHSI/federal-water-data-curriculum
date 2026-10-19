@@ -1,6 +1,10 @@
 # Meet NOAA NWM
 
-The *NOAA National Water Model ({term}`NWM`)* is produced by NOAA's [Office of Water Prediction](https://water.noaa.gov/about/nwm) (OWP), part of the National Weather Service (NWS). NWM is a hydrologic modeling framework, not an observational network — it simulates and forecasts streamflow (along with soil moisture, snowpack, and other water-budget variables) for over 3.4 million miles of rivers and streams across the U.S. and its territories by combining weather forecasts, land surface physics, and channel routing. It exists to fill the huge gap between official river forecast points and the entire river network: NOAA describes the NWM as complementing official NWS river forecasts at approximately 4,000 locations across the contiguous U.S. ({term}`CONUS`), giving forecasters, emergency managers, and floodplain managers guidance in places with no forecast point ([About the NWM](https://water.noaa.gov/about/nwm)). NWM output is supplemental guidance: official river forecasts at forecast points come from the NWS River Forecast Centers. Learn more at the [NWM landing page](https://water.noaa.gov/about/nwm), [National Water Prediction Service](https://water.noaa.gov/) viewer, and [CIROH's NWM overview](https://hub.ciroh.org/docs/products/national-water-model/).
+The *NOAA National Water Model ({term}`NWM`)* is produced by NOAA's [Office of Water Prediction](https://water.noaa.gov/about/nwm) (OWP), part of the National Weather Service (NWS). NWM is a hydrologic modeling framework, not an observational network — it simulates and forecasts streamflow (along with soil moisture, snowpack, and other water-budget variables) for over 3.4 million miles of rivers and streams across the U.S. and its territories by combining weather forecasts, land surface physics, and channel routing. 
+
+It exists to fill the huge gap between official river forecast points and the entire river network: NOAA describes the NWM as complementing official NWS river forecasts at approximately 4,000 locations across the contiguous U.S. ({term}`CONUS`), giving forecasters, emergency managers, and floodplain managers guidance in places with no forecast point ([About the NWM](https://water.noaa.gov/about/nwm)). NWM output is supplemental guidance: official river forecasts at forecast points come from the NWS River Forecast Centers. 
+
+Learn more at the [NWM landing page](https://water.noaa.gov/about/nwm), [National Water Prediction Service](https://water.noaa.gov/) viewer, the NWS story map [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab), and [CIROH's NWM overview](https://hub.ciroh.org/docs/products/national-water-model/).
 
 :::{admonition} Partner review (NOAA): Official forecasts and model guidance
 :class: important
@@ -13,7 +17,7 @@ This table maps NWM's own vocabulary onto the course's [shared concepts](00_intr
 
 | Shared concept | NWM equivalent | Notes |
 |---|---|---|
-| {term}`Location identifier` | `feature_id` (= {term}`COMID`) | Each stream reach in the model has a unique {term}`feature_id`, which corresponds to a COMID in the {term}`NHDPlus` stream network (see below). |
+| {term}`Location identifier` | `feature_id` (= {term}`COMID`) | For streamflow in the CONUS domain, each stream reach in the model has a unique {term}`feature_id`, which corresponds to a COMID in the {term}`NHDPlus` stream network (see below). The NOAA NWM API and `hydrotools` call it `nwm_feature_id`. |
 | {term}`Variable` | streamflow | Channel discharge at a reach. NWM also outputs many other variables (soil moisture, snowpack, evapotranspiration, reservoir levels) that aren't the focus of this course. |
 | {term}`Variable unit` | m³/s | Cubic meters per second, consistent across all NWM configurations. The NOAA NWM API labels it `CMS`. |
 | {term}`Time` | {term}`reference time <Forecast reference time>` + {term}`valid time <Valid time>` | Every forecast value has two times (UTC): when the forecast was issued (reference time) and the time it predicts (valid time). The difference is the {term}`lead time <Lead time>`. The same valid time appears in many forecasts issued at different reference times. |
@@ -21,14 +25,14 @@ This table maps NWM's own vocabulary onto the course's [shared concepts](00_intr
 | {term}`Version / provenance` | model version and {term}`configuration <Configuration>` | For example v3.0, `medium_range`, issued 2026-10-08 18:00 UTC. Values for the same reach and valid time differ between versions and between configurations. |
 | {term}`Data unit` | one output file per timestep | Each configuration's run writes one NetCDF file per valid time (for streamflow, a `channel_rt` file), holding every reach in the domain. |
 
-Two network terms come up constantly with the NWM:
+Two network terms come up constantly with the NWM's streamflow output. They identify reaches in the river network, so they apply to streamflow (and other values reported per reach). Other variables are reported on different units: soil moisture and snowpack, for example, are reported on a structured grid (see Spatial coverage).
 
 - **{term}`NHDPlus`** is short for "National Hydrography Dataset Plus." A USGS-maintained geospatial dataset that breaks the entire U.S. stream and river network into individual reaches, each with its own COMID, plus catchment boundaries and upstream/downstream connectivity. NWM doesn't define its own river network, it runs on top of NHDPlus, which is also why tools like {term}`NLDI` can look up COMIDs by location.
-- **{term}`COMID`** is short for "Common Identifier." A unique numeric ID assigned to each individual stream segment (reach) in the NHDPlus stream network. NWM's `feature_id` values are the same numbers as COMIDs, just under a different name, so the two terms are used interchangeably across NWM documentation and tools.
+- **{term}`COMID`** is short for "Common Identifier." A unique numeric ID assigned to each individual stream segment (reach) in the NHDPlus stream network. In the CONUS domain, NWM's feature_id values are the same numbers as COMIDs, just under a different name, so the two terms are used interchangeably across NWM documentation and tools.
 
 ## Dataset derivation
 
-**Key point: NWM values are model output, and a new model version can change the numbers for the same reach and time.**
+**Key point: NWM values are model output, and a new model version can change the estimates for the same reach and time.**
 
 NWM output is entirely modeled, not measured directly. It couples a land-surface model (calculating snowmelt, infiltration, and runoff on a grid) with channel and reservoir routing along the NHDPlus stream network, driven by weather inputs called {term}`forcing <Forcing>`. The analysis configuration then uses {term}`data assimilation <Data assimilation>` of real-time observations (including USGS gage data) to correct the simulation.
 
@@ -50,23 +54,29 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 
 ## Spatial coverage
 
-- **Extent:** CONUS + hydrologically-contributing areas, plus separate domains for Hawaii, Puerto Rico/USVI, and southern Alaska (Cook Inlet, Copper River Basin, Prince William Sound)
+- **Extent:** In the current version (v3.0): CONUS + hydrologically-contributing areas, plus separate domains for Hawaii, Puerto Rico/USVI, and southern Alaska (Cook Inlet, Copper River Basin, Prince William Sound). The extent depends on the model version: for example, only the v3.0 retrospective simulation covers the Alaska, Hawaii and Puerto Rico/USVI domains ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/)).
 - **Type:** Point/vector network output for streamflow and reservoirs (one value per `feature_id`, over 2.7 million reaches); paired with 1 km gridded NetCDF for land-surface variables and 100–250 m gridded NetCDF for ponded water depth and soil saturation
-- **Resolution:** Reach-based routing follows NHDPlus (medium-resolution, 1:100,000-scale network); grids are 1 km (land surface) and 100/250 m (near-surface hydrology)
-- **{term}`CRS`:** Streamflow output has no coordinates: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide for NHDPlus](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
+- **Resolution:** Reach-based routing follows NHDPlus (medium-resolution, 1:100,000-scale network); grids are 1 squared km (land surface) and 250 square m (near-surface hydrology)
+- **{term}`CRS`:** Streamflow outputs do not include coordinate information in the format the NWM reports them: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide for NHDPlus](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
 
 ## Temporal coverage
 
-- **Period of record:** A {term}`retrospective simulation <Retrospective simulation>` covers the historical period, and operational forecasts have run since August 2016. "Retrospective" here means a single, continuous model run over the full historical period, using historical weather data as input rather than real-time observations or forecasts. It's not a collection of old forecasts, it's NWM re-simulating what streamflow likely was at every `feature_id`, including reaches with no gage. The v3.0 retrospective on AWS covers February 1979 – January 2023 ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/), checked 2026-10-07). This makes it the main source of long-term, reach-level historical streamflow for ungauged locations.
+- **Period of record:** The NWM offers different types of simulation, and each covers a different period. Operational forecasts have run since August 2016. A {term}`retrospective simulation <Retrospective simulation>` is a single, continuous model run over multiple decades that lets you examine past hydrologic events. "Retrospective" here means a run over the full historical period using historical weather data as input rather than real-time observations or forecasts. It's not a collection of old forecasts: it is the model's best available reconstruction of what streamflow likely was at every `feature_id`, given current modeling knowledge and datasets, including reaches with no gage. The v3.0 retrospective on AWS covers February 1979 – January 2023 ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/)). This makes it the main source of long-term, reach-level historical streamflow for ungauged locations.
 - **Frequency/resolution:** Varies by configuration. Analysis & Assimilation and Short-Range are hourly, and the Retrospective dataset is hourly throughout. Medium-Range runs as an {term}`ensemble <Ensemble member>`: member 1 runs out to 10 days and members 2–6 out to 8.5 days; the NOAA NWM API returned hourly streamflow for all six members on 2026-10-08 (see the figure below). Long-Range output is 6-hourly.
 - **Update cadence:** Short-Range forecasts cycle hourly over CONUS; Medium- and Long-Range forecasts are produced four times a day; forecast latency is roughly 1–2 hours after cycle time (mostly driven by the lag in incoming weather-forcing data)
 
-**Which configuration do I want?** For history (a past flood, a long record at an ungaged reach), use the retrospective simulation. For what the model predicted or predicts about an event, use a forecast configuration. In CONUS:
+**Which configuration do I want?** It depends on what you mean by "history":
+
+- To see how well we can digitally reproduce a past event, such as a flood from 15 years ago, or to get a long record at an ungaged reach, use the retrospective simulation. It shows what current modeling knowledge and tools can reproduce, not what was forecast at the time.
+- To assess the NWM's forecasting skill for a past flood, use the archived forecasts from the forecast configurations (for floods since forecasts began to be archived). These are also historical data, but they show what the model actually predicted at the time.
+- For what the model predicts now, use a current forecast configuration.
+
+Each configuration also has its own model inputs. For example, the retrospective simulation is driven by the AORC (Analysis of Record for Calibration) weather dataset, while short-range forecasts use operational weather forecast products such as HRRR and RAP. See the QPF forcings section of [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab). In CONUS:
 
 | Configuration | What it's for | Horizon | Output interval | Issued |
 |---|---|---|---|---|
 | Retrospective | Long historical record, ungaged reaches | Feb 1979 – Jan 2023 (v3.0) | hourly | one-off run per model version |
-| Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last few hours | hourly | hourly |
+| Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last 3 hours (look-back) | hourly | hourly |
 | Short-Range (`short_range`) | Next-day forecasts | 18 hours | hourly | hourly |
 | Medium-Range (`medium_range`) | Forecasts for the coming week; six ensemble members | 10 days (member 1); 8.5 days (members 2–6) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
@@ -84,7 +94,7 @@ Confirm (1) the period covered by the current retrospective simulation, and the 
 
 **What the data look like.** The figure shows one medium-range forecast for the NHDPlus reach of the Ohio River at Louisville, Kentucky (COMID `10164004`). Everything to the right of the dotted line is a prediction issued at a single reference time. Members 1–6 start from the same conditions and spread apart as lead time grows, and member 1 runs a day and a half longer than the others. Medium-range forecasts are issued four times a day, so six hours later a new forecast replaces this one; a forecast is identified by both its reach and its reference time.
 
-This is model output, not an observation, and it is not checked against the gage here. The quick dip and rise in the first day may reflect the river's real behavior (Louisville sits at a lock and dam) or the forecast settling in from its starting conditions; Module 4 shows how to compare forecasts with observations. This figure also can't be lined up with the April 2025 flood shown on the SWOT and USGS pages, because the API only keeps the latest few days of forecasts. Past forecasts come from archives, as Module 3 explains.
+This is model output, not an observation, and it is not checked against the gage here. The quick dip and rise in the first day may reflect the river's real behavior (Louisville sits at a lock and dam) or the forecast settling in from its starting conditions; Module 4 shows how to compare forecasts with observations. This particular figure can't be lined up with the April 2025 flood shown on the SWOT and USGS pages, because the API only keeps the latest few days of forecasts. Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve them.
 
 The COMID `10164004` was found by asking the {term}`NLDI` which NHDPlus reach the Louisville USGS gage sits on; Module 3 shows how.
 
@@ -96,7 +106,7 @@ NWM medium-range streamflow forecast for COMID `10164004`, Ohio River at Louisvi
 :::
 
 :::{dropdown} How this figure was made
-This script asks NOAA's [NWM API](https://api.water.noaa.gov/nwm/v1/docs) for the latest medium-range forecast at one reach. The API needs no key. It returns JSON, which the script flattens into one row per ensemble member and valid time. It runs in the course's `m03-nwm` environment (`environments/m03-nwm.yml`); the Module 3 lesson explains this and the other NWM access routes.
+*You don't need to run this now.* It's here so you can see exactly how the figure was made and reproduce it later. This script asks NOAA's [NWM API](https://api.water.noaa.gov/nwm/v1/docs) for the latest medium-range forecast at one reach. The API needs no key. It returns JSON, which the script flattens into one row per ensemble member and valid time. It runs in the course's `m03-nwm` environment (`environments/m03-nwm.yml`); the Module 3 lesson explains this and the other NWM access routes.
 
 ```python
 import requests
@@ -145,19 +155,15 @@ The `print` line shows the run's configuration, reference time and units, for ex
 ## Usage and support
 
 - **Citation:** NOAA publishes a standard format on each dataset's AWS Registry of Open Data listing, e.g. for the Short-Range Forecast: *"NOAA National Water Model Short-Range Forecast was accessed on [DATE] from https://registry.opendata.aws/noaa-nwm-pds."* Swap in the specific product name, version, and dataset URL you actually used (e.g. the [Retrospective archive](https://registry.opendata.aws/nwm-archive/) instead of the Short-Range Forecast).
-- **License/access:** NWM output is open data, distributed through the NOAA Open Data Dissemination ({term}`NODD`) program via AWS and Google Cloud, as well as a 48-hour rolling window on NOAA's {term}`NOMADS` server.
-- **Which access route should I use?** NWM output can be reached several ways: the NOAA NWM API for current forecasts, {term}`hydrotools` for past forecasts, and {term}`kerchunk`/{term}`virtual Zarr <Virtual Zarr>` references for many reaches. They differ a lot in cost as your question grows. The Module 3 lesson [Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-access-routes) compares them.
+- **License/access:** NWM output is open data, distributed through the NOAA Open Data Dissemination ({term}`NODD`) program via AWS and Google Cloud, as well as a rolling window of about 48 hours on NOAA's {term}`NOMADS` server.
+- **Which access route should I use?** It depends on what you need:
+  - **Current forecasts:** the NOAA NWM API, which keeps only the last few days.
+  - **Past forecasts:** NOAA's public cloud archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (also on [AWS](https://registry.opendata.aws/noaa-nwm-pds/)), stored as NetCDF files, one per forecast hour. {term}`hydrotools` downloads whole files. {term}`kerchunk`/{term}`virtual Zarr <Virtual Zarr>` references are small index files that tell tools where each variable's chunks sit inside those NetCDF files, so they read only the chunks they need, which helps with many reaches or many forecasts.
+  - **Long historical simulations (retrospective):** NOAA's public archive in NetCDF or Zarr format ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/)).
+
+  They differ a lot in cost as your question grows. The Module 3 lesson [Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md#nwm-access-routes) compares them.
 - **Change over time:** Values can shift not just with new observations (in Analysis & Assimilation) but with model version upgrades — treat any long time series spanning a version change as non-homogeneous. Forecasts also *expire* from some services: the NOAA NWM API and NOMADS keep only the last few days. If your work depends on a specific forecast, record its configuration, reference time and model version, and keep a copy of the values you used; Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) discusses exactly this case.
 - **Contact:** For questions about data content, quality, or model methodology, contact NOAA's Office of Water Prediction (contacts listed on the [NWM about page](https://water.noaa.gov/about/nwm)). For questions specifically about data delivery via NODD (AWS/Google Cloud access), email nodd@noaa.gov.
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Terminology: say that `feature_id` = COMID holds for the CONUS domain (the glossary already does); Alaska, Hawaii and Puerto Rico domains need a NOAA check before stating what they use.
-- Partner-review callouts still describe earlier drafts ("an earlier draft said 3-hourly", "1979–present"); keep the questions, drop the history.
-- Mention `nwm_feature_id` (the NOAA NWM API's name for the ID); make the NOMADS window wording match the glossary (about 48 hours); give the Analysis & Assimilation lookback in hours.
-- Split the opening paragraph; add the "you don't need to run this now" note to the figure dropdown.
-:::
 
 ## Further reading
 
@@ -171,3 +177,5 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [CIROH RIVR App](https://hub.ciroh.org/docs/products/mobile-apps/RIVR/#background-of-the-us-nwm-streamflow-forecasts) - tool for real-time and forecast riverflow information
 - Comparison of NWM v2.1 and v3.0 in Texas: [Journal of Hydrology: Regional Studies (2025)](https://doi.org/10.1016/j.ejrh.2025.102196)
 - [USGS user guide for the National Hydrography Dataset](https://pubs.usgs.gov/publication/sir20255031/full)
+- [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab) (NWS story map, updated September 2024)
+- [NWM operational archive on Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model)
