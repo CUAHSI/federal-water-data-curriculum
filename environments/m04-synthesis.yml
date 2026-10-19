@@ -30,7 +30,10 @@ dependencies:
   - pandas
   - geopandas
   - matplotlib
-  - ipykernel   # optional: run the lesson in Jupyter
+  # For running inside Jupyter
+  - ipykernel     # optional: run the lesson in Jupyter
+  - jupyterlab
+  - ipywidgets
   - pip
   - pip:
       - nwmurl   # CIROH: builds NWM file URLs

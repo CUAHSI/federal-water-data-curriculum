@@ -2,7 +2,7 @@
 
 USGS Water Data for the Nation ({term}`WDFN`) publishes the observations USGS collects at thousands of {term}`monitoring locations <Monitoring location ID>` across the country: river {term}`discharge <Discharge>` and {term}`gage height <Gage height>`, groundwater levels, water quality and more. This lesson shows you how to find monitoring locations and retrieve their streamflow data in Python. For what these data are, how they're collected and their limitations, start with [Meet USGS WDFN](../02-federal-water-data-landscape/03_meet_usgs_wdfn.md).
 
-**Main example: the Ohio River at Louisville, Kentucky.** The Ohio is one of the largest rivers in the country, and at Louisville it carries the drainage of much of the Ohio Valley. In early April 2025, days of heavy rain sent it into a large spring flood. You will find the stream monitoring locations around Louisville, then retrieve the sensor record, daily values and field measurements from the gage on the Ohio, monitoring location `USGS-03294500`, for 15 March to 15 May 2025. At the end, you will repeat the steps on a second river, the Willamette at Salem, Oregon.
+You will find the stream monitoring locations around the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers), then retrieve the sensor record, daily values and field measurements from the gage on the Ohio, monitoring location `USGS-03294500`, for 15 March to 15 May 2025.
 
 **A note on names.** The data you'll retrieve are stored in the National Water Information System ({term}`NWIS`), the USGS database behind WDFN. Many older tutorials say "NWIS" for the whole system, and its older web services carry that name. USGS currently runs two generations of web service side by side:
 
@@ -45,7 +45,34 @@ USGS explains how keys work on its [API keys page](https://api.waterdata.usgs.go
 
 ### Create the conda environment
 
-This lesson has its own {term}`conda environment <Conda environment>`, [`environments/m03-wdfn.yml`](../environments/m03-wdfn.yml), with `dataretrieval` and the other packages this lesson uses:
+You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, which contians `dataretrieval` and the other packages this lesson uses:
+
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m03-wdfn.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Environment for Module 3, "Retrieve USGS WDFN data" (03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md)
+# Create:   mamba env create -f environments/m03-wdfn.yml   (or: conda env create -f environments/m03-wdfn.yml)
+# Activate: conda activate m03-wdfn
+name: m03-wdfn
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  - dataretrieval>=1.4   # modernized `waterdata` module (USGS Water Data APIs)
+  - pandas
+  - geopandas
+  - matplotlib          # figures and maps in the lesson
+  - requests            # river line for the location map (NLDI)
+  - ipykernel           # optional: run the lesson in Jupyter
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 # From the root of the course repository
@@ -529,17 +556,19 @@ Confirm these recommendations, especially the guidance on concurrency and on usi
 
 ## Now you try it
 
-Repeat the main steps on the course's second river: the **Willamette River at Salem, Oregon**, monitoring location `USGS-14191000`. The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+Repeat the main steps for accessing NWM data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task**
+**Your task:** Retrieve discharge from a monitoring location on the Willamette using `dataretrieval`.
 
-1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` and the dates (`START`, `END`) in the daily-values example.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
+
+1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` to `USGS-14191000` and the dates `START, END` to `"2026-02-01", "2026-03-31"`.
 2. Find the highest daily mean, and check its approval status.
 3. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
 **What you should see:** 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
-:::{dropdown} Answer
+:::{dropdown} Example answer
 ```python
 site = "USGS-14191000"                  # Willamette River at Salem, OR
 START, END = "2026-02-01", "2026-03-31"

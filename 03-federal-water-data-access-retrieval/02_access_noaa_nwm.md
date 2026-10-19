@@ -2,7 +2,7 @@
 
 The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <Streamflow>` for about 2.8 million river {term}`reaches <Reach>` across the United States. This lesson shows you how to find the reach you care about and retrieve its forecasts in Python. If you haven't met the NWM yet, start with [Meet NOAA NWM](../02-federal-water-data-landscape/02_meet_noaa_nwm.md), which covers how the model works, its {term}`configurations <Configuration>` and its known limitations.
 
-**Main example: the Ohio River at Louisville, Kentucky.** The Ohio is one of the largest rivers in the country, and at Louisville it carries the drainage of much of the Ohio Valley. In early April 2025, days of heavy rain sent it into a large spring flood. You will retrieve NWM forecasts for the reach of the Ohio at Louisville, both today's forecast and archived forecasts issued during the April 2025 flood. At the end, you will repeat the steps on a second river, the Willamette at Salem, Oregon.
+You will retrieve NWM forecasts for the reach of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers), both today's forecast and archived forecasts issued during the April 2025 flood.
 
 NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on Google Cloud and AWS. Two NOAA services serve slices of it:
 
@@ -33,14 +33,68 @@ The numbers behind these recommendations are in [Why NWM downloads cost what the
 
 ## Tools and environment setup
 
-This lesson has its own {term}`conda environment <Conda environment>`, so its packages don't collide with other lessons' packages and so the code runs with known versions.
+You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, so its packages don't collide with other lessons' packages and so the code runs with known versions. This installs everything for discovery (`pynhd`) and for all three download routes (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the figures and `ipykernel` for Jupyter.
 
 :::{admonition} TODO (dev team): One environment per lesson?
 :class: attention
 For consideration: should we use environments to avoid dependency collisions? Or try to actually address any dependency collisions? We ultimately want people to be able to use all three datasets on their computers, and give them the knowledge and tools to do so.
 :::
 
-The environment file [`environments/m03-nwm.yml`](../environments/m03-nwm.yml) lists everything this page uses. From the root of the course repository:
+**Create the YAML file**
+
+1. Create an empty YAML file, this can be done in the command line or any text editor. 
+2. Copy and paste the code snippet in the dropdown below into that file.
+3. Save the file in an `environments` folder with the name `m03-nwm.yml`.
+
+::: {dropdown} YAML file contents
+```yaml
+# Environment for Module 3, "Retrieve NOAA NWM data"
+# (03-federal-water-data-access-retrieval/02_access_noaa_nwm.md).
+#   conda env create -f environments/m03-nwm.yml
+#   conda activate m03-nwm
+name: m03-nwm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  # discovery: NLDI / COMIDs
+  - pynhd
+  - geopandas
+  # reading NWM NetCDF files and kerchunk / virtual-Zarr references
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - h5py
+  - zarr>=3
+  - kerchunk
+  - fsspec
+  - gcsfs
+  - s3fs
+  - ujson
+  - dask
+  - pandas
+  - requests
+  - matplotlib
+  - nest-asyncio  # only needed when running hydrotools inside Jupyter
+  - ipykernel     # optional: run the lesson in Jupyter
+  # dependencies of hydrotools.nwm_client, installed from conda-forge where possible
+  - pytables
+  - pint
+  - pyarrow
+  - google-cloud-storage
+  - beautifulsoup4
+  - aiohttp
+  - aiofiles
+  - adlfs
+  - planetary-computer
+  - pip
+  - pip:
+      - hydrotools.nwm_client
+      - nwmurl
+```
+:::
+
+**Create and activate the environment**
 
 ```bash
 conda env create -f environments/m03-nwm.yml
@@ -50,7 +104,7 @@ conda activate m03-nwm
 python -m ipykernel install --user --name m03-nwm --display-name "Python (m03-nwm)"
 ```
 
-This installs everything for discovery (`pynhd`) and for all three download routes (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the figures and `ipykernel` for Jupyter. If you work in Jupyter, choose the `Python (m03-nwm)` kernel; otherwise your notebook runs in a different environment and imports such as `pynhd` fail. None of the routes on this page needs an API key or account.
+If you work in Jupyter, choose the `Python (m03-nwm)` kernel; otherwise your notebook runs in a different environment and imports such as `pynhd` fail. None of the routes on this page needs an API key or account.
 
 The environment file pins the Python version but lets most packages float to their latest release, so a year from now `conda env create` may give you newer versions than the ones we tested. When you finish an analysis, record exactly what you ran with `conda env export > environment-lock.yml` and keep that file with your results. [Data Management](../01-data-best-practices/02_data_management.md) (Module 1) explains why this matters for reproducibility. The examples on this page were tested with Python 3.14, `pynhd` 0.20.0, `hydrotools.nwm_client` 9.2.1, `kerchunk` 0.2.10, `xarray` 2026.9.0, `zarr` 3.4.0 and `fsspec` 2026.9.0.
 
@@ -672,17 +726,19 @@ print(basin.shape)   # (forecast hours, reaches)
 
 ## Now you try it
 
-Repeat the main steps on the course's second river: the **Willamette River at Salem, Oregon**. The Willamette drains the valley between Oregon's Coast Range and Cascades and runs high in winter, when Pacific storms bring heavy rain.
+Repeat the main steps for accessing NWM data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task**
+**Your task:** Find the COMID for the Willamette and retrieve short-range forecasts using the NWM API and Kerchunk references. 
 
-1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`. Change `POINT` to `(-123.0429, 44.9443)`.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
+
+1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, by changing `POINT` to `(-123.0429, 44.9443)`.
 2. Get the latest short-range forecast for that COMID from the NOAA NWM API. Change `comid` in the API example.
 3. The Willamette ran high in late February 2026. Read the short-range forecast issued at 12Z on 25 February 2026 from NOAA's published references. Change `day` to `"20260225"` in the published-references example (keep `t12z`).
 
 **What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 published reference files for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
 
-:::{dropdown} Answer
+:::{dropdown} Example answer
 ```python
 from pynhd import NLDI
 import requests
