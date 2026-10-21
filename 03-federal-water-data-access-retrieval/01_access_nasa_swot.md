@@ -445,13 +445,8 @@ reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_s
 
 The point sits on reach **`74267300251`**, about 200 m from its centerline (well inside a channel about 720 m wide). Its neighbors are `74267300241` (downstream) and `74267300261` (upstream). Reach
 IDs encode position in SWORD: in `74267300251`, the leading `7` is the North America region, and the last digit (`1`) is the
-reach type, `1` meaning a river reach. The granule itself holds every reach SWOT observed along this pass across North America.
+reach type, `1` meaning a river reach. For detailed information on how to read a `reach_id`, see this [PO.DAAC Cookbook page](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html#obtain-sword-reach-ids). The granule itself holds every reach SWOT observed along this pass across North America.
 RiverSP files carry about 130 columns; the product description documents (PDDs), linked in the table on the PO.DAAC [datasets information page](https://podaac.jpl.nasa.gov/SWOT?tab=datasets-information), define them all.
-
-:::{admonition} TODO (dev team): Reach ID structure
-:class: attention
-Confirm the reach ID digit meanings (region, basin, reach number, type) against the SWORD product description and add a link.
-:::
 
 Notice `p_width`: SWORD expects this reach to be about 720 m wide, and SWOT measured 853 m on this overpass, with the river in
 flood. Each row is one reach seen on this overpass. The key columns:
