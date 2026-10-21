@@ -24,12 +24,10 @@ branches as you go and open draft PRs; Lindsay reviews and merges them.
 |---|---|
 | `02-` to `04-` module folders | Full edits per `STYLE_GUIDE.md` and your lane. Colleagues also edit these pages: build on their text and list changed sections in the PR. |
 | `glossary.md`, `references.md`, `images/` | Course-wide Glossary, References page, and rendered figures/maps (`images/<module>/`). |
-| `01-data-best-practices/` | **Do not edit or propose changes.** Staff are working on it. |
+| `01-data-best-practices/` | Editable. Keep changes to items Lindsay approved in the Module 1 alignment review. |
 | `environments/` | One file per lesson: `m03-swot.yml`, `m03-nwm.yml`, `m03-wdfn.yml`, `m04-synthesis.yml` (STYLE_GUIDE §5). |
 | `myst.yml` | Update the `toc` when adding/renaming pages. |
 | `.claude/`, `.github/workflows/` | Don't change unless Lindsay asks. |
-
-Edits to Module 1 are blocked by `.claude/settings.json`; don't try to work around that.
 
 ## Content conventions
 
