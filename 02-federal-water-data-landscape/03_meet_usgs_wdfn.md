@@ -52,7 +52,7 @@ Field measurements are published too, so you can see how well the rating is supp
 
 :::{admonition} Partner review (USGS): Coverage figures and provisional data
 :class: important
-Confirm: (1) the count of 9,011 monitoring locations with discharge data; (2) that instantaneous (continuous) data are available back to October 1, 1950; (3) that daily values are usually available the same day; (4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); and (5) that daily values are computed over the monitoring location's local day (standard time).
+Confirm: (1) the count of 9,011 monitoring locations with discharge data; (2) that instantaneous (continuous) data are available back to October 1, 1950; (3) that daily values are usually available the same day; (4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); and (5) that daily values are computed over the monitoring location's local day (standard time). The provisional data statement describes provisional data as subject to revision, not limited to 120 days, and the 120-day window we found applies to certain parameters on some legacy station pages.
 :::
 
 ## Data content
