@@ -24,10 +24,10 @@ NWM output is big: every forecast hour is a file covering all ~2.8 million reach
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Today's or the last few days' forecasts for a few reaches | [NOAA NWM API](#nwm-api) | No | Keeps only ~3–5 days of runs; labelled experimental; built for a few reaches per request |
-| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
+| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) ([Google Cloud archive](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model)) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
 | Past forecasts for many reaches or a region, or many issue times | [Kerchunk references](#nwm-kerchunk) + `xarray`/`dask`, ideally run in the cloud | No | Reads only the `streamflow` chunk (~7× fewer bytes than whole files) with less memory, but each read is still a CONUS-wide chunk; building references is a one-time step per run |
 | Long historical record (simulation, not forecasts) | NWM {term}`retrospective simulation <Retrospective simulation>` (cloud Zarr) | No | A different product (see [Temporal scaling](#nwm-temporal-scaling)) |
-| Researchers working on CIROH projects | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
+| Researchers working on CIROH projects who want to query selected forecast data without downloading whole files | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | You request only the data you need through a REST API backed by a BigQuery dataset, unlike `hydrotools`, which downloads whole files from the Google Cloud archive. Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
 
 The numbers behind these recommendations are in [Why NWM downloads cost what they cost](#nwm-cost).
 
