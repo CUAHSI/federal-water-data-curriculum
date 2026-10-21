@@ -290,7 +290,7 @@ Every `waterdata` function returns a `(DataFrame, metadata)` pair. The DataFrame
 cont, md = waterdata.get_continuous(
     monitoring_location_id=site,
     parameter_code=["00060", "00065"],    # discharge and gage height
-    time=f"{START}T00:00:00Z/{END}T00:00:00Z",
+    time=f"{START}T00:00:00Z/{END}T23:59:59Z",
 )
 print(cont.shape)
 print(cont[["time", "parameter_code", "value", "unit_of_measure", "approval_status", "qualifier"]].head())
@@ -565,24 +565,28 @@ Repeat the main steps for accessing NWM data on a second river: the **Willamette
 
 Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
 
-1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` to `USGS-14191000` and the dates `START, END` to `"2026-02-01", "2026-03-31"`.
-2. Find the highest daily mean, and check its approval status.
-3. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
+1. Change `site` to `USGS-14191000`.
+2. Get the time series metadata for the monitoring location to check the expected record lengths.
+3. Change the dates `START, END` to `"2026-02-01", "2026-03-31"`
+4. Get the daily mean discharge for 1 February to 31 March 2026. Find the highest daily mean, and check its approval status.
+6. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
-**What you should see:** 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
+**What you should see:** You should see discharge records going back to 1989 for continuous values, and 1909 for daily values. From 1 February to 31 March there are 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
 :::{dropdown} Example answer
 ```python
 site = "USGS-14191000"                  # Willamette River at Salem, OR
 START, END = "2026-02-01", "2026-03-31"
 
+series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+print(series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
 daily_w, md = waterdata.get_daily(monitoring_location_id=site, parameter_code="00060",
                                   statistic_id="00003", time=f"{START}/{END}")
 print(len(daily_w), daily_w["approval_status"].value_counts().to_dict())
 print(daily_w.loc[daily_w["value"].idxmax(), ["time", "value", "unit_of_measure", "approval_status"]])
 
 cont_w, md = waterdata.get_continuous(monitoring_location_id=site, parameter_code=["00060", "00065"],
-                                      time=f"{START}T00:00:00Z/2026-04-01T00:00:00Z")
+                                      time=f"{START}T00:00:00Z/{END}T23:59:59Z")
 peaks_w = cont_w.loc[cont_w.groupby("parameter_code")["value"].idxmax()]
 print(peaks_w[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])
 ```
@@ -598,13 +602,6 @@ Name: 24, dtype: object
 14392          00060 2026-02-25 23:45:00+00:00  64000.00          ft^3/s     Provisional
 14393          00065 2026-02-25 23:45:00+00:00     16.86              ft     Provisional
 ```
-:::
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- "Now you try it": add a discovery step (`get_time_series_metadata` for `USGS-14191000`) and the expected record lengths (continuous since 1986, daily since 1909).
-- Continuous windows end at `{END}T00:00:00Z`, which drops the last day; use `T23:59:59Z` in the main example and the answer (needs a re-run).
 :::
 
 ## Further reading
