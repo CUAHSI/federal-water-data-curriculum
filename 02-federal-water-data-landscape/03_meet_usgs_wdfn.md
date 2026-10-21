@@ -20,6 +20,8 @@ This table maps WDFN's own vocabulary onto the course's [shared concepts](00_int
 
 ## Dataset derivation
 
+**Key point: WDFN discharge values are not directly measured, but calculated from gage height. The gage height-discharge relationship is calibrated with periodic field measurements of discharge.**
+
 Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data is the mean (average) of all continuously sampled data for that day.
 
 Discharge is not directly measured every 15 minutes, but is calculated using the gage height. This is because it's easier to continuously measure the height of water than the volume of water passing by a point. Below are the three steps used to calculate continuous discharge data and ensure its accuracy. For further detail, see: [How Streamflow is Measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured) and [Why we use gage height](https://waterdata.usgs.gov/blog/gage_height/).
@@ -50,7 +52,7 @@ Field measurements are published too, so you can see how well the rating is supp
 
 :::{admonition} Partner review (USGS): Coverage figures and provisional data
 :class: important
-Confirm: (1) the count of 9,011 monitoring locations with discharge data; (2) that instantaneous (continuous) data are available back to October 1, 1950; (3) that daily values are usually available the same day; (4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); and (5) that daily values are computed over the monitoring location's local day (standard time). An earlier draft said provisional data are "only available for the last 120 days"; the provisional data statement describes provisional data as subject to revision, not limited to 120 days, and the 120-day window we found applies to certain parameters on some legacy station pages.
+Confirm: (1) the count of 9,011 monitoring locations with discharge data; (2) that instantaneous (continuous) data are available back to October 1, 1950; (3) that daily values are usually available the same day; (4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); and (5) that daily values are computed over the monitoring location's local day (standard time). The provisional data statement describes provisional data as subject to revision, not limited to 120 days, and the 120-day window we found applies to certain parameters on some legacy station pages.
 :::
 
 ## Data content
@@ -73,7 +75,7 @@ Daily mean discharge at USGS-03294500, Ohio River at Louisville, KY, 1 October 2
 :::
 
 :::{dropdown} How this figure was made
-This script asks the USGS Water Data APIs for daily mean discharge at one monitoring location, using the `waterdata` module of `dataretrieval`. The query (location, parameter code, statistic code and dates) is kept in variables at the top. It runs in the course's `m03-wdfn` environment (`environments/m03-wdfn.yml`). An API key is optional; if you have one in the `API_USGS_PAT` environment variable, `dataretrieval` uses it for you. Module 3 explains keys.
+_You don’t need to run this now._ It’s here so you can see exactly how the figure was made and reproduce it later. This script asks the USGS Water Data APIs for daily mean discharge at one monitoring location, using the `waterdata` module of `dataretrieval`. The query (location, parameter code, statistic code and dates) is kept in variables at the top. It runs in the course's `m03-wdfn` environment (`environments/m03-wdfn.yml`). An API key is optional; if you have one in the `API_USGS_PAT` environment variable, `dataretrieval` uses it for you. Module 3 explains keys.
 
 ```python
 import pandas as pd
@@ -111,16 +113,13 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 ## Usage and support
 
 - **Citation:** USGS recommends citing WDFN data with the publication year, access date, and DOI. More information can be found at [How should I cite USGS Water Data for the Nation data?](https://waterdata.usgs.gov/citation/) Because recent values are provisional, also note the approval status of the data you used; if you publish results based on provisional data, say so. Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) covers recording the source, the retrieval date and how you processed it.
-- **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have an hourly limit.
+- **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have a limit of 50 requests per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
 - **Change over time:** The USGS Water Data APIs will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So a new API version does not by itself change the data. Values change for a different reason: provisional data are revised when they are approved, and approved data are occasionally revised too. Still, it is a good idea to check the [Water Data Blog](https://waterdata.usgs.gov/blog/) regularly for important updates.
 - **Contact:** For questions about WDFN data, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments/).
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Dataset derivation: add a bold "Key point:" line, as on the SWOT and NWM pages.
-- The provisional-data partner-review callout quotes the old "120 days" claim; keep the question, drop the history.
-- Say how big the no-key hourly limit is, or that it is fine for this module's examples; add the "you don't need to run this now" note to the figure dropdown.
 - "Daily data is usually available same-day": revisit once USGS answers the partner review.
 :::
 
