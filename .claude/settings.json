@@ -95,7 +95,6 @@
       "Edit(./.claude/settings.json)",
       "Edit(./.claude/hooks/**)",
       "Bash(git push origin dev:*)",
-      "Edit(./01-data-best-practices/**)",
       "Edit(./.github/workflows/**)",
       "Edit(./.claude/scripts/**)",
       "Bash(git push upstream main:*)",
