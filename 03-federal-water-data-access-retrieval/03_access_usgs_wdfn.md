@@ -569,7 +569,7 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
 2. Get the time series metadata for the monitoring location to check the expected record lengths.
 3. Change the dates `START, END` to `"2026-02-01", "2026-03-31"`
 4. Get the daily mean discharge for 1 February to 31 March 2026. Find the highest daily mean, and check its approval status.
-6. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
+5. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
 **What you should see:** You should see discharge records going back to 1989 for continuous values, and 1909 for daily values. From 1 February to 31 March there are 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
