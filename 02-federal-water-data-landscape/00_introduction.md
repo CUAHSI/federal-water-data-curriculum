@@ -11,7 +11,6 @@ job of this module. Each page introduces one product, and you can read them in a
 By the end of this module, learners should be able to:
 - Characterize the river data products from NASA SWOT, NOAA NWM, and USGS WDFN, including relevant variables, derivation, spatial and temporal resolution, and known limitations.
 
-(m02-shared-concepts)=
 ## One framework for three products
 
 Each agency has its own vocabulary. SWOT talks about {term}`granules <Granule>` and {term}`reaches <Reach>`, the NWM
