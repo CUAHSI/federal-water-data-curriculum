@@ -341,19 +341,25 @@ For anything older than a few days, such as the April 2025 flood, you need NOAA'
 Before you run this: `.get()` downloads all 18 files of the run (about 270 MB) and needs about 1.7 GB of memory, and took about 2–3 minutes on our home connection. Let it finish; interrupting it can leave a broken file behind (see "If `.get()` fails" below). **In Jupyter**, run `import nest_asyncio; nest_asyncio.apply()` once first (the first line of the block, commented out); plain Python scripts don't need it.
 
 ```python
-# import nest_asyncio; nest_asyncio.apply()   # uncomment in Jupyter only
+from concurrent.futures import ThreadPoolExecutor
 from hydrotools.nwm_client.NWMFileClient import NWMFileClient
 
 comid = 10164004  # from the discovery step
 
-# downloads go to ./hydrotools_data/NWMFileClient_NetCDF_files; results are cached in ./hydrotools_data/nwm_store.parquet
-client = NWMFileClient()   # default catalog: Google Cloud
+def get_forecast():
+    # downloads go to ./hydrotools_data/NWMFileClient_NetCDF_files; results are cached in ./hydrotools_data/nwm_store.parquet
+    client = NWMFileClient()   # default catalog: Google Cloud
+    return client.get(
+        configurations=["short_range"],
+        reference_times=["2025-04-06T00:00"],   # forecast issue time (UTC)
+        nwm_feature_ids=[comid],
+    )
 
-forecast_data = client.get(
-    configurations=["short_range"],
-    reference_times=["2025-04-06T00:00"],   # forecast issue time (UTC)
-    nwm_feature_ids=[comid],
-)
+# hydrotools starts its own event loop to download files, which fails inside Jupyter's running loop.
+# Running the call in its own thread avoids that, and it also works in a plain script.
+with ThreadPoolExecutor(1) as pool:
+    forecast_data = pool.submit(get_forecast).result()
+
 print(forecast_data[["reference_time", "nwm_feature_id", "value_time", "value", "measurement_unit"]].head().to_string())
 ```
 
@@ -412,6 +418,15 @@ def index_one(url):
     with fsspec.open(url, "rb", block_size=2**20) as f:   # read in 1 MB blocks (see below)
         return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
 
+def combine_refs(singles):
+    """Stitch per-file references into one dataset along the time dimension.
+    Runs in its own thread so it also works inside Jupyter."""
+    def _combine():
+        return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
+                               identical_dims=["feature_id", "reference_time", "crs"]).translate()
+    with ThreadPoolExecutor(1) as pool:
+        return pool.submit(_combine).result()
+
 def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
     """References for one forecast run: day "YYYYMMDD", cycle = issue hour (UTC)."""
     urls = nwmurl.generate_urls_operational(
@@ -426,9 +441,7 @@ def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
     )
     with ThreadPoolExecutor(8) as pool:     # one request per file: run them in parallel
         singles = list(pool.map(index_one, urls))
-    # stitch the per-file references into one dataset along the time dimension
-    return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
-                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+    return combine_refs(singles)
 
 refs = build_refs("20250406", 0)
 print(len(refs["refs"]), "reference entries")
