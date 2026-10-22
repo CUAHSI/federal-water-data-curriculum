@@ -244,7 +244,7 @@ Two terms you'll see in every route:
   Confirm cadences, horizons and ensemble sizes for NWM v3.0. Note that we are pivoting to referencing the following figures developed by CUAHSI's Irene Garousi-Nejad for the configurations, so confirmation that these are correct is also useful: https://www.hydroshare.org/resource/33634cbd65db47329435e510e75b8d08/
   :::
 
-* **{term}`Reference time <Forecast reference time>`**: when a forecast was issued, in UTC (Coordinated Universal Time). NWM shorthand writes the issue hour with a Z for UTC: `00Z` is 00:00 UTC, and file names write it as `t00z`. The time each forecast value applies to is its **{term}`valid time <Valid time>`** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
+* **{term}`Reference time <Forecast reference time>`**: model initialization time, in UTC (Coordinated Universal Time). NWM shorthand writes the reference hour with a Z for UTC: `00Z` is 00:00 UTC, and file names write it as `t00z`. The time each forecast value applies to is its **{term}`valid time <Valid time>`** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
 
 (nwm-api)=
 ### NOAA NWM API: today's forecasts for a few reaches
@@ -561,7 +561,7 @@ Whichever route you used, you now have NWM streamflow forecasts for one reach. H
 | {term}`Location identifier` | COMID / `feature_id` `10164004` (the NHDPlus reach of the Ohio at Louisville) | `nwm_feature_id` (API, `hydrotools`), `feature_id` (files) |
 | {term}`Variable` | `streamflow`: modeled discharge through the reach | variable name in each route |
 | {term}`Variable unit` | m³/s | `units` = `CMS` (API), `measurement_unit` = `m3 s-1` (`hydrotools`), `ds["streamflow"].attrs["units"]` (files) |
-| {term}`Time` | reference time (when the forecast was issued) and valid time (when each value applies), both UTC | `reference_datetime`/`valid_datetime` (API), `reference_time`/`value_time` (`hydrotools`), `reference_time`/`time` (files) |
+| {term}`Time` | reference time (model initialization time) and valid time (when each value applies), both UTC | `reference_datetime`/`valid_datetime` (API), `reference_time`/`value_time` (`hydrotools`), `reference_time`/`time` (files) |
 | {term}`Data quality flag(s)` | None. The NWM is a model, so there is no per-value flag. Judge forecasts by lead time (valid time minus reference time) and by comparing runs | – |
 | {term}`Version / provenance` | NWM v3.0, configuration `short_range` (or `medium_range` member 1), from the Google Cloud or AWS archive | `ds.attrs["NWM_version_number"]`, `ds.attrs["model_configuration"]`; the API's `configuration` field |
 | {term}`Data unit` | One NetCDF file per forecast hour, covering every reach; a short-range run is 18 files, a medium-range member 240 | file names in the archive (e.g. `nwm.t00z.short_range.channel_rt.f001.conus.nc`) |

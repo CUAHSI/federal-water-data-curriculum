@@ -105,7 +105,7 @@ The environment file lets most packages float to their latest release, so a year
 
 ### Codes: parameters and statistics
 
-The Water Data APIs use codes for many query arguments. A {term}`parameter code <Parameter code>` says what was measured (`00060` is discharge, `00065` is gage height), and a statistic code says how values were summarized (`00003` is the daily mean). `get_reference_table` returns each list of codes as a `pandas` DataFrame, so you can look them up in code rather than on a web page. Like every `waterdata` function, it returns a pair, `(DataFrame, metadata)`; `_` or `md` catches the metadata:
+The Water Data APIs use codes for many query arguments. A {term}`parameter code <Parameter code>` says what was measured (`00060` is discharge, `00065` is gage height), and a {term}`statistic code<Statistic code>` says how values were summarized (`00003` is the daily mean). `get_reference_table` returns each list of codes as a `pandas` DataFrame, so you can look them up in code rather than on a web page. Like every `waterdata` function, it returns a pair, `(DataFrame, metadata)`; `_` or `md` catches the metadata:
 
 ```python
 from dataretrieval import waterdata
@@ -127,7 +127,9 @@ print(statistic_codes.loc[statistic_codes["statistic_code"].isin(["00003", "0001
 10          00011  INSTANTANEOUS  RANDOM INSTANTANEOUS VALUES
 ```
 
-`parameter_codes` has about 19,600 rows and `statistic_codes` about 3,200. Other reference tables work the same way, for example `"site-types"`, `"states"`, `"counties"`, `"hydrologic-unit-codes"` and `"agency-codes"`.
+`parameter_codes` has about 19,600 rows and `statistic_codes` about 3,200. Other reference tables work the same way, for example `"site-types"`, `"states"`, `"counties"`, `"hydrologic-unit-codes"` and `"agency-codes"`. 
+
+**Note**: the `unit_of_measure` for `Discharge` above says `ft3/s`, but when retrieving data, the unit is referred to as `ft^3/s`.
 
 ### Finding monitoring locations
 
@@ -271,13 +273,15 @@ print(series[["parameter_code", "parameter_name", "statistic_id", "computation_p
 8          00065          Gage height          NaN                    Water Year 1832-02-21 05:00:00+00:00 2024-04-17 04:00:00+00:00
 ```
 
-Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous sensor record (gage height since 2007, discharge since 2009), and `00003` with period `Daily` is the daily mean (discharge since 1928). The `Water Year` rows are annual summaries (they start in 1832, long before the sensor record), the sediment series ran only from 1979 to 1983, and `00045` is a precipitation record added in June 2026. Your `end` dates will be later.
+Each row is one time series. `statistic_id` `00011` with period `Points` is the continuous sensor record (gage height since 2007, discharge since 2009), and `00003` with period `Daily` is the daily mean (discharge since 1928). The {term}`Water Year<Water year>` rows are annual summaries (they start in 1832, long before the sensor record), the sediment series ran only from 1979 to 1983, and `00045` is a precipitation record added in June 2026. Your `end` dates will be later.
 
 Once you have your monitoring location ID(s) and codes, move on to downloads.
 
 ## Programmatic data downloads
 
 Every `waterdata` function returns a `(DataFrame, metadata)` pair. The DataFrame holds the values; the metadata object records the request (`md.url`) and when it was made, which is useful when you write down how you got your data.
+
+### Continuous data
 
 **{term}`Continuous values <Continuous values>`** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
 
@@ -286,7 +290,7 @@ Every `waterdata` function returns a `(DataFrame, metadata)` pair. The DataFrame
 cont, md = waterdata.get_continuous(
     monitoring_location_id=site,
     parameter_code=["00060", "00065"],    # discharge and gage height
-    time=f"{START}T00:00:00Z/{END}T00:00:00Z",
+    time=f"{START}T00:00:00Z/{END}T23:59:59Z",
 )
 print(cont.shape)
 print(cont[["time", "parameter_code", "value", "unit_of_measure", "approval_status", "qualifier"]].head())
@@ -302,7 +306,7 @@ print(cont[["time", "parameter_code", "value", "unit_of_measure", "approval_stat
 4 2025-03-15 00:30:00+00:00          00065     16.80              ft        Approved      None
 ```
 
-The result is a long-format `GeoDataFrame`: one row per timestamp and parameter (about 5,850 rows for each of the two parameters, every 15 minutes), with columns including `monitoring_location_id`, `parameter_code`, `statistic_id`, `time` (UTC), `value`, `unit_of_measure`, `approval_status` and `qualifier`.
+The result is a long-format `GeoDataFrame`: one row per timestamp and parameter (about 5,850 rows for each of the two parameters, every 15 minutes), with columns including `monitoring_location_id`, `parameter_code`, `statistic_id`, `time` (UTC), `value`, `unit_of_measure`, `approval_status` and {term}`qualifier<Qualifier>`.
 
 To find the flood crest, take the row with the largest value for each parameter:
 
@@ -320,6 +324,8 @@ print(peaks[["parameter_code", "time", "value", "unit_of_measure", "approval_sta
 The Ohio crested at **719,000 ft³/s** at 14:30 UTC on 9 April 2025 (10:30 a.m. in Louisville), with a gage height of **67.98 ft** half an hour earlier. Gage height is measured above the gage's own reference point (its datum), not from the riverbed, so it isn't the water depth. Times are in UTC: convert them before comparing with local records.
 
 Look at `approval_status`, too. On 2026-10-08, values up to 9 April 2025 17:15 UTC were `Approved`, and everything after that was still {term}`provisional <Provisional data>`. Provisional data can still be revised when USGS reviews them ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)), so check `approval_status` before you publish numbers, and expect values after the crest to change. No values in this window carry a `qualifier`.
+
+### Daily data
 
 **{term}`Daily values <Daily values>`** are summaries of the continuous record, here the daily mean (`statistic_id="00003"`) discharge. The `time` argument can be a plain date range:
 
@@ -345,12 +351,9 @@ print(daily[["time", "value", "unit_of_measure", "approval_status", "qualifier"]
 61 2025-05-15  157000.0          ft^3/s     Provisional      None
 ```
 
-There are 62 daily values, one per day. The daily mean peaked at 712,000 ft³/s on 9 April, slightly below the 719,000 ft³/s continuous peak, as expected for an average. That day is `Provisional` even though its morning values are approved, because the daily mean includes the provisional afternoon. Daily `time` is a calendar date, not a timestamp.
+There are 62 daily values, one per day. The daily mean peaked at 712,000 ft³/s on 9 April, slightly below the 719,000 ft³/s continuous peak, as expected for an average. That day is `Provisional` even though its morning values are approved, because the daily mean includes the provisional afternoon. Daily `time` is the monitoring location's local calendar date, not a timestamp.
 
-:::{admonition} TODO (dev team): Daily-value dates and time zone
-:class: attention
-Verify whether daily dates are local-standard-time days.
-:::
+### Field  measurements
 
 **{term}`Field measurements <Field measurement>`** are the discharge and gage-height measurements that hydrographers make in person at the gage. USGS uses them to build and check the {term}`rating curve <Rating curve>` that turns the sensor's gage height into the continuous discharge record, so they are the closest thing to "ground truth" for discharge:
 
@@ -562,24 +565,28 @@ Repeat the main steps for accessing NWM data on a second river: the **Willamette
 
 Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
 
-1. Get the daily mean discharge for 1 February to 31 March 2026. Change `site` to `USGS-14191000` and the dates `START, END` to `"2026-02-01", "2026-03-31"`.
-2. Find the highest daily mean, and check its approval status.
-3. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
+1. Change `site` to `USGS-14191000`.
+2. Get the time series metadata for the monitoring location to check the expected record lengths.
+3. Change the dates `START, END` to `"2026-02-01", "2026-03-31"`
+4. Get the daily mean discharge for 1 February to 31 March 2026. Find the highest daily mean, and check its approval status.
+5. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
-**What you should see:** 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
+**What you should see:** You should see discharge records going back to 1989 for continuous values, and 1909 for daily values. From 1 February to 31 March there are 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
 :::{dropdown} Example answer
 ```python
 site = "USGS-14191000"                  # Willamette River at Salem, OR
 START, END = "2026-02-01", "2026-03-31"
 
+series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+print(series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
 daily_w, md = waterdata.get_daily(monitoring_location_id=site, parameter_code="00060",
                                   statistic_id="00003", time=f"{START}/{END}")
 print(len(daily_w), daily_w["approval_status"].value_counts().to_dict())
 print(daily_w.loc[daily_w["value"].idxmax(), ["time", "value", "unit_of_measure", "approval_status"]])
 
 cont_w, md = waterdata.get_continuous(monitoring_location_id=site, parameter_code=["00060", "00065"],
-                                      time=f"{START}T00:00:00Z/2026-04-01T00:00:00Z")
+                                      time=f"{START}T00:00:00Z/{END}T23:59:59Z")
 peaks_w = cont_w.loc[cont_w.groupby("parameter_code")["value"].idxmax()]
 print(peaks_w[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])
 ```
@@ -595,15 +602,6 @@ Name: 24, dtype: object
 14392          00060 2026-02-25 23:45:00+00:00  64000.00          ft^3/s     Provisional
 14393          00065 2026-02-25 23:45:00+00:00     16.86              ft     Provisional
 ```
-:::
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- "Now you try it": add a discovery step (`get_time_series_metadata` for `USGS-14191000`) and the expected record lengths (continuous since 1986, daily since 1909).
-- Continuous windows end at `{END}T00:00:00Z`, which drops the last day; use `T23:59:59Z` in the main example and the answer (needs a re-run).
-- Note that the reference table says `ft3/s` but the data say `ft^3/s`.
-- Link first uses of glossary terms: statistic code, water year, qualifier, gage datum.
 :::
 
 ## Further reading
