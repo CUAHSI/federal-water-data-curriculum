@@ -1,6 +1,6 @@
 # Retrieve USGS WDFN data
 
-USGS Water Data for the Nation ({term}`WDFN`) publishes the observations USGS collects at thousands of {term}`monitoring locations <Monitoring location ID>` across the country: river {term}`discharge <Discharge>` and {term}`gage height <Gage height>`, groundwater levels, water quality and more. This lesson shows you how to find monitoring locations and retrieve their streamflow data in Python. For what these data are, how they're collected and their limitations, start with [Meet USGS WDFN](../02-federal-water-data-landscape/03_meet_usgs_wdfn.md).
+USGS Water Data for the Nation ({term}`WDFN`) publishes the observations USGS collects at thousands of {term}`monitoring locations <Monitoring location ID>` across the country: river {term}`discharge <Discharge>` and {term}`gage height <Gage height>`, groundwater levels, water quality and more. This lesson shows you how to find monitoring locations and retrieve their streamflow data in Python. For an introduction to the data, how they're collected, and their limitations, start with [Meet USGS WDFN](../02-federal-water-data-landscape/03_meet_usgs_wdfn.md).
 
 You will find the stream monitoring locations around the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers), then retrieve the sensor record, daily values and field measurements from the gage on the Ohio, monitoring location `USGS-03294500`, for 15 March to 15 May 2025.
 
@@ -11,7 +11,7 @@ You will find the stream monitoring locations around the [Ohio River at Louisvil
 
 This lesson uses the modernized APIs through the {term}`dataretrieval` Python package and its `waterdata` module. The steps are:
 
-1. **Programmatic data discovery.** Before pulling values, you need the monitoring location ID (for example `USGS-03294500`) and the codes for what you want. Discovery means searching by place, parameter or other criteria rather than assuming you know the ID.
+1. **Programmatic data discovery.** Before pulling values, you need the monitoring location ID (for example `USGS-03294500`) and the various metadata codes specific to your analysis. Discovery means searching by place, parameter or other criteria rather than assuming you know the ID.
 1. **Programmatic data downloads.** With IDs in hand, `dataretrieval` retrieves the values: continuous, daily or field measurements, depending on your question.
 
 If you already know your monitoring location ID(s), you can skip discovery.
@@ -24,28 +24,28 @@ All the routes below use the same Water Data APIs, so the choice is mostly about
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) | No | Manual; not reproducible on its own |
-| Find monitoring locations and what they record | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages; each page is one request |
+| Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages with a maximum of 50,000 rows per page; each page is one request |
 | Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one call (paged for you) |
 | The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per call |
 | Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (key recommended) | About one measurement a month per site |
-| One day (or a short window) at many sites | `waterdata.get_daily` with no site, optionally a `bbox` | No (key recommended) | One request instead of thousands; mind the page count |
+| One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page (request) count |
 | Code that uses the legacy Water Services | `dataretrieval.nwis` | No | Being retired; port it to `waterdata` (see [the note below](#wdfn-legacy)) |
 
 ## Tools and environment setup
 
 ### USGS Water Data API key
 
-The Water Data APIs work without a key, but USGS recommends one (USGS calls it a token) for higher rate limits, so this lesson uses one. If you don't have a key yet, skip this step: every example on this page runs without one, just with lower rate limits.
+The Water Data APIs work without a key, but USGS recommends one (USGS calls it a token) for higher rate limits (1,000 requests per hour), so this lesson uses one. If you don't have a key yet, skip this step: every example on this page runs without one, just with lower rate limits.
 
 1. Request a key at the [USGS Water Data API signup page](https://api.waterdata.usgs.gov/signup/).
 2. Save it in a safe place, such as a password manager.
 3. Store it in the `API_USGS_PAT` environment variable (below).
 
-USGS explains how keys work on its [API keys page](https://api.waterdata.usgs.gov/docs/ogcapi/keys/). Requests over the limit get an HTTP `429 Too Many Requests` error, and a key raises how many requests you can make per hour. `dataretrieval` reads the key from the `API_USGS_PAT` environment variable and sends it for you, so it never appears in your code.
+USGS explains how keys work on its [API keys page](https://api.waterdata.usgs.gov/docs/ogcapi/keys/). Requests over the limit get an HTTP `429 Too Many Requests` error, and a key increases how many requests you can make per hour. `dataretrieval` reads the key from the `API_USGS_PAT` environment variable and sends it for you, so it never appears in your code.
 
 ### Create the conda environment
 
-You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, which contians `dataretrieval` and the other packages this lesson uses:
+You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, which contains `dataretrieval` and the other packages this lesson uses:
 
 **Create the YAML file**
 
@@ -168,7 +168,7 @@ This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-
 
 :::{admonition} Partner review (USGS): Test entries in monitoring-location results
 :class: important
-Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out.
+Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out. - I wouldn't filter these out since they don't have discharge data, anyway. Also, unless it is important to show which monitoring locations have discharge and which do not, you could save a call or two by running the function below without running `get_monitoring_locations`. It has the geometry and site info you need to make the map.
 :::
 
 **Example: which of those have daily mean discharge?**
@@ -464,7 +464,7 @@ The continuous values, daily values and field measurements share their core colu
 
 :::{admonition} Partner review (USGS): Data citation
 :class: important
-Confirm the recommended citation for data retrieved through the Water Data APIs (DOI 10.5066/F7P55KJN, and the preferred wording now that NWISWeb is replaced by WDFN).
+Confirm the recommended citation for data retrieved through the Water Data APIs (DOI 10.5066/F7P55KJN, and the preferred wording now that NWISWeb is replaced by WDFN). Defer to Mike, et al.
 :::
 
 ## Best practices FAQs
@@ -500,13 +500,13 @@ Name: 3314, dtype: object
 
 On 2026-10-08 this one request returned 36,054 rows, one per day from 1 January 1928 to the day before, in about 6 seconds. The largest daily mean in the record is 1,110,000 ft³/s on 27 January 1937. Look at the `qualifier` column on long records: about 1,100 of these days are marked `[ESTIMATED]` (count them with `daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()`), some together with `[ICE]` or `[EQUIP]` (equipment problems).
 
-Continuous values are limited to three years per call, so request a long continuous record in three-year windows (the Louisville record starts in 2009, so that's six requests). Approved data rarely change, so save each window to a file and only request new data next time.
+Continuous values are limited to three years per call, so request a long continuous record in three-year windows (the Louisville record starts in 2009, so that's six chunks of requests). Approved data rarely change, so save each window to a file and only request new data next time.
 
 ### Spatial scaling
 
 **What is the recommended way to download data across all locations but a small time range?**
 
-Leave out `monitoring_location_id` and set a short `time` instead. One request for one day returns that day's value for every site with daily mean discharge. Looping over thousands of site IDs one request at a time would send thousands of requests and quickly use up your rate limit.
+Leave out `monitoring_location_id` and set a short `time` instead. One request for one day returns that day's value for every site with daily mean discharge. Looping over thousands of site IDs one at a time would quickly use up your rate limit.
 
 ```python
 one_day, md = waterdata.get_daily(
@@ -554,7 +554,7 @@ If I am working on improving efficiency of my code through parallelization, what
 
 :::{admonition} Partner review (USGS): Parallelization
 :class: important
-Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates.
+Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates. - Noting that `dataretrieval` will automatically chunk up calls that go over the byte limit and run those chunked calls in parallel. However, if a call does not go over the byte limit, no parallelization happens, and paging occurs synchronously. Users can adjust parallelization settings, and I'd generally recommend against it (as you have), but want to point out that it does happen automatically under the hood, depending upon the call.
 :::
 
 ## Now you try it

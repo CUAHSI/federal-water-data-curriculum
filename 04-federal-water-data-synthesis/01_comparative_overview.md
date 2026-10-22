@@ -35,7 +35,7 @@ Much like their spatial coverage, the three data products also represent vastly 
 
   Operational forecasts have run since August 2016. A separate **retrospective** simulation re-runs the model over historical weather back to 1979, which makes it the main source of long, reach-level streamflow records where there is no gage (Module 2). Many distribution channels keep only recent runs: the no-key NOAA NWM API keeps only about the last 3–5 days ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)), and Module 2 notes that NOAA's NOMADS server keeps a 48-hour rolling window. Past forecasts, like the December 2025 forecasts used in this module, come from the public cloud archives on Google Cloud (`national-water-model`) and AWS ([`noaa-nwm-pds`](https://registry.opendata.aws/noaa-nwm-pds/)).
 
-* **USGS WDFN streamflow** is published in near real time, as {term}`provisional <Provisional data>` values. At currently active gages, data are collected every 15 minutes from sensors located at each streamgage. Under normal operational status, data are pushed up from the gages to NWIS (the USGS database whose data WDFN publishes) at least every 6 hours. {term}`Continuous values <Continuous values>` (typically every 15 minutes) start on different dates at each site: Module 2 gives the earliest as October 1950, and at USGS 12200500 continuous discharge starts in 1988. Check a site's record with the time-series metadata shown in [Retrieve USGS WDFN data](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md). Continuous values are also rolled up to _daily_ values (most commonly a _mean daily_ value). Daily records are available back to when the USGS streamgaging program began in 1889. Because the data arrive in near real time, these in-situ sensors are subject to unexpected monitoring challenges (e.g. equipment malfunctions, critter invasions, biofouling, etc) and while mitigated, data gaps are present in the records.
+* **USGS WDFN streamflow** is published in near real time, as {term}`provisional <Provisional data>` values. At currently active gages, data are collected every 15 minutes from sensors located at each streamgage. Under normal operational status, data are pushed up from the gages to NWIS (the USGS database whose data WDFN publishes) at least every 6 hours. {term}`Continuous values <Continuous values>` (typically every 15 minutes) start on different dates at each site: Module 2 gives the earliest as October 1950, and at USGS-12200500 continuous discharge starts in 1988. Check a site's record with the time-series metadata shown in [Retrieve USGS WDFN data](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md). Continuous values are also rolled up to _daily_ values (most commonly a _mean daily_ value). Daily records are available back to when the USGS streamgaging program began in 1889. Because the data arrive in near real time, these in-situ sensors are subject to unexpected monitoring challenges (e.g. equipment malfunctions, critter invasions, biofouling, etc) and while mitigated, data gaps are present in the records.
 
   :::{admonition} TODO (dev team): Start of USGS continuous records
   :class: attention
@@ -64,7 +64,7 @@ Confirm this summary of NWM error sources and of how observations are assimilate
 
 :::{admonition} Partner review (USGS): Accuracy
 :class: important
-Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms.
+Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms. - Not sure on this one.
 :::
 
 :::{admonition} TODO (dev team): Rating-curve uncertainty citation
@@ -164,10 +164,10 @@ _Course note (not agency guidance):_ NWM output can be reached several ways, and
 
 :::{admonition} Partner review (USGS): USGS (Water Data for the Nation)
 :class: important
-- Confirm this recommendation: *Check whether data are provisional before relying on them.*
-- Confirm this recommendation: *Use the modernized Water Data APIs.*
-- Confirm this recommendation: *Get a free API key for repeated or large requests.*
-- Confirm this recommendation: *Cite the data with the publication year, access date and DOI.*
+- Confirm this recommendation: *Check whether data are provisional before relying on them.* Confirmed
+- Confirm this recommendation: *Use the modernized Water Data APIs.* Confirmed, recommend reducing reference to legacy services
+- Confirm this recommendation: *Get a free API key for repeated or large requests.* Confirmed, really for all requests.
+- Confirm this recommendation: *Cite the data with the publication year, access date and DOI.* Confirmed
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
