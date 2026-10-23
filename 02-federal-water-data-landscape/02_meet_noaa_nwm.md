@@ -6,11 +6,6 @@ NWM output is supplemental guidance. Official river forecasts are provided at ap
 
 Learn more at the [NWM landing page](https://water.noaa.gov/about/nwm), [National Water Prediction Service](https://water.noaa.gov/) viewer, the NWS story map [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab), and [CIROH's NWM overview](https://hub.ciroh.org/docs/products/national-water-model/).
 
-:::{admonition} Partner review (NOAA): Official forecasts and model guidance
-:class: important
-Confirm the wording that NWM output is supplemental guidance and that official river forecasts at forecast points come from the NWS River Forecast Centers, and the figure of approximately 4,000 official forecast locations.
-:::
-
 ## Terminology
 
 This table maps NWM's own vocabulary onto the course's [shared concepts](00_introduction.md#m02-shared-concepts):
@@ -22,13 +17,13 @@ This table maps NWM's own vocabulary onto the course's [shared concepts](00_intr
 | {term}`Variable unit` | m³/s | Cubic meters per second, consistent across all NWM configurations. The NOAA NWM API labels it `CMS`. |
 | {term}`Time` | {term}`reference time <Forecast reference time>` + {term}`valid time <Valid time>` | Every forecast value has two times (UTC): the model initialization time (reference time) and the time it predicts (valid time). ~~The difference is the {term}`lead time <Lead time>`.~~ The same valid time appears in many forecasts issued at different reference times. |
 | {term}`Data quality flag(s)` | none per value | NWM has no per-observation QA/QC flag the way a sensor network does. Instead, quality is a function of which model version and configuration produced the value, see below. |
-| {term}`Version / provenance` | model version and {term}`configuration <Configuration>` | For example v3.0, `medium_range`, issued 2026-10-08 18:00 UTC. Values for the same reach and valid time differ between versions and between configurations. |
+| {term}`Version / provenance` | model version and {term}`configuration <Configuration>` | For example v3.1, `medium_range`, reference time 2026-10-08 18:00 UTC. Values for the same reach and valid time differ between versions and between configurations. |
 | {term}`Data unit` | one output file per timestep | Each configuration's run writes one NetCDF file per valid time (for streamflow, a `channel_rt` file), holding every reach in the domain. |
 
 Two network terms come up constantly with the NWM's streamflow output. They identify reaches in the river network, so they apply to streamflow (and other values reported per reach). Other variables are reported on different units: soil moisture and snowpack, for example, are reported on a structured grid (see Spatial coverage).
 
 - **{term}`NHDPlus`** is short for "National Hydrography Dataset Plus." A USGS-maintained geospatial dataset that breaks the entire U.S. stream and river network into individual reaches, each with its own COMID, plus catchment boundaries and upstream/downstream connectivity. NWM doesn't define its own river network, it runs on top of NHDPlus, which is also why tools like {term}`NLDI` can look up COMIDs by location.
-- **{term}`COMID`** is short for "Common Identifier." A unique numeric ID assigned to each individual stream segment (reach) in the NHDPlus stream network. In the CONUS domain, NWM's feature_id values are the same numbers as COMIDs, just under a different name, so the two terms are used interchangeably across NWM documentation and tools.
+- **{term}`COMID`** is short for "Common Identifier." A unique numeric ID assigned to each individual stream segment (reach) in the NHDPlus stream network. In the CONUS domain, NWM's `feature_id` values generally correspond directly to NHDPlusV2 COMIDs, though some variation may exist, so the two terms are often used interchangeably across NWM documentation and tools.
 
 ## Dataset derivation
 
@@ -47,9 +42,17 @@ It has gone through several major versions since becoming operational in August 
 - Calibration/parameter improvements
 :::
 
-:::{admonition} Partner review (NOAA): Current model version
-:class: important
-This page and the course's shared-concept table use v3.0 as the example model version. Confirm the operational NWM version as of October 2026, and where researchers should look to find which version produced a given file.
+:::{dropdown} What changed in v3.1
+Changes from v3.0, which was operational until about 18 August 2026:
+
+- Use of Multi-Radar/Multi-Sensor (MRMS) and numerical weather prediction (NWP) precipitation-type information in CONUS Analysis & Assimilation, Short-Range and GFS-based Medium-Range configurations
+- Improved downscaling of temperature forcing data, using a dynamic lapse-rate approach based on NWP model data
+- Representation of the flow diversion between the Mississippi and Atchafalaya Rivers at the Old River Control Structure, using observation-based flow persistence
+- Assimilation of USGS streamflow observations available at forecast time into the first hours of the short-, medium- and long-range forecasts
+- Updated CONUS hydrofabric with location refinements for 311 USGS stream gauges
+- Shorter Medium-Range coastal forecasts for the Atlantic-Gulf and Pacific domains (5 days, down from 10)
+- Puerto Rico/USVI: National Blend of Models (NBM) precipitation replaces WRF-ARW as supplemental forcing in Short-Range configurations, and new 00Z and 12Z Short-Range cycles
+As announced in [NWS Service Change Notice 26-64](https://www.weather.gov/media/notification/pdf_2026/scn26-64_Updated_National_Water_Model_V3.1_aaa.pdf).
 :::
 
 ## Spatial coverage
@@ -73,7 +76,7 @@ This page and the course's shared-concept table use v3.0 as the example model ve
 
 Each configuration also has its own model inputs. For example, the retrospective simulation is driven by the AORC (Analysis of Record for Calibration) weather dataset, while short-range forecasts use operational weather forecast products such as HRRR and RAP. See the QPF forcings section of [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab). In CONUS:
 
-| Configuration | What it's for | Horizon | Output interval | Issued |
+| Configuration | What it's for | Horizon | Output interval | Initialized |
 |---|---|---|---|---|
 | Retrospective | Long historical record, ungaged reaches | Feb 1979 – Jan 2023 (v3.0) | hourly | one-off run per model version |
 | Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last 3 hours (look-back) | hourly | hourly |
@@ -82,10 +85,12 @@ Each configuration also has its own model inputs. For example, the retrospective
 | Medium-Range Ensemble (`medium_range`) | Ensemble forecasts for the coming week; six ensemble members | 8.5 days (members 2–6, plus first 8.5 days of member 1) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
 
-:::{admonition} Partner review (NOAA): Retrospective period and output intervals
-:class: important
-Confirm (1) the period covered by the current retrospective simulation, and the horizons in the configuration table (Short-Range 18 hours and Long-Range 30 days for CONUS) (an earlier draft said "1979–present (continuously extended)"; the AWS listing for v3.0 shows February 1979 – January 2023), and (2) the streamflow output interval for each configuration, in particular whether medium-range channel output is hourly for all members (an earlier draft said 3-hourly) and long-range output is 6-hourly.
-:::
+There are four operational Medium-Range products for CONUS:
+
+- 10-day deterministic (GFS), `medium_range_mem1`
+- 10-day deterministic (NBM), `medium_range_blend`
+- Ensemble (GFS): the first 8.5 days of `medium_range_mem1` plus `medium_range_mem2` through `medium_range_mem6`
+- 10-day deterministic (GFS, no data assimilation), `medium_range_no_da`, initialized by `analysis_assim_no_da`
 
 ## Data content
 
@@ -100,10 +105,10 @@ This is model output, not an observation, and it is not checked against the gage
 The COMID `10164004` was found by asking the {term}`NLDI` which NHDPlus reach the Louisville USGS gage sits on; Module 3 shows how.
 
 :::{figure} ../images/m02/02_meet_noaa_nwm-ohio-medium-range.png
-:alt: Line chart of NWM medium-range streamflow forecasts for COMID 10164004 issued 2026-10-08 18:00 UTC. Flow dips to about 930 cubic meters per second, rises to about 1,890 on October 10, then declines to about 1,050 by October 17. Member 1 (blue) continues to October 18; members 2 to 6 (gray) end on October 17 and spread slightly, between about 1,020 and 1,150.
+:alt: Line chart of NWM medium-range streamflow forecasts for COMID 10164004 with reference time (model initialization time) 2026-10-08 18:00 UTC. Flow dips to about 930 cubic meters per second, rises to about 1,890 on October 10, then declines to about 1,050 by October 17. Member 1 (blue) continues to October 18; members 2 to 6 (gray) end on October 17 and spread slightly, between about 1,020 and 1,150.
 :width: 100%
 
-NWM medium-range streamflow forecast for COMID `10164004`, Ohio River at Louisville, KY, issued (reference time) 2026-10-08 18:00 UTC. Data: NOAA NWM API (experimental), `configuration=medium_range`, accessed 2026-10-08. The API keeps only the most recent few days of forecasts, so this exact forecast can't be retrieved from it later.
+NWM medium-range streamflow forecast for COMID `10164004`, Ohio River at Louisville, KY, with reference time (model initialization time) 2026-10-08 18:00 UTC. Data: NOAA NWM API (experimental), `configuration=medium_range`, accessed 2026-10-08. The API keeps only the most recent few days of forecasts, so this exact forecast can't be retrieved from it later.
 :::
 
 :::{dropdown} How this figure was made
