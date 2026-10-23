@@ -1,12 +1,6 @@
 # Module overview
 
-Every dataset you use was shaped by decisions someone made about how it was collected, processed, documented and shared. This module is about making those decisions well in your own work, so that your results can be checked, rebuilt and reused. Often the person most likely to need them is **future you**.
-
-The module has three lessons that build on each other:
-
-- **Open science** is the umbrella. It covers the values behind how you and your team work, and why they matter.
-- **Data management** is how you put those values into practice while you collect and analyze data.
-- **Data publishing** is how you archive and share your final results, so they still meet those open science goals long after the project ends.
+Every dataset you use was shaped by decisions someone made about how it was collected, processed, documented and shared. This module is about making those decisions well in your own work, so that your results can be checked, rebuilt and reused. Often the person most likely to need to rebuild or reuse your work is **future you**, often months or years later, once the details have faded. Each lesson comes back to this idea: if your future self could pick up the work without help, others probably can too.
 
 ## Learning objectives
 
@@ -28,11 +22,3 @@ These break down into:
 3. [Data Publishing](03_data_publishing.md): FAIR in action, choosing a repository (with a closer look at HydroShare), publishing derived data, and peer review of data and code.
 
 Each lesson ends with a short "Now you try it" activity and Further reading. Module 1 is conceptual, so unlike later modules it has no code and no software environment to set up.
-
-## Important concepts and terminology
-
-- **Future you.** The person most likely to need to rebuild or reuse your work is you, months or years later, once the details have faded. Each lesson comes back to this idea: if your future self could pick up the work without help, others probably can too.
-- **Open is not the same as FAIR.** Open is about who can get the data. {term}`FAIR <FAIR principles>` is about how easily people and machines can find, access, combine and reuse them. Restricted data can still be FAIR if the rules for access are clear.
-- **Reproducibility is a continuum.** It starts with documentation and scripted steps, and grows through version control and modular code to automated pipelines. You don't need every tool to make real progress.
-- **{term}`Metadata` and the {term}`README`.** Metadata describe your data: the who, what, when, where, why and how. The README is the front page that ties a project or dataset together.
-- **{term}`Persistent identifiers <Persistent identifier>`.** A {term}`DOI` gives a published dataset or piece of software a permanent link that others can cite.
