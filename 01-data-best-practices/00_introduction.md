@@ -5,8 +5,8 @@
 ## Learning objectives
 
 By the end of this module, learners should be able to:
-- [objective 1]
-- [objective 2]
+- Describe open science, FAIR principles, and reproducibility best practices, and their benefits to science products and the science community.
+- List elements of a data management plan and describe the benefits of publishing scientific data in an appropriate repository.
 
 ## TBD -- more content here
 
