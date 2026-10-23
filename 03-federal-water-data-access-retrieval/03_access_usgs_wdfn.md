@@ -25,8 +25,8 @@ All the routes below use the same Water Data APIs, so the choice is mostly about
 |---|---|---|---|
 | Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) | No | Manual; not reproducible on its own |
 | Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages with a maximum of 50,000 rows per page; each page is one request |
-| Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one call (paged for you) |
-| The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per call |
+| Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one query (paged for you) |
+| The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per query |
 | Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (key recommended) | About one measurement a month per site |
 | One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page (request) count |
 | Code that uses the legacy Water Services | `dataretrieval.nwis` | No | Being retired; port it to `waterdata` (see [the note below](#wdfn-legacy)) |
@@ -135,7 +135,7 @@ print(statistic_codes.loc[statistic_codes["statistic_code"].isin(["00003", "0001
 
 **The point-and-click way.** The [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) let you search by place name, address, state or watershed and click on sites. That's fine for exploring. A programmatic discovery step keeps your search reproducible, so capture it in code too.
 
-Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each call. Your query is then recorded in one spot and easy to change.
+Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each function call. Your query is then recorded in one spot and easy to change.
 
 **Example: which stream monitoring locations are in Jefferson County, Kentucky (Louisville)?**
 
@@ -173,7 +173,7 @@ Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" mon
 
 **Example: which of those have daily mean discharge?**
 
-`get_combined_metadata` combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same call:
+`get_combined_metadata` combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same query:
 
 ```python
 sites_with_q, md = waterdata.get_combined_metadata(
@@ -283,7 +283,7 @@ Every `waterdata` function returns a `(DataFrame, metadata)` pair. The DataFrame
 
 ### Continuous data
 
-**{term}`Continuous values <Continuous values>`** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per call. Here we request two months of discharge and gage height together:
+**{term}`Continuous values <Continuous values>`** are the sensor record, typically every 15 minutes. `get_continuous` accepts up to three years per query. Here we request two months of discharge and gage height together:
 
 ```python
 # START and END (the April 2025 flood) are set in the query block above
@@ -500,7 +500,7 @@ Name: 3314, dtype: object
 
 On 2026-10-08 this one request returned 36,054 rows, one per day from 1 January 1928 to the day before, in about 6 seconds. The largest daily mean in the record is 1,110,000 ft³/s on 27 January 1937. Look at the `qualifier` column on long records: about 1,100 of these days are marked `[ESTIMATED]` (count them with `daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()`), some together with `[ICE]` or `[EQUIP]` (equipment problems).
 
-Continuous values are limited to three years per call, so request a long continuous record in three-year windows (the Louisville record starts in 2009, so that's six chunks of requests). Approved data rarely change, so save each window to a file and only request new data next time.
+Continuous values are limited to three years per query, so request a long continuous record in three-year windows (the Louisville record starts in 2009, so that's six chunks of calls). Approved data rarely change, so save each window to a file and only request new data next time.
 
 ### Spatial scaling
 
@@ -554,7 +554,7 @@ If I am working on improving efficiency of my code through parallelization, what
 
 :::{admonition} Partner review (USGS): Parallelization
 :class: important
-Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates. - Noting that `dataretrieval` will automatically chunk up calls that go over the byte limit and run those chunked calls in parallel. However, if a call does not go over the byte limit, no parallelization happens, and paging occurs synchronously. Users can adjust parallelization settings, and I'd generally recommend against it (as you have), but want to point out that it does happen automatically under the hood, depending upon the call.
+Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates. - Noting that `dataretrieval` will automatically chunk up queries that go over the byte limit and run those chunked queries in parallel. However, if a query does not go over the byte limit, no parallelization happens, and paging occurs synchronously. Users can adjust parallelization settings, and I'd generally recommend against it (as you have), but want to point out that it does happen automatically under the hood, depending upon the query.
 :::
 
 ## Now you try it
