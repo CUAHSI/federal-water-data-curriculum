@@ -1,0 +1,87 @@
+# Renders the session slide decks and their pre/post-session readings on request (never automatically).
+# Actions → "Render slides" → Run workflow. Pick the branch, a deck (or "all"),
+# and whether to open a draft PR that commits the rendered files.
+name: Render slides
+
+on:
+  workflow_dispatch:
+    inputs:
+      deck:
+        description: 'Deck file name without .qmd (e.g. session-03_module-03_lesson-01_retrieve-nasa-swot-data), or "all"'
+        required: true
+        default: all
+      open_pr:
+        description: Open a draft PR into dev with the rendered files (otherwise just download the artifact)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.40
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Choose decks
+        id: decks
+        run: |
+          cd teaching-materials/slides
+          if [ "${{ inputs.deck }}" = "all" ]; then
+            ls session-*.qmd | sed 's/\.qmd$//' > ../../decks.txt
+          else
+            test -f "${{ inputs.deck }}.qmd" || { echo "No deck named ${{ inputs.deck }}.qmd"; exit 1; }
+            echo "${{ inputs.deck }}" > ../../decks.txt
+          fi
+          cat ../../decks.txt
+
+      - name: Render decks (HTML, PowerPoint, PDF) and readings (PDF)
+        run: |
+          OUT="$PWD/teaching-materials/slides/rendered"
+          mkdir -p "$OUT"
+          cd teaching-materials/slides
+          while read -r d; do
+            quarto render "$d.qmd" --to revealjs
+            quarto render "$d.qmd" --to pptx
+            npx --yes decktape@3.12.0 reveal \
+              --chrome-path "$(which google-chrome)" --chrome-arg=--no-sandbox \
+              "file://$PWD/$d.html" "$OUT/$d.pdf"
+            mv "$d.html" "$d.pptx" "$OUT/"
+            for r in ../readings/"$d"_*-reading.qmd; do
+              [ -e "$r" ] || continue
+              quarto render "$r" --to typst
+              mv "${r%.qmd}.pdf" "$OUT/"
+            done
+          done < ../../decks.txt
+          ls -la "$OUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rendered-slides-${{ github.run_number }}
+          path: teaching-materials/slides/rendered/
+
+      - name: Open a draft PR with the rendered files
+        if: ${{ inputs.open_pr }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BR="chore/render-slides-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BR"
+          git add teaching-materials/slides/rendered/
+          git commit -m "Render slides: ${{ inputs.deck }} (run ${{ github.run_number }})"
+          git push origin "$BR"
+          gh pr create --draft --base dev --head "$BR" \
+            --title "Render slides: ${{ inputs.deck }}" \
+            --body "Rendered by the Render slides workflow (run ${{ github.run_number }}) from ${{ github.ref_name }} at ${{ github.sha }}."

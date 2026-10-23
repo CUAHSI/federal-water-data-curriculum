@@ -67,7 +67,12 @@
       "Bash(git worktree list:*)",
       "Bash(git push:*)",
       "Bash(gh pr create:*)",
-      "Bash(gh pr edit:*)"
+      "Bash(gh pr edit:*)",
+      "Bash(quarto render:*)",
+      "Bash(quarto check:*)",
+      "Bash(quarto --version:*)",
+      "Bash(papermill:*)",
+      "Bash(text2qti:*)"
     ],
     "ask": [
       "Bash(git reset:*)",
