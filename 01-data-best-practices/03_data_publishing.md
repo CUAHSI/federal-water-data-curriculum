@@ -162,6 +162,26 @@ Peer review of data and code is less standardized than it is for papers, but the
 
   It is often the quickest way to catch problems, and it ties back to the idea we discussed in the [Open Science lesson](01_open_science.md#putting-open-science-into-practice) of sharing work early and often.
 
+## Now you try it
+
+Practice the "data or recipe" decision from Publishing derivative data, above.
+
+**Your task:** For each derived dataset below, decide whether to publish a **snapshot** of the values or only the **recipe** (your code plus the exact identifiers of what you used), and list what you would record.
+
+1. Discharge you downloaded from a gage network. The values are marked *provisional* and may still be revised.
+2. A subset of a long-term model simulation, kept in a public archive with a DOI.
+3. A flood forecast that the provider posts for only a few days.
+
+**What you should see:** One recipe and two snapshots, each with the provenance needed to trace it back to its source.
+
+:::{dropdown} Example answer
+1. **Snapshot.** Once the values are revised, they won't match your results, so keep a copy of what you used. Record the site ID, the variable, the provisional status, and the date you retrieved the data.
+2. **Recipe.** The archive is stable and citable, so publish your code with the DOI, the model version, the subset you took (place, dates, variables), and your access date.
+3. **Snapshot.** The original will disappear, so publish the part you used. Record the provider, the time the forecast was issued, and what you kept.
+
+In every case, cite the original source, carry its license or terms with your files, and publish in a repository that gives your product a DOI.
+:::
+
 ## Further reading
 
 - [Generalist Repository Comparison Chart](https://zenodo.org/records/17315963)
