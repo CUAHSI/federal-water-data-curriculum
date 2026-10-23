@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check that every external link on a course page has an entry in that page's reference file.
 
-Each page in scope (Modules 2-4, the landing page and the Glossary) has one reference file,
+Each page in scope (Modules 1-4, the landing page and the Glossary) has one reference file,
 references/<page-key>.md, where <page-key> is "m" + the module folder's number + "-" + the page's file name, e.g.
 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -> references/m03-01_access_nasa_swot.md.
 Top-level pages use their own name (index.md -> references/index.md).
@@ -29,8 +29,8 @@ REF_DIR = ROOT / "references"
 FENCE = re.compile(r"^\s*(```|~~~)")
 URL = re.compile(r"https?://[^\s)>\]\"'`<]+")
 SKIP_HOSTS = ("localhost", "127.0.0.1", "example.com")
-# Pages that must keep references. Module 1 is read-only for this pass.
-SCOPE = ["index.md", "glossary.md", "02-*/*.md", "03-*/*.md", "04-*/*.md"]
+# Pages that must keep references.
+SCOPE = ["index.md", "glossary.md", "01-*/*.md", "02-*/*.md", "03-*/*.md", "04-*/*.md"]
 
 
 def page_key(page: pathlib.Path) -> str:

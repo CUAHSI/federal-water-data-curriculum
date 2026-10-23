@@ -3,6 +3,28 @@
 Every external source cited in the course, grouped by the page that cites it. Each page's list lives in its own
 file under `references/` and is included here (see the style guide, section 8).
 
+## Module 1: Data Best Practices in Water Research
+
+### [Module overview](01-data-best-practices/00_introduction.md)
+
+```{include} references/m01-00_introduction.md
+```
+
+### [Open Science](01-data-best-practices/01_open_science.md)
+
+```{include} references/m01-01_open_science.md
+```
+
+### [Data Management](01-data-best-practices/02_data_management.md)
+
+```{include} references/m01-02_data_management.md
+```
+
+### [Data Publishing](01-data-best-practices/03_data_publishing.md)
+
+```{include} references/m01-03_data_publishing.md
+```
+
 ## Module 2: Federal Water Data Landscape
 
 ### [Module overview](02-federal-water-data-landscape/00_introduction.md)

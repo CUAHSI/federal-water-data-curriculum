@@ -1,0 +1,37 @@
+% References for 01-data-best-practices/03_data_publishing.md. One list item per external source cited on that page, in the
+% STYLE_GUIDE section 8 format. Included by references.md; checked by references/check_references.py.
+
+- American Geophysical Union. (n.d.). *AGU Data and Software Sharing Guidance*. https://data.agu.org/resources/agu-data-software-sharing-guidance (accessed 2026-10-23).
+- American Geophysical Union. (n.d.). *Useful domain repositories*. https://data.agu.org/resources/useful-domain-repositories (accessed 2026-10-23).
+- Blodgett, D. (2019). *National Water Model V1.2 Retrospective and Operational Model Run Archive for Selected NWIS Gage Locations* (dataset). U.S. Geological Survey. https://doi.org/10.5066/P9ZRX948
+- CF Conventions. (n.d.). *CF Metadata Conventions*. https://cfconventions.org (accessed 2026-10-23).
+- choosealicense.com. (n.d.). *Choose an open source license*. GitHub. https://choosealicense.com (accessed 2026-10-23).
+- Colavizza, G., Hrynaszkiewicz, I., Staden, I., Whitaker, K., & McGillivray, B. (2020). The citation advantage of linking publications to research data. *PLOS ONE*, 15(4), e0230416. https://doi.org/10.1371/journal.pone.0230416
+- Copernicus Publications. (n.d.). *Earth System Science Data*. https://essd.copernicus.org (accessed 2026-10-23).
+- Copernicus Publications. (n.d.). *Earth System Science Data: Repository criteria*. https://www.earth-system-science-data.net/policies/repository_criteria.html (accessed 2026-10-23).
+- Creative Commons. (n.d.). *About CC Licenses*. https://creativecommons.org/licenses/ (accessed 2026-10-23).
+- CUAHSI. (2026). *Apply for the CUAHSI Data Publishing Program* (event announcement, Spring 2026). https://www.cuahsi.org/events/apply-for-the-cuahsi-data-publishing-program (accessed 2026-10-23).
+- CUAHSI. (n.d.). *HydroShare*. https://www.hydroshare.org (accessed 2026-10-23).
+- CUAHSI. (n.d.). *HydroShare help: Creating resource versions*. https://help.hydroshare.org/creating-and-managing-resources/creating-resource-versions (accessed 2026-10-23).
+- CUAHSI. (n.d.). *HydroShare help: Minimum metadata requirements for publishing in HydroShare*. https://help.hydroshare.org/publishing-in-hydroshare/minimum-metadata-requirements-for-publishing-in-hydroshare/ (accessed 2026-10-23).
+- CUAHSI. (n.d.). *HydroShare help: Permanently publish a resource*. https://help.hydroshare.org/introduction-to-hydroshare/getting-started/permanently-publish-a-resource/ (accessed 2026-10-23).
+- CUAHSI. (n.d.). *HydroShare help documentation*. https://help.hydroshare.org (accessed 2026-10-23).
+- CUAHSI. (n.d.). *hsclient: HydroShare Python client* (software). GitHub. https://github.com/hydroshare/hsclient (accessed 2026-10-23).
+- EarthChem. (n.d.). *EarthChem Library*. https://www.earthchem.org (accessed 2026-10-23).
+- EarthChem. (n.d.). *EarthChem Library policies*. https://earthchem.org/ecl/policies (accessed 2026-10-23).
+- Environmental Data Initiative. (n.d.). *Environmental Data Initiative*. https://edirepository.org (accessed 2026-10-23).
+- Environmental Data Initiative. (n.d.). *Evaluating a data package*. https://edirepository.org/resources/evaluating-a-data-package (accessed 2026-10-23).
+- Global Indigenous Data Alliance. (n.d.). *CARE Principles for Indigenous Data Governance*. https://www.gida-global.org/careprinciples (accessed 2026-10-23).
+- Journal of Open Source Software. (n.d.). *Journal of Open Source Software*. https://joss.theoj.org (accessed 2026-10-23).
+- NCEAS. (n.d.). *MetaDIG checks* (software). GitHub. https://github.com/NCEAS/metadig-checks (accessed 2026-10-23).
+- Nature Portfolio. (n.d.). *Scientific Data*. https://www.nature.com/sdata/ (accessed 2026-10-23).
+- ORCID. (n.d.). *ORCID*. https://orcid.org (accessed 2026-10-23).
+- pyOpenSci. (n.d.). *pyOpenSci*. https://www.pyopensci.org (accessed 2026-10-23).
+- re3data. (n.d.). *Registry of Research Data Repositories*. https://www.re3data.org (accessed 2026-10-23).
+- rOpenSci. (n.d.). *rOpenSci*. https://ropensci.org (accessed 2026-10-23).
+- Stall, S., Martone, M. E., Carson, M., et al. (2025). *Generalist Repository Comparison Chart* (version 4). Zenodo. https://zenodo.org/records/17315963
+- The Turing Way Community. (n.d.). *The Turing Way: A handbook for reproducible, ethical and collaborative research*. https://book.the-turing-way.org (accessed 2026-10-23).
+- Vrouwenvelder, K., & Platt, L. (2024). *AGU Learning Workshop: Technical Skills for Publishing and Sharing Data and Code* (version 1). Zenodo. https://zenodo.org/records/14271000
+- Vrouwenvelder, K., Wong, K., Castronova, A., Platt, L., & Sedora, B. (n.d.). *AGU Learning Workshop: Technical Skills for Publishing and Sharing Data and Code* (all versions). Zenodo. https://doi.org/10.5281/zenodo.14270999
+- Wilkinson, M. D., et al. (2016). The FAIR Guiding Principles for scientific data management and stewardship. *Scientific Data*, 3, 160018. https://doi.org/10.1038/sdata.2016.18
+- Zenodo. (n.d.). *Zenodo*. CERN. https://zenodo.org (accessed 2026-10-23).
