@@ -24,10 +24,10 @@ NWM output is big: every forecast hour is a file covering all ~2.8 million reach
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Today's or the last few days' forecasts for a few reaches | [NOAA NWM API](#nwm-api) | No | Keeps only ~3–5 days of runs; labelled experimental; built for a few reaches per request |
-| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) (Google Cloud archive) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
+| Past forecasts, a few reaches, a few issue times | [`hydrotools`](#nwm-hydrotools) ([Google Cloud archive](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model)) | No | Downloads whole {term}`CONUS` (contiguous U.S.) files (~250–280 MB per short-range run); cost grows with the number of runs, not reaches |
 | Past forecasts for many reaches or a region, or many issue times | [Kerchunk references](#nwm-kerchunk) + `xarray`/`dask`, ideally run in the cloud | No | Reads only the `streamflow` chunk (~7× fewer bytes than whole files) with less memory, but each read is still a CONUS-wide chunk; building references is a one-time step per run |
 | Long historical record (simulation, not forecasts) | NWM {term}`retrospective simulation <Retrospective simulation>` (cloud Zarr) | No | A different product (see [Temporal scaling](#nwm-temporal-scaling)) |
-| Researchers working on CIROH projects | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
+| Researchers working on CIROH projects who want to query selected forecast data without downloading whole files | [CIROH NWM BigQuery API](https://hub.ciroh.org/docs/products/data-management/bigquery-api/) | Yes, by request | You request only the data you need through a REST API backed by a BigQuery dataset, unlike `hydrotools`, which downloads whole files from the Google Cloud archive. Free for CIROH members and partners with active CIROH projects; request access and estimate query costs first (see the CIROH page). Not covered further in this lesson |
 
 The numbers behind these recommendations are in [Why NWM downloads cost what they cost](#nwm-cost).
 
@@ -341,19 +341,25 @@ For anything older than a few days, such as the April 2025 flood, you need NOAA'
 Before you run this: `.get()` downloads all 18 files of the run (about 270 MB) and needs about 1.7 GB of memory, and took about 2–3 minutes on our home connection. Let it finish; interrupting it can leave a broken file behind (see "If `.get()` fails" below). **In Jupyter**, run `import nest_asyncio; nest_asyncio.apply()` once first (the first line of the block, commented out); plain Python scripts don't need it.
 
 ```python
-# import nest_asyncio; nest_asyncio.apply()   # uncomment in Jupyter only
+from concurrent.futures import ThreadPoolExecutor
 from hydrotools.nwm_client.NWMFileClient import NWMFileClient
 
 comid = 10164004  # from the discovery step
 
-# downloads go to ./hydrotools_data/NWMFileClient_NetCDF_files; results are cached in ./hydrotools_data/nwm_store.parquet
-client = NWMFileClient()   # default catalog: Google Cloud
+def get_forecast():
+    # downloads go to ./hydrotools_data/NWMFileClient_NetCDF_files; results are cached in ./hydrotools_data/nwm_store.parquet
+    client = NWMFileClient()   # default catalog: Google Cloud
+    return client.get(
+        configurations=["short_range"],
+        reference_times=["2025-04-06T00:00"],   # forecast issue time (UTC)
+        nwm_feature_ids=[comid],
+    )
 
-forecast_data = client.get(
-    configurations=["short_range"],
-    reference_times=["2025-04-06T00:00"],   # forecast issue time (UTC)
-    nwm_feature_ids=[comid],
-)
+# hydrotools starts its own event loop to download files, which fails inside Jupyter's running loop.
+# Running the call in its own thread avoids that, and it also works in a plain script.
+with ThreadPoolExecutor(1) as pool:
+    forecast_data = pool.submit(get_forecast).result()
+
 print(forecast_data[["reference_time", "nwm_feature_id", "value_time", "value", "measurement_unit"]].head().to_string())
 ```
 
@@ -412,6 +418,15 @@ def index_one(url):
     with fsspec.open(url, "rb", block_size=2**20) as f:   # read in 1 MB blocks (see below)
         return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
 
+def combine_refs(singles):
+    """Stitch per-file references into one dataset along the time dimension.
+    Runs in its own thread so it also works inside Jupyter."""
+    def _combine():
+        return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
+                               identical_dims=["feature_id", "reference_time", "crs"]).translate()
+    with ThreadPoolExecutor(1) as pool:
+        return pool.submit(_combine).result()
+
 def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
     """References for one forecast run: day "YYYYMMDD", cycle = issue hour (UTC)."""
     urls = nwmurl.generate_urls_operational(
@@ -426,9 +441,7 @@ def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
     )
     with ThreadPoolExecutor(8) as pool:     # one request per file: run them in parallel
         singles = list(pool.map(index_one, urls))
-    # stitch the per-file references into one dataset along the time dimension
-    return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
-                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+    return combine_refs(singles)
 
 refs = build_refs("20250406", 0)
 print(len(refs["refs"]), "reference entries")
@@ -506,6 +519,7 @@ For runs since January 2026 you can skip the build step. NOAA's references are o
 import json
 import fsspec
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 from kerchunk.combine import MultiZarrToZarr
 
 comid = 10164004                                # Ohio River at Louisville
@@ -522,8 +536,17 @@ def load_ref(path):
     text = json.dumps(json.loads(s3.cat(path)))
     return json.loads(text.replace("s3://noaa-nwm-pds/", "https://noaa-nwm-pds.s3.amazonaws.com/"))
 
-recent = MultiZarrToZarr([load_ref(p) for p in paths], remote_protocol="https", concat_dims=["time"],
-                         identical_dims=["feature_id", "reference_time", "crs"]).translate()
+refs_list = [load_ref(p) for p in paths]
+
+def combine():
+    return MultiZarrToZarr(refs_list, remote_protocol="https", concat_dims=["time"],
+                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+# Run the combine step in its own thread: kerchunk starts its own event loop,
+# which fails inside Jupyter's running loop.
+with ThreadPoolExecutor(1) as pool:
+    recent = pool.submit(combine).result()
+
 ds_recent = open_refs(recent)
 print(len(paths), "reference files;", dict(ds_recent.sizes))
 print(ds_recent["streamflow"].sel(feature_id=comid).load().to_series().head(3))
@@ -734,7 +757,7 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
 
 1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, by changing `POINT` to `(-123.0429, 44.9443)`.
 2. Get the latest short-range forecast for that COMID from the NOAA NWM API. Change `comid` in the API example.
-3. The Willamette ran high in late February 2026. Read the short-range forecast issued at 12Z on 25 February 2026 from NOAA's published references. Change `day` to `"20260225"` in the published-references example (keep `t12z`).
+3. The Willamette ran high in late February 2026. Build kerchunk references for the short-range forecast issued at 12Z on 25 February 2026 with `build_refs("20260225", 12)` (about 20 seconds), then read the `streamflow` for your COMID with `open_refs`, as in the kerchunk example.
 
 **What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 published reference files for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
 
@@ -753,20 +776,18 @@ resp.raise_for_status()
 run = resp.json()[0]
 print(run["reference_datetime"], run["units"], len(run["forecast"][0]["timeseries"]), "values")
 
-# NOAA-published references for the 2026-02-25 12Z short-range run (uses s3, load_ref, open_refs from above)
-paths = sorted(s3.glob("noaa-nodd-kerchunk-pds/nwm/short_range/"
-                       "nwm.short_range.channel_rt.conus.20260225.t12z.f*.nc.zarr"))
-feb = MultiZarrToZarr([load_ref(p) for p in paths], remote_protocol="https", concat_dims=["time"],
-                      identical_dims=["feature_id", "reference_time", "crs"]).translate()
-q_feb = open_refs(feb)["streamflow"].sel(feature_id=comid).load().to_series()
-print(len(paths), "reference files")
+# Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
+# (uses build_refs and open_refs from the kerchunk examples above)
+refs_feb = build_refs("20260225", 12)
+q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=comid).load().to_series()
+print(len(q_feb), "hourly values")
 print(q_feb.iloc[[0, 8, 17]])
 ```
 
 ```text
 COMID: 23791093
 2026-10-09T02:00:00Z CMS 18 values
-18 reference files
+18 hourly values
 time
 2026-02-25 13:00:00    1717.849962
 2026-02-25 21:00:00    1807.389960
