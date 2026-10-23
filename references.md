@@ -20,6 +20,11 @@ file under `references/` and is included here (see the style guide, section 8).
 ```{include} references/m01-02_data_management.md
 ```
 
+### [Data Publishing](01-data-best-practices/03_data_publishing.md)
+
+```{include} references/m01-03_data_publishing.md
+```
+
 ## Module 2: Federal Water Data Landscape
 
 ### [Module overview](02-federal-water-data-landscape/00_introduction.md)

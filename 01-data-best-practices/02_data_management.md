@@ -91,6 +91,7 @@ Remember the message about the corrected sensor record at the start of this page
 
 Thankfully, you don't need to consider yourself as a programmer, or to adopt every tool mentioned above, to make real progress on reproducibility. The three approaches described in this section target the first tier of the continuum: documentation and well-organized, well-structured files. Each one takes some thought and a little time, not advanced technical skill, and each pays off both for you and for anyone who later reuses your work (including your future self). They also build toward the [FAIR principles](01_open_science.md#fair-and-care): organization and naming help make data findable and reusable (F and R), machine-readable files make them interoperable (I), and documentation makes them reusable (R). FAIR is built during the project and cashed in when you publish.
 
+(m01-project-organization)=
 ### 1. Project organization
 
 Good organization makes it easier for you and others to find files and products later. The goal is to be intentional: even if you land on a different pattern than the one below, spend some time thinking through how your project is structured and how your files are named.
