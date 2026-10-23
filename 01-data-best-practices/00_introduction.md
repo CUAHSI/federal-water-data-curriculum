@@ -25,7 +25,7 @@ These break down into:
 
 1. [Open Science](01_open_science.md): what open science is, the FAIR and CARE principles, common barriers, and practical ways to start.
 2. [Data Management](02_data_management.md): {term}`data management plans <Data management plan>`, what reproducibility means, and three simple approaches you can start using today.
-3. [Data Publishing](03_data_publishing.md): FAIR in action, choosing a repository (with HydroShare as the example we look at in most detail), publishing derived data, and peer review of data and code.
+3. [Data Publishing](03_data_publishing.md): FAIR in action, choosing a repository (with a closer look at HydroShare), publishing derived data, and peer review of data and code.
 
 Each lesson ends with a short "Now you try it" activity and Further reading. Module 1 is conceptual, so unlike later modules it has no code and no software environment to set up.
 
@@ -36,15 +36,3 @@ Each lesson ends with a short "Now you try it" activity and Further reading. Mod
 - **Reproducibility is a continuum.** It starts with documentation and scripted steps, and grows through version control and modular code to automated pipelines. You don't need every tool to make real progress.
 - **{term}`Metadata` and the {term}`README`.** Metadata describe your data: the who, what, when, where, why and how. The README is the front page that ties a project or dataset together.
 - **{term}`Persistent identifiers <Persistent identifier>`.** A {term}`DOI` gives a published dataset or piece of software a permanent link that others can cite.
-
-## Where this leads
-
-Module 1 stands on its own, so you can take it without the rest of the course. If you go on, these ideas come back whenever the course touches data. Modules 2–4 work with river data from NASA, NOAA and USGS, and each lesson:
-
-- pins its software environment
-- keeps its query (places, identifiers, dates) in one place
-- records the data version and the date it was retrieved
-- keeps raw downloads separate from derived results
-- shows how to cite the data
-
-Those are this module's practices, applied to federal water data. Some of the data you'll meet there are provisional and may still be revised, which is exactly the "snapshot or recipe" decision from Data Publishing.

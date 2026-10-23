@@ -102,7 +102,7 @@ Some repositories are also run by universities, funders, or governments. These c
 | **DOIs** | One DOI per published resource. A [new version](https://help.hydroshare.org/creating-and-managing-resources/creating-resource-versions) is a separate resource with its own identifier, linked to the previous version | Every version of a data package gets its own DOI and identifier |
 | **Collaboration and compute** | Staged sharing with people and groups, linked JupyterHub environments, and the `hsclient` Python package | Primarily a publication and archive step |
 
-In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. Since HydroShare is the repository we look at in the most detail, we will spend a bit more time there.
+In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. CUAHSI, which developed this course, also runs HydroShare, so we look at it in more detail next.
 
 ### Introduction to HydroShare
 
