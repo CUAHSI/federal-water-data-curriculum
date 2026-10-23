@@ -9,47 +9,93 @@ The rules (names, the session map, learner-facing outputs, live coding, quizzes)
 [STYLE_GUIDE §11](../STYLE_GUIDE.md#11-teaching-materials). This README records the names the Phase 8 lanes
 build to, so they agree before they start.
 
+## How outputs are built
+
+Most outputs are written by a Claude Code agent following a **skill**: a set of instructions in
+`.claude/skills/<name>/SKILL.md` (`build-slides`, `build-notebooks`, `build-quizzes`, `build-instructor-guide`).
+"Rebuild" means asking an agent to run that skill again. A person can do the same work by hand by following
+the skill's steps. Only some steps are plain scripts you run yourself:
+
+- `tools/prepare_learner_copy.py` and `tools/check_stale.py` (standard library only, any Python 3.9 or later; no
+  conda environment needed);
+- `tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
+- rendering: `quarto render` locally, or Actions → Render slides → Run workflow;
+- quizzes: `text2qti <file>.txt` makes the QTI zip.
+
+Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
+the next rebuild undoes it.
+
 ## Layout
 
-| Folder | What's in it | Built by | Lane (ROADMAP Phase 8) |
-|---|---|---|---|
-| `slides/` | One Quarto reveal.js deck (`.qmd`, with speaker notes) per session; `slides/rendered/` holds HTML, PPTX and PDF renders from the "Render slides" workflow | `build-slides` skill | E |
-| `readings/` | Pre- and post-session readings (`.qmd` → PDF via Typst) | `build-slides` skill | E |
-| `learner-bundle/` | Student and solutions notebooks, environment files, scaffolds and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | F |
-| `quizzes/` | One `text2qti` quiz per module (`.txt`), its QTI zip for Canvas and an answer key | `build-quizzes` skill | H |
-| `instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | P8.5 |
-| `tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `build_notebooks.py` (lane F) | | |
-| `manifest.json` | One entry per generated output: its sources and the commit it was built from | `check_stale.py --update` | every lane |
+Lanes and task IDs are from ROADMAP.md Phase 8. Lane G (Acknowledgements, `CITATION.cff`, the root README)
+works outside this folder.
+
+| Folder | What's in it | Built by | Goes to learners? | Lane |
+|---|---|---|---|---|
+| `slides/` | One Quarto reveal.js deck (`.qmd`, with speaker notes) per session; `slides/rendered/` holds the HTML, PPTX and PDF renders of the decks **and the reading PDFs**, from the "Render slides" workflow | `build-slides` skill | Yes, via Canvas | E |
+| `readings/` | Pre- and post-session readings (`.qmd`; rendered to PDF) | `build-slides` skill | Yes, via Canvas | E |
+| `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
+| `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
+| `quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
+| `quizzes/*_key.md` | Answer key and objective coverage per quiz | `build-quizzes` skill | **No**, instructors only | H |
+| `instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
+| `tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `build_notebooks.py` (lane F) | | No | |
+| `manifest.json` | One entry per generated output: its sources and the commit it was built from | `check_stale.py --update` | No | every lane |
+
+Decks are built from learner copies, so their speaker notes follow the learner-facing rules too (no internal
+links, no open callouts), and any deck format is safe to share.
 
 ## Tools
 
 **`tools/prepare_learner_copy.py`.** Every learner-facing builder starts from this copy of a page. It removes
 every `TODO (dev team)` and `Partner review (…)` callout, turns internal course links (other pages, `{term}`,
 `{ref}` and `{doc}` roles, the Glossary and References pages, the repo) into plain text, keeps external links
-and images, and reports the counts. Put the counts in your PR.
+and images, and reports the counts. Put the counts in your PR. If the report ends with
+`WARNING: ... flag mention(s) left`, a page names a flag outside a callout (in prose or code): check it by hand
+before anything built from it goes to learners.
+
+Run from the repo root. Write learner copies to a scratch directory outside this repo (`<scratch-dir>` below):
 
 ```bash
-python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -o /tmp/learner/01_access_nasa_swot.md
-python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/*.md --out-dir /tmp/learner
+python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -o <scratch-dir>/01_access_nasa_swot.md
+python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/*.md --out-dir <scratch-dir>/learner
 ```
 
-From Python: `from prepare_learner_copy import prepare; text, counts = prepare(page_text)`. Write learner
-copies to a scratch directory, not into this repo.
+From Python:
+
+```python
+import sys
+sys.path.insert(0, "teaching-materials/tools")
+from prepare_learner_copy import prepare
+
+page = "03-federal-water-data-access-retrieval/01_access_nasa_swot.md"
+text, counts = prepare(open(page, encoding="utf-8").read())
+```
 
 **`tools/check_stale.py`.** Lists outputs whose sources changed since they were built (exit code 1 if any).
-After a rebuild, record it:
+A `STALE` line names the output; its manifest entry's `builder` says which skill rebuilds it.
 
-```bash
-python teaching-materials/tools/check_stale.py
-python teaching-materials/tools/check_stale.py --update teaching-materials/quizzes/module-01_quiz_data-best-practices.txt \
-    --kind quiz --builder build-quizzes \
-    --source 01-data-best-practices/00_introduction.md --source 01-data-best-practices/01_open_science.md
-```
+To rebuild an output, on your feature branch:
+
+1. Commit the lesson change. Staleness is measured against commits, so uncommitted edits don't count.
+2. Run the builder (the skill, or the script).
+3. Record the rebuild:
+   ```bash
+   python teaching-materials/tools/check_stale.py --update teaching-materials/quizzes/module-01_quiz_data-best-practices.txt \
+       --kind quiz --builder build-quizzes --source 01-data-best-practices
+   ```
+4. Commit the output and `manifest.json` together.
+5. Run `python teaching-materials/tools/check_stale.py`: the output should no longer be listed.
 
 `--kind` is one of `slides`, `reading`, `notebook`, `environment`, `bundle-readme`, `quiz`,
-`instructor-guide`. `--kind`, `--builder` and `--source` are needed only for a new entry; `--source` replaces
-the recorded sources. Paths are repo-relative. Commit lesson changes before recording a rebuild, because
-staleness is measured against commits.
+`instructor-guide` (answer keys use `quiz`). `--kind`, `--builder` and `--source` are needed only for a new entry; `--source` (repeat
+it for each path) replaces the recorded sources. Paths are repo-relative. A directory in `sources` (e.g.
+`01-data-best-practices` or `images/m03`) covers every file under it.
+
+Renders in `slides/rendered/` have no manifest entries: they follow their `.qmd`, so re-render a deck
+whenever its `.qmd` is rebuilt. Recorded commits must stay reachable, so merge PRs with merge commits, not
+squash merges; otherwise `check_stale.py` reports the entry's commit as "not in this clone" and it needs
+recording again.
 
 Each manifest entry looks like this:
 
@@ -64,11 +110,10 @@ Each manifest entry looks like this:
 }
 ```
 
-A directory in `sources` (e.g. `images/m03`) covers every file under it.
-
 ## Session map
 
-All sessions are at 2:00 pm ET. The Dec 1 peer review and Dec 3 demos have no decks.
+All sessions are in 2026, at 2:00 pm ET. The Dec 1 peer review and Dec 3 demos have no decks. The same map is in
+STYLE_GUIDE §11; change both together.
 
 | Session | Date | Length | Covers | Lesson pages |
 |---|---|---|---|---|
@@ -84,7 +129,11 @@ All sessions are at 2:00 pm ET. The Dec 1 peer review and Dec 3 demos have no de
 The naming rule is in STYLE_GUIDE §11: whole words, numbers kept, lowercase with hyphens inside a part and
 underscores between parts. **Module slugs** are the module folder names without their number
 (`data-best-practices`, `federal-water-data-landscape`, `federal-water-data-access-retrieval`,
-`federal-water-data-synthesis`). **Lesson slugs** come from the lesson page's title (its `#` heading).
+`federal-water-data-synthesis`). **Lesson slugs** come from the lesson page's title (its `#` heading),
+lowercased, with spaces turned into hyphens and punctuation dropped: *Retrieve NASA SWOT data* →
+`retrieve-nasa-swot-data`. A file for a whole module uses `module-NN_<module slug>`; a file for one lesson uses
+`module-NN_lesson-NN_<lesson slug>`. So `module-03_lesson-01_retrieve-nasa-swot-data` has three parts:
+`module-03` | `lesson-01` | `retrieve-nasa-swot-data`.
 
 ### Slides and readings (lane E)
 
@@ -99,7 +148,8 @@ underscores between parts. **Module slugs** are the module folder names without 
 
 A reading has its deck's name plus `_pre-reading.qmd` or `_post-reading.qmd`, in `readings/`, e.g.
 `readings/session-03_module-03_lesson-01_retrieve-nasa-swot-data_pre-reading.qmd`. Skip a reading when nothing
-needs to go in it. Renders keep the same base name (`.html`, `.pptx`, `.pdf`) in `slides/rendered/`.
+needs to go in it. Renders keep the same base name (`.html`, `.pptx`, `.pdf`); deck renders and reading PDFs
+both land in `slides/rendered/`.
 
 ### Learner bundle (lane F)
 
@@ -118,7 +168,7 @@ learner-bundle/
 ├── module-04_federal-water-data-synthesis/
 │   ├── module-04_lesson-02_synthesizing-federal-data-products-to-build-hydrologic-confidence[...]  (m04-synthesis)
 │   └── module-04_lesson-03_additional-federal-water-data[...]                                     (m04-synthesis)
-└── scaffolds/
+└── scaffolds/                        hand-edited source, read by build_notebooks.py
     └── <lesson file stem>.yml        e.g. module-03_lesson-01_retrieve-nasa-swot-data.yml
 ```
 
@@ -127,7 +177,8 @@ Module 4 lesson 3 has three short code blocks; lane F decides whether they make 
 in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are shown on slides).
 
 The `build-notebooks` skill's layout example names the Module 3 folder `module-03_access-and-retrieval/`. Use
-`module-03_federal-water-data-access-retrieval/` from this table instead, so module folders follow one rule.
+`module-03_federal-water-data-access-retrieval/` from this table instead, so module folders follow one rule
+(the skill is due to be updated to match).
 
 ### Quizzes (lane H)
 

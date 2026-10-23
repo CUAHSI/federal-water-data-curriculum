@@ -219,6 +219,8 @@ def _summary(name: str, counts: dict) -> str:
         f"{counts['internal_links_converted']} internal links to text; kept "
         f"{counts['external_links_kept']} external links; removed {counts['labels_removed']} labels"
     )
+    if counts.get("malformed_roles_fixed"):
+        msg += f"; fixed {counts['malformed_roles_fixed']} role(s) missing backticks (fix the page too)"
     if counts.get("flag_mentions_left"):
         msg += f"; WARNING: {counts['flag_mentions_left']} flag mention(s) left, check by hand"
     return msg

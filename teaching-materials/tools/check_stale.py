@@ -11,7 +11,8 @@ Every generated output has an entry in ``teaching-materials/manifest.json``:
       "builder": "build-slides"
     }
 
-Paths are relative to the repo root. ``sources`` may use git pathspecs (e.g. ``images/m03/*``).
+Paths are relative to the repo root. A directory in ``sources`` (e.g. ``images/m03``) covers every file
+under it.
 
 Usage:
     python teaching-materials/tools/check_stale.py
