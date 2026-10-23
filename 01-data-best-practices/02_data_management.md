@@ -191,7 +191,7 @@ storm_project/
 2. Sketch a cleaner folder structure, using the numbered phases from [project organization](#m01-project-organization).
 3. Rename the files so that a stranger could tell what each one is.
 
-**What you should see:** At least four problems: several "final" copies and no single source of truth; raw records that can't be told apart from edited copies; scripts that aren't linked to the outputs they make; vague file names with spaces; and no README.
+**What you should see:** At least these five problems: several "final" copies and no single source of truth; raw records that can't be told apart from edited copies; scripts that aren't linked to the outputs they make; vague file names with spaces; and no README.
 
 :::{dropdown} Example answer
 ```text
