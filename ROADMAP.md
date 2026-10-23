@@ -259,10 +259,245 @@ One session, one branch: `content/p7-rm-swot-discharge`. Draft PR into `dev`. *(
 - [x] P7.7 `content-reviewer` + `learner-reviewer` on the changed pages; fix must-fixes and blockers; push;
       draft PR listing every changed sentence/table cell (before → after) for Lindsay's review.
 
+## Phase 8 — Teaching materials (built from the course content, rebuildable)
+
+**Goal:** everything needed to *run* the course is generated from the lesson pages and can be regenerated
+when they change:
+- **Session slide decks** with instructor notes, plus pre- and post-session reading PDFs for content that
+  doesn't fit the session time.
+- **A learner bundle for HydroShare:** notebooks (student and solutions), environment files and a README for
+  the Module 3 and 4 lessons with code.
+- **Module quizzes:** one per module, multiple choice, QTI for Canvas.
+- **An instructor guide.**
+- **An Acknowledgements page.**
+
+The website (`0*/` pages) stays the single source of truth. Generated material lives in `teaching-materials/`,
+which is not part of the website build.
+
+**Pilot constraint:** pilot learners can't see the website or this repo. They learn from the sessions, so they
+get the slides and reading PDFs (via Canvas) and the learner bundle (via HydroShare). Learner-facing outputs
+must stand on their own:
+- **External links are fine** (agency docs, datasets, tools).
+- **No links into the course itself:** no links to other course pages, the glossary, the References page or
+  the repo. Convert them to plain text, or point to the deck or reading that covers the topic.
+- **No `TODO (dev team)` or `Partner review` callouts.**
+
+**How work flows:** as in Phase 6. Agents push their own `<type>/<topic>` branches to `upstream` and open draft
+PRs into `dev`. Lane branches don't edit `ROADMAP.md`; each PR lists its task IDs.
+
+| Order | What |
+|---|---|
+| 1 | Lindsay adds the settings and workflow changes by hand (see "Lindsay, by hand") |
+| 2 | **P8.0 setup**, one session → draft PR → merge |
+| 3 | **Lanes E, F, G, H** in parallel → draft PRs → merge as each lands |
+| 4 | **P8.5 instructor guide** (needs E, F and H merged) |
+
+### Lindsay, by hand (before P8.0; agents can't edit these paths)
+- [X] Add to `allow` in `.claude/settings.json`: `"Bash(quarto render:*)"`, `"Bash(quarto check:*)"`,
+      `"Bash(quarto --version:*)"`, `"Bash(papermill:*)"`, `"Bash(text2qti:*)"`.
+- [X] Add `.github/workflows/render-slides.yml` (from this kit). It renders the decks and readings on request,
+      never per PR.
+- [X] Add the four `.claude/skills/build-*` folders (from this kit).
+- [X] Repo **Settings → Actions → General**: tick **Allow GitHub Actions to create and approve pull requests**. This setting lets the Render slides workflow open draft PRs; it can’t approve or merge its own PRs, because GitHub never lets a PR's author approve it and the workflow only creates a draft. The remaining risk is that a future workflow could approve or merge someone else's PR, but any workflow change has to come through a reviewed PR (agents can't automatically edit .github/workflows/), so approving and merging stay with people.
+- [X] Install Quarto locally (https://quarto.org/docs/get-started/). Its bundled Typst makes the reading
+      PDFs, so no LaTeX is needed.
+
+### P8.0 — Setup · branch `chore/p8-setup` · about 45 min
+- [ ] P8.0.1 Create `teaching-materials/` with `slides/`, `readings/`, `learner-bundle/`, `quizzes/`,
+      `instructor-guide/`, `tools/` and a `README.md`. Exclude `teaching-materials/` from the MyST site build
+      in `myst.yml`.
+- [ ] P8.0.2 Add **STYLE_GUIDE §11 Teaching materials** (text below) and add `teaching-materials/` to the
+      CLAUDE.md repo map.
+- [ ] P8.0.3 `teaching-materials/manifest.json` plus `teaching-materials/tools/check_stale.py`:
+    - The manifest has one entry per output: `output`, `kind`, `sources` (lesson paths, images and environment
+      files it was built from), `source_commit`, `built_at` and `builder` (skill name).
+    - `check_stale.py` uses only the standard library. For each entry it runs
+      `git diff --quiet <source_commit> HEAD -- <sources>` and prints the stale outputs, with an exit code of 1
+      if any are stale. It also takes `--update <output>` to rewrite an entry after a rebuild.
+- [ ] P8.0.4 `teaching-materials/tools/prepare_learner_copy.py`: copies a page for learner-facing use. It:
+    - removes every `TODO (dev team)` and `Partner review (…)` admonition
+    - turns internal course links (relative links to other pages, `{term}`, `{ref}`, `{doc}` roles, links to
+      the References or Glossary pages) into plain text, keeping external `http(s)` links
+    - reports the counts of both
+
+    Every learner-facing builder uses it.
+- [ ] P8.0.5 Write down the **session map** and the **file names** (§11) in `teaching-materials/README.md`, so
+      the lanes agree on names before they start.
+
+### Lane E — Slides and readings · branch `content/p8-slides` · owns `teaching-materials/slides/*`, `teaching-materials/readings/*`
+Use the `build-slides` skill. If it's slow, split it across two terminals: sessions 1–3, then sessions 4–6.
+- [ ] P8.E1 Sessions 1–6 per the session map: Quarto reveal.js decks with speaker notes and a timing table.
+- [ ] P8.E2 For each session, the pre- and/or post-session reading (Quarto → PDF) holding the lesson content
+      the session time can't cover. Skip a reading when nothing needs to go in it.
+- [ ] P8.E3 Render each deck to HTML, PPTX and PDF and each reading to PDF locally. Check the timing and slide
+      counts, and fix any overflowing slides.
+- [ ] P8.E4 Manifest entries; review with `content-reviewer`; draft PR with the timing summary per session.
+
+### Lane F — Learner bundle · branch `content/p8-learner-bundle` · owns `teaching-materials/learner-bundle/*`, `teaching-materials/tools/build_notebooks.py`
+Use the `build-notebooks` skill.
+- [ ] P8.F1 `build_notebooks.py` plus scaffold files; a student notebook and a solutions notebook for each
+      Module 3 and 4 lesson that has code; environment files.
+- [ ] P8.F2 Run every solutions notebook top to bottom in its environment. Run every student notebook up to
+      the first "Now you try it" cell.
+- [ ] P8.F3 Bundle `README.md`, written for HydroShare (what's here, how to open it, credentials, licence,
+      how to cite).
+- [ ] P8.F4 Manifest entries; review; draft PR.
+
+### Lane G — Credits and orientation · branch `docs/p8-credits-readme` · owns `acknowledgements.md`, `CITATION.cff`, root `README.md`, the authors fields
+- [ ] P8.G1 Remove the per-page authors. They probably come from `authors:` in `myst.yml` (project
+      frontmatter) and/or page frontmatter; remove them everywhere.
+- [ ] P8.G2 Add `acknowledgements.md` (text below) to the toc, after References.
+- [ ] P8.G3 Add `CITATION.cff` with the course as learning material: Platt as contact, the
+      Writing – Original Draft authors in the order below, the repo URL, GPL-3.0 and the version `pilot-2026-11`.
+- [ ] P8.G4 Update the root `README.md` to orient a newcomer:
+    - what this repo is
+    - **the website** (`0*/` pages, glossary, references; built from `dev` to GitHub Pages)
+    - **teaching materials** (`teaching-materials/`; not on the website: slides and readings, the learner
+      bundle, quizzes, the instructor guide)
+    - **how to rebuild:**
+        - regenerate the content with the `build-*` skills
+        - render the slides and readings with the "Render slides" action (Actions → Render slides → Run
+          workflow) or locally with `quarto render`
+        - rebuild a quiz's QTI file with `text2qti <file>.txt`
+        - find stale outputs with `python teaching-materials/tools/check_stale.py`
+    - how to contribute (fork → branch → PR into `dev`)
+    - licence and how to cite
+- [ ] P8.G5 Review; draft PR.
+
+### Lane H — Module quizzes · branch `content/p8-quizzes` · owns `teaching-materials/quizzes/*`
+Use the `build-quizzes` skill. Follows issue #32 (formative, retakes allowed, the correct answer always shown
+with an explanation, QTI for Canvas).
+- [ ] P8.H1 One quiz per module (Modules 1–4): about 10–15 minutes, multiple choice (mostly single answer,
+      with 2–3 "select all that apply"), mapped to that module's
+      learning objectives, with feedback on every question.
+- [ ] P8.H2 Convert each with `text2qti`; check that the QTI zips build.
+- [ ] P8.H3 An objective-coverage table and an answer-key summary per quiz in the PR (for spot-checking); manifest
+      entries; draft PR.
+
+### P8.5 — Instructor guide (after E, F and H merge) · branch `content/p8-instructor-guide`
+Use the `build-instructor-guide` skill. Draft PR.
+
+### Parked
+- [ ] Publishing the learner bundle (plus the rendered slides and readings) to a HydroShare collection.
+      Lindsay will do this with the HydroShare staff after F merges.
+- [ ] Canvas: replace the "Lesson pages" module items with the session's slides and reading PDFs.
+- [ ] Canvas: set the minimum quiz score for module checkpoints (issue #32) as a module requirement.
+
+---
+
+### STYLE_GUIDE §11 text (P8.0.2)
+
+```markdown
+## 11. Teaching materials
+
+Teaching materials are generated from the lesson pages; they never replace them. Fix content in the lesson,
+then rebuild. Everything lives in `teaching-materials/` and isn't part of the website.
+
+**Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
+hyphens inside a part and underscores between parts:
+`module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
+the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`, `_pre-reading.qmd`,
+`_post-reading.qmd`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
+*names* inside the files stay short (`m03-swot`), because people type them.
+
+**Session map**
+
+| Session | Date (ET) | Length | Covers | Slide deck (`slides/`) |
+|---|---|---|---|---|
+| 1 | Tue Nov 3, 2:00 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `session-01_module-01_data-best-practices.qmd` |
+| 2 | Thu Nov 5, 2:00 | 120 min | Module 2 overview + lessons 1–3 | `session-02_module-02_federal-water-data-landscape.qmd` |
+| 3 | Tue Nov 10, 2:00 | 90 min | Module 3 overview + lesson 1 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd` |
+| 4 | Thu Nov 12, 2:00 | 90 min | Module 3 lesson 2 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.qmd` |
+| 5 | Tue Nov 17, 2:00 | 90 min | Module 3 lesson 3 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.qmd` |
+| 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.qmd` |
+
+(Dec 1 peer review and Dec 3 demos have no decks.) Readings in `readings/` share the deck's name plus
+`_pre-reading` or `_post-reading`.
+
+**The slides are the lessons for learners.** Pilot learners meet with an instructor and can't open the website
+or this repo. Lesson content that doesn't fit the session time goes in that session's pre- or post-session
+reading, never into a PDF of the whole lesson.
+
+**Learner-facing outputs** (slides, readings, notebooks, the bundle README, quizzes) stand on their own:
+- **External links are fine.** Internal course links (other pages, glossary terms, References, the repo)
+  become plain text, or point to the deck or reading that covers the topic.
+- **No `TODO (dev team)` or `Partner review` callouts.**
+
+`tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
+
+**Notebook sections are named after lesson headings**, so a slide can say "notebook section 'Programmatic data
+downloads'" and mean the same thing in both places.
+
+**Live coding.** Slides carry the explanation and short code (≤ 12 lines per slide, shown, not run). Switch to
+the notebook only after a block of related concepts has been explained on slides. Then spend at least 10
+minutes there: run the code, change something, read the output. Use no more than 2 switches in a 90-minute
+session and 3 in a 120-minute one. Each switch is a "Live coding" slide that names the notebook, the sections
+to run, what to point out, and when to come back.
+
+**Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
+answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
+
+**Every output is in `manifest.json`** with its sources and the commit it was built from.
+`python teaching-materials/tools/check_stale.py` lists what needs rebuilding.
+```
+
+### `acknowledgements.md` text (P8.G2)
+
+```markdown
+---
+title: Acknowledgements
+---
+
+*Federal Open Water Data for Researchers* was developed by CUAHSI with contributions from colleagues at NOAA,
+USGS and NASA. Contributions are described with the [CRediT contributor roles](https://credit.niso.org/).
+
+## Contributors
+
+| Name | Affiliation | Contributions |
+|---|---|---|
+| Lindsay Platt | CUAHSI | Conceptualization; Writing – Original Draft; Project Administration |
+| Kimberlee Wong | CUAHSI | Writing – Original Draft |
+| Kaysa Vaarre-Lamoureux | CUAHSI | Writing – Original Draft |
+| Abner Bogan | CUAHSI | Writing – Original Draft |
+| Julia Masterman | CUAHSI | Conceptualization |
+| Irene Garousi-Nejad | CUAHSI | Conceptualization; Resources; Writing – Review & Editing |
+| Tony Castronova | CUAHSI | Conceptualization; Resources |
+| Danielle Tijerina-Kreuzer | CUAHSI | Conceptualization; Resources |
+| Jason Regina | NOAA | Resources; Writing – Review & Editing |
+| Elise Hinman | USGS | Writing – Review & Editing |
+| Cee Nell | USGS | Resources; Writing – Review & Editing |
+| Michael Mahoney | USGS | Resources; Writing – Review & Editing |
+| *[NASA contributor(s)]* | NASA | *[contributions]* |
+
+:::{admonition} TODO (dev team): NASA attribution
+:class: attention
+Add the NASA contributor(s) and their contributions.
+:::
+
+Contributions from federal agency staff are acknowledged with thanks. Acknowledgment does not imply
+endorsement of this course by NASA, NOAA or USGS.
+
+This course adapts code and examples from the [CUAHSI notebooks](https://github.com/CUAHSI/notebooks)
+repository (GPL-3.0); individual lessons credit the notebooks they draw on.
+
+## Funding
+
+This material is based upon work supported by the U.S. National Science Foundation under
+[Award No. 2535162](https://www.nsf.gov/awardsearch/show-award?AWD_ID=2535162). Any opinions, findings, and
+conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily
+reflect the views of the National Science Foundation.
+
+## Use of AI tools
+
+Generative AI tools (Anthropic's Claude) were used to help draft lesson text, code examples, figures and
+the teaching materials (slides, readings, notebooks, quizzes and instructor guide) from outlines, existing
+CUAHSI notebooks and contributors' materials. Contributors reviewed, edited and tested all content, ran every
+code example, and are responsible for the course as published.
+```
+
 ## Parked
-- [ ] "Check your understanding" in Modules 2–4 (after the internal review).
-- [ ] Slides built from the repo plus a course narration guide (after partner review). Keep lesson sections self-contained
-      with one key figure each so slides can be generated later.
+
+None at the moment.
 
 ---
 
