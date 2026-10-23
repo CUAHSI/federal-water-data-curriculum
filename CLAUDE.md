@@ -27,6 +27,7 @@ branches as you go and open draft PRs; Lindsay reviews and merges them.
 | `01-data-best-practices/` | Editable. Keep changes to items Lindsay approved in the Module 1 alignment review. |
 | `environments/` | One file per lesson: `m03-swot.yml`, `m03-nwm.yml`, `m03-wdfn.yml`, `m04-synthesis.yml` (STYLE_GUIDE §5). |
 | `myst.yml` | Update the `toc` when adding/renaming pages. |
+| `teaching-materials/` | Generated slides, readings, learner bundle, quizzes and instructor guide; not on the website. Build with the `build-*` skills per STYLE_GUIDE §11; each Phase 8 lane edits only its own subfolder. |
 | `.claude/`, `.github/workflows/` | Don't change unless Lindsay asks. |
 
 ## Content conventions
