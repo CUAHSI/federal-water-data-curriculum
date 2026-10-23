@@ -126,7 +126,7 @@ These are only a few of the options, and there are surely others we have missed.
 
 ## Publishing derivative data
 
-Sometimes, water science involves working with data you didn't collect yourself. You might subset a national dataset, reformat it, aggregate it, or combine it with other sources and then analyze it. Later modules introduce the datasets we will work with in this course, and many of them fall into this category, so these are good questions to keep in mind when we get there.
+Sometimes, water science involves working with data you didn't collect yourself. You might subset a national dataset, reformat it, aggregate it, or combine it with other sources and then analyze it. Public agency datasets are a common example. Before you publish anything built from them, work through these questions:
  
 - **Check the license first.** Can the source data be redistributed? A CC BY or public domain source can usually be republished with attribution, but restricted or "all rights reserved" sources may not be. You inherit restrictions, and you can't make them looser.
 - **Decide whether to publish the data or the recipe.** If the source is large, stable, open, and versioned, you may only need to publish the code that retrieves and processes it, along with a precise pointer to the source. If the source is short-lived, gets revised, or is hard to access, publishing a snapshot of the subset you actually used is a good idea. Often, doing both is best.
