@@ -64,7 +64,7 @@ Confirm this summary of NWM error sources and of how observations are assimilate
 
 :::{admonition} Partner review (USGS): Accuracy
 :class: important
-Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms. - I generally agree that uncertainty increases as gage heights/discharge become more extreme, but I am not sure "in percent terms".
+Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms. - I generally agree that uncertainty increases as gage heights/discharge become more extreme, but I am not sure "in percent terms". Mike et al. likely have a better grasp.
 :::
 
 :::{admonition} TODO (dev team): Rating-curve uncertainty citation
