@@ -2,7 +2,7 @@
 
 Imagine you finished an analysis months ago for a paper currently in review, and the associated data products are archived. Then you get a message: one of your monitoring sites had a sensor malfunction, and the provider has corrected the record. How you feel about that message depends almost entirely on how you managed your data, workflows, and documentation along the way.
 
-:::{figure} ../figures/scenario_sensor_malfunction.png
+:::{figure} ../images/m01/02_data_management-scenario-sensor-malfunction.png
 :alt: A chat exchange. A colleague writes that a monitoring site had a sensor malfunction and the data have since been corrected, after the analysis and data release were finished. The reply: "Umm... I think I can figure out which results are impacted," then "Never mind. I can just re-run the whole thing. Might take some time though."
 :width: 100%
 
@@ -11,7 +11,7 @@ Your colleague informs you of an unfortunate scenario where you are required to 
 
 That is what this page is about. **Data management** is the set of actions you take *during* a research project (not just at the end) so that your methods are credible and you (including your future self), and everyone else, can have confidence in your results. These practices are also what make the data publishing step in the [next lesson](03_data_publishing.md) possible. Tidy data, solid documentation, and complete metadata don't appear at publication time. They get built in as you go.
 
-:::{figure} ../figures/reproducibility_overview.jpg
+:::{figure} ../images/m01/02_data_management-reproducibility-overview.jpg
 :alt: Illustration of a winding path from a person holding The Turing Way book, past bubbles labelled "Here are my data", "Here is my code" and "Here are my tools", up to a person on a hilltop presenting "Here are my results".
 :width: 100%
 
@@ -57,7 +57,7 @@ A few tips that make DMPs and DMSPs more useful than a box to check:
 - **Plan for the sharing step early.** Choosing a repository and a license at the *start* of a project means you can organize and document with the end in mind.
 - **Use existing tools and resources to help get you started.** There are many existing materials and services dedicated to helping you get your Data Management Plan started. Many university library and research offices offer their own data management plan tools, templates, and one-on-one support.
 
-[![Illustration of the DMP guide, showing key steps and linked resources](../figures/dmp_guide.png)](https://www.cuahsi.org/uploads/pages/doc/DMP_guide_digital.pdf)
+[![Illustration of the DMP guide, showing key steps and linked resources](../images/m01/02_data_management-dmp-guide.png)](https://www.cuahsi.org/uploads/pages/doc/DMP_guide_digital.pdf)
 
 _Click the image to open the full DMP guide (PDF). The links to templates, tools, and other resources are clickable in the PDF, but not in the image above._
 
@@ -73,7 +73,7 @@ In this course, we build on these definitions (e.g., [The Turing Way Community, 
 
 This understanding of reproducibility also allows for _tiers of reproducibility_, which show that reproducibility is on a continuum rather than an all-or-nothing property:
 
-:::{figure} ../figures/continuum_of_reproducibility.png
+:::{figure} ../images/m01/02_data_management-continuum-of-reproducibility.png
 :alt: A three-tier pyramid titled Continuum of reproducibility. Bottom tier: document and rebuild your own analysis (documentation, scripts). Middle tier: rebuild, reuse, and debug analyses plus track changes through time (scripted data access, version control, modular code). Top tier: build and collaborate on automated analyses (dependency tracking, automated workflows).
 :width: 100%
 
@@ -111,7 +111,7 @@ Good organization makes it easier for you and others to find files and products 
 
 **Converge on file naming conventions.** The exact convention matters less than having one: pick a pattern deliberately, write it down, and use it consistently. A good naming convention lets you understand a file without opening it. One approach is to prefix input and output files with a date (e.g., `YYMMDD`, or the unambiguous ISO 8601 form `YYYY-MM-DD`) so you can track when a file was generated from the filename alone. Matching output file names to the code that produced them (e.g., `regression_model_v1.R` creates `regression_model_v1_output.csv`) makes it easy to trace a result back to its source.
 
-:::{figure} ../figures/project_organization.png
+:::{figure} ../images/m01/02_data_management-project-organization.png
 :alt: Left: five numbered phase folders, 01_fetch, 02_clean, 03_model, 04_summarize and 05_visualize. Middle: each phase holds in, out, src and tmp subfolders. Right: output files named with a YYMMDD date prefix, such as 240818_regression_model_v1_output.csv, next to the scripts with matching names, such as regression_model_v1.R.
 :width: 100%
 
@@ -133,7 +133,7 @@ Spreadsheet software like Excel is intuitive and keeps your data right at your f
 - **Mixing data types in the same column:** combining text and numbers (e.g., `12.4 cfs`) means the column is read as text rather than as numbers.
 - **Including metadata in the same sheet as the data:** notes, site descriptions, and other context above or beside your data make it hard to tell where the data actually start.
 
-:::{figure} ../figures/excel_poor_practices.png
+:::{figure} ../images/m01/02_data_management-excel-poor-practices.png
 :alt: A spreadsheet of daily discharge, temperature and specific conductance for one site. Site notes sit in the top rows above the data, storm days are marked only by blue shading, merged cells label a site visit, and the units are in a row below the data. Labels list the four problems: merged cells, color as an indicator, mixed types in a column, and contextual information mixed with the data.
 :width: 100%
 
@@ -142,7 +142,7 @@ An example spreadsheet with several common practices that make data publishing a
 
 A more reusable approach is to store the data in a tidy, rectangular table where every column holds one type of information and every row is one observation. Information that was previously encoded by color gets its own column (e.g., `storm_day` as a TRUE/FALSE value), and the site metadata move to a separate sheet or file. You can still add fill colors with conditional formatting, but the information lives in the data itself and the color is just a bonus. Keeping site metadata separate also means you can add new sites in the future without restructuring anything.
 
-:::{figure} ../figures/excel_recommended_practices.png
+:::{figure} ../images/m01/02_data_management-excel-recommended-practices.png
 :alt: The same data as one tidy table with columns site, Date, streamflow_cfs, stream_temperature_degC, specific_conductance_uSpercm, site_visit and storm_day (TRUE or FALSE), and a separate small table of site metadata with columns site, sensor and date_installed.
 :width: 100%
 
