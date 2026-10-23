@@ -165,6 +165,62 @@ Many of us start with standalone scripts for tasks like data cleaning or modelin
 These three approaches are the first tier of the continuum. As your projects grow, they are also the foundation for the more advanced tools in the upper tiers, like version control, modular code, and automated pipelines. This module doesn't cover those tools in depth ([The Turing Way](https://book.the-turing-way.org/reproducible-research/reproducible-research) is a good place to start), but the habits here make them much easier to adopt later.
 
 
+## Now you try it
+
+Apply the three simple approaches to a project someone else left behind.
+
+A colleague who has moved to another job (or a student who has graduated) leaves you their project on how a small watershed's stream responded to a summer storm. Your manager or PI wants the analysis updated with this year's storm. The folder holds:
+
+```text
+storm_project/
+  data.xlsx
+  data_FINAL.xlsx
+  final_v3_USE_THIS_ONE.xlsx
+  Copy of gage data (2).csv
+  rain gauge.csv
+  analysis.py
+  analysis_new_TRY.py
+  fig1.png
+  figure for report.png
+  notes.docx
+```
+
+**Your task:**
+
+1. List what makes this project hard to reproduce.
+2. Sketch a cleaner folder structure, using the numbered phases from [project organization](#m01-project-organization).
+3. Rename the files so that a stranger could tell what each one is.
+
+**What you should see:** At least four problems: several "final" copies and no single source of truth; raw records that can't be told apart from edited copies; scripts that aren't linked to the outputs they make; vague file names with spaces; and no README.
+
+:::{dropdown} Example answer
+```text
+storm_response/
+  README.md
+  1_raw/
+    out/240715_stream_gage_discharge_raw.csv     # never edited by hand
+    out/240715_rain_gauge_precip_raw.csv
+  2_process/
+    src/align_rain_and_discharge.py
+    out/240720_align_rain_and_discharge_output.csv
+  3_figures/
+    src/plot_storm_hydrograph.py
+    out/240720_plot_storm_hydrograph_output.png
+```
+
+Check your version against this list:
+
+- One copy of each file: the three "final" spreadsheets are resolved into one raw file and code that processes it.
+- Raw data kept separate and untouched.
+- Each output named after the script that made it.
+- Dates in file names, and no spaces.
+- A README that says what the project is and the order to run the steps in.
+
+Your names and folders don't have to match these. Any convention is fine as long as you choose it deliberately and use it consistently.
+:::
+
+*Optional:* sketch the same structure for one of your own projects.
+
 ## Further reading
 
 - [Data Management Plan guide (CUAHSI)](https://www.cuahsi.org/uploads/pages/doc/DMP_guide_digital.pdf)
