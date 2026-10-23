@@ -56,6 +56,34 @@ We know it is easy to talk about open science, and more difficult to pull these 
 
 Open science sets the values: work that others, including your future self, can find, check, and build on. The next two lessons put those values into practice. [Data Management](02_data_management.md) covers what you do during a project, and [Data Publishing](03_data_publishing.md) covers how you share the results so they last.
 
+## Now you try it
+
+Practice telling FAIR and open apart, using five datasets a water researcher might come across.
+
+**Your task:** For each dataset below, mark which FAIR letters it meets (F, A, I, R) and whether it is *open*, meaning anyone can get the files without asking or being approved.
+
+1. A stream gage's discharge record, served by a public web service, with a permanent site ID and documented formats.
+2. Satellite water-surface data from a national archive, with a dataset DOI. Downloads are free but need a free account.
+3. A repository record whose metadata anyone can read, but whose files are released on request because the sites are on private land.
+4. A CSV on a lab's shared drive ("anyone with the link can view"), with no README.
+5. Discharge values printed as a table in the PDF supplement of a journal article.
+
+**What you should see:** Open and FAIR don't always go together. Two of the datasets are largely FAIR without being fully open, one is open but barely FAIR, and one is easy to get but hard for a machine to read.
+
+:::{dropdown} Example answer
+| # | F | A | I | R | Open? |
+|---|---|---|---|---|---|
+| 1 | ✓ permanent site ID, catalogued | ✓ standard web service | ✓ documented formats | ✓ if the metadata describe units and quality | Yes |
+| 2 | ✓ DOI | ✓ standard protocol, with a free login | ✓ | ✓ | Free, but behind a login |
+| 3 | ✓ metadata can be found | ✓ access rules are stated | Depends on the files | Depends on the metadata | No |
+| 4 | ✗ no permanent ID or metadata | Partly: only while the link works | Maybe | ✗ no README | Yes, by link |
+| 5 | Partly, through the article | ✓ | ✗ a PDF table isn't machine-readable | Partly | Yes |
+
+Datasets 2 and 3 are not fully open, but they are largely FAIR: you can find them, and the rules for getting the files are clear. Dataset 4 is open to anyone with the link, but with no persistent identifier and no metadata it is barely FAIR, and it can disappear at any time. Dataset 5 is easy to get but hard to reuse, because the values have to be copied out of a PDF by hand.
+:::
+
+*Optional:* where would your own data sit in this table today?
+
 ## Further reading
 
 - [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1)
