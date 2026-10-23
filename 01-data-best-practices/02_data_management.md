@@ -15,7 +15,7 @@ That is what this page is about. **Data management** is the set of actions you t
 :alt: Illustration of a winding path from a person holding The Turing Way book, past bubbles labelled "Here are my data", "Here is my code" and "Here are my tools", up to a person on a hilltop presenting "Here are my results".
 :width: 100%
 
-An illustration demonstrating the value of documenting at each stage of the data lifecycle for improving research reproducibility ([The Turing Way Community and Scriberia, 2024](https://zenodo.org/records/13882307)).
+An illustration demonstrating the value of documenting at each stage of the data lifecycle for improving research reproducibility ([The Turing Way Community and Scriberia, 2024](https://zenodo.org/records/13882307), CC BY 4.0).
 :::
 
 ## It's really data *and* information management
@@ -27,7 +27,7 @@ When we say "data", we mean more than the numbers in your spreadsheet. Good mana
 - **The code:** if you wrote scripts, notebooks, or models to clean, analyze, or present the data, that code is a research product too and needs the same care.
 - **The methods:** field and lab protocols, standard operating procedures (SOPs), and notes on your approach. These record the steps that don't happen in code, like how a sensor was calibrated or how a sample was collected, and they need the same care too.
 
-The FAIR principles you saw earlier for data have also been adapted for research software ([Barker, 2022](https://doi.org/10.1038/s41597-022-01710-x)) and more recently for computational workflows ([Wilkinson et al., 2025](https://doi.org/10.1038/s41597-025-04451-9)). Treating your code as something others (including your future self) will need to access, understand, and run is an idea that runs through the rest of this page.
+The {term}`FAIR principles <FAIR principles>` you saw earlier for data have also been adapted for research software ([Barker, 2022](https://doi.org/10.1038/s41597-022-01710-x)) and more recently for computational workflows ([Wilkinson et al., 2025](https://doi.org/10.1038/s41597-025-04451-9)). Treating your code as something others (including your future self) will need to access, understand, and run is an idea that runs through the rest of this page.
 
 This page covers three things, in order: planning for your data up front with a **data management plan**, understanding what {term}`reproducibility <Reproducibility>` is and how to build toward it, and **three simple approaches** you can start using today to make meaningful strides towards making your research reproducible.
 
@@ -197,13 +197,13 @@ storm_project/
 ```text
 storm_response/
   README.md
-  1_raw/
-    out/240715_stream_gage_discharge_raw.csv     # never edited by hand
-    out/240715_rain_gauge_precip_raw.csv
-  2_process/
+  01_raw/
+    in/240715_stream_gage_discharge_raw.csv      # never edited by hand
+    in/240715_rain_gauge_precip_raw.csv
+  02_process/
     src/align_rain_and_discharge.py
     out/240720_align_rain_and_discharge_output.csv
-  3_figures/
+  03_figures/
     src/plot_storm_hydrograph.py
     out/240720_plot_storm_hydrograph_output.png
 ```

@@ -14,7 +14,7 @@ Many groups support researchers who want to work this way. [The Turing Way](http
 
 Open science is no longer an optional "nice to have" aspect of research. Funders and journals increasingly require shared data and metadata as part of the publication process.
 
-Some requirements from [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include data management plans, machine-readable metadata, and for publications to be available free of charge. For awards made on or after 22 January 2026, NSF also requires recipients to share all data supporting NSF-funded publications at the time of publication, removes the 12-month embargo (a waiting period before a paper must be made public), and moves the data management and sharing plan to a tool on Research.gov ([NSF 26-202](https://www.nsf.gov/policies/document/pappg24-1-supplement-2)). These changes follow the [2022 OSTP memo](https://bidenwhitehouse.archives.gov/wp-content/uploads/2022/08/08-2022-OSTP-Public-Access-Memo.pdf) on free, immediate, and equitable access to federally funded research.
+Some requirements from [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include {term}`data management plans <Data management plan>`, machine-readable {term}`metadata <Metadata>`, and for publications to be available free of charge. For awards made on or after 22 January 2026, NSF also requires recipients to share all data supporting NSF-funded publications at the time of publication, removes the 12-month embargo (a waiting period before a paper must be made public), and moves the data management and sharing plan to a tool on Research.gov ([NSF 26-202](https://www.nsf.gov/policies/document/pappg24-1-supplement-2)). These changes follow the [2022 OSTP memo](https://bidenwhitehouse.archives.gov/wp-content/uploads/2022/08/08-2022-OSTP-Public-Access-Memo.pdf) on free, immediate, and equitable access to federally funded research.
 
 [AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data) emphasizes "Preserving Open Data as a World Heritage to Secure our Future", including topics like ensuring equitable access to trusted and reusable data, implementing metadata standards across disciplines and domains, and taking collective responsibility in maintaining data infrastructure.
 
@@ -77,7 +77,7 @@ Practice telling FAIR and open apart, using five datasets a water researcher mig
 | 2 | ✓ DOI | ✓ standard protocol, with a free login | ✓ | ✓ | Free, but behind a login |
 | 3 | ✓ metadata can be found | ✓ access rules are stated | Depends on the files | Depends on the metadata | No |
 | 4 | ✗ no permanent ID or metadata | Partly: only while the link works | Maybe | ✗ no README | Yes, by link |
-| 5 | Partly, through the article | ✓ | ✗ a PDF table isn't machine-readable | Partly | Yes |
+| 5 | Partly, through the article | ✓ | ✗ a PDF table isn't machine-readable | Partly | Only if the article is open access |
 
 Datasets 2 and 3 are not fully open, but they are largely FAIR: you can find them, and the rules for getting the files are clear. Dataset 4 is open to anyone with the link, but with no persistent identifier and no metadata it is barely FAIR, and it can disappear at any time. Dataset 5 is easy to get but hard to reuse, because the values have to be copied out of a PDF by hand.
 :::

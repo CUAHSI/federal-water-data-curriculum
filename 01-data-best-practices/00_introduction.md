@@ -35,7 +35,7 @@ Each lesson ends with a short "Now you try it" activity and Further reading. Mod
 - **Open is not the same as FAIR.** Open is about who can get the data. {term}`FAIR <FAIR principles>` is about how easily people and machines can find, access, combine and reuse them. Restricted data can still be FAIR if the rules for access are clear.
 - **Reproducibility is a continuum.** It starts with documentation and scripted steps, and grows through version control and modular code to automated pipelines. You don't need every tool to make real progress.
 - **{term}`Metadata` and the {term}`README`.** Metadata describe your data: the who, what, when, where, why and how. The README is the front page that ties a project or dataset together.
-- **Persistent identifiers.** A {term}`DOI` gives a published dataset or piece of software a permanent link that others can cite.
+- **{term}`Persistent identifiers <Persistent identifier>`.** A {term}`DOI` gives a published dataset or piece of software a permanent link that others can cite.
 
 ## Where this leads
 

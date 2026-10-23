@@ -3,7 +3,7 @@
 
 - American Geophysical Union. (n.d.). *AGU Data and Software Sharing Guidance*. https://data.agu.org/resources/agu-data-software-sharing-guidance (accessed 2026-10-23).
 - American Geophysical Union. (n.d.). *Useful domain repositories*. https://data.agu.org/resources/useful-domain-repositories (accessed 2026-10-23).
-- Blodgett, D. (2019). *National Water Model V1.2 Retrospective and Operational Model Run Archive for Selected NWIS Gage Locations* (dataset). U.S. Geological Survey. https://www.usgs.gov/node/273527; https://doi.org/10.5066/P9ZRX948
+- Blodgett, D. (2019). *National Water Model V1.2 Retrospective and Operational Model Run Archive for Selected NWIS Gage Locations* (dataset). U.S. Geological Survey. https://doi.org/10.5066/P9ZRX948
 - CF Conventions. (n.d.). *CF Metadata Conventions*. https://cfconventions.org (accessed 2026-10-23).
 - choosealicense.com. (n.d.). *Choose an open source license*. GitHub. https://choosealicense.com (accessed 2026-10-23).
 - Colavizza, G., Hrynaszkiewicz, I., Staden, I., Whitaker, K., & McGillivray, B. (2020). The citation advantage of linking publications to research data. *PLOS ONE*, 15(4), e0230416. https://doi.org/10.1371/journal.pone.0230416
@@ -32,6 +32,6 @@
 - Stall, S., Martone, M. E., Carson, M., et al. (2025). *Generalist Repository Comparison Chart* (version 4). Zenodo. https://zenodo.org/records/17315963
 - The Turing Way Community. (n.d.). *The Turing Way: A handbook for reproducible, ethical and collaborative research*. https://book.the-turing-way.org (accessed 2026-10-23).
 - Vrouwenvelder, K., & Platt, L. (2024). *AGU Learning Workshop: Technical Skills for Publishing and Sharing Data and Code* (version 1). Zenodo. https://zenodo.org/records/14271000
-- Vrouwenvelder, K., Wong, K., Castronova, A., Platt, L., & Sedora, B. *AGU Learning Workshop: Technical Skills for Publishing and Sharing Data and Code* (all versions). Zenodo. https://doi.org/10.5281/zenodo.14270999
+- Vrouwenvelder, K., Wong, K., Castronova, A., Platt, L., & Sedora, B. (n.d.). *AGU Learning Workshop: Technical Skills for Publishing and Sharing Data and Code* (all versions). Zenodo. https://doi.org/10.5281/zenodo.14270999
 - Wilkinson, M. D., et al. (2016). The FAIR Guiding Principles for scientific data management and stewardship. *Scientific Data*, 3, 160018. https://doi.org/10.1038/sdata.2016.18
 - Zenodo. (n.d.). *Zenodo*. CERN. https://zenodo.org (accessed 2026-10-23).
