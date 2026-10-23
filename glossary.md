@@ -115,6 +115,44 @@ Zarr
   parts it needs from cloud storage. See also {term}`Virtual Zarr`.
 ```
 
+## Open science and data management
+
+Terms from Module 1. Each one links back to the lesson that explains it.
+
+```{glossary}
+CARE principles
+: Principles for Indigenous data governance: Collective benefit, Authority to control, Responsibility and Ethics.
+  They complement the FAIR principles by asking who the data are about and who benefits. See
+  [Open Science](01-data-best-practices/01_open_science.md).
+
+Data management plan
+: A short document, written before a project starts, describing what data it will create or use and how they will be
+  stored, documented, shared and preserved. Also called a DMP, or a DMSP (data management and sharing plan). See
+  [Data Management](01-data-best-practices/02_data_management.md).
+
+FAIR principles
+: Guidelines for making data Findable, Accessible, Interoperable and Reusable by people and machines. FAIR is not the
+  same as open: restricted data can be FAIR if the rules for access are clear. See
+  [Open Science](01-data-best-practices/01_open_science.md).
+
+Metadata
+: Data about data: what the values are, their units and definitions, where and when they were collected, how they
+  were produced and who to contact.
+
+README
+: A plain-text or Markdown file that introduces a project or dataset: what each file is, how the files relate, how
+  to run or read them, and how to cite them. Often called the front page of a project.
+
+Replicability
+: Getting consistent results across studies that ask the same question, each with its own data. Definitions vary by
+  field; see [Data Management](01-data-best-practices/02_data_management.md).
+
+Reproducibility
+: Getting the same results from the same data and methods. This course also uses a broader working definition:
+  methods can be easily rebuilt with the same data to recreate results, or with new data to update an analysis. See
+  [Data Management](01-data-best-practices/02_data_management.md).
+```
+
 ## NASA SWOT
 
 ```{glossary}
