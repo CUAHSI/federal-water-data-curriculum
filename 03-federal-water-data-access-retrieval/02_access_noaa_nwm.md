@@ -519,6 +519,7 @@ For runs since January 2026 you can skip the build step. NOAA's references are o
 import json
 import fsspec
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 from kerchunk.combine import MultiZarrToZarr
 
 comid = 10164004                                # Ohio River at Louisville
@@ -535,8 +536,17 @@ def load_ref(path):
     text = json.dumps(json.loads(s3.cat(path)))
     return json.loads(text.replace("s3://noaa-nwm-pds/", "https://noaa-nwm-pds.s3.amazonaws.com/"))
 
-recent = MultiZarrToZarr([load_ref(p) for p in paths], remote_protocol="https", concat_dims=["time"],
-                         identical_dims=["feature_id", "reference_time", "crs"]).translate()
+refs_list = [load_ref(p) for p in paths]
+
+def combine():
+    return MultiZarrToZarr(refs_list, remote_protocol="https", concat_dims=["time"],
+                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+# Run the combine step in its own thread: kerchunk starts its own event loop,
+# which fails inside Jupyter's running loop.
+with ThreadPoolExecutor(1) as pool:
+    recent = pool.submit(combine).result()
+
 ds_recent = open_refs(recent)
 print(len(paths), "reference files;", dict(ds_recent.sizes))
 print(ds_recent["streamflow"].sel(feature_id=comid).load().to_series().head(3))
@@ -747,7 +757,7 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
 
 1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, by changing `POINT` to `(-123.0429, 44.9443)`.
 2. Get the latest short-range forecast for that COMID from the NOAA NWM API. Change `comid` in the API example.
-3. The Willamette ran high in late February 2026. Read the short-range forecast issued at 12Z on 25 February 2026 from NOAA's published references. Change `day` to `"20260225"` in the published-references example (keep `t12z`).
+3. The Willamette ran high in late February 2026. Build kerchunk references for the short-range forecast issued at 12Z on 25 February 2026 with `build_refs("20260225", 12)` (about 20 seconds), then read the `streamflow` for your COMID with `open_refs`, as in the kerchunk example.
 
 **What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 published reference files for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
 
@@ -766,20 +776,18 @@ resp.raise_for_status()
 run = resp.json()[0]
 print(run["reference_datetime"], run["units"], len(run["forecast"][0]["timeseries"]), "values")
 
-# NOAA-published references for the 2026-02-25 12Z short-range run (uses s3, load_ref, open_refs from above)
-paths = sorted(s3.glob("noaa-nodd-kerchunk-pds/nwm/short_range/"
-                       "nwm.short_range.channel_rt.conus.20260225.t12z.f*.nc.zarr"))
-feb = MultiZarrToZarr([load_ref(p) for p in paths], remote_protocol="https", concat_dims=["time"],
-                      identical_dims=["feature_id", "reference_time", "crs"]).translate()
-q_feb = open_refs(feb)["streamflow"].sel(feature_id=comid).load().to_series()
-print(len(paths), "reference files")
+# Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
+# (uses build_refs and open_refs from the kerchunk examples above)
+refs_feb = build_refs("20260225", 12)
+q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=comid).load().to_series()
+print(len(q_feb), "hourly values")
 print(q_feb.iloc[[0, 8, 17]])
 ```
 
 ```text
 COMID: 23791093
 2026-10-09T02:00:00Z CMS 18 values
-18 reference files
+18 hourly values
 time
 2026-02-25 13:00:00    1717.849962
 2026-02-25 21:00:00    1807.389960
