@@ -19,11 +19,11 @@ If you are working alongside a paper, a good rule of thumb is to choose your rep
 We introduced the {term}`FAIR principles <FAIR principles>` in the [Open Science lesson](01_open_science.md#fair-and-care). Here we look at what they actually look like at the moment of publishing. Each letter comes down to a concrete decision you make:
  
 - **F:** a persistent identifier is assigned and the data are placed where they can be searched.
-- **A:** an access protocol and sharing status are set, and any restrictions are stated.
-- **I:** a standard repository and open, non-proprietary formats are chosen.
+- **A:** how the files are retrieved (for example, a download link or an API), who may retrieve them, and any restrictions are stated.
+- **I:** open, non-proprietary formats and shared vocabularies are chosen.
 - **R:** a license and rich metadata are attached.
 
-Many repositories and services can check some of these automatically. [DataONE's MetaDIG engine](https://github.com/NCEAS/metadig-checks) is a good example. It runs a suite of open source checks, such as whether the metadata document is valid against its schema, and sorts the results into F, A, I, and R. Looking at a report like this for a real dataset is a great way to see what FAIR means in practice. One caveat is that these scores measure whether metadata are machine-readable, not whether the data themselves are correct, so they complement careful documentation and human review rather than replace them.
+Many repositories and services can check some of these automatically. [DataONE's MetaDIG engine](https://github.com/NCEAS/metadig-checks) is a good example. It runs a suite of open source checks, such as whether the metadata document is valid against its schema, and sorts the results into F, A, I, and R. Seeing how checks like these sort into the four letters is a good way to see what FAIR means in practice. One caveat is that these scores measure whether metadata are machine-readable, not whether the data themselves are correct, so they complement careful documentation and human review rather than replace them.
 
 :::{admonition} TODO (dev team): MetaDIG link
 :class: attention
@@ -66,6 +66,7 @@ Reusable data are well enough described that someone else can understand and tru
 - **A {term}`README`.** Describe what each file is and how the files relate, define variables, units, and abbreviations, explain how the data were collected or produced (including known issues and missing-value codes), list the software and versions needed, and say how to cite it and who to contact.
 - **Shared vocabularies.** Using community conventions, like CF standard names for NetCDF variables, controlled vocabularies for hydrologic variables, and ISO 8601 dates, means your terms mean the same thing to everyone. Where no standard exists, define your terms explicitly.
 - **Provenance.** Record where your inputs came from, what you did to them, and which version of the code produced the outputs.
+
 This is where the idea of "future you" returns. Six months from now, you will be the person who doesn't remember the project context, and if your published package would let you rerun your own analysis, it will probably work for others too. If your data are complex to read (a multi-file NetCDF, a database, or a Zarr store), consider also sharing a short script or notebook that loads them and makes one example plot. It doubles as a test that the package works. Asking a colleague to follow your README without any help from you is a great final check.
 
 (m01-water-domain-repositories)=
@@ -74,6 +75,13 @@ This is where the idea of "future you" returns. Six months from now, you will be
 A very important decision that members of the water science community have to make is where to publish their data and workflows. Let's dive into what should be considered when deciding on a repository, some possible options, and the strengths and weaknesses of them.
 
 **What should be considered when deciding on a repository?**
+
+- Does it give your data a DOI, and does it handle new versions?
+- Do its metadata fields fit your kind of data?
+- Does it review or curate submissions before publishing?
+- Will it preserve your data for the long term?
+- Will the community most likely to reuse your data find it there?
+- Can it accept the size and types of files you have?
 
 Much of this section draws on the AGU Learning Workshop *Technical Skills for Publishing and Sharing Data and Code* ([Vrouwenvelder & Platt, 2024](https://zenodo.org/records/14271000)), led by Kristina Vrouwenvelder of AGU Publishing with support from CUAHSI.
 
@@ -94,7 +102,7 @@ Some repositories are also run by universities, funders, or governments. These c
 | **DOIs** | One DOI per published resource. A [new version](https://help.hydroshare.org/creating-and-managing-resources/creating-resource-versions) is a separate resource with its own identifier, linked to the previous version | Every version of a data package gets its own DOI and identifier |
 | **Collaboration and compute** | Staged sharing with people and groups, linked JupyterHub environments, and the `hsclient` Python package | Primarily a publication and archive step |
  
-In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. Since HydroShare is the repository we use as the worked example in this course, we will spend a bit more time there.
+In short, HydroShare's strengths are collaboration before publication and keeping data, models, and code together with the means to run them. The trade-off is that published content is locked, so you need to finish everything before publishing. EDI's strengths are its structured, standardized metadata and built-in checks. The trade-off is that you need to prepare that metadata in EML, which is an extra step if you haven't worked with it before. Since HydroShare is the repository we look at in the most detail, we will spend a bit more time there.
 
 ### Introduction to HydroShare
 
@@ -105,7 +113,7 @@ A few features make it particularly useful:
 - **Sharing happens in stages.** A resource can be private, shared with specific people or groups, discoverable (anyone can find the metadata, but only people with permission can get the files), public, and finally published. This makes it easy to collaborate and prepare before anything is final.
 - **Publishing is permanent.** Publishing a resource assigns a DOI and locks the content, title, and authorship. A few things, like the abstract and related resources, can still be edited, but users cannot delete a published resource. Take care to finish your resource and metadata before you publish, and don't publish test resources. HydroShare also has [guidance on its minimum metadata requirements](https://help.hydroshare.org/publishing-in-hydroshare/minimum-metadata-requirements-for-publishing-in-hydroshare/): a descriptive title, an abstract, and at least three keywords including geographic ones. A CUAHSI staff member does a light review before publication.
 - **Data and compute sit together.** You can open a resource in a linked JupyterHub environment, and the [`hsclient`](https://github.com/hydroshare/hsclient) Python package lets you create resources, edit metadata, and add files from code.
-- **It supports the full citation loop.** HydroShare shows your resource's DOI before you permanently publish, so you can cite it right away. [Its recommended workflow](https://help.hydroshare.org/introduction-to-hydroshare/getting-started/permanently-publish-a-resource/):
+- **It supports the full citation loop.** HydroShare shows what your resource's DOI will be before you permanently publish. The DOI only starts working once the resource is permanently published, so until then you cite the resource by its URL. [Its recommended workflow](https://help.hydroshare.org/introduction-to-hydroshare/getting-started/permanently-publish-a-resource/):
   1. Make the resource public when you submit the paper, and cite it by URL.
   2. Switch to the DOI once the paper is accepted.
   3. Add the paper's reference to the resource's related resources once the paper has its DOI.

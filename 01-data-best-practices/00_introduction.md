@@ -25,7 +25,7 @@ These break down into:
 
 1. [Open Science](01_open_science.md): what open science is, the FAIR and CARE principles, common barriers, and practical ways to start.
 2. [Data Management](02_data_management.md): {term}`data management plans <Data management plan>`, what reproducibility means, and three simple approaches you can start using today.
-3. [Data Publishing](03_data_publishing.md): FAIR in action, choosing a repository (with HydroShare as the worked example), publishing derived data, and peer review of data and code.
+3. [Data Publishing](03_data_publishing.md): FAIR in action, choosing a repository (with HydroShare as the example we look at in most detail), publishing derived data, and peer review of data and code.
 
 Each lesson ends with a short "Now you try it" activity and Further reading. Module 1 is conceptual, so unlike later modules it has no code and no software environment to set up.
 

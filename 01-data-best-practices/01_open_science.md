@@ -6,13 +6,17 @@
 
 Other organizations word it differently, so you may meet other definitions elsewhere. Notice that this one covers *processes* as well as products: open science is about how you and your team work, not only about what you share at the end. It treats other scientists and disciplines as collaborators. We all benefit from transparent and {term}`reproducible <Reproducibility>` research, as it helps ensure the integrity and usability of scientific findings going into the future. This is especially true for water science and common complications water scientists have to navigate: fragmented community, data-intensive problems, and funder mandates.
 
-Open science exists on a spectrum made up of open data, open code, open access publications, open methods/protocols, and open processes, such as developing code in a public repository and sharing work in progress. We will explore each of these concepts as we move forward through this training.
+Open science exists on a spectrum made up of open data, open code, open access publications, open methods/protocols, and open processes, such as developing code in a public repository and sharing work in progress. This module focuses mostly on open data, open code, and open processes.
 
 Many groups support researchers who want to work this way. [The Turing Way](https://book.the-turing-way.org) is a community-written handbook on reproducible, ethical and collaborative data science. [Openscapes](https://openscapes.org) is a movement that helps researchers connect and build confidence in open, data-intensive science. NASA's Transform to Open Science (TOPS) initiative offers [Open Science 101](https://science.data.nasa.gov/features-events/open-science-training), a free online course. For Indigenous data governance, the [Global Indigenous Data Alliance (GIDA)](https://www.gida-global.org/careprinciples) maintains the CARE principles described below.
 
 ## Open science in practice
 
-Open science is no longer an optional "nice to have" aspect of research, with many organizations requiring data best practices as part of the publication process. Some requirements from [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include data management plans, machine-readable metadata, and for publications to be available free of charge. For awards made on or after 22 January 2026, NSF also requires recipients to share all data supporting NSF-funded publications at the time of publication, removes the 12-month embargo on publications, and moves the data management and sharing plan to a tool on Research.gov ([NSF 26-202](https://www.nsf.gov/policies/document/pappg24-1-supplement-2)). These changes follow the [2022 OSTP memo](https://bidenwhitehouse.archives.gov/wp-content/uploads/2022/08/08-2022-OSTP-Public-Access-Memo.pdf) on free, immediate, and equitable access to federally funded research. [AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data) emphasizes "Preserving Open Data as a World Heritage to Secure our Future", including topics like ensuring equitable access to trusted and reusable data, implementing metadata standards across disciplines and domains, and taking collective responsibility in maintaining data infrastructure.
+Open science is no longer an optional "nice to have" aspect of research. Funders and journals increasingly require shared data and metadata as part of the publication process.
+
+Some requirements from [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include data management plans, machine-readable metadata, and for publications to be available free of charge. For awards made on or after 22 January 2026, NSF also requires recipients to share all data supporting NSF-funded publications at the time of publication, removes the 12-month embargo (a waiting period before a paper must be made public), and moves the data management and sharing plan to a tool on Research.gov ([NSF 26-202](https://www.nsf.gov/policies/document/pappg24-1-supplement-2)). These changes follow the [2022 OSTP memo](https://bidenwhitehouse.archives.gov/wp-content/uploads/2022/08/08-2022-OSTP-Public-Access-Memo.pdf) on free, immediate, and equitable access to federally funded research.
+
+[AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data) emphasizes "Preserving Open Data as a World Heritage to Secure our Future", including topics like ensuring equitable access to trusted and reusable data, implementing metadata standards across disciplines and domains, and taking collective responsibility in maintaining data infrastructure.
 
 ## FAIR and CARE
 
@@ -21,17 +25,16 @@ The {term}`FAIR principles <FAIR principles>` ([Wilkinson et al., 2016](https://
 - F: Findable - Metadata and data should be easy to find for both humans and computers
 - A: Accessible - Once the user finds the required data, they need to know how they can be accessed
 - I: Interoperable - The data usually need to be integrated with other data and interoperate with workflows for analysis, storage, and processing
-- R: Reusable - Data should be well-described so they can be replicated or combined in different settings
+- R: Reusable - Data should be well-described so they can be reused or combined in different settings
 
-It's important to note that "open" doesn't always mean completely accessible to everyone, all the time. It usually entails having clear and persistent ways to access the data, publication, code, etc. Sometimes, there are necessary restrictions around sharing different types of data, whether that's because of laws, ethics, or data sovereignty. The {term}`CARE principles <CARE principles>` for Indigenous Data Governance ([GIDA](https://www.gida-global.org/careprinciples)) are a very important example. GIDA describes them as complementing the existing FAIR principles, asking those who work with data to consider both people and purpose:
+It's important to note that "open" doesn't always mean completely accessible to everyone, all the time. It usually entails having clear and persistent ways to access the data, publication, code, etc. Sometimes, there are necessary restrictions around sharing different types of data, whether that's because of laws, ethics, or data sovereignty. The {term}`CARE principles <CARE principles>` for Indigenous Data Governance ([GIDA](https://www.gida-global.org/careprinciples)) are a very important example. GIDA describes them as complementing the existing FAIR principles, asking those who work with data to consider both people and purpose. In GIDA's words:
 
 - C: Collective benefit - data ecosystems shall be designed and function in ways that enable Indigenous Peoples to derive benefit from the data.
 - A: Authority to Control - Indigenous Peoples’ rights and interests in Indigenous data must be recognised and their authority to control such data be empowered.
-- R: Responsibility - Those working with Indigenous data have a responsibility to share how those data are used to support Indigenous Peoples’ self
-determination and collective benefit
+- R: Responsibility - Those working with Indigenous data have a responsibility to share how those data are used to support Indigenous Peoples’ self-determination and collective benefit.
 - E: Ethics - Indigenous Peoples’ rights and wellbeing should be the primary concern at all stages of the data life cycle and across the data ecosystem.
 
-CARE is an important check on any project. Before you use or share data, ask whether they relate to Indigenous Peoples, lands, or waters, and so should follow the CARE principles. Understanding where your data come from, and the terms attached to them, is each researcher's responsibility.
+CARE is an important check on any project. Before you use or share data, ask whether they relate to Indigenous Peoples, lands, or waters, and so should follow the CARE principles. If they might, check the terms attached to the data and GIDA's guidance before you go further. Understanding where your data come from, and the terms attached to them, is each researcher's responsibility.
 
 ## Barriers to open science
 

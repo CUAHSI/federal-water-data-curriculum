@@ -135,13 +135,25 @@ FAIR principles
   same as open: restricted data can be FAIR if the rules for access are clear. See
   [Open Science](01-data-best-practices/01_open_science.md).
 
+Embargo
+: A set period during which a dataset's or paper's files are withheld from the public, although its record (and
+  often its DOI) can already be found. See [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
 Metadata
 : Data about data: what the values are, their units and definitions, where and when they were collected, how they
-  were produced and who to contact.
+  were produced and who to contact. See [Data Management](01-data-best-practices/02_data_management.md).
 
 README
 : A plain-text or Markdown file that introduces a project or dataset: what each file is, how the files relate, how
-  to run or read them, and how to cite them. Often called the front page of a project.
+  to run or read them, and how to cite them. Often called the front page of a project. See [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
+Persistent identifier
+: A permanent, unique label for a dataset, paper, person or organization that keeps working even if web pages move.
+  Examples: a {term}`DOI` for a dataset and an ORCID iD for a researcher.
+
+Provenance
+: The record of where data came from and what was done to them: sources and their versions, retrieval dates,
+  processing steps and the code that ran them.
 
 Replicability
 : Getting consistent results across studies that ask the same question, each with its own data. Definitions vary by
