@@ -17,12 +17,10 @@ By the end of this module, learners should be able to:
 - Compare and describe the capabilities and limitations of NASA SWOT, NOAA NWM, and USGS WDFN data for a single flood event at the appropriate scales and resolutions.
 
 These break down into:
-- Compare SWOT, NWM and WDFN river data by spatial coverage, temporal availability, accuracy and quality information, using the course's shared concepts ({term}`location identifier <Location identifier>`, {term}`variable <Variable>`, {term}`variable unit <Variable unit>`, {term}`time <Time>`, {term}`data quality flag(s) <Data quality flag(s)>`, {term}`version / provenance <Version / provenance>` and {term}`data unit <Data unit>`).
+- Compare SWOT, NWM and WDFN river data by spatial coverage, temporal availability, accuracy and quality information, using the course's shared concepts.
 - Link the same river location across agencies: a SWOT {term}`SWORD` reach, an NWM {term}`feature_id` (NHDPlus {term}`COMID`; `nwm_feature_id` in `hydrotools`) and a USGS monitoring location.
 - Retrieve and line up observations, forecasts and satellite measurements for a single event, accounting for differences in units, vertical reference, time zone and sampling.
 - Explain what each product can and cannot show during a flood, for example gage ratings at out-of-bank flows, forecast changes with lead time, and satellite overpass timing.
-- Summarize each agency's recommendations for using its data, and choose the product, or combination of products, that fits a research question.
-- Identify related Federal products: take a first step to access AORC precipitation, and know how to find SWOT SoS discharge estimates, which are still in development and not yet recommended for research use. Know that other agencies, such as USDA and USACE, also publish water data.
 
 ## Important concepts and terminology
 
