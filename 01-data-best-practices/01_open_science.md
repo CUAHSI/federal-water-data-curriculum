@@ -64,8 +64,8 @@ Practice telling FAIR and open apart, using five datasets a water researcher mig
 
 1. A stream gage's discharge record, served by a public web service, with a permanent site ID and documented formats.
 2. Satellite water-surface data from a national archive, with a dataset DOI. Downloads are free but need a free account.
-3. A repository record whose metadata anyone can read, but whose files are released on request because the sites are on private land.
-4. A CSV on a lab's shared drive ("anyone with the link can view"), with no README.
+3. A repository record with CSV files whose metadata anyone can read, but whose files are released on request because the sites are on private land.
+4. An Excel spreadsheet with just the data table on a lab's shared drive ("anyone with the link can view"), with no README or other related files.
 5. Discharge values printed as a table in the PDF supplement of a journal article.
 
 **What you should see:** Open and FAIR don't always go together. Two of the datasets are largely FAIR without being fully open, one is open but barely FAIR, and one is easy to get but hard for a machine to read.
@@ -73,16 +73,14 @@ Practice telling FAIR and open apart, using five datasets a water researcher mig
 :::{dropdown} Example answer
 | # | F | A | I | R | Open? |
 |---|---|---|---|---|---|
-| 1 | ✓ permanent site ID, catalogued | ✓ standard web service | ✓ documented formats | ✓ if the metadata describe units and quality | Yes |
-| 2 | ✓ DOI | ✓ standard protocol, with a free login | ✓ | ✓ | Free, but behind a login |
-| 3 | ✓ metadata can be found | ✓ access rules are stated | Depends on the files | Depends on the metadata | No |
-| 4 | ✗ no permanent ID or metadata | Partly: only while the link works | Maybe | ✗ no README | Yes, by link |
-| 5 | Partly, through the article | ✓ | ✗ a PDF table isn't machine-readable | Partly | Only if the article is open access |
+| 1 | ✓ Permanent site ID, catalogued | ✓ Standard web service | ✓ Documented formats | Depends on the metadata quality | ✓ Yes |
+| 2 | ✓ DOI | ✓ Standard protocol, with a free login | Depends on the data format of the archive | Depends on the metadata quality | Mostly; Free but behind a login |
+| 3 | ✓ Metadata can be found | ✓ Access rules are stated | ✓ CSV files are non-proprietary file types and commonly used across platforms | Depends on the metadata quality | No |
+| 4 | ✗ No permanent ID or metadata; you would need the direct link | Partly: only while the link works | ✗ Excel is a proprietary file format | ✗ No README or indication of any available metadata | ✓ Yes, by link |
+| 5 | Partly, through the article | Partly, embedded in the article but access license may not be clear | ✗ A PDF table isn't machine-readable | Maybe, depends on how the table is described in the article  | Only if the article is open access |
 
-Datasets 2 and 3 are not fully open, but they are largely FAIR: you can find them, and the rules for getting the files are clear. Dataset 4 is open to anyone with the link, but with no persistent identifier and no metadata it is barely FAIR, and it can disappear at any time. Dataset 5 is easy to get but hard to reuse, because the values have to be copied out of a PDF by hand.
+Datasets 2 and 3 are not fully open, but they are largely FAIR: you can find them, and the rules for getting the files are clear. Dataset 4 is open to anyone with the link, but with no persistent identifier and no metadata it is barely FAIR, and it can disappear at any time. Dataset 5 is easy to get but hard to reuse, because the values have to be copied out of a PDF by hand. Notice that there are no ✓ in the "R" column. Reusability is one of the more challenging parts of FAIR to achieve, and can be very dependent on the _quality_ of metadata and information provided. In addition to having metadata and documentation, peer reviews are one of the best ways you can help improve your data's reusability (more on that in [Data Publishing](03_data_publishing.md)).
 :::
-
-*Optional:* where would your own data sit in this table today?
 
 ## Further reading
 
