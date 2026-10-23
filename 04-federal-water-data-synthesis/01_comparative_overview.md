@@ -112,7 +112,7 @@ The comparison above comes down to matching a product to your research question.
 | Streamflow on an ungaged reach, or a long simulated record there | NOAA NWM retrospective | Every NHDPlus reach, back to 1979 |
 | What was expected to happen (forecasts), or how a forecast changed with lead time | NOAA NWM forecasts | Short-, medium- and long-range forecasts on every reach |
 | The best record of flow or stage at a specific site, or a long record | USGS WDFN continuous and daily values | Measured, quality-reviewed, often decades long |
-| How much to trust a flood peak | USGS WDFN field measurements, with the rating | Shows how far the peak is from direct measurement |
+| How much to trust a flood peak | USGS WDFN field measurements, with the measured rating, as well as the historical annual peaks for a site | Shows how far the peak is from direct measurement |
 
 Most real questions need more than one row, which is what the [case study](02_synthesize_river_data.md) shows.
 
