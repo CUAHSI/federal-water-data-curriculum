@@ -131,7 +131,7 @@ Peer review of data and code is less standardized than it is for papers, but the
 ## Further reading
 
 - [Generalist Repository Comparison Chart](https://zenodo.org/records/17315963)
- [Wilkinson et al. (2016), The FAIR Guiding Principles](https://doi.org/10.1038/sdata.2016.18)
+- [Wilkinson et al. (2016), The FAIR Guiding Principles](https://doi.org/10.1038/sdata.2016.18)
 - [AGU Data and Software Sharing Guidance](https://data.agu.org/resources/agu-data-software-sharing-guidance)
 - [AGU list of useful domain repositories](https://data.agu.org/resources/useful-domain-repositories)
 - [Technical Skills for Publishing and Sharing Data and Code (AGU/CUAHSI workshop slides)](https://doi.org/10.5281/zenodo.14270999)

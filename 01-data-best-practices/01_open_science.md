@@ -8,7 +8,7 @@ Open science exists on a spectrum made up of open data, open code, open access p
 
 ## Open science in practice
 
-Open science is no longer an optional "nice to have" aspect of research, with many organizations requiring data best practices as part of the publication process. Some requirements from [NSFs Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include data management plans, machine-readable metadata, and for publications to be available free of charge. [AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data) emphasizes "Preserving Open Data as a World Heritage to Secure our Future", including topics like ensuring equitable access to trusted and reusable data, implementing metadata standards across disciplines and domains, and taking collective responsibility in maintaining data infrastructure.
+Open science is no longer an optional "nice to have" aspect of research, with many organizations requiring data best practices as part of the publication process. Some requirements from [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1) include data management plans, machine-readable metadata, and for publications to be available free of charge. [AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data) emphasizes "Preserving Open Data as a World Heritage to Secure our Future", including topics like ensuring equitable access to trusted and reusable data, implementing metadata standards across disciplines and domains, and taking collective responsibility in maintaining data infrastructure.
 
 [FAIR data principles](https://www.go-fair.org/fair-principles/) are a very common way to measure how "open" science products are. We will go into more detail about FAIR in the Data Publishing section, but here is a quick overview:
 
@@ -33,13 +33,13 @@ It takes additional time and effort, especially at the start of a project. Thing
 
 We know it is easy to talk about open science, and more difficult to pull these practices into your own work. There is a wider push towards adopting these open science workflows, and here are some tangible ways to work towards them:
 
-- **Opt for constructive peer code reviews during the development phase.** We are human and it is importance to foster an environment where everyone is comfortable sharing in-progress work for constructive feedback. It is often the best way to ensure quality and build confidence in your work.
+- **Opt for constructive peer code reviews during the development phase.** We are human and it is important to foster an environment where everyone is comfortable sharing in-progress work for constructive feedback. It is often the best way to ensure quality and build confidence in your work.
 - **Share work early and often with peers and collaborators.** This is related to our point about peer code reviews. In every phase of the scientific process, it is important to get other people's perspectives. They may think of an issue you've run into from another angle and help you find a solution that you may never have thought of.
 - **Publish data and code as their own citable products.** This makes your data, code, and findings accessible to the wider water science community. It may add an extra step to the process, but it will in turn lower the barrier of entry for someone that is building off of concepts related to your work. It also ensures that if someone does use your data or code, you will be properly credited. It is through collaboration that we can move the scientific community forward, together.
 
 ## Further reading
 
-- [NSFs Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1)
+- [NSF's Public Access Policy](https://www.nsf.gov/policies/document/faq-public-access#qa-group-1)
 - [AGU's Position Statement on Data](https://www.agu.org/science-policy/position-statements/open-data)
 - [FAIR data principles](https://www.go-fair.org/fair-principles/)
 - [CARE principles for Indigenous Data Governance](https://www.gida-global.org/careprinciples)

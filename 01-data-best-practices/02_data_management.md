@@ -62,7 +62,7 @@ This understanding of reproducibility also allows for _tiers of reproducibility_
 
 ![](../figures/continuum_of_reproducibility.png)
 
-_Continuum of reproducibility, where more time and techincal skill is required as you go up each tier._
+_Continuum of reproducibility, where more time and technical skill is required as you go up each tier._
 
 It all starts with documentation and capturing data transformations in scripts. As projects become more data-intensive and our skills grow more technical, the next step is often to track code changes with a version control tool like Git (hosted on platforms like [GitHub](https://github.com/)) and commit modular code and functions across the codebase. Eventually, we may adopt automation and dependency-tracking tools (e.g., [`targets`](https://docs.ropensci.org/targets/) or [`Snakemake`](https://snakemake.readthedocs.io/en/stable/)) to build full data pipelines that reliably and efficiently execute workflows in encapsulated, pre-configured environments.
 
@@ -109,7 +109,7 @@ Setting up these habits early in a project helps you avoid headaches later when 
 
 ### 3. Documentation
 
-Documenting your code and process in detail is wonderful when you share it with others, but it is helpful even if you are the only person who will ever use it. Below is a list of helpful tips for documneting your code:
+Documenting your code and process in detail is wonderful when you share it with others, but it is helpful even if you are the only person who will ever use it. Below is a list of helpful tips for documenting your code:
 
 - **Add helpful in-line comments.** Guide a reader through what your code is doing. Not every line needs a comment, but there should be enough information for someone to understand the code and troubleshoot issues, especially around clever or complex lines.
 - **Describe your data with metadata.** Metadata describe the contents of a data file, such as units, definitions, and sources, so that the values can be interpreted correctly without needing to ask you.
