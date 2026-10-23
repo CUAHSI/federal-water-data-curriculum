@@ -1,6 +1,6 @@
 # Synthesizing Federal data products to build hydrologic confidence
 
-One way that these datasets are leveraged to improve hydrologic understanding and confidence is through the flood analyses. Floods are one of the most visible ways that communities benefit from improved hydrologic confidence and water research investments. Each of the three Federal water data products unlock different capabilities and mitigate limitations for measuring and understanding hydrologic conditions, especially in flood events. In this lesson, we will explore a specific prior flood and learn how each Federal dataset contributes to improving our understanding of flood events from a surface water perspective. You will also learn ancillary skills that are needed to work with these datasets together given their different temporal and spatial extents.
+One way that these datasets are leveraged to improve hydrologic understanding and confidence is through flood analyses. Floods are one of the most visible ways that communities benefit from improved hydrologic confidence and water research investments. Each of the three Federal water data products unlock different capabilities and mitigate limitations for measuring and understanding hydrologic conditions, especially in flood events. In this lesson, we will explore a specific prior flood and learn how each Federal dataset contributes to improving our understanding of flood events from a surface water perspective. You will also learn ancillary skills that are needed to work with these datasets together given their different temporal and spatial extents.
 
 ## Flood event context
 
@@ -235,7 +235,7 @@ The study area. The USGS gage (triangle), the NWM reach that NLDI indexes it to 
 
 ## Starting on the ground: observations from USGS
 
-The USGS gage is our reference: it records continuously, and USGS staff periodically measure the flow directly to check it. You can explore the same data in the [USGS Water Data viewer for 12200500](https://waterdata.usgs.gov/monitoring-location/USGS-12200500/#dataTypeId=continuous-00060-0&showFieldMeasurements=true&startDT=2025-12-01&endDT=2025-12-31). Here we request December 2025 {term}`continuous <Continuous values>` {term}`discharge <Discharge>` ({term}`parameter code <Parameter code>` `00060`) and {term}`gage height <Gage height>` (`00065`), plus {term}`daily <Daily values>` mean discharge (statistic code `00003` = mean), using the modernized `waterdata` module (see [Module 3](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md) for setup and API keys).
+The USGS gage is our reference: it records continuously, and USGS staff periodically measure the flow directly to check it. You can explore the same data on the [USGS Monitoring Location Page for USGS-12200500](https://waterdata.usgs.gov/monitoring-location/USGS-12200500/#dataTypeId=continuous-00060-0&showFieldMeasurements=true&startDT=2025-12-01&endDT=2025-12-31). Here we request December 2025 {term}`continuous <Continuous values>` {term}`discharge <Discharge>` ({term}`parameter code <Parameter code>` `00060`) and {term}`gage height <Gage height>` (`00065`), plus {term}`daily <Daily values>` mean discharge (statistic code `00003` = mean), using the modernized `waterdata` module (see [Module 3](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md) for setup and API keys).
 
 ```python
 # 15-minute discharge (00060) and gage height (00065), and daily mean (00003) discharge, for December 2025
@@ -248,20 +248,20 @@ print(discharge[["time", "value", "unit_of_measure", "approval_status", "qualifi
 
 Each table is a pandas DataFrame with one row per value (every 15 minutes for the continuous tables). In the course's shared vocabulary: the {term}`variable <Variable>` is identified by `parameter_code`, the {term}`variable unit <Variable unit>` is in `unit_of_measure` (`ft^3/s` for discharge, `ft` for gage height), and the {term}`data quality flags <Data quality flag(s)>` are `approval_status` (`Provisional` or `Approved`; see {term}`approval status <Approval status>`) and `qualifier` (for example, estimated or ice-affected values). The {term}`time <Time>` is in `time`, in UTC. When we accessed these data (2026-10-08), all December 2025 values at this gage were `Approved` with no qualifiers. Had they been {term}`provisional <Provisional data>`, they could change after you downloaded them, so record the approval status and your access date with any result (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)).
 
-Finding the peak is a one-liner on each table:
+Finding the event peak is a one-liner on each table:
 
 ```python
 peak_q = discharge.loc[discharge["value"].idxmax()]
 peak_h = stage.loc[stage["value"].idxmax()]
-print(f"Peak discharge: {peak_q['value']:,.0f} {peak_q['unit_of_measure']} at {peak_q['time']}")
-print(f"Peak stage:     {peak_h['value']} {peak_h['unit_of_measure']} at {peak_h['time']}")
+print(f"Peak event discharge: {peak_q['value']:,.0f} {peak_q['unit_of_measure']} at {peak_q['time']}")
+print(f"Peak event stage:     {peak_h['value']} {peak_h['unit_of_measure']} at {peak_h['time']}")
 ```
 
 The river peaked at **133,000 ft³/s at 08:00 UTC on 12 December 2025** (midnight local time), with a gage height of **37.73 ft** at 08:15 UTC. That stage is the highest on [NOAA's list of historic crests at this gauge](https://water.noaa.gov/gauges/MVEW1) (37.37 ft in November 1990), but the discharge isn't: NOAA's list shows 152,000 ft³/s for that 1990 crest. A record *stage* without a record *flow* is a clue that the relationship between stage and flow at this site isn't fixed.
 
 :::{admonition} Partner review (USGS): Starting on the ground: observations from USGS
 :class: important
-Confirm interpretation of record stage vs. non-record discharge at 12200500.
+Confirm interpretation of record stage vs. non-record discharge at 12200500. Confirmed. Here is the latest rating curve: https://api.waterdata.usgs.gov/stac-files/ratings/USGS.12200500.exsa.rdb
 :::
 
 ### Field measurements and the limits of out-of-bank flow
@@ -286,7 +286,7 @@ Verify whether the 12200500 rating has measurements above 111,000 ft³/s from ea
 
 :::{admonition} Partner review (USGS): Field measurements and the limits of out-of-bank flow
 :class: important
-Wording on rating extrapolation and out-of-bank flow at this site.
+Wording on rating extrapolation and out-of-bank flow at this site. - From the rating curve linked above, it was most recently amended in 2015. It was used to estimate discharge for this flood, and both the instantaneous gage height and discharge were approved (`approval_status` = "Approved"). I think it's fair to consider that the instantaneous discharge measurement has more uncertainty than the field measurement, but to me this reads as though we shouldn't trust an approved measurement. Maybe I'm misinterpreting. I think it is accurate to say that changes to the river channel morphology often necessitate amendments to the rating curve/stage-discharge relationship.
 :::
 
 Plot the continuous and daily discharge, with the December field measurement overlaid:

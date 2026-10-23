@@ -35,7 +35,7 @@ Much like their spatial coverage, the three data products also represent vastly 
 
   Operational forecasts have run since August 2016. A separate **retrospective** simulation re-runs the model over historical weather back to 1979, which makes it the main source of long, reach-level streamflow records where there is no gage (Module 2). Many distribution channels keep only recent runs: the no-key NOAA NWM API keeps only about the last 3–5 days ([Retrieve NOAA NWM data](../03-federal-water-data-access-retrieval/02_access_noaa_nwm.md)), and Module 2 notes that NOAA's NOMADS server keeps a 48-hour rolling window. Past forecasts, like the December 2025 forecasts used in this module, come from the public cloud archives on Google Cloud (`national-water-model`) and AWS ([`noaa-nwm-pds`](https://registry.opendata.aws/noaa-nwm-pds/)).
 
-* **USGS WDFN streamflow** is published in near real time, as {term}`provisional <Provisional data>` values. At currently active gages, data are collected every 15 minutes from sensors located at each streamgage. Under normal operational status, data are pushed up from the gages to NWIS (the USGS database whose data WDFN publishes) at least every 6 hours. {term}`Continuous values <Continuous values>` (typically every 15 minutes) start on different dates at each site: Module 2 gives the earliest as October 1950, and at USGS 12200500 continuous discharge starts in 1988. Check a site's record with the time-series metadata shown in [Retrieve USGS WDFN data](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md). Continuous values are also rolled up to _daily_ values (most commonly a _mean daily_ value). Daily records are available back to when the USGS streamgaging program began in 1889. Because the data arrive in near real time, these in-situ sensors are subject to unexpected monitoring challenges (e.g. equipment malfunctions, critter invasions, biofouling, etc) and while mitigated, data gaps are present in the records.
+* **USGS WDFN streamflow** is published in near real time, as {term}`provisional <Provisional data>` values. At currently active gages, data are collected every 15 minutes from sensors located at each streamgage. Under normal operational status, data are pushed up from the gages to NWIS (the USGS database whose data WDFN publishes) at least every 6 hours. {term}`Continuous values <Continuous values>` (typically every 15 minutes) start on different dates at each site: Module 2 gives the earliest as October 1950, and at USGS-12200500 continuous discharge starts in 1988. Check a site's record with the time-series metadata shown in [Retrieve USGS WDFN data](../03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md). Continuous values are also rolled up to _daily_ values (most commonly a _mean daily_ value). Daily records are available back to when the USGS streamgaging program began in 1889. Because the data arrive in near real time, these in-situ sensors are subject to unexpected monitoring challenges (e.g. equipment malfunctions, critter invasions, biofouling, etc) and while mitigated, data gaps are present in the records.
 
   :::{admonition} TODO (dev team): Start of USGS continuous records
   :class: attention
@@ -60,11 +60,11 @@ Confirm the precision-target wording and the main factors that affect WSE accura
 Confirm this summary of NWM error sources and of how observations are assimilated.
 :::
 
-**USGS WDFN streamflow** is the reference most researchers compare against, but discharge is not measured directly. The sensor records gage height, and discharge is computed from it with a {term}`rating curve <Rating curve>` fitted to periodic field measurements of discharge (Module 2). Accuracy therefore depends on how well the rating is defined at the flow you care about. During floods the river can go out of bank, the channel can scour or fill, and field measurements are hard and dangerous to make. The top of the rating curve often rests on only a few measurements, so peak discharges are usually more uncertain than typical flows ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). Each field measurement carries the hydrographer's own accuracy rating. At USGS 12200500, the measurement of 111,000 ft³/s on December 12, 2025, about nine hours after the crest, was rated "Fair", compared with "Good" for a calmer November measurement (USGS field measurements from the [Water Data API](https://api.waterdata.usgs.gov/ogcapi/v0/); see the case study in the next lesson). Module 3 shows how to retrieve field measurements and their ratings. Values are {term}`provisional <Provisional data>`, and can be revised, until USGS approves them ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
+**USGS WDFN streamflow** is the reference most researchers compare against, but discharge is not measured directly. The sensor records gage height, and discharge is computed from it with a {term}`rating curve <Rating curve>` fitted to periodic field measurements of discharge (Module 2). Accuracy therefore depends on how well the rating is defined at the flow you care about. During floods the river can go out of bank, the channel can scour or fill, and field measurements are hard and dangerous to make. The top of the rating curve often rests on only a few measurements, so peak discharges are usually more uncertain than typical flows ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). Each field measurement carries the hydrographer's own accuracy rating. At USGS-12200500, the measurement of 111,000 ft³/s on December 12, 2025, about nine hours after the crest, was rated "Fair", compared with "Good" for a calmer November measurement (USGS field measurements from the [Water Data API](https://api.waterdata.usgs.gov/ogcapi/v0/); see the case study in the next lesson). Module 3 shows how to retrieve field measurements and their ratings. Values are {term}`provisional <Provisional data>`, and can be revised, until USGS approves them ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
 
 :::{admonition} Partner review (USGS): Accuracy
 :class: important
-Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms.
+Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms. - I generally agree that uncertainty increases as gage heights/discharge become more extreme, but I am not sure "in percent terms". Mike et al. likely have a better grasp.
 :::
 
 :::{admonition} TODO (dev team): Rating-curve uncertainty citation
@@ -112,7 +112,7 @@ The comparison above comes down to matching a product to your research question.
 | Streamflow on an ungaged reach, or a long simulated record there | NOAA NWM retrospective | Every NHDPlus reach, back to 1979 |
 | What was expected to happen (forecasts), or how a forecast changed with lead time | NOAA NWM forecasts | Short-, medium- and long-range forecasts on every reach |
 | The best record of flow or stage at a specific site, or a long record | USGS WDFN continuous and daily values | Measured, quality-reviewed, often decades long |
-| How much to trust a flood peak | USGS WDFN field measurements, with the rating | Shows how far the peak is from direct measurement |
+| How much to trust a flood peak | USGS WDFN field measurements, with the measured rating, as well as the historical annual peaks for a site | Shows how far the peak is from direct measurement |
 
 Most real questions need more than one row, which is what the [case study](02_synthesize_river_data.md) shows.
 
@@ -164,10 +164,10 @@ _Course note (not agency guidance):_ NWM output can be reached several ways, and
 
 :::{admonition} Partner review (USGS): USGS (Water Data for the Nation)
 :class: important
-- Confirm this recommendation: *Check whether data are provisional before relying on them.*
-- Confirm this recommendation: *Use the modernized Water Data APIs.*
-- Confirm this recommendation: *Get a free API key for repeated or large requests.*
-- Confirm this recommendation: *Cite the data with the publication year, access date and DOI.*
+- Confirm this recommendation: *Check whether data are provisional before relying on them.* Confirmed
+- Confirm this recommendation: *Use the modernized Water Data APIs.* Confirmed, recommend reducing reference to legacy services
+- Confirm this recommendation: *Get a free API key for repeated or large requests.* Confirmed, really for all requests.
+- Confirm this recommendation: *Cite the data with the publication year, access date and DOI.* Confirmed
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
