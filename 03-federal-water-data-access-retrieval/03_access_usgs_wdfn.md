@@ -380,6 +380,12 @@ Field measurements include both discharge (`00060`) and gage-height (`00065`) re
 :::{admonition} Partner review (USGS): Field measurements and ratings
 :class: important
 Confirm the description of field measurements, measurement ratings and rating curves, and the statement that `Poor` ratings are common for flood measurements (and what accuracy each rating implies).
+From Water Data APIs: "Field measurements are physically measured values collected during a visit to the monitoring location. Field measurements consist of measurements of gage height and discharge, and readings of groundwater levels, and are primarily used as calibration readings for the automated sensors collecting continuous data. They are collected at a low frequency, and delivery of the data in WDFN may be delayed due to data processing time."
+
+From Water Data APIs: "`measurement_rated`: A qualitative estimate of the quality of a measurement."
+
+I don't know if `Poor` is a common rating for a flood measurement, but it makes logical sense to me.
+
 :::
 
 **What the data look like.** Plotting the continuous record by approval status, with the field measurement on top, shows the flood, the crest and where provisional data begin:
@@ -434,11 +440,11 @@ datetime
 2025-04-10 00:00:00+00:00      691000             P  03294500
 ```
 
-The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column. `dataretrieval` warns that `nwis.get_dv` will be removed on or after 2027-05-06. Write new code with `waterdata`, as in this lesson.
+The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column. `dataretrieval` warns that `nwis.get_dv` will be removed on or after 2027-02-22. Write new code with `waterdata`, as in this lesson.
 
 :::{admonition} Partner review (USGS): Legacy Water Services retirement
 :class: important
-Confirm the retirement timeline for the legacy Water Services to cite here.
+Confirm the retirement timeline for the legacy Water Services to cite here. - It's actually Feb 22, 2027: https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/
 :::
 
 (wdfn-understanding)=
