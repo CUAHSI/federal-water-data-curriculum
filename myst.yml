@@ -5,6 +5,9 @@ project:
   authors:
     - name: Lindsay Platt, Kimberlee Wong, Kaysa Vaarre-Lamoureux
   github: https://github.com/CUAHSI/federal-water-data-curriculum
+  # Teaching materials are generated from the pages and are not part of the website (STYLE_GUIDE §11).
+  exclude:
+    - teaching-materials/**
   toc:
     - file: index.md
     - title: Module 1 - Data Best Practices in Water Research
