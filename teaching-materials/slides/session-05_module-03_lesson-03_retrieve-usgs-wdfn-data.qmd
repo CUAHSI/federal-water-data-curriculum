@@ -1,0 +1,452 @@
+---
+title: "Module 3, Lesson 3: Retrieve USGS WDFN data"
+subtitle: "Federal Open Water Data for Researchers · Session 5"
+date: "Tuesday, November 17, 2026 · 2:00–3:30 pm ET"
+format:
+  revealjs:
+    embed-resources: true
+    slide-number: true
+    code-line-numbers: false
+    include-in-header:
+      text: |
+        <style>.reveal pre { font-size: 0.5em; }</style>
+  pptx: default
+execute:
+  enabled: false
+---
+
+## Today's agenda {.smaller}
+
+| Time (ET) | Minutes | Topic |
+|---|---|---|
+| 2:00 | 3 | Agenda, pre-reading recap |
+| 2:03 | 10 | What we'll retrieve; access routes |
+| 2:13 | 4 | Setup: API key |
+| 2:17 | 13 | Data discovery |
+| 2:30 | 12 | **Live coding 1** |
+| 2:42 | 15 | Data downloads |
+| 2:57 | 12 | **Live coding 2** |
+| 3:09 | 14 | What you downloaded; best practices |
+| 3:23 | 2 | Now you try it |
+| 3:25 | 5 | Recap, questions |
+
+::: notes
+- This lesson stands alone: no SWOT or NWM knowledge needed.
+- An API key is optional: everything runs without one, with lower rate limits.
+:::
+
+## From the pre-reading
+
+- **WDFN** publishes data stored in **NWIS**. USGS is retiring the legacy **Water Services**; this course uses the modernized **Water Data APIs**.
+- The `dataretrieval` package's **`waterdata`** module calls them for you.
+- Your **USGS API key** lives in the `API_USGS_PAT` environment variable; `dataretrieval` sends it, so it never appears in code.
+
+::: notes
+- Recap of `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data_pre-reading.pdf`.
+- Check: can everyone run the "is the key set" cell in the `Python (m03-wdfn)` kernel?
+:::
+
+# Retrieve USGS WDFN data {background-color="#1f4e79"}
+
+## What we'll retrieve
+
+- Find the stream monitoring locations around **Louisville, Kentucky**.
+- Retrieve the **sensor record**, **daily values** and **field measurements** from the Ohio River gage, `USGS-03294500`, for **15 March – 15 May 2025**.
+- Two steps: **discovery** (location IDs and codes), then **downloads**.
+
+::: notes
+- If you already know your monitoring location IDs, you can skip discovery.
+- Monitoring location ID: the USGS identifier for a place where data are collected: agency prefix plus site number.
+:::
+
+## Two generations of web service
+
+1. **Legacy Water Services** (`waterservices.usgs.gov`): what most existing tutorials and packages use. **Being retired.**
+2. **Modernized Water Data APIs** (`api.waterdata.usgs.gov`): monitoring locations, daily, continuous, field measurements and more. Supports **API keys**.
+
+This lesson: the modernized APIs, via `dataretrieval.waterdata`.
+
+::: notes
+- NWIS: the National Water Information System, the database behind WDFN. Older tutorials say "NWIS" for the whole system.
+- USGS encourages everyone to migrate.
+:::
+
+## Choosing an access route {.smaller}
+
+| Use case | `waterdata` function | Scaling limits |
+|---|---|---|
+| Find locations and what they record | `get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | Paged; each page is one request |
+| Daily values, any length of record | `get_daily` | Whole record in one call (paged for you) |
+| The sensor record (every 5–15 min) | `get_continuous` | Up to **three years** per call |
+| Field measurements by hydrographers | `get_field_measurements` | About one a month per site |
+| One day at many sites | `get_daily` with no site (optionally a `bbox`) | One request instead of thousands |
+
+Same APIs underneath: pick the **function** that matches your question.
+
+::: notes
+- Point-and-click: the WDFN website and WDFN Explore (waterdata.usgs.gov/explore).
+- Legacy code using `dataretrieval.nwis`: port it to `waterdata` (end of the downloads section).
+:::
+
+## Setup: an API key, kept out of your code
+
+- Request a key at the [USGS Water Data API signup page](https://api.waterdata.usgs.gov/signup/).
+- Store it in the **`API_USGS_PAT`** environment variable. `dataretrieval` reads and sends it for you.
+- Over the limit: HTTP `429 Too Many Requests`. **50 requests per hour** without a key; **1,000** with one.
+
+```python
+import os
+
+print("API_USGS_PAT is set:", bool(os.getenv("API_USGS_PAT")))
+```
+
+Check that it **exists**; never print the key itself.
+
+::: notes
+- Printed output ends up in notebooks, logs and screenshots.
+- USGS calls the key a token. See the API keys page (api.waterdata.usgs.gov/docs/ogcapi/keys).
+- Tested with Python 3.14, `dataretrieval` 1.4.0, pandas 3.0.6, geopandas 1.2.0.
+:::
+
+## Codes: parameters and statistics
+
+```python
+from dataretrieval import waterdata
+
+parameter_codes, _ = waterdata.get_reference_table("parameter-codes")
+statistic_codes, _ = waterdata.get_reference_table("statistic-codes")
+#    parameter_code parameter_name unit_of_measure
+# 42          00060      Discharge           ft3/s
+# 47          00065    Gage height              ft
+#    statistic_code statistic_name
+# 2           00003           MEAN
+# 10          00011  INSTANTANEOUS
+```
+
+Every `waterdata` function returns a pair: **(DataFrame, metadata)**.
+
+::: notes
+- Parameter code: what was measured. Statistic code: how values were summarized.
+- ~19,600 parameter codes, ~3,200 statistic codes. Other tables: `"site-types"`, `"states"`, `"counties"`, `"hydrologic-unit-codes"`, `"agency-codes"`.
+- The table says `ft3/s`; the data say `ft^3/s`.
+:::
+
+## Monitoring locations in a county
+
+```python
+STATE, COUNTY = "Kentucky", "Jefferson County"
+site = "USGS-03294500"                    # Ohio River at Louisville, KY
+START, END = "2025-03-15", "2025-05-15"   # the April 2025 flood
+
+site_info, md = waterdata.get_monitoring_locations(
+    state_name=STATE, county_name=COUNTY, site_type="Stream",
+)
+print(site_info.shape)                    # (120, 44)
+```
+
+**Look before you download:** the list includes inactive sites, and 15 entries that aren't real gages ("STUDENT" creeks, "TEST" sites).
+
+::: notes
+- A GeoDataFrame, one row per location: `monitoring_location_id`, `monitoring_location_name`, `site_type`, `drainage_area` (square miles), `geometry`.
+- Keep the query in variables at the top.
+:::
+
+## Which have daily mean discharge?
+
+```python
+sites_with_q, md = waterdata.get_combined_metadata(
+    state_name=STATE, county_name=COUNTY, site_type="Stream",
+    parameter_code="00060",   # discharge
+    statistic_id="00003",     # daily mean
+)
+# 29 time series at 27 locations
+```
+
+- Each row is a **time series**, not a location.
+- `begin` and `end` show the period: an `end` years ago means the gage no longer reports.
+
+::: notes
+- One of these is `USGS-03294500`, daily discharge from 1928 to the present.
+- `get_combined_metadata` combines location details with the list of time series each records.
+:::
+
+## Check on a map
+
+![Stream monitoring locations in Jefferson County, KY (gray; 105 after removing test entries), those with daily mean discharge (dark gray; 27, active or not) and the Louisville gage, USGS-03294500 (orange star). Data: USGS Water Data APIs via `dataretrieval`; river line from the USGS NLDI. Accessed 2026-10-08.](../../images/m03/wdfn-ohio-louisville-map.png){fig-alt="Map of Jefferson County, Kentucky, with the Ohio River as a blue line curving along the north and west edge. About a hundred gray and dark gray dots mark stream monitoring locations spread east of the river; an orange star marks the Louisville gage on the river." .r-stretch}
+
+::: notes
+- A quick map checks that discovery found what you meant.
+- The river line comes from the NLDI, which returns the network up- and downstream of a monitoring location.
+:::
+
+## What does the Louisville gage record?
+
+```python
+series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+```
+
+- `00060` discharge, statistic `00011`, period **Points**: the **continuous** record, since **2009**.
+- `00060` discharge, statistic `00003`, period **Daily**: the **daily mean**, since **1928**.
+- `00065` gage height, continuous since 2007.
+- Also: water-year summaries, 1979–83 sediment series, a 2026 precipitation record.
+
+::: notes
+- Discovery for a single site.
+- Your `end` dates will be later.
+:::
+
+## Live coding 1: setup and discovery {.smaller}
+
+- **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb`
+- **Sections:** "Tools and environment setup", then "Programmatic data discovery"
+- **Point out:**
+  - `API_USGS_PAT is set: True`, with no key on screen
+  - the STUDENT and TEST entries in the county list
+  - change `COUNTY` (or `STATE`) and count locations with daily discharge
+- **12 minutes.** Back to slides at **2:42**.
+
+::: notes
+- Without a key, the discovery calls still work.
+- If short on time: skip the map cell.
+:::
+
+## Continuous data: the sensor record
+
+```python
+cont, md = waterdata.get_continuous(
+    monitoring_location_id=site,
+    parameter_code=["00060", "00065"],    # discharge and gage height
+    time=f"{START}T00:00:00Z/{END}T23:59:59Z",
+)
+peaks = cont.loc[cont.groupby("parameter_code")["value"].idxmax()]
+#      parameter_code                      time      value unit_of_measure
+# 4900          00060 2025-04-09 14:30:00+00:00  719000.00          ft^3/s
+# 4895          00065 2025-04-09 14:00:00+00:00      67.98              ft
+```
+
+Crest: **719,000 ft³/s** at 14:30 UTC on 9 April 2025 (10:30 a.m. in Louisville).
+
+::: notes
+- Long format: one row per timestamp and parameter, ~5,850 rows each, every 15 minutes. Columns include `time` (UTC), `value`, `unit_of_measure`, `approval_status`, `qualifier`.
+- Gage height is above the gage datum, not the riverbed: it isn't water depth.
+- Convert UTC before comparing with local records.
+:::
+
+## Approved, then provisional
+
+- On 2026-10-08, values up to **9 April 2025 17:15 UTC** were `Approved`; everything after was still `Provisional`.
+- Provisional values **can still be revised**: check `approval_status` before publishing numbers.
+- No values in this window carry a `qualifier`.
+
+::: notes
+- USGS provisional data statement: waterdata.usgs.gov/provisional-data-statement.
+- Expect values after the crest to change.
+:::
+
+## Daily data
+
+```python
+daily, md = waterdata.get_daily(
+    monitoring_location_id=site,
+    parameter_code="00060",
+    statistic_id="00003",     # daily mean
+    time=f"{START}/{END}",
+)
+# {'Provisional': 37, 'Approved': 25}
+# 2025-04-09   712000.0   ft^3/s   Provisional
+```
+
+- 62 daily values; the daily mean peaked at **712,000 ft³/s**, below the continuous peak, as expected.
+- 9 April is `Provisional`: its mean includes the provisional afternoon.
+
+::: notes
+- Daily `time` is the monitoring location's local calendar date, not a timestamp.
+:::
+
+## Field measurements: closest to ground truth
+
+```python
+fm, md = waterdata.get_field_measurements(
+    monitoring_location_id=site,
+    time="2025-01-01T00:00:00Z/2025-12-31T00:00:00Z",
+)
+discharge_fm = fm[fm["parameter_code"] == "00060"].sort_values("time")
+# 2025-04-09  738000.0  ft^3/s  Acoustic Doppler Current Profiler  Poor  Approved
+```
+
+- Hydrographers measure discharge in person; USGS uses these to build and check the **rating curve**.
+- Five discharge measurements in 2025, **including the crest day**: 738,000 ft³/s, rated `Poor`.
+
+::: notes
+- `observing_procedure`: here always an ADCP towed across the river.
+- `measurement_rated`: the hydrographer's judgment of accuracy. `Poor` is common in fast, debris-laden flood water.
+- 738,000 is about 3% above the continuous peak, well within what `Poor` allows.
+- The `time` is a date; time of day is in `time_of_day`.
+:::
+
+## The flood at Louisville
+
+![Continuous discharge at USGS-03294500, Ohio River at Louisville, KY, 15 March to 15 May 2025, by approval status, with the crest-day field measurement (rated `Poor`). Data: USGS Water Data APIs via `dataretrieval` (parameter `00060`), accessed 2026-10-08.](../../images/m03/wdfn-ohio-louisville-discharge.png){fig-alt="Line chart of discharge at the Ohio River at Louisville from 15 March to 15 May 2025. Flow is around 100,000 to 200,000 cubic feet per second in March, rises steeply in early April to a crest of 719,000 on 9 April, then falls back to about 100,000 by late April. The line is blue (approved) up to the crest and orange (provisional) after it; a black dot marks a field measurement of 738,000 at the crest." .r-stretch}
+
+::: notes
+- The flood, the crest and where provisional data begin, all in one picture.
+:::
+
+## For contrast: the legacy `nwis` module
+
+```python
+from dataretrieval import nwis
+
+legacy, md = nwis.get_dv(sites="03294500", parameterCd="00060",
+                         start="2025-04-08", end="2025-04-10")
+# DeprecationWarning: `nwis.get_dv` is deprecated and will be removed ...
+#                            00060_Mean 00060_Mean_cd   site_no
+# 2025-04-09 00:00:00+00:00      712000             P  03294500
+```
+
+Same values, different shape: bare site number, one column per parameter, approval as `A`/`P`. **Removal on or after 2027-05-06**: write new code with `waterdata`.
+
+::: notes
+- Many older tutorials, including the CUAHSI notebook this lesson draws on, use `nwis`.
+- Expect: "My lab's scripts use `nwis`. Do I need to change them?" Yes, before the removal date.
+:::
+
+## Live coding 2: downloads {.smaller}
+
+- **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb`
+- **Section:** "Programmatic data downloads"
+- **Point out:**
+  - the crest rows and their `approval_status`
+  - daily peak (712,000) vs. continuous peak (719,000)
+  - change the field-measurement `time` to 2024 and compare the ratings
+- **12 minutes.** Back to slides at **3:09**.
+
+::: notes
+- If short on time: run continuous and daily only; show field measurements from the slides.
+:::
+
+## Understanding what you downloaded {.smaller}
+
+| Concept | In your download | Column(s) |
+|---|---|---|
+| Location identifier | `USGS-03294500` | `monitoring_location_id` |
+| Variable | discharge `00060`, gage height `00065` | `parameter_code`, `statistic_id` |
+| Variable unit | `ft^3/s`, `ft` | `unit_of_measure` |
+| Time | continuous: UTC every 15 min; daily: a date | `time` |
+| Quality flag(s) | approval status; qualifiers; field ratings | `approval_status`, `qualifier`, `measurement_rated` |
+| Version | no version: service, request URL, retrieval date | `md.url`, `last_modified` |
+| Data unit | one series per location, parameter, statistic | `time_series_id` |
+
+::: notes
+- Qualifiers mark special conditions, e.g. `[ESTIMATED]`, `[ICE]`.
+- Field measurements: `time` is a date plus `time_of_day`.
+:::
+
+## Keep it reproducible
+
+- **Re-running later:** provisional values change, so the same request next year may differ. Record the retrieval date and **save what you downloaded**.
+- **Raw vs. derived:** save each download unchanged (`data/raw/…`), and computed results separately (`data/derived/…`).
+- **Cite:** USGS water data, [doi:10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN), with location IDs, parameter codes, dates and access date; and `dataretrieval`, [doi:10.5066/P94I5TX3](https://doi.org/10.5066/P94I5TX3).
+
+::: notes
+- Example raw file name: `data/raw/usgs_03294500_continuous_2025-03-15_2025-05-15.csv`.
+- Module 1: Data Management and Data Publishing.
+:::
+
+## Best practices: one place, full record
+
+```python
+daily_record, md = waterdata.get_daily(
+    monitoring_location_id=site, parameter_code="00060", statistic_id="00003",
+)   # leave out time: the whole record
+# 36054 rows, 1928-01-01 to 2026-10-07, in about 6 seconds
+# largest daily mean: 1,110,000 ft³/s on 1937-01-27
+```
+
+- One request per site; `dataretrieval` handles the paging.
+- Continuous: **three-year windows** (Louisville since 2009: six requests). Save each; request only new data next time.
+
+::: notes
+- About 1,100 days are `[ESTIMATED]`, some with `[ICE]` or `[EQUIP]`: check `qualifier` on long records.
+:::
+
+## Best practices: many places, one day
+
+```python
+one_day, md = waterdata.get_daily(
+    parameter_code="00060", statistic_id="00003",
+    time="2025-04-09",                  # no site: every location
+)   # 9041 rows at 9029 locations, in a couple of seconds
+
+around_louisville, md = waterdata.get_daily(
+    parameter_code="00060", statistic_id="00003",
+    time="2025-04-09", bbox=[-86.5, 37.8, -85.0, 38.8],
+)   # 36 locations in the box
+```
+
+Looping over thousands of site IDs sends thousands of requests and uses up your rate limit.
+
+::: notes
+- `bbox` is (west, south, east, north) in decimal degrees.
+- In the box, the two largest are the Louisville gage and a second Ohio River location in Louisville, at the water tower.
+:::
+
+## Best practices: parallelization
+
+- **Do** ask for more per request first: lists of sites or codes, a `bbox`, a time interval.
+- **Do** use an API key for repeated or large work; expect `429` over your hourly limit.
+- **Do** let `dataretrieval` page (`limit`, `max_rows`).
+- **Avoid** bursts of parallel requests from your own threads: the quickest way to get throttled.
+- **Avoid** re-downloading history: approved data rarely change.
+
+::: notes
+- One request returning 10,000 rows is cheaper for you and USGS than 100 requests of 100.
+- Recent `dataretrieval` can split and run large pulls concurrently; use sparingly.
+- `last_modified` helps request only what's new.
+:::
+
+## Now you try it: the Willamette at Salem {.smaller}
+
+Retrieve discharge from a monitoring location on the Willamette. Use new names (e.g. `_salem`).
+
+1. `site = "USGS-14191000"`.
+2. Get its time series metadata to check the record lengths.
+3. `START, END = "2026-02-01", "2026-03-31"`.
+4. Daily mean discharge: find the highest daily mean and its approval status.
+5. Continuous discharge and gage height: find the crest.
+
+**Notebook cell:** "Now you try it" in `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb`.
+
+::: notes
+- Start now; finish after the session. What you should see and an example answer are in the post-reading.
+- These values are provisional, so numbers may differ slightly.
+:::
+
+# Wrap-up {background-color="#1f4e79"}
+
+## Recap
+
+- **Discover, then look:** county lists include test entries and retired gages; `begin`/`end` tell you what's live.
+- **Pick the function:** continuous (≤ 3 years per call), daily (whole record), field measurements (ground truth).
+- **Approval status is the quality flag:** record your retrieval date, save your downloads, and cite the DOIs.
+
+::: notes
+- One takeaway in the chat.
+:::
+
+## What's due and what to read
+
+- **Module 3 quiz:** see Canvas (Sessions 3–5 are now complete).
+- **Post-reading:** `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data_post-reading.pdf` (the Willamette answer and the scaling examples in full).
+- **Next session (Thu Nov 19):** Module 4, Federal water data synthesis. Set up the `m04-synthesis` environment.
+
+::: notes
+- Module 4 uses an Earthdata Login and a USGS API key, like Sessions 3 and 5.
+:::
+
+## Questions?
+
+::: notes
+- About 5 minutes.
+- Expect: "Daily or continuous for my study?" Daily for long records and many sites; continuous for event timing, like the crest hour.
+:::

@@ -1,0 +1,126 @@
+---
+title: "Retrieving USGS WDFN data: answers and more depth"
+subtitle: "Federal Open Water Data for Researchers · Session 5 (Module 3, Lesson 3) · Read after the session"
+format:
+  typst:
+    margin:
+      x: 2cm
+      y: 2cm
+    include-in-header:
+      text: |
+        #show raw.where(block: true): set text(size: 0.75em)
+        #show raw.where(block: true): it => { set par(justify: false); it }
+---
+
+**Why this matters:** this reading has what you need to check your "Now you try it" work on the Willamette, plus
+details from the lesson that the session moved through quickly. About 10 minutes.
+
+## Now you try it: what you should see
+
+For the **Willamette River at Salem, Oregon** (`USGS-14191000`): discharge records going back to 1989 for continuous
+values, and 1909 for daily values. From 1 February to 31 March 2026 there are 59 daily values, almost all
+`Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at
+**64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your
+numbers may differ slightly.
+
+```python
+site = "USGS-14191000"                  # Willamette River at Salem, OR
+START, END = "2026-02-01", "2026-03-31"
+
+series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+print(series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
+daily_w, md = waterdata.get_daily(monitoring_location_id=site, parameter_code="00060",
+                                  statistic_id="00003", time=f"{START}/{END}")
+print(len(daily_w), daily_w["approval_status"].value_counts().to_dict())
+print(daily_w.loc[daily_w["value"].idxmax(), ["time", "value", "unit_of_measure", "approval_status"]])
+
+cont_w, md = waterdata.get_continuous(monitoring_location_id=site, parameter_code=["00060", "00065"],
+                                      time=f"{START}T00:00:00Z/{END}T23:59:59Z")
+peaks_w = cont_w.loc[cont_w.groupby("parameter_code")["value"].idxmax()]
+print(peaks_w[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])
+```
+
+```text
+59 {'Provisional': 58, 'Approved': 1}
+time               2026-02-25 00:00:00
+value                          62200.0
+unit_of_measure                 ft^3/s
+approval_status            Provisional
+Name: 24, dtype: object
+      parameter_code                      time     value unit_of_measure approval_status
+14392          00060 2026-02-25 23:45:00+00:00  64000.00          ft^3/s     Provisional
+14393          00065 2026-02-25 23:45:00+00:00     16.86              ft     Provisional
+```
+
+## Long records: check the qualifiers
+
+On long daily records, look at the `qualifier` column. Of the 36,054 daily values at Louisville (1928 to the
+present), about 1,100 days are marked `[ESTIMATED]`, some together with `[ICE]` or `[EQUIP]` (equipment problems).
+Count them with:
+
+```python
+daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()
+```
+
+Continuous values are limited to three years per call, so request a long continuous record in three-year windows (the
+Louisville record starts in 2009, so that's six requests). Approved data rarely change, so save each window to a file
+and only request new data next time.
+
+## The legacy `nwis` module in full
+
+Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the
+legacy Water Services. The same daily-mean request the old way:
+
+```python
+from dataretrieval import nwis
+
+# legacy Water Services: bare site number, parameter in the column name, approval as a code
+legacy, md = nwis.get_dv(sites="03294500", parameterCd="00060", start="2025-04-08", end="2025-04-10")
+print(legacy)
+```
+
+```text
+DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
+                           00060_Mean 00060_Mean_cd   site_no
+datetime
+2025-04-08 00:00:00+00:00      710000             A  03294500
+2025-04-09 00:00:00+00:00      712000             P  03294500
+2025-04-10 00:00:00+00:00      691000             P  03294500
+```
+
+The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one
+column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in
+a `_cd` column.
+
+## More on the data you retrieved
+
+- **The metadata object.** Every `waterdata` function returns a `(DataFrame, metadata)` pair. The metadata object
+  records the request (`md.url`) and when it was made, which is useful when you write down how you got your data.
+- **Reference tables.** `parameter_codes` has about 19,600 rows and `statistic_codes` about 3,200. Other reference
+  tables work the same way, for example `"site-types"`, `"states"`, `"counties"`, `"hydrologic-unit-codes"` and
+  `"agency-codes"`. The `unit_of_measure` for discharge in the reference table is `ft3/s`, but in retrieved data it is
+  `ft^3/s`.
+- **Spatial scaling.** Most `waterdata` functions accept lists (several `monitoring_location_id`s or
+  `parameter_code`s), a `bbox`, or a time interval; `get_daily` with no site and one date returned 9,041 daily values
+  at 9,029 locations (a few locations have more than one discharge series).
+- **Paging and concurrency.** Let `dataretrieval` handle paging (`limit` sets the page size, `max_rows` caps the
+  total). Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you; use
+  that sparingly, and only for pulls you know are large. The `last_modified` argument helps you request only what is
+  new.
+
+## Key terms
+
+- **Approval status:** whether a USGS value is provisional (subject to revision) or approved (reviewed and final).
+- **Qualifier:** a remark attached to an individual USGS value, for example `ESTIMATED` when ice affected the gage.
+- **Rating curve:** the relationship between gage height and discharge at a monitoring location, fitted to field
+  measurements.
+- **Gage datum:** the local reference level that gage height is measured from at a monitoring location.
+
+## Further reading
+
+- [`dataretrieval` (Python) on GitHub](https://github.com/DOI-USGS/dataretrieval-python) and its [documentation](https://doi-usgs.github.io/dataretrieval-python/)
+- [USGS Water Data APIs documentation](https://api.waterdata.usgs.gov/)
+- [USGS Water Data API keys](https://api.waterdata.usgs.gov/docs/ogcapi/keys/)
+- [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/)
+- [USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)
+- Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` in the lesson.
