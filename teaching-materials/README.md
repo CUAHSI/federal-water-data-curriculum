@@ -25,6 +25,73 @@ the skill's steps. Only some steps are plain scripts you run yourself:
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
 the next rebuild undoes it.
 
+## Before you rebuild
+
+Some builders need tools that the lesson environments don't include. Set them up once per machine. Run the
+commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
+
+| Skill | Needs | Used for |
+|---|---|---|
+| `build-slides` | [Quarto](https://quarto.org/docs/get-started/) 1.4 or later (it bundles Typst, so no LaTeX) | rendering decks and readings on your machine. Optional: the Render slides action installs its own Quarto |
+| `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
+| `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
+| `build-instructor-guide` | nothing extra | |
+
+### Lesson environments and papermill
+
+The `environments/*.yml` files are the recipes learners build their environments from, and they're copied
+into the learner bundle. Your installed environments are your own copies built from those recipes. Add
+testing tools to your copies only, never to the `.yml` files.
+
+1. **Make sure your environments match the recipes.** Create any that are missing, and update any built from
+   an older `.yml`:
+   ```bash
+   conda env create -f environments/m03-swot.yml          # if m03-swot doesn't exist yet
+   conda env update -n m03-swot -f environments/m03-swot.yml --prune   # if it exists but may be out of date
+   ```
+   Do the same for `m03-nwm`, `m03-wdfn` and `m04-synthesis`. (`conda env list` shows which you have.) `--prune` removes packages the `.yml` doesn't list, papermill
+   included, so repeat step 2 whenever you repeat step 1.
+2. **Add papermill and ipykernel without changing anything else.** `--freeze-installed` stops conda from
+   upgrading or downgrading the packages already installed, so your environment keeps the learners'
+   versions. (conda still refreshes `ca-certificates` and `certifi`; that's expected and harmless.) `ipykernel` is already in every `.yml`; listing it again does nothing if it's there.
+   ```bash
+   for e in m03-swot m03-nwm m03-wdfn m04-synthesis; do
+     conda install -y -n "$e" -c conda-forge --freeze-installed papermill ipykernel
+   done
+   for e in m03-swot m03-nwm m03-wdfn m04-synthesis; do conda run -n "$e" papermill --version; done
+   ```
+   If conda says it can't install without changing other packages, stop and ask: don't remove the flag.
+3. **Run each notebook inside its lesson's environment, with that environment's kernel**, so it's tested
+   with the learners' packages:
+   ```bash
+   conda run -n m03-swot papermill -k python3 <notebook>.ipynb <scratch-dir>/<notebook>_out.ipynb
+   ```
+
+The notebooks don't import papermill, so a notebook that runs in your environment also runs in the
+learners' environment, as long as your environment matches the `.yml` (step 1).
+
+### text2qti, nbformat and pyyaml
+
+Install these into any Python on your PATH (conda `base` is fine): `pip install text2qti nbformat pyyaml`.
+Check with `text2qti --version` in the shell you'll build in.
+
+### Credentials
+
+Testing notebooks logs in to real services. The process running the builder needs these environment
+variables set:
+
+| Notebooks | Needs |
+|---|---|
+| Module 3 lesson 1 (SWOT), Module 4 lessons 2 and 3 | `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD` (read by `earthaccess.login()`) |
+| Module 3 lesson 3 (WDFN), Module 4 lesson 2 | `API_USGS_PAT` (read by `dataretrieval`) |
+| Module 3 lesson 2 (NWM) | nothing |
+
+Save them once as Windows user environment variables, following
+[AGENT_SETUP.md, "Windows: credentials"](../AGENT_SETUP.md#windows-credentials), which also shows how to
+check them without printing the values. A program only sees environment variables that existed when it
+started. After saving or changing them, close your terminals (and VS Code, if you use it), open a new
+terminal, and start Claude Code from there. Never write the values into a file in this repo.
+
 ## Layout
 
 Lanes and task IDs are from ROADMAP.md Phase 8. Lane G (Acknowledgements, `CITATION.cff`, the root README)

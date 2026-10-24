@@ -9,6 +9,8 @@ You produce `teaching-materials/learner-bundle/`, the hands-on material pilot le
 They can't see the website or the repo, so everything here stands on its own. Read STYLE_GUIDE.md first,
 especially §11.
 
+Install papermill and ipykernel into the lesson's conda environment, not into environments/*.yml; see teaching-materials/README.md.
+
 ## Layout and names (STYLE_GUIDE §11)
 
 ```
