@@ -25,6 +25,44 @@ the skill's steps. Only some steps are plain scripts you run yourself:
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
 the next rebuild undoes it.
 
+## Before you rebuild
+
+Some builders need tools that aren't in the lesson environments. Install them once per machine:
+
+| Skill | Needs | Used for |
+|---|---|---|
+| `build-slides` | [Quarto](https://quarto.org/docs/get-started/) (includes Typst, so no LaTeX needed) | rendering decks and reading PDFs locally; the Render slides action installs its own |
+| `build-notebooks` | `papermill` and `ipykernel` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` | running every notebook top to bottom to test it |
+| `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
+| `build-instructor-guide` | nothing extra | |
+
+**papermill and ipykernel** go into your installed copy of each lesson environment, not into the
+`environments/*.yml` files:
+
+```bash
+conda install -n m03-swot -c conda-forge papermill ipykernel
+conda install -n m03-nwm -c conda-forge papermill ipykernel
+conda install -n m03-wdfn -c conda-forge papermill ipykernel
+conda install -n m04-synthesis -c conda-forge papermill ipykernel
+conda run -n m03-swot papermill --version   # check; repeat for each environment
+```
+
+The `.yml` files are the recipes learners build their environments from, and they're copied into the learner
+bundle. `conda install -n <env>` changes only the environment installed on your machine, so learners still get
+exactly what the `.yml` lists. papermill is a testing tool and the notebooks don't import it, so a notebook
+that runs in your environment also runs in theirs. `ipykernel` is already in every `.yml`; installing it only
+matters if your environment was built before it was added. Run notebooks inside the lesson's environment
+(`conda run -n m03-swot papermill <notebook> <output>`), so each one is tested with the learners' packages.
+
+**text2qti, nbformat and pyyaml** go into your everyday Python (e.g. conda `base`): `pip install text2qti
+nbformat pyyaml`.
+
+**Credentials.** Testing the notebooks logs in to NASA Earthdata and calls the USGS Water Data API, so the
+terminal that runs the builder needs `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD` and `API_USGS_PAT` set as
+environment variables (`earthaccess.login()` and `dataretrieval` read them from there). Save them once as
+user environment variables (AGENT_SETUP.md, "Windows: credentials"), then open a new terminal; a terminal only reads
+environment variables when it starts. Never write the values into a file in this repo.
+
 ## Layout
 
 Lanes and task IDs are from ROADMAP.md Phase 8. Lane G (Acknowledgements, `CITATION.cff`, the root README)
