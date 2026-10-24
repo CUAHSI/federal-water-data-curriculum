@@ -14,7 +14,7 @@ especially §11.
 ```
 teaching-materials/learner-bundle/
 ├── README.md
-├── module-03_access-and-retrieval/
+├── module-03_federal-water-data-access-retrieval/
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data.ipynb
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data_solutions.ipynb
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data_environment.yml

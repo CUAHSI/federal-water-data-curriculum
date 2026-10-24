@@ -166,7 +166,7 @@ learner-bundle/
 │   ├── module-03_lesson-02_retrieve-noaa-nwm-data[.ipynb | _solutions.ipynb | _environment.yml]   (m03-nwm)
 │   └── module-03_lesson-03_retrieve-usgs-wdfn-data[.ipynb | _solutions.ipynb | _environment.yml]  (m03-wdfn)
 ├── module-04_federal-water-data-synthesis/
-│   ├── module-04_lesson-02_synthesizing-federal-data-products-to-build-hydrologic-confidence[...]  (m04-synthesis)
+│   ├── module-04_lesson-02_synthesizing-federal-data-products[...]  (m04-synthesis)
 │   └── module-04_lesson-03_additional-federal-water-data[...]                                     (m04-synthesis)
 └── scaffolds/                        hand-edited source, read by build_notebooks.py
     └── <lesson file stem>.yml        e.g. module-03_lesson-01_retrieve-nasa-swot-data.yml
