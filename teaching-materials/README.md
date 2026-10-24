@@ -132,7 +132,8 @@ underscores between parts. **Module slugs** are the module folder names without 
 `federal-water-data-synthesis`). **Lesson slugs** come from the lesson page's title (its `#` heading),
 lowercased, with spaces turned into hyphens and punctuation dropped: *Retrieve NASA SWOT data* →
 `retrieve-nasa-swot-data`. A file for a whole module uses `module-NN_<module slug>`; a file for one lesson uses
-`module-NN_lesson-NN_<lesson slug>`. So `module-03_lesson-01_retrieve-nasa-swot-data` has three parts:
+`module-NN_lesson-NN_<lesson slug>`. One exception: Module 4 lesson 2's title is too long, so its slug is
+shortened to `synthesizing-federal-data-products`. So `module-03_lesson-01_retrieve-nasa-swot-data` has three parts:
 `module-03` | `lesson-01` | `retrieve-nasa-swot-data`.
 
 ### Slides and readings (lane E)
@@ -175,10 +176,6 @@ learner-bundle/
 Module 4 lesson 1 (*Comparative overview of Federal data products*) has no code, so it has no notebook.
 Module 4 lesson 3 has three short code blocks; lane F decides whether they make a useful notebook and says so
 in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are shown on slides).
-
-The `build-notebooks` skill's layout example names the Module 3 folder `module-03_access-and-retrieval/`. Use
-`module-03_federal-water-data-access-retrieval/` from this table instead, so module folders follow one rule
-(the skill is due to be updated to match).
 
 ### Quizzes (lane H)
 
