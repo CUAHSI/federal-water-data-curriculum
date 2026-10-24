@@ -1,0 +1,145 @@
+---
+title: "Getting ready to retrieve SWOT data"
+subtitle: "Federal Open Water Data for Researchers · Session 3 (Module 3, Lesson 1) · Read before the session"
+format:
+  typst:
+    margin:
+      x: 2cm
+      y: 2cm
+    include-in-header:
+      text: |
+        #show raw.where(block: true): set text(size: 0.75em)
+        #show raw.where(block: true): it => { set par(justify: false); it }
+---
+
+**Why this matters:** Session 3 is the first coding session. This reading covers the ideas every Module 3 lesson
+relies on, and walks you through setting up your account and software, so the session can start with data. About
+15 minutes, plus setup time. **Do the setup steps before the session.**
+
+## Getting data into your own code
+
+Module 3 is about finding what exists (*discovery*) and retrieving it (*download* or *access*), using the tools each
+agency recommends. How you get the data matters too. A workflow that downloads a whole national file to read one
+value, or that sends thousands of requests where a few would do, wastes your time and loads shared agency systems. It
+also tends to break when those systems change, which creates support work for the agencies.
+
+## Important concepts and terminology
+
+- **API** (application programming interface). A web API is a set of URLs that return data, rather than web pages,
+  in response to a request. A request is usually a base URL plus *query parameters*. For example, the PO.DAAC
+  `hydrocron` API takes a reach ID, a start time and an end time, and returns a table. Your browser, `curl` or
+  Python's `requests` can all send requests.
+- **Agency libraries.** Python packages such as `earthaccess` (NASA-supported), `hydrotools` (NOAA Office of Water
+  Prediction) and `dataretrieval` (USGS) wrap these APIs. They handle authentication, paging and file formats, and
+  return familiar objects like `pandas` DataFrames. APIs change: endpoints move, parameters are renamed, and old
+  services retire. When that happens, the library is updated, and your code often keeps working after a simple
+  upgrade. Code that calls URLs directly has to be fixed by hand. USGS's move from the legacy Water Services to the
+  modernized Water Data APIs is a current example.
+- **Discovery vs. download.** Discovery queries *metadata* (which sites, files or time ranges exist) and is cheap.
+  Download retrieves the data values themselves and can be expensive. Always discover first, check what you found,
+  and then download only what you need.
+- **Authentication and API keys.** Some services need an account (NASA Earthdata login), and some work without one
+  but give higher limits with a key (the USGS Water Data APIs). Keep credentials in environment variables or a
+  `.netrc` file, never in code, notebooks or version control.
+- **Rate limits and paging.** Services limit how many requests you can make in a period of time. Going over typically
+  returns an HTTP `429 Too Many Requests` error. Large results are split into *pages*. Agency libraries page for you,
+  but each page still counts as a request.
+- **Files vs. services.** Some data are best retrieved as whole files (SWOT granules, NWM output files) and some
+  through a query service that returns only the rows you ask for (`hydrocron`, the USGS Water Data APIs).
+- **Scaling and cloud-native access.** Very large analyses often run fastest *next to the data*: on a cloud computer
+  in the same region as the archive, streaming only the needed parts of files instead of downloading them.
+- **Reproducibility.** Every lesson pins a conda environment, keeps its query (places, IDs, dates, codes) in
+  variables, names the data version it used, keeps raw downloads separate from derived results, and shows how to cite
+  the data. These ideas come from Module 1.
+
+## The shared concepts, for all three products
+
+| Shared concept | SWOT | NWM | WDFN |
+|---|---|---|---|
+| Location identifier | `reach_id`, `node_id` (from SWORD) | COMID / `feature_id` (from NHDPlus) | monitoring location ID (e.g. `USGS-03294500`) |
+| Variable | water surface elevation, width, … | streamflow | discharge, gage height, … |
+| Variable unit | m, m/km | m³/s | ft³/s, ft |
+| Time | overpass time | forecast reference time + valid time | timestamp (continuous / daily) |
+| Data quality flag(s) | `reach_q`, `wse_qual`, … | none per value (model output) | approval status, qualifiers |
+| Version / provenance | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
+| Data unit | granule | one output file per timestep | one time series per location + parameter |
+
+## Setup step 1: an Earthdata Login account
+
+Downloading SWOT files requires a free Earthdata account. Register at
+[urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov). (`hydrocron` does not need it.)
+
+## Setup step 2: the lesson's environment
+
+The lesson's conda environment file, `m03-swot`, lists every package the lesson uses: `earthaccess` for login,
+search and download; `geopandas` for the RiverSP shapefiles; `xarray` for the Raster NetCDF files; `requests` and
+`pandas` for `hydrocron`; and `matplotlib` for plots. It pins the Python version but lets most packages float to
+their latest release, so you may get newer versions than the ones we tested; record what you actually ran and keep
+it with your results. In the learner bundle, the file is
+`module-03_lesson-01_retrieve-nasa-swot-data_environment.yml`. Its contents:
+
+```yaml
+name: m03-swot
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14         # 3.12+ avoids the earthaccess SSL import error
+  - earthaccess
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - rioxarray
+  - numpy
+  - pandas
+  - geopandas
+  - shapely
+  - pyproj
+  - requests
+  - matplotlib
+  - ipykernel           # optional: run the lesson in Jupyter
+```
+
+Create and activate it (`mamba` is faster, but `conda` works the same way):
+
+```bash
+mamba env create -f module-03_lesson-01_retrieve-nasa-swot-data_environment.yml
+conda activate m03-swot
+
+# Optional: register this environment as a Jupyter kernel, then pick "Python (m03-swot)"
+python -m ipykernel install --user --name m03-swot --display-name "Python (m03-swot)"
+```
+
+If you work in Jupyter, choose the `Python (m03-swot)` kernel; otherwise your notebook runs in a different
+environment and imports such as `earthaccess` fail.
+
+> **Known install issue:** `import earthaccess` can fail with an SSL error (`ASN1: NOT_ENOUGH_DATA`) on older Python
+> and newer OpenSSL combinations ([details](https://github.com/python/cpython/issues/151504)). **Fix:** use Python
+> 3.12 or later (the course environment uses 3.14).
+
+## Setup step 3: store your credentials
+
+To avoid typing your Earthdata username and password each time, set the `EARTHDATA_USERNAME` and
+`EARTHDATA_PASSWORD` environment variables (or use a `.netrc` file); `earthaccess.login()` finds them automatically.
+Never write your password into a script or notebook. If you're not sure how to set environment variables, let it
+prompt you; that's fine for this lesson. See the
+[`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
+
+Check that it works:
+
+```python
+import earthaccess
+
+# Log in to NASA Earthdata. Uses EARTHDATA_USERNAME/EARTHDATA_PASSWORD or .netrc if set, otherwise prompts.
+auth = earthaccess.login()
+auth.authenticated  # True once you are logged in
+```
+
+## Key terms
+
+- **Granule:** the smallest unit of data NASA distributes for a product, usually one file.
+- **Conda environment:** an isolated set of Python packages, defined by a file, so a lesson's code runs with known
+  package versions.
+- **API key:** a personal token that identifies you to an API, often allowing higher request limits. Keep keys in
+  environment variables, never in your code.
+- **SWORD:** the SWOT River Database, a global river network that defines the reaches and nodes SWOT river
+  measurements are mapped to.

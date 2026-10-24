@@ -6,6 +6,10 @@ format:
   revealjs:
     embed-resources: true
     slide-number: true
+    code-line-numbers: false
+    include-in-header:
+      text: |
+        <style>.reveal pre { font-size: 0.5em; }</style>
   pptx: default
 execute:
   enabled: false
@@ -216,10 +220,12 @@ execute:
 params = {
     "feature": "Reach", "feature_id": "74267300251",
     "start_time": "2025-01-01T00:00:00Z", "end_time": "2026-10-01T00:00:00Z",
-    "output": "csv", "fields": "reach_id,time_str,wse,width,reach_q,collection_shortname",
+    "output": "csv",
+    "fields": "reach_id,time_str,wse,width,reach_q,collection_shortname",
 }
-resp = requests.get("https://soto.podaac.earthdatacloud.nasa.gov/hydrocron/v1/timeseries",
-                    params=params, timeout=60)
+resp = requests.get(
+    "https://soto.podaac.earthdatacloud.nasa.gov/hydrocron/v1/timeseries",
+    params=params, timeout=60)
 df = pd.read_csv(io.StringIO(resp.json()["results"]["csv"]))
 ```
 
@@ -382,9 +388,10 @@ One row per overpass: `wse` (m), `width` (m), `reach_q`, and `collection_shortna
 
 ```python
 COMID = 10164004   # NHDPlus reach (NWM feature_id), Ohio River at Louisville, KY
-url = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{COMID}/"
-resp = requests.get(url, params={"configuration": "medium_range", "latest": "true"},
-                    timeout=60)
+url = ("https://api.water.noaa.gov/nwm/v1/streamflow/forecast/"
+       f"nwm_feature_id/{COMID}/")
+resp = requests.get(url, timeout=60,
+                    params={"configuration": "medium_range", "latest": "true"})
 run = resp.json()[0]          # one forecast run for this reach
 print(run["configuration"], run["reference_datetime"], run["units"])
 # medium_range 2026-10-08T18:00:00Z CMS
@@ -509,7 +516,8 @@ SITE = "USGS-03294500"            # Ohio River at Louisville, KY
 PARAM, STAT = "00060", "00003"    # discharge; daily mean
 TIME = "2024-10-01/2026-10-07"
 
-daily, md = waterdata.get_daily(monitoring_location_id=SITE, parameter_code=PARAM,
+daily, md = waterdata.get_daily(monitoring_location_id=SITE,
+                                parameter_code=PARAM,
                                 statistic_id=STAT, time=TIME)
 print(daily["approval_status"].value_counts())
 ```

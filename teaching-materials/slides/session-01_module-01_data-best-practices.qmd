@@ -6,6 +6,10 @@ format:
   revealjs:
     embed-resources: true
     slide-number: true
+    code-line-numbers: false
+    include-in-header:
+      text: |
+        <style>.reveal pre { font-size: 0.5em; }</style>
   pptx: default
 execute:
   enabled: false
