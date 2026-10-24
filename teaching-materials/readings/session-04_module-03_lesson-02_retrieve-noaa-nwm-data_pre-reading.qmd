@@ -1,0 +1,87 @@
+---
+title: "Getting ready to retrieve NWM data"
+subtitle: "Federal Open Water Data for Researchers · Session 4 (Module 3, Lesson 2) · Read before the session"
+format:
+  typst:
+    margin:
+      x: 2cm
+      y: 2cm
+    include-in-header:
+      text: |
+        #show raw.where(block: true): set text(size: 0.75em)
+        #show raw.where(block: true): it => { set par(justify: false); it }
+---
+
+**Why this matters:** NWM data are organized differently from SWOT and USGS data: by forecast run and forecast
+hour, in files that cover the whole country. This reading explains that organization and gets your software ready,
+so the session can go straight to retrieving forecasts. About 10 minutes, plus setup time. **Do the setup before the
+session.**
+
+## What you'll retrieve
+
+The NOAA National Water Model (NWM) simulates and forecasts streamflow for about 2.8 million river reaches across the
+United States. In Session 4 you retrieve NWM forecasts for the reach of the Ohio River at Louisville, Kentucky, both
+today's forecast and archived forecasts issued during the April 2025 flood.
+
+NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model
+output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on
+Google Cloud and AWS. NOAA's experimental [NWM API](https://api.water.noaa.gov/nwm/v1/docs) serves individual reaches,
+but only the most recent few days of forecasts.
+
+The lesson focuses on NWM **forecasts** (short, medium and long range), because forecasting is what sets the NWM
+apart: it predicts what rivers will do, everywhere, rather than recording what they did at a few places.
+
+## Two terms you'll see in every route
+
+- **Configuration:** which forecast product, e.g. `short_range` (hourly out to 18 hours, issued every hour),
+  `medium_range` (out to 10 days, issued every 6 hours, with several *ensemble members*: parallel runs from slightly
+  different inputs, numbered by `member_id`, that show the spread of possible outcomes), `long_range`, or
+  `analysis_assim` (the model's best estimate of current conditions).
+- **Reference time:** model initialization time, in UTC (Coordinated Universal Time). NWM shorthand writes the
+  reference hour with a Z for UTC: `00Z` is 00:00 UTC, and file names write it as `t00z`. The time each forecast value
+  applies to is its **valid time** (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in the files).
+
+All routes return the NWM's variable `streamflow`, in m³/s (the API labels it `CMS`), for each reach. The NWM has no
+per-value data quality flag, so you record the configuration, reference time and model version with your data
+instead.
+
+## Reaches are identified by COMID
+
+The NWM's location identifier is the **COMID** of a reach (also called `feature_id`, `nwm_feature_id` or ComID), a
+number from the NHDPlus stream network. Before you can download a forecast, you find the COMID for your location. You
+do this with the NLDI (Network Linked Data Index), a separate web service from wherever the NWM files live, called
+from Python with the [`pynhd`](https://docs.hyriver.io/readme/pynhd.html) package (part of HyRiver).
+
+## Setup: the lesson's environment
+
+The `m03-nwm` conda environment installs everything for discovery (`pynhd`) and for all three download routes
+(`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the
+figures and `ipykernel` for Jupyter. The file is in the learner bundle as
+`module-03_lesson-02_retrieve-noaa-nwm-data_environment.yml`.
+
+```bash
+conda env create -f module-03_lesson-02_retrieve-noaa-nwm-data_environment.yml
+conda activate m03-nwm
+
+# Optional: register this environment as a Jupyter kernel, then pick "Python (m03-nwm)" in Jupyter
+python -m ipykernel install --user --name m03-nwm --display-name "Python (m03-nwm)"
+```
+
+If you work in Jupyter, choose the `Python (m03-nwm)` kernel; otherwise your notebook runs in a different environment
+and imports such as `pynhd` fail. **None of the routes in this lesson needs an API key or account.**
+
+The environment file pins the Python version but lets most packages float to their latest release, so a year from now
+`conda env create` may give you newer versions than the ones we tested. When you finish an analysis, record exactly
+what you ran with `conda env export > environment-lock.yml` and keep that file with your results. The examples were
+tested with Python 3.14, `pynhd` 0.20.0, `hydrotools.nwm_client` 9.2.1, `kerchunk` 0.2.10, `xarray` 2026.9.0, `zarr`
+3.4.0 and `fsspec` 2026.9.0.
+
+## Key terms
+
+- **NHDPlus:** the National Hydrography Dataset Plus, a geospatial dataset of the U.S. stream network, broken into
+  reaches each with a COMID. The NWM runs on this network.
+- **Catchment:** the land area that drains directly to one stream reach. Each NHDPlus reach has one catchment, which
+  is why a point on the map can be looked up to find its COMID.
+- **Lead time:** how far ahead a forecast value is: its valid time minus its reference time.
+- **Long-format table:** a table with one row per value, where columns such as location, time or ensemble member say
+  which value it is.

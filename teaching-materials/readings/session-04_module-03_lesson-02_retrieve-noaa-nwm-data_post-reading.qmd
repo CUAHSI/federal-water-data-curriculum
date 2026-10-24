@@ -1,0 +1,213 @@
+---
+title: "Retrieving NWM data: answers and more depth"
+subtitle: "Federal Open Water Data for Researchers · Session 4 (Module 3, Lesson 2) · Read after the session"
+format:
+  typst:
+    margin:
+      x: 2cm
+      y: 2cm
+    include-in-header:
+      text: |
+        #show raw.where(block: true): set text(size: 0.75em)
+        #show raw.where(block: true): it => { set par(justify: false); it }
+---
+
+**Why this matters:** this reading has what you need to check your "Now you try it" work on the Willamette, plus the
+details behind the session's cost comparisons: how to use NOAA's published references, how `hydrotools` behaves, and
+what the measurements were. About 15 minutes.
+
+## Now you try it: what you should see
+
+For the **Willamette River at Salem, Oregon**: COMID **23791093**; an API response with 18 hourly values in `CMS`
+(the API's `name` field is blank for this reach); and, for the short-range run issued at 12Z on 25 February 2026,
+18 hourly values of streamflow of about 1,700–1,800 m³/s, rising through the run.
+
+```python
+from pynhd import NLDI
+import requests
+
+POINT = (-123.0429, 44.9443)        # Willamette River at Salem, OR
+comid = int(NLDI().feature_byloc(POINT)["comid"].iloc[0])
+print("COMID:", comid)
+
+url = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{comid}/"
+resp = requests.get(url, params={"configuration": "short_range", "latest": "true"}, timeout=60)
+resp.raise_for_status()
+run = resp.json()[0]
+print(run["reference_datetime"], run["units"], len(run["forecast"][0]["timeseries"]), "values")
+
+# Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
+# (uses build_refs and open_refs from the kerchunk examples in the notebook)
+refs_feb = build_refs("20260225", 12)
+q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=comid).load().to_series()
+print(len(q_feb), "hourly values")
+print(q_feb.iloc[[0, 8, 17]])
+```
+
+```text
+COMID: 23791093
+2026-10-09T02:00:00Z CMS 18 values
+18 hourly values
+time
+2026-02-25 13:00:00    1717.849962
+2026-02-25 21:00:00    1807.389960
+2026-02-26 06:00:00    1816.159959
+Name: streamflow, dtype: float64
+```
+
+## NOAA's published references, for recent runs
+
+For runs since January 2026 you can skip building references. NOAA's references are one JSON file per forecast hour
+and point at the AWS copy of the files (`s3://noaa-nwm-pds`). This example combines them and reads them over HTTPS.
+It uses `open_refs` from the notebook's kerchunk example.
+
+```python
+import json
+import fsspec
+import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
+from kerchunk.combine import MultiZarrToZarr
+
+comid = 10164004                                # Ohio River at Louisville
+
+s3 = fsspec.filesystem("s3", anon=True)        # public bucket: no AWS account needed
+
+# NOAA publishes one reference file per forecast hour; pick yesterday's 12Z short-range run
+day = (pd.Timestamp.now(tz="UTC") - pd.Timedelta("1D")).strftime("%Y%m%d")
+paths = sorted(s3.glob(f"noaa-nodd-kerchunk-pds/nwm/short_range/"
+                       f"nwm.short_range.channel_rt.conus.{day}.t12z.f*.nc.zarr"))
+
+def load_ref(path):
+    """Read one NOAA reference file and point it at the same NWM files over HTTPS."""
+    text = json.dumps(json.loads(s3.cat(path)))
+    return json.loads(text.replace("s3://noaa-nwm-pds/", "https://noaa-nwm-pds.s3.amazonaws.com/"))
+
+refs_list = [load_ref(p) for p in paths]
+
+def combine():
+    return MultiZarrToZarr(refs_list, remote_protocol="https", concat_dims=["time"],
+                           identical_dims=["feature_id", "reference_time", "crs"]).translate()
+
+# Run the combine step in its own thread: kerchunk starts its own event loop,
+# which fails inside Jupyter's running loop.
+with ThreadPoolExecutor(1) as pool:
+    recent = pool.submit(combine).result()
+
+ds_recent = open_refs(recent)
+print(len(paths), "reference files;", dict(ds_recent.sizes))
+print(ds_recent["streamflow"].sel(feature_id=comid).load().to_series().head(3))
+```
+
+```text
+18 reference files; {'time': 18, 'feature_id': 2776734, 'reference_time': 1}
+time
+2026-10-08 13:00:00    996.369978
+2026-10-08 14:00:00    984.489978
+2026-10-08 15:00:00    956.629979
+Name: streamflow, dtype: float64
+```
+
+When you build your own references with `nwmurl`, check that it gave you files that exist: a URL for a run that isn't
+in the archive fails when it is opened. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first
+and drops missing ones. `nwmurl` can also point at the AWS copy (`urlbaseinput=7`) or other configurations (e.g.
+`runinput=2` and `meminput=1` for medium-range member 1).
+
+## `hydrotools` in more detail
+
+- **If `.get()` fails in Jupyter** with `RuntimeError: asyncio.run() cannot be called from a running event loop`, run
+  `import nest_asyncio; nest_asyncio.apply()` once before calling `.get()`.
+- **If it fails with errors about reading a NetCDF/HDF file**, an earlier run was probably interrupted, leaving a
+  half-downloaded file in `hydrotools_data/`. `hydrotools` treats files already in that folder as downloaded. Delete
+  the `hydrotools_data/` folder and run the call again.
+- **Units:** values are in SI units (`m3 s-1`); pass `unit_system=MeasurementUnitSystem.US` (from
+  `hydrotools.nwm_client.NWMClientDefaults`) to `NWMFileClient` for cubic feet per second.
+- **Many reaches:** `NWMFileClient.get()` accepts a list of COMIDs. If you omit `nwm_feature_ids`, it returns a
+  default set: channel reaches that `hydrotools` maps to stream gages (8,866 in `hydrotools.nwm_client` 9.2.1).
+- **Categorical columns:** `hydrotools` results use categorical columns to save memory. The documentation notes that
+  these can behave unexpectedly in groupby operations, are incompatible with fixed-format HDF files (use
+  `format="table"`), and may cause problems when writing to geospatial formats with geopandas. Casting a categorical
+  column to `str` resolves these issues. Setting `compute=False` returns a dask DataFrame instead.
+- **Parallel downloads:** downloads are already asynchronous. The `FileDownloader` class has `limit` (default 10
+  concurrent downloads) and `timeout` (default 900 seconds) settings. Files for a single forecast cycle are processed
+  in groups of 20 by default (the `group_size` parameter of `get_files()`). Running several `NWMFileClient.get()` calls
+  at once mostly multiplies disk use and memory.
+
+## The measurements behind the recommendations
+
+Three short-range runs before the April 2025 crest (issued 6 April 00Z and 12Z and 7 April 00Z: 54 hourly files), for
+the Louisville reach, from a home internet connection, on 2026-10-08:
+
+| Route | Reaches | Data transferred | Peak memory | Wall time |
+|---|---|---|---|---|
+| NOAA NWM API (today's data; all 99 short-range runs it held) | 1 | 0.13 MB | 0.1 GB | < 1 s |
+| `hydrotools` (Google Cloud) | 1 | 844 MB (saved to disk) | 1.7 GB | 2.6 min |
+| `hydrotools` (Google Cloud) | 498 | 844 MB (saved to disk) | 1.8 GB | 2.7 min |
+| Kerchunk references + `xarray` | 1 | 125 MB | 0.5 GB | 10 s |
+| Kerchunk references + `xarray` | 498 | 125 MB | 1.0 GB* | 19 s |
+| *Building the references (one time)* | – | 57 MB, in 54 requests | 0.2 GB | 19 s |
+
+\* This run also loaded the NLDI navigation (`pynhd`, `geopandas`) to get the 498 COMIDs, which accounts for part of
+the extra memory.
+
+Wall times vary a lot with network conditions; treat them as rough. These flood-time files were larger than files from
+quiet periods, because high, changing flows compress less well. One **medium-range** member (issued 2025-04-03 00Z:
+240 hourly files) scales the same way, about 13× a short-range run:
+
+| Route | Reaches | Data transferred | Peak memory | Wall time |
+|---|---|---|---|---|
+| `hydrotools` (Google Cloud) | 1 | ~3 GB or more (240 whole files); timed out on a home connection | – | – |
+| Kerchunk references + `xarray` | 1 | 520 MB | 0.4 GB | 38 s |
+| *Building the references (one time)* | – | 252 MB, in 240 requests | 0.2 GB | 92 s |
+
+## Scaling in more detail
+
+**Where the archives are.** According to the
+[hydrotools NWM Client documentation](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client), Google Cloud
+holds the largest amount of operational forecast data, which is why `hydrotools` uses it by default. On 2026-10-07 the
+AWS bucket `noaa-nwm-pds` held every day from 2025-01-01 onward (earlier descriptions call it a rolling four-week
+archive). Not every configuration covers the whole archive (the Alaska configurations, for example, only became
+available after August 2023). For big jobs, run on a cloud machine in the same region as the bucket (Google Cloud's
+`US` multi-region for `gs://national-water-model`; AWS `us-east-1` for `s3://noaa-nwm-pds`).
+
+**Many reaches with kerchunk.** Keep only the COMIDs that are NWM reaches (almost all NHDPlus reaches are, but check),
+then select them all at once:
+
+```python
+import numpy as np
+
+# keep only COMIDs that exist in the NWM output, then read them all in one selection
+ids = np.array(upstream_comids)
+ids = ids[np.isin(ids, ds["feature_id"].values)]
+basin = ds["streamflow"].sel(feature_id=ids).load()
+print(basin.shape)   # (forecast hours, reaches): (18, 498)
+```
+
+**Parallel reads.** Opening references with `chunks={}` gives dask arrays with one task per chunk, so `.load()`
+fetches chunks concurrently. Building references makes one request per file, so a thread pool helps a lot. In testing,
+16 threads (with `gcsfs`) gave intermittent SSL errors from too many simultaneous connections; fewer threads plus a
+retry fixed it.
+
+**The NWM retrospective.** If you need a long *simulated* record rather than forecasts, use the NWM retrospective
+simulations: multi-decade model runs over historical weather, not archived forecasts. They cover every reach, so they
+are the way to get a long streamflow record for a reach with no gage. Version 3.0 covers February 1979 through January
+2023, and version 2.1 covers February 1979 through December 2020. Their output frequency and fields differ from the
+operational forecast model. Zarr versions are available on AWS for version 2.1, and NCAR describes Zarr stores for
+version 3.0 (see the [NWM retrospective registry entry](https://registry.opendata.aws/nwm-archive/)).
+
+## Key terms
+
+- **Chunk:** one block of a large array that is stored and read as a unit.
+- **kerchunk:** a Python library that builds reference files describing where each variable sits inside existing
+  files, so `xarray` can read only the parts it needs.
+- **NODD:** NOAA Open Data Dissemination, which publishes NWM output and the kerchunk references on commercial clouds.
+
+## Further reading
+
+- [NLDI documentation](https://api.water.usgs.gov/docs/nldi) and [`pynhd` (HyRiver)](https://docs.hyriver.io/readme/pynhd.html); cite HyRiver as <https://doi.org/10.21105/joss.03175>
+- [NOAA NWM API (experimental) documentation](https://api.water.noaa.gov/nwm/v1/docs)
+- [OWPHydroTools (hydrotools) on GitHub](https://github.com/NOAA-OWP/hydrotools) and the [NWM Client documentation](https://noaa-owp.github.io/hydrotools/hydrotools.nwm_client.html)
+- [NOAA Cloud Optimized Zarr Reference Files (Kerchunk)](https://registry.opendata.aws/noaa-nodd-kerchunk/)
+- [Kerchunk documentation](https://fsspec.github.io/kerchunk/)
+- [`nwmurl` (CIROH)](https://github.com/CIROH-UA/nwmurl)
+- Tuhinanshu, T. (2023), [*Using Kerchunk to make NOAA's National Water Model dataset more accessible*](https://element84.com/software-engineering/using-kerchunk-to-make-noaas-national-water-model-dataset-more-accessible/), Element 84
+- Example code for `hydrotools` adapted from the [OWPHydroTools NWM Client README](https://github.com/NOAA-OWP/hydrotools/tree/main/python/nwm_client) (NOAA-OWP)

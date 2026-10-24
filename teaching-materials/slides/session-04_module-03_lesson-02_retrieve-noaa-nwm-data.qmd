@@ -1,0 +1,480 @@
+---
+title: "Module 3, Lesson 2: Retrieve NOAA NWM data"
+subtitle: "Federal Open Water Data for Researchers · Session 4"
+date: "Thursday, November 12, 2026 · 2:00–3:30 pm ET"
+format:
+  revealjs:
+    embed-resources: true
+    slide-number: true
+    code-line-numbers: false
+    include-in-header:
+      text: |
+        <style>.reveal pre { font-size: 0.5em; }</style>
+  pptx: default
+execute:
+  enabled: false
+---
+
+## Today's agenda {.smaller}
+
+| Time (ET) | Minutes | Topic |
+|---|---|---|
+| 2:00 | 3 | Agenda, pre-reading recap |
+| 2:03 | 10 | What we'll retrieve; access routes |
+| 2:13 | 10 | Data discovery: COMIDs with the NLDI |
+| 2:23 | 8 | NOAA NWM API: today's forecasts |
+| 2:31 | 12 | **Live coding 1** |
+| 2:43 | 7 | `hydrotools`: past forecasts |
+| 2:50 | 10 | Kerchunk references |
+| 3:00 | 12 | **Live coding 2** |
+| 3:12 | 11 | What you downloaded; best practices |
+| 3:23 | 2 | Now you try it |
+| 3:25 | 5 | Recap, questions |
+
+::: notes
+- Today's lesson stands alone: no SWOT knowledge needed.
+- No credentials needed for anything today.
+:::
+
+## From the pre-reading
+
+- The **NWM** is a model: it predicts streamflow for ~2.8 million reaches; output is **NetCDF files, one per forecast hour**.
+- Every forecast has a **configuration** (`short_range`, `medium_range`, …) and a **reference time** (when it was issued, UTC).
+- You created the `m03-nwm` environment. No account or API key needed.
+
+::: notes
+- Recap of `session-04_module-03_lesson-02_retrieve-noaa-nwm-data_pre-reading.pdf`.
+- Check: can everyone `import pynhd` in the `Python (m03-nwm)` kernel?
+:::
+
+# Retrieve NOAA NWM data {background-color="#1f4e79"}
+
+## What we'll retrieve
+
+- NWM **forecasts** for the Ohio River at Louisville: **today's**, and **archived** forecasts from the **April 2025 flood**.
+- Forecasting is what sets the NWM apart: it predicts what rivers will do, **everywhere**.
+- Two steps:
+  1. **Discovery:** find the reach's **COMID** with the **NLDI**.
+  2. **Downloads:** retrieve forecast values; the best route depends on how much you need.
+
+::: notes
+- COMID: the NHDPlus reach ID; NWM calls it `feature_id` (or `nwm_feature_id`).
+- NLDI: Network Linked Data Index, a USGS web service, separate from wherever the NWM files live.
+- If you already know your COMID(s), skip discovery.
+:::
+
+## No query service for the full output
+
+- NWM output: **one NetCDF file per forecast hour**, each covering **every reach**.
+- Read files from NOAA's archive, mirrored on **Google Cloud** and **AWS**.
+- The experimental **NOAA NWM API** serves individual reaches, but only the **last few days**.
+- The NWPS API serves NWM output only at NWPS forecast locations, so this lesson doesn't use it.
+
+::: notes
+- NWPS: the National Water Prediction Service.
+- This is the main difference from the SWOT and USGS lessons: for the past, you work with files.
+:::
+
+## Choosing an access route {.smaller}
+
+| Use case | Route | Scaling limits |
+|---|---|---|
+| Today's or the last few days' forecasts, a few reaches | **NOAA NWM API** | Keeps ~3–5 days of runs; experimental |
+| Past forecasts, a few reaches, a few issue times | **`hydrotools`** (Google Cloud archive) | Downloads whole CONUS files (~250–280 MB per short-range run) |
+| Past forecasts, many reaches or many issue times | **Kerchunk references** + `xarray`/`dask` | Reads only the `streamflow` chunk (~7× fewer bytes) |
+| Long historical record (simulation) | **NWM retrospective** (cloud Zarr) | A different product |
+
+Cost depends on **how many forecast runs** you need, much less on how many reaches. No keys needed.
+
+::: notes
+- CONUS: the contiguous U.S.
+- The lesson's table also lists the CIROH NWM BigQuery API, for researchers on CIROH projects (by request); not covered.
+:::
+
+## Programmatic data discovery
+
+- Point-and-click: the [NWPS map](https://water.noaa.gov/map); click a river and read its reach ID (= COMID).
+- In code, the **NLDI** (via [`pynhd`](https://docs.hyriver.io/readme/pynhd.html)) can:
+  - find the COMID for a **point**
+  - find the COMID a **monitoring site** sits on
+  - **navigate** up- or downstream from a COMID
+- Build your COMID list once, and reuse it.
+
+::: notes
+- Capture the lookup in code even if you first found the reach by clicking, so it can be repeated.
+- NHDPlus: the U.S. stream network broken into reaches, each with a COMID; catchments let a point be matched to a reach.
+:::
+
+## COMID for a point
+
+```python
+from pynhd import NLDI
+
+# the Ohio River at Louisville, KY (longitude, latitude; EPSG:4326)
+POINT = (-85.7991, 38.2803)
+
+nldi = NLDI()
+comid_gdf = nldi.feature_byloc(POINT)   # snap the point to an NHDPlus reach
+comid = int(comid_gdf["comid"].iloc[0])
+print(f"COMID: {comid}")                # COMID: 10164004
+```
+
+Keep the place in a variable at the top, not typed into the middle of a call.
+
+::: notes
+- Returns a one-row GeoDataFrame with `comid` and the reach geometry.
+- Raw web address (paste into a browser): `https://api.water.usgs.gov/nldi/linked-data/comid/position?coords=POINT(-85.7991 38.2803)`.
+:::
+
+## COMID for a site, and a check
+
+```python
+# the reach the Louisville gage sits on (used here only to name the place)
+site = nldi.getfeature_byid("nwissite", "USGS-03294500")
+print(site[["identifier", "name", "comid"]])
+#       identifier                          name     comid
+# 0  USGS-03294500  OHIO RIVER AT LOUISVILLE, KY  10164004
+```
+
+Both routes give **10164004**: a useful check that you found the right reach.
+
+::: notes
+- NLDI lists stream gages as the `nwissite` source.
+- This lesson doesn't use the gage's measurements.
+:::
+
+## Every reach upstream, up to 100 km
+
+```python
+upstream = nldi.navigate_byid(fsource="comid", fid=str(comid),
+                              navigation="upstreamTributaries",
+                              source="flowlines", distance=100)
+upstream_comids = upstream["nhdplus_comid"].astype(int).tolist()
+# 498 reaches upstream of (and including) the Louisville reach
+```
+
+Set `distance` to what your question needs: the whole Ohio basin has tens of thousands of reaches.
+
+::: notes
+- `upstreamTributaries` follows every tributary; other options are upstream mainstem, downstream mainstem and downstream with diversions.
+- `upstream_comids` comes back in Spatial scaling.
+:::
+
+## Check on a map
+
+![The 498 NHDPlus reaches up to 100 km upstream of the Ohio River reach at Louisville (COMID 10164004, orange), from the NLDI `upstreamTributaries` navigation. Data: USGS NLDI via `pynhd`, accessed 2026-10-09.](../../images/m03/nwm-ohio-louisville-map.png){fig-alt="Map of thin blue river lines branching to the northeast and east of Louisville, Kentucky, with the main stem of the Ohio River running from the upper right to a highlighted orange reach and star at Louisville in the lower left." .r-stretch}
+
+::: notes
+- The long line is the Ohio's main stem; branches are tributaries.
+- Plotting what discovery returned is a quick check you have the right river; the geometries come with the reaches.
+:::
+
+## Two terms in every route
+
+- **Configuration:** which forecast product: `short_range` (hourly to 18 h, issued hourly), `medium_range` (to 10 days, every 6 h, with **ensemble members**), `long_range`, `analysis_assim`.
+- **Reference time:** when the model run started (UTC). `00Z` = 00:00 UTC; file names write `t00z`.
+- **Valid time:** when each value applies (`valid_datetime` in the API, `value_time` in `hydrotools`, `time` in files).
+
+::: notes
+- Ensemble members: parallel runs from slightly different inputs, numbered by `member_id`; their spread shows possible outcomes.
+- Lead time = valid time − reference time.
+- All routes return `streamflow` in m³/s. No per-value quality flag: record configuration, reference time and model version instead.
+:::
+
+## NOAA NWM API: the latest forecast
+
+```python
+comid = 10164004
+url = ("https://api.water.noaa.gov/nwm/v1/streamflow/forecast/"
+       f"nwm_feature_id/{comid}/")
+resp = requests.get(url, timeout=60,
+                    params={"configuration": "short_range", "latest": "true"})
+resp.raise_for_status()                 # stop if the request failed
+run = resp.json()[0]                    # one entry per configuration + reference time
+
+forecast = pd.DataFrame(run["forecast"][0]["timeseries"])
+print(run["configuration"], run["reference_datetime"], run["units"])
+# short_range 2026-10-09T02:00:00Z CMS
+```
+
+::: notes
+- JSON: a text format Python reads as lists and dictionaries.
+- Each entry: `nwm_feature_id`, `configuration`, `reference_datetime`, `units`, and a `forecast` list with one item per member; each member has a `timeseries` of `valid_datetime`/`value`.
+- Your numbers will differ: it's whatever run is newest.
+- Several reaches: separate COMIDs with commas in the URL.
+:::
+
+## The API keeps only a few days
+
+- Labelled **experimental**; keeps roughly the **last 3–5 days** of forecasts.
+- Use it for "what is the model predicting **now**?", not past events.
+- Leave out `latest` and use `min_reference_datetime` to get **every recent run**, all ensemble members, in one request.
+- Seven medium-range runs: ~0.6 MB. All 99 short-range runs it held: **0.13 MB, under a second**.
+
+::: notes
+- On 2026-10-09 the oldest short-range run it held was from 2026-10-05 00Z.
+- Flattening the nested JSON gives a long-format table: `reference_time`, `member`, `valid_time`, `streamflow_cms`.
+- Medium range: member 1 to 240 hours; others to 204 hours.
+:::
+
+## Live coding 1: discovery and the NWM API {.smaller}
+
+- **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb`
+- **Sections:** "Programmatic data discovery", then "NOAA NWM API: today's forecasts for a few reaches" in "Programmatic data downloads"
+- **Point out:**
+  - both NLDI routes return COMID 10164004
+  - the upstream map: is this the right river?
+  - change `configuration` to `medium_range` and count the members
+- **12 minutes.** Back to slides at **2:43**.
+
+::: notes
+- If the NLDI is slow, skip the upstream navigation and map.
+- If short on time: run only the two COMID lookups and the latest short-range forecast.
+:::
+
+## `hydrotools`: past forecasts from the archive {.smaller}
+
+- Anything older than a few days, like the **April 2025 flood**, comes from NOAA's archive of raw files: **Google Cloud** (`gs://national-water-model`) and **AWS** (`s3://noaa-nwm-pds`). No account needed.
+- `hydrotools` (NOAA Office of Water Prediction) finds and downloads the files, and returns a `pandas.DataFrame` for **just your COMIDs**.
+- Use `hydrotools.nwm_client` (9.x); older tutorials use `nwm_client_new`.
+
+::: notes
+- A short-range `channel_rt` file is ~13–16 MB; `channel_rt` is the channel-routing output that holds `streamflow`.
+- Canonical column names (`value`, `value_time`, `nwm_feature_id`) are shared across `hydrotools` subpackages, so tables join easily.
+:::
+
+## A past short-range forecast with `hydrotools`
+
+```python
+from hydrotools.nwm_client.NWMFileClient import NWMFileClient
+
+def get_forecast():
+    client = NWMFileClient()   # default catalog: Google Cloud
+    return client.get(configurations=["short_range"],
+                      reference_times=["2025-04-06T00:00"],   # issue time (UTC)
+                      nwm_feature_ids=[comid])
+
+# hydrotools runs its own event loop; a separate thread also works in Jupyter
+with ThreadPoolExecutor(1) as pool:
+    forecast_data = pool.submit(get_forecast).result()
+```
+
+Downloads **all 18 files** of the run (~270 MB, ~1.7 GB memory, 2–3 minutes).
+
+::: notes
+- In Jupyter, run `import nest_asyncio; nest_asyncio.apply()` once first.
+- Result: long-format table, one row per COMID and valid time: `reference_time`, `nwm_feature_id`, `value_time`, `value`, `measurement_unit` (`m3 s-1`), `configuration`, `usgs_site_code`.
+- If `.get()` fails with NetCDF/HDF errors, a half-downloaded file is in `hydrotools_data/`: delete that folder and retry.
+- `FutureWarning`/`UserWarning` messages are harmless.
+:::
+
+## What `hydrotools` costs
+
+- Downloads **every file of every run you ask for, in full**, then extracts your COMIDs.
+- One short-range run: 18 files (~250–280 MB). One medium-range member: 240 files (**~3 GB or more**).
+- Results cache in `hydrotools_data/`: keep it out of version control, delete when done.
+- On a slow connection, big requests can **time out** (900 s per file, including queue time).
+
+::: notes
+- `file_directory=` chooses where files go; `cleanup_files=True` deletes NetCDF files after each `get()`.
+- In a test of a ~3 GB medium-range member on a home connection, both attempts timed out after ~15 minutes.
+- Units: pass `unit_system=MeasurementUnitSystem.US` for ft³/s.
+:::
+
+## Kerchunk: read only the chunks you need {.smaller}
+
+- Inside a NetCDF file, each variable is stored in compressed **chunks**; you must fetch a whole chunk to read any value in it.
+- **Zarr** keeps each chunk as a separate object, so cloud tools fetch only what they need.
+- **Kerchunk** scans each NetCDF file once and writes a small JSON **reference**: where each chunk lives (byte offset, length).
+- `xarray` opens the references as one Zarr dataset and fetches **only the chunks you touch**.
+
+::: notes
+- Analogy: taking a whole box off the shelf to get one book.
+- Virtual Zarr: a small reference file that lets software read existing files as if they were one Zarr dataset.
+- Sources: kerchunk documentation; Element 84's 2023 write-up.
+:::
+
+## Two kinds of reference
+
+1. **NOAA-published** references in `s3://noaa-nodd-kerchunk-pds` for `short_range` and `medium_range_mem1`, built as files arrive. They start at **2026-01-01**: they don't cover April 2025.
+2. **Build your own** for any run in the archive: one-time, small (~20 KB of JSON per short-range run).
+
+CIROH's [`nwmurl`](https://github.com/CIROH-UA/nwmurl) builds the file URLs from a date, issue time, hours and configuration.
+
+::: notes
+- `nwmurl` only builds URLs; it doesn't download.
+- Using NOAA's published references for recent runs is in the post-reading.
+:::
+
+## Build references for one run
+
+```python
+def index_one(url):
+    """Scan one NetCDF file and return its byte-range references."""
+    with fsspec.open(url, "rb", block_size=2**20) as f:   # 1 MB blocks
+        return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
+
+def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
+    urls = nwmurl.generate_urls_operational(...)   # one URL per forecast hour
+    with ThreadPoolExecutor(8) as pool:            # one request per file
+        singles = list(pool.map(index_one, urls))
+    return combine_refs(singles)                   # stitch along time
+
+refs = build_refs("20250406", 0)                   # 134 reference entries
+```
+
+::: notes
+- Simplified: the `nwmurl` arguments and `combine_refs` are in the notebook.
+- `urlbaseinput=3` gives public HTTPS addresses on Google Cloud (no cloud account); `gcsfs` stalled in testing.
+- `inline_threshold=500` stores tiny variables in the JSON; `block_size=2**20` makes each scan one 1 MB request.
+- Save `refs` as JSON and reuse it.
+:::
+
+## Read one reach from the references
+
+```python
+def open_refs(refs):
+    """Open references lazily: nothing downloads until values are needed."""
+    return xr.open_dataset("reference://", engine="zarr", chunks={},
+                           consolidated=False, zarr_format=2,
+                           storage_options={"fo": refs, "remote_protocol": "https",
+                                            "remote_options": {"asynchronous": True}})
+
+ds = open_refs(refs)
+print(ds.attrs["NWM_version_number"], ds.attrs["model_configuration"])  # v3.0 short_range
+q = ds["streamflow"].sel(feature_id=comid).load()   # 1 chunk per hour (~2 MB each)
+```
+
+::: notes
+- `ds` has dimensions `time` (18 valid times) and `feature_id` (2,776,734 reaches); "2GB" is what it would be in memory; nothing downloads until `.load()`.
+- `chunksize=(1, 2776734)`: one chunk per hour holds every reach.
+- Values match `hydrotools` to within rounding.
+:::
+
+## Live coding 2: kerchunk references {.smaller}
+
+- **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb`
+- **Section:** "Kerchunk references: lazy, cloud-native reads with `xarray`" in "Programmatic data downloads"
+- **Point out:**
+  - `print(ds)`: 2.8 million reaches, but nothing downloaded yet
+  - the version and configuration in `ds.attrs`
+  - change the `cycle` to `12` and compare the two runs
+- **12 minutes.** Back to slides at **3:12**.
+
+::: notes
+- Building references for one run takes ~20 seconds.
+- Skip the `hydrotools` cell in class (2–3 minutes, ~270 MB); learners can run it later.
+- If the network is slow: show the printed `ds` and the 5-row series from the slides.
+:::
+
+## Understanding what you downloaded {.smaller}
+
+| Concept | In your download |
+|---|---|
+| Location identifier | COMID `10164004` (`nwm_feature_id` or `feature_id`) |
+| Variable | `streamflow` (modeled discharge) |
+| Variable unit | m³/s (`CMS` in the API, `m3 s-1` in `hydrotools`) |
+| Time | reference time + valid time, UTC |
+| Quality flag(s) | **None**: judge by lead time and by comparing runs |
+| Version | NWM v3.0 and configuration (`ds.attrs`) |
+| Data unit | one file per forecast hour, every reach |
+
+::: notes
+- Where to find each: API fields `nwm_feature_id`, `units`, `reference_datetime`/`valid_datetime`; `hydrotools` columns `nwm_feature_id`, `measurement_unit`, `reference_time`/`value_time`; files `feature_id`, `ds["streamflow"].attrs["units"]`, `reference_time`/`time`.
+- A short-range run is 18 files (e.g. `nwm.t00z.short_range.channel_rt.f001.conus.nc`); a medium-range member 240.
+:::
+
+## Forecast runs disagree
+
+![NWM v3.0 streamflow forecasts for COMID 10164004: medium range (member 1) issued 3 April 2025 00Z, and short range issued 6 April 00Z, 6 April 12Z and 7 April 00Z. Data: NOAA NWM operational archive on Google Cloud, read with kerchunk references, accessed 2026-10-09.](../../images/m03/nwm-ohio-louisville-forecasts.png){fig-alt="Line chart of NWM streamflow forecasts for the Ohio River at Louisville, 3 to 13 April 2025. A gray medium-range line issued on 3 April rises from about 3,000 to a peak near 13,900 cubic meters per second on 8 April, then eases to about 10,000. Three short colored lines, the short-range runs issued on 6 and 7 April, each start between 15,000 and 18,000; the two from 6 April fall to about 8,000 to 9,000 within 18 hours, and the one from 7 April falls to about 13,000 and turns back up." .r-stretch}
+
+::: notes
+- Each line is a separate run. Short-range runs start near 15,000–18,000 m³/s and fall quickly; the medium-range run from three days earlier peaks near 13,900 on 8 April.
+- If your plot looks like this, your code is right: this is what the archive holds.
+- Record exactly which runs you used; look at several before concluding from one.
+:::
+
+## Keep it reproducible
+
+- **Raw:** the archive files stay where they are. **Derived:** your reference JSON and extracted values, saved separately with the COMIDs, configuration and reference times.
+- **Cite:** operational forecasts have **no DOI**. Cite the model version (NWM v3.0), configuration, reference times, the archive URL and your access date.
+
+::: notes
+- Old forecasts don't change once issued, but archive retention can: the access date matters.
+- Module 1: Data Management and Data Publishing.
+:::
+
+## Why NWM downloads cost what they cost {.smaller}
+
+- In each `channel_rt` file, `streamflow` is **one chunk per forecast hour holding all 2,776,734 reaches** (~2 MB compressed).
+- **Cost grows with forecast hours (files), not reaches.**
+
+| Route (3 short-range runs, 54 files) | Reaches | Transferred | Time |
+|---|---|---|---|
+| `hydrotools` | 1 or 498 | 844 MB | ~2.7 min |
+| Kerchunk + `xarray` | 1 or 498 | 125 MB | 10–19 s |
+
+::: notes
+- Measured 2026-10-08 from a home connection; wall times vary with network.
+- The NOAA NWM API returned all 99 short-range runs it held in 0.13 MB, under a second (today's data only).
+- Building the references: 57 MB in 54 requests, 19 s, one time.
+- Full tables (including medium range) are in the post-reading.
+:::
+
+## Best practices: scaling
+
+- **One place, long period:** last few days → the **NWM API**. Past forecasts → **kerchunk**, built once and reused; ask whether you need *every* run. Long simulated record → the **retrospective**.
+- **Many places, short window:** build the COMID list, then pass **the whole list in one call**. 498 reaches cost the same as 1.
+- **Parallel:** split over **files**, not reaches. Run big jobs **next to the data**.
+
+::: notes
+- A month of every short-range run is 720 runs: ~200 GB with `hydrotools`, ~30 GB of chunk reads with references.
+- Cloud regions: Google Cloud `US` multi-region; AWS `us-east-1`.
+- Retrospective v3.0: Feb 1979 – Jan 2023; v2.1: Feb 1979 – Dec 2020. It is a simulation, not archived forecasts.
+- Looping one COMID at a time re-reads the same CONUS-wide chunks for every reach.
+- Too many threads gave SSL errors at 16 (with `gcsfs`); fewer threads plus a retry fixed it.
+:::
+
+## Now you try it: the Willamette at Salem {.smaller}
+
+Find the COMID and retrieve short-range forecasts. Use new names (e.g. `_salem`).
+
+1. COMID with `nldi.feature_byloc`, using `POINT = (-123.0429, 44.9443)`.
+2. The latest short-range forecast for that COMID from the **NOAA NWM API**.
+3. References for the run issued **12Z on 25 February 2026**: `build_refs("20260225", 12)`; read `streamflow` with `open_refs`.
+
+**Notebook cell:** "Now you try it" in `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb`.
+
+::: notes
+- Start now; finish after the session. What you should see and an example answer are in the post-reading.
+- Building the references takes about 20 seconds.
+:::
+
+# Wrap-up {background-color="#1f4e79"}
+
+## Recap
+
+- **Discover first:** the NLDI turns a point or a gage into a COMID, or a whole upstream network.
+- **Pick the route by how many runs you need:** the NWM API for now, `hydrotools` for a few past runs, kerchunk for many.
+- **No quality flags:** record configuration, reference time and model version, and compare runs.
+
+::: notes
+- One takeaway in the chat.
+:::
+
+## What's due and what to read
+
+- **Module 3 quiz:** see Canvas (covers Sessions 3–5).
+- **Post-reading:** `session-04_module-03_lesson-02_retrieve-noaa-nwm-data_post-reading.pdf` (the Willamette answer, `hydrotools` details, NOAA's published references, the full cost tables).
+- **Next session (Tue Nov 17):** Retrieve USGS WDFN data. Have the `m03-wdfn` environment and your USGS API key ready.
+
+::: notes
+- The `m03-wdfn` setup is in Session 5's pre-reading.
+:::
+
+## Questions?
+
+::: notes
+- About 5 minutes.
+- Expect: "Can I get NWM forecasts for my gage without downloading files?" Only recent ones (NWM API). For the past, kerchunk is the lightest route.
+:::
