@@ -1,7 +1,15 @@
 ---
 title: "Data best practices in more depth"
 subtitle: "Federal Open Water Data for Researchers · Session 1 (Module 1) · Read after the session"
-format: typst
+format:
+  typst:
+    margin:
+      x: 2cm
+      y: 2cm
+    include-in-header:
+      text: |
+        #show raw.where(block: true): set text(size: 0.75em)
+        #show raw.where(block: true): it => { set par(justify: false); it }
 ---
 
 **Why this matters:** the session gave you the main ideas of data management and publishing. This reading holds the
