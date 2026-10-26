@@ -351,7 +351,7 @@ Daily values
 : USGS values summarized per day, most often the daily mean (statistic code, `statistic_id`, `00003`).
 
 dataretrieval
-: A USGS Python package for retrieving USGS water data. Its modernized `waterdata` module uses the
+: A [USGS Python package](https://github.com/DOI-USGS/dataretrieval-python) for retrieving USGS water data. Its modernized `waterdata` module uses the
   USGS Water Data APIs; the legacy `nwis` module uses the older services.
 
 Field measurement

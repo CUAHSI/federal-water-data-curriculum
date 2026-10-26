@@ -36,7 +36,7 @@ These break down into:
 
 - **Forecast lead time.** A forecast is labeled by when it was issued (its {term}`forecast reference time <Forecast reference time>`) and how far ahead it looks. Comparing forecasts issued at different times before an event shows how the predicted peak evolved.
 - **Data provider recommendations.** Each agency publishes guidance on appropriate use (for example, quality flags, official forecasts vs. model guidance, and provisional vs. approved data). Following it keeps analyses defensible.
-- **Reproducible synthesis.** Combining three products multiplies what you need to record: each product's version (SWOT product version, NWM model version, USGS approval status), your query (identifiers, dates, product names) and your access dates. Module 1 covers why ([reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques), [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)); the case study shows one way to do it.
+- **Reproducible synthesis.** Combining three products multiplies what you need to record: each product's version (SWOT product version, NWM model version, USGS approval status, last modified date and date accessed), your query (identifiers, dates, product names) and your access dates. Module 1 covers why ([reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques), [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)); the case study shows one way to do it.
 
 :::{admonition} Partner review (NASA): Important concepts and terminology
 :class: important
@@ -50,7 +50,7 @@ Review the important concept descriptions.
 
 :::{admonition} Partner review (USGS): Important concepts and terminology
 :class: important
-Review the important concept descriptions.
+Review the important concept descriptions. - See edits. I think it makes more sense (and aligns with Module 2 to say that the version for USGS data is the `last_modified` date and the date accessed by the user)
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
