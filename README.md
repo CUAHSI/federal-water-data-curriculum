@@ -2,11 +2,15 @@
 
 # Federal Open Water Data for Researchers
 
-This repo holds the course materials for *Federal Open Water Data for Researchers*, a CUAHSI
-micro-credentialing course (about 20 hours). Researchers and graduate students with some Python learn to
+This repo holds the course materials for *Federal Open Water Data for Researchers*, a micro-credentialing
+course from CUAHSI (the Consortium of Universities for the Advancement of Hydrologic Science, Inc.) (about 20 hours). Researchers and graduate students with some Python learn to
 find, retrieve and combine federal open water data: NASA SWOT, the NOAA National Water Model (NWM) and
 USGS Water Data for the Nation (WDFN). The course will later move into
 [CUAHSI's Water Content Portal](https://water-content-portal.cuahsi.io/).
+
+**Want to read the course?** Start at the draft site,
+<https://cuahsi.github.io/federal-water-data-curriculum/>. The rest of this README is for people who build and
+maintain the course.
 
 The repo has two parts: **the website** (the lessons, which are the source of truth) and **the teaching
 materials** generated from it.
@@ -23,15 +27,19 @@ The lessons are [MyST](https://mystmd.org/) Markdown pages, organized by module:
 | `04-federal-water-data-synthesis/` | 4 · Federal water data synthesis |
 
 Also part of the site: `index.md` (the home page), `glossary.md`, `references.md`, `acknowledgements.md` and
-`images/` (figures and maps, one folder per module). `myst.yml` sets the table of contents. Each Module 3 and 4
-lesson with code has a conda environment in `environments/`.
+`images/` (figures and maps, one folder per module). `myst.yml` sets the table of contents.
+
+Each Module 3 lesson has its own conda environment in `environments/`, and the Module 4 lessons share one
+(`m04-synthesis.yml`). The "Tools and environment setup" section of each Module 3 lesson shows how to create
+the environment (`conda env create -f environments/<file>.yml`) and which free accounts the lesson needs (a
+NASA Earthdata Login for SWOT; an optional but recommended USGS API key for WDFN).
 
 Every push to `dev` builds the site and publishes a draft preview to GitHub Pages:
 <https://cuahsi.github.io/federal-water-data-curriculum/>.
 
 ### Build the site locally
 
-You need Node.js and npm. Install MyST once:
+You need Node.js (20 or later) and npm. Install MyST once:
 
 ```bash
 npm install -g mystmd
@@ -62,9 +70,9 @@ setup each builder needs, and the tools.
 
 ### How to rebuild
 
-- **Regenerate content** with the Claude Code skills in `.claude/skills/`: `build-slides`, `build-notebooks`,
+- **Regenerate content** with the [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`: `build-slides`, `build-notebooks`,
   `build-quizzes` and `build-instructor-guide`. Ask an agent to run the skill, or follow its `SKILL.md` steps
-  by hand.
+  by hand. [`AGENT_SETUP.md`](AGENT_SETUP.md) explains how to set up Claude Code for this repo.
 - **Render the slides and readings** with the "Render slides" action (**Actions → Render slides → Run
   workflow**). It can open a draft PR with the rendered files. To render locally, run `quarto render` on a
   deck or reading (needs [Quarto](https://quarto.org/docs/get-started/)).
@@ -88,12 +96,13 @@ We use a fork-and-pull workflow, and `dev` is the integration branch:
 Course planning lives in [`ROADMAP.md`](ROADMAP.md). Contributors working with Claude Code should also read
 [`CLAUDE.md`](CLAUDE.md) and [`AGENT_SETUP.md`](AGENT_SETUP.md).
 
-## Licence and how to cite
+## License and how to cite
 
 The course is licensed under GPL-3.0, matching the
 [CUAHSI notebooks](https://github.com/CUAHSI/notebooks) it adapts code from. Each lesson credits its sources,
-and the [References](references.md) page lists them all. Contributors, funding and the use of AI tools are
-described on the [Acknowledgements](acknowledgements.md) page.
+and the References page lists them all. Contributors, funding and the use of AI tools are described on the
+Acknowledgements page. Both are on the [course site](https://cuahsi.github.io/federal-water-data-curriculum/)
+(sources: [`references.md`](references.md), [`acknowledgements.md`](acknowledgements.md)).
 
 To cite the course, use [`CITATION.cff`](CITATION.cff) (on GitHub, **Cite this repository** in the sidebar
 formats it as APA or BibTeX).
