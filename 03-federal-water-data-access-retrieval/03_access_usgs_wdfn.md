@@ -19,16 +19,16 @@ If you already know your monitoring location ID(s), you can skip discovery.
 (wdfn-access-routes)=
 ## Choosing an access route
 
-All the routes below use the same Water Data APIs, so the choice is mostly about *which function* matches your question. None of them needs a key, but USGS recommends one for repeated or large requests.
+All the routes below use the same Water Data APIs, so the choice is mostly about *which function* matches your question. None of them needs a key, but USGS recommends one for repeated or large requests. If you do not have an API key your {term}`queries<Query>` have a limit of 50 requests per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) | No | Manual; not reproducible on its own |
-| Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages with a maximum of 50,000 rows per page; each page is one request |
+| Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in {term}`pages<Page/Request>` with a maximum of 50,000 rows per page; each page is one {term}`request<Page/Request>` |
 | Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one query (paged for you) |
 | The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per query |
 | Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (key recommended) | About one measurement a month per site |
-| One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page (request) count |
+| One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page/request count |
 | Code that uses the legacy Water Services | `dataretrieval.nwis` | No | Being retired; port it to `waterdata` (see [the note below](#wdfn-legacy)) |
 
 ## Tools and environment setup
@@ -135,7 +135,7 @@ print(statistic_codes.loc[statistic_codes["statistic_code"].isin(["00003", "0001
 
 **The point-and-click way.** The [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) let you search by place name, address, state or watershed and click on sites. That's fine for exploring. A programmatic discovery step keeps your search reproducible, so capture it in code too.
 
-Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each function call. Your query is then recorded in one spot and easy to change.
+Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each {term}`function call<Function call>`. Your query is then recorded in one spot and easy to change.
 
 **Example: which stream monitoring locations are in Jefferson County, Kentucky (Louisville)?**
 
