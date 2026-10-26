@@ -46,29 +46,11 @@ Field measurements are published too, so you can see how well the rating is supp
 ## Temporal coverage
 
 - **Period of record:**
-    - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. However, instantaneous water data is only available as far back as October 1st, 1950. The availability of that historical record is dependent on the type of water data and the history of the monitoring location collecting that data. For example, the Ohio River at Louisville, KY (USGS-03294500) has continuous discharge from 2009 and daily values from 1928.
+    - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. The availability of the historical record is dependent on the type of water data and the history of the monitoring location collecting that data. For example, the Ohio River at Louisville, KY (USGS-03294500) has continuous discharge from 2009 and daily values from 1928. See [USGS's data availability statement](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/) for more information.
     - Historical continuous data may have gaps in availability due to instrument problems, environmental conditions, or other factors. Daily data can be used for a more complete record.
     - Recent data are {term}`provisional <Provisional data>`: they have not yet been reviewed and may be revised. USGS reviews and approves them later (see the [USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
 - **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is the mean of all continuous data from that day.
-- **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is usually available same-day.
-
-:::{admonition} Partner review (USGS): Coverage figures and provisional data
-:class: important
-Confirm:
-(1) the count of 9,011 monitoring locations with discharge data; I'm getting ~24k? Maybe there is a filter I a missing
-```
-from dataretrieval import waterdata
-check,_ = waterdata.get_combined_metadata(parameter_code="00060", statistic_id="00003", site_type="Stream")
-len(set(check["monitoring_location_id"].to_list()))
-```
-(2) that instantaneous (continuous) data are available back to October 1, 1950; Are you looking for discharge specifically, or gage height? I would check with Mike on this one, but I see an instantaneous discharge timeseries that begins 1928-05-17 (time_series_id = 417795156ba54de59b284ab0f91a8807). The earliest gage height I see is 1955-05-03 (time_series_id = 7c1d8e49b40345c8b5959bb4e5f1f672). I'm not sure these are "real" though, since I think the instantaneous gaging network began in...the 90's? Again, this is not something I know much about, this is just what I'm seeing in the data.
-```
-inst,_ = waterdata.get_time_series_metadata(statistic_id="00011")
-```
-(3) that daily values are usually available the same day; Defer to Mike, but my sense is "next day".
-(4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); I think just saying "later" is fine.
-(5) that daily values are computed over the monitoring location's local day (standard time). The provisional data statement describes provisional data as subject to revision, not limited to 120 days, and the 120-day window we found applies to certain parameters on some legacy station pages. Defer to Mike.
-:::
+- **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is typically available by 6am est the next day.
 
 ## Data content
 
@@ -131,12 +113,6 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 - **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have a limit of 50 {term}`requests<Page/Request>` per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
 - **Change over time:** The USGS Water Data APIs will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So a new API version does not by itself change the data. Values change for a different reason: provisional data are revised when they are approved, and approved data are occasionally revised too. Still, it is a good idea to check the [Water Data Blog](https://waterdata.usgs.gov/blog/) regularly for important updates.
 - **Contact:** For questions about WDFN data, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments/).
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- "Daily data is usually available same-day": revisit once USGS answers the partner review.
-:::
 
 ## Further reading
 

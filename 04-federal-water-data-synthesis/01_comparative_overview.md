@@ -62,11 +62,6 @@ Confirm this summary of NWM error sources and of how observations are assimilate
 
 **USGS WDFN streamflow** is the reference most researchers compare against, but discharge is not measured directly. The sensor records gage height, and discharge is computed from it with a {term}`rating curve <Rating curve>` fitted to periodic field measurements of discharge (Module 2). Accuracy therefore depends on how well the rating is defined at the flow you care about. During floods the river can go out of bank, the channel can scour or fill, and field measurements are hard and dangerous to make. The top of the rating curve often rests on only a few measurements, so peak discharges are usually more uncertain than typical flows ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). Each field measurement carries the hydrographer's own accuracy rating. At USGS-12200500, the measurement of 111,000 ft³/s on December 12, 2025, about nine hours after the crest, was rated "Fair", compared with "Good" for a calmer November measurement (USGS field measurements from the [Water Data API](https://api.waterdata.usgs.gov/ogcapi/v0/); see the case study in the next lesson). Module 3 shows how to retrieve field measurements and their ratings. Values are {term}`provisional <Provisional data>`, and can be revised, until USGS approves them ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
 
-:::{admonition} Partner review (USGS): Accuracy
-:class: important
-Confirm the description of rating-curve uncertainty at high flows, and what the field-measurement ratings (e.g. Good, Fair) represent in percent terms. - I generally agree that uncertainty increases as gage heights/discharge become more extreme, but I am not sure "in percent terms". Mike et al. likely have a better grasp.
-:::
-
 :::{admonition} TODO (dev team): Rating-curve uncertainty citation
 :class: attention
 Cite USGS rating-curve guidance for high-flow uncertainty.
