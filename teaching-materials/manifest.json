@@ -1,3 +1,213 @@
 {
-  "outputs": []
+  "outputs": [
+    {
+      "output": "teaching-materials/readings/session-01_module-01_data-best-practices_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "01-data-best-practices/02_data_management.md",
+        "01-data-best-practices/03_data_publishing.md",
+        "glossary.md",
+        "images/m01/02_data_management-dmp-guide.png"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:41Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-01_module-01_data-best-practices_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "01-data-best-practices/01_open_science.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:41Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-02_module-02_federal-water-data-landscape_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "02-federal-water-data-landscape",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:42Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-02_module-02_federal-water-data-landscape_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "02-federal-water-data-landscape",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:42Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-03_module-03_lesson-01_retrieve-nasa-swot-data_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "glossary.md",
+        "images/m03/swot-hydrocron-wse-full-record.png"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:46Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-03_module-03_lesson-01_retrieve-nasa-swot-data_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/00_introduction.md",
+        "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:45Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-04_module-03_lesson-02_retrieve-noaa-nwm-data_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:47Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-04_module-03_lesson-02_retrieve-noaa-nwm-data_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:47Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:49Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:48Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-06_module-04_federal-water-data-synthesis_post-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "04-federal-water-data-synthesis",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:51Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/readings/session-06_module-04_federal-water-data-synthesis_pre-reading.qmd",
+      "kind": "reading",
+      "sources": [
+        "04-federal-water-data-synthesis",
+        "glossary.md"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:50Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-01_module-01_data-best-practices.qmd",
+      "kind": "slides",
+      "sources": [
+        "01-data-best-practices",
+        "glossary.md",
+        "images/m01"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:40Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-02_module-02_federal-water-data-landscape.qmd",
+      "kind": "slides",
+      "sources": [
+        "02-federal-water-data-landscape",
+        "glossary.md",
+        "images/m02"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:41Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd",
+      "kind": "slides",
+      "sources": [
+        "03-federal-water-data-access-retrieval/00_introduction.md",
+        "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "glossary.md",
+        "images/m03"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:44Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-04_module-03_lesson-02_retrieve-noaa-nwm-data.qmd",
+      "kind": "slides",
+      "sources": [
+        "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "glossary.md",
+        "images/m03"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:47Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.qmd",
+      "kind": "slides",
+      "sources": [
+        "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "glossary.md",
+        "images/m03"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:48Z",
+      "builder": "build-slides"
+    },
+    {
+      "output": "teaching-materials/slides/session-06_module-04_federal-water-data-synthesis.qmd",
+      "kind": "slides",
+      "sources": [
+        "04-federal-water-data-synthesis",
+        "glossary.md",
+        "images/m04"
+      ],
+      "source_commit": "3863b63ad8ad1caf58cc1ad1d1a930511aa2ecb2",
+      "built_at": "2026-10-26T03:18:49Z",
+      "builder": "build-slides"
+    }
+  ]
 }
