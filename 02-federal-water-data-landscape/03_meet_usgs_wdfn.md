@@ -38,7 +38,7 @@ Field measurements are published too, so you can see how well the rating is supp
 
 - **Extent:** Mainly CONUS + Alaska, Hawaii, and Puerto Rico. There are international monitoring locations which can be explored alongside all other monitoring locations here: [Monitoring locations - USGS Water Data for the Nation](https://waterdata.usgs.gov/monitoring-location/).
 - **Type:** Point data for monitoring locations, returned as point geometries when querying monitoring location information from the API (`dataretrieval` returns them as a GeoDataFrame). Locations can also be found as coordinates (latitude and longitude) on monitoring location webpages
-- **Resolution:** There are > 9,000 monitoring locations with discharge data across CONUS + Alaska, Hawaii, and Puerto Rico. The spread of these monitoring locations is uneven, but easily explored using the [National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/).
+- **Resolution:** There are ~ 9,000 monitoring locations (as of October 2026) with discharge data across CONUS + Alaska, Hawaii, and Puerto Rico. The spread of these monitoring locations is uneven, but easily explored using the [National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/).
 - **{term}`CRS`:** Point geometries from the API are longitude and latitude on the WGS84 datum, also referred to as EPSG 4326.
 
 ## Temporal coverage
