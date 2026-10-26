@@ -235,8 +235,7 @@ Reach
 
 RiverSP
 : SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
-  overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is
-  `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` for one each.
+  overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with subcollections for reaches only  (`SWOT_L2_HR_RiverSP_reach_D`) and nodes only (`SWOT_L2_HR_RiverSP_node_D`) to facilitate specific data access (though the reach/node data is the same in the main collection and the respective sub-collection).
 
 Science orbit
 : SWOT's 21-day repeat orbit, used since 2023 for routine observations. It followed a 1-day repeat
@@ -248,7 +247,7 @@ Swath
 
 SWORD
 : The SWOT River Database: a global river network, built before launch, that defines the reaches and nodes
-  SWOT river measurements are mapped to.
+  SWOT river measurements are mapped to. See SWORD visualized with the [SWORD Explorer](https://www.swordexplorer.com/)
 
 SWORD of Science (SoS)
 : A Level 4 SWOT product (in development) that holds river discharge estimates from several algorithms, run by the

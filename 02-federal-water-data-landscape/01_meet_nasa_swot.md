@@ -2,12 +2,12 @@
 
 The *NASA Surface Water and Ocean Topography ({term}`SWOT`)* mission is a satellite jointly developed by NASA and Centre National D'Etudes Spatiales (CNES), with contributions from the Canadian Space Agency (CSA) and United Kingdom Space Agency (UKSA). Rather than measuring streamflow at fixed points, SWOT uses a Ka-band Radar Interferometer ({term}`KaRIn`) to make the first global survey of surface water — measuring the elevation, width, and slope of rivers, lakes, and reservoirs worldwide. 
 
-It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [SWOT resources page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/). 
+It exists to close major observation gaps: most of the world's rivers have no streamgage at all, and SWOT can observe rivers that have never been gaged (see [Spatial coverage](#swot-spatial-coverage) for how wide a river needs to be). Learn more at the [NASA Earthdata SWOT page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) and [NASA's SWOT mission page](https://science.nasa.gov/mission/swot/). 
 
 (swot-terminology)=
 ## Terminology
 
-This course only covers open surface and hydrology related measurements from SWOT (SWOT also measures ocean data). The table below maps SWOT's own vocabulary onto the course's [shared concepts](00_introduction.md#m02-shared-concepts). It describes the river product most hydrology work uses, the River Single-Pass Vector product ({term}`RiverSP`). 
+This course only covers open surface and hydrology related measurements from SWOT (SWOT also measures ocean data). The table below maps SWOT's own vocabulary onto the course's [shared concepts](00_introduction.md#m02-shared-concepts). It focuses on and describes the river product: River Single-Pass Vector ({term}`RiverSP`). 
 
 | Shared concept | SWOT equivalent | Notes |
 |---|---|---|
@@ -16,7 +16,7 @@ This course only covers open surface and hydrology related measurements from SWO
 | {term}`Variable unit` | meters (WSE, width), m/km (slope) | WSE is reported as height above the {term}`geoid <Geoid>` (EGM2008), with the geoid height and tide corrections provided alongside (see the partner-review note below). |
 | {term}`Time` | {term}`overpass <Overpass>` time | The time the satellite observed that reach (UTC), for example `time_str` = `2025-01-09T11:18:10Z`. Most locations are seen at least once per 21-day {term}`cycle <Cycle and pass>`, often several times where passes overlap, not on a regular daily schedule. |
 | {term}`Data quality flag(s)` | summary flags (`reach_q`, `node_q`, `wse_qual`, …) plus detailed bitwise flags | **Summary flags** use one simple scale: 0 = good, 1 = suspect, 2 = degraded, 3 = bad. RiverSP's `reach_q` rates a whole reach observation; the Raster product's `wse_qual` rates one variable. Each summary flag has a **{term}`bitwise <Bitwise quality flag>`** partner (for example `reach_q_b`) that records *which* problems were found, packed into one integer as a sum of powers of two, so its values look arbitrary (`14`, `524298`). Start with the summary flag; decode the bitwise flag with the {term}`product description document (PDD) <Product description document (PDD)>` for your product version only when you need to know why. |
-| {term}`Version / provenance` | product version (e.g. `D`) and collection DOI | The version letter is part of each collection's short name, e.g. `SWOT_L2_HR_RiverSP_D` (reaches and nodes together; `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` hold one each). Module 3 searches the combined `SWOT_L2_HR_RiverSP_D` collection. Version D of the RiverSP product has the {term}`DOI` [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D). |
+| {term}`Version / provenance` | product version (e.g. `D`) and collection DOI | The version letter is part of each collection’s short name, e.g. `SWOT_L2_HR_RiverSP_D` (reaches and nodes together; `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` hold reach only and node only data, respectively). Module 3 searches the combined `SWOT_L2_HR_RiverSP_D` collection. Version D of the RiverSP product has the {term}`DOI` [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D). |
 | {term}`Data unit` | {term}`granule <Granule>` | One file for one stretch of one satellite pass. A RiverSP granule holds every reach (or node) observed along one pass over one continent; a Raster granule holds one scene along one pass. |
 
 :::{admonition} Partner review (NASA): Vertical reference for water surface elevation
@@ -27,11 +27,11 @@ An earlier draft said WSE "is referenced to the WGS84 ellipsoid and corrected fo
 (swot-dataset-derivation)=
 ## Dataset derivation
 
-**Key point: SWOT measures water surface elevation, width, and slope from a hydrologic perspective. It does not measure discharge, and SWOT discharge estimates are not yet ready for research use.**
+**Key point: SWOT measures water surface elevation, width, and slope from a hydrologic perspective. It does not directly measure discharge, and SWOT Level 2 discharge estimates are not yet ready for research use as of Nov 2026.**
 
 SWOT launched December 16, 2022, and does not measure streamflow directly — it derives WSE, width, and slope from raw radar returns collected as the satellite passes overhead, then aggregates lower-level pixel detections (the {term}`PIXC <Pixel cloud (PIXC)>` product) up to reach- and node-scale values using the predefined SWORD network.
 
-SWOT discharge estimates, from the {term}`SWORD of Science (SoS) <SWORD of Science (SoS)>`, a separate Level 4 product in which a NASA working group runs discharge algorithms on SWOT measurements, are still in development and are not yet a recommended research product in this course; see [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) in Module 4.
+SWOT discharge estimates, from the {term}`SWORD of Science (SoS) <SWORD of Science (SoS)>`, a separate Level 4 product in which a NASA working group runs discharge algorithms on SWOT measurements, are still in development and are not yet a recommended research product in this course; see [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) in Module 4. Users can explore the [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3) and are encouraged to check on [NASA Earthdata](https://www.earthdata.nasa.gov/) periodically for updated versions of discharge products.
 
 The SWOT mission has two phases: a 1-day repeat "fast-sampling"/calibration orbit (Dec. 2022–July 2023), and the current 21-day repeat {term}`science orbit <Science orbit>` that began in mid-2023, which is what most hydrology use cases rely on. Product versions have also evolved (e.g., Beta Pre-Validated → Version C → Version D), moving from "pre-validated" toward fully validated status over time, so check the version and validation status of any dataset you're using; see the [SWOT documentation page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) for release notes. Because a new version reprocesses old observations, the version is part of your data's provenance: record it, as Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) recommends.
 
@@ -151,6 +151,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 
 ## Further reading
 
+- [NASA Earthdata](https://www.earthdata.nasa.gov/)
 - [SWOT Documentation and Resources (NASA Earthdata)](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources)
 - [NASA SWOT mission page](https://science.nasa.gov/mission/swot/)
 - [PO.DAAC SWOT Cookbook (tutorials, data access via `earthaccess` quality flag demo, Hydrocron walkthrough)](https://podaac.github.io/tutorials/quarto_text/SWOT.html)
@@ -159,6 +160,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [SWOT Level 2 River Single-Pass Vector Data Product, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) (dataset landing page)
 - [SWOT River Database (SWORD)](https://zenodo.org/records/10013982)
 - [NASA Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance), including how to cite data
+- [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3)
 
 Tools developed by USGS and CUAHSI working with the SWOT team and stakeholders:
 - [USGS’s app allows users to explore & access data over the US](https://apps.usgs.gov/wisp?lat=54.402713&lon=-117.204218&zoom=3&basemap=%22Light%22&useDevStyles=false&activeLayers=%5B%7B%22id%22%3A%22sword%22%2C%22value%22%3A%22width%22%7D%5D)
