@@ -8,7 +8,7 @@ show correct answers: true
 ... Open science is a spectrum that covers research products (open data, code, publications) and the processes behind them, such as developing code in a public repository and sharing work in progress. It is about how research is carried out, not only what is shared at the end.
 -   Open science is not all-or-nothing, and "open" does not require every file to be public to everyone: it means clear, persistent ways to access the work.
 a)  That is right: open science is only about the final data products.
-*b) It also covers how the work is done, such as open methods, code and sharing work in progress.
+*b) It also covers how the work is done, such as sharing work in progress.
 c)  It mainly means publishing the paper in an open-access journal.
 d)  It means every file must be public, with no restrictions of any kind.
 
@@ -41,7 +41,7 @@ b)  Ignore FAIR for this dataset, because CARE replaces FAIR for Indigenous data
 d)  Convert the dataset to an open, machine-readable format before using it.
 
 
-5.  A teammate reruns your scripts on your input data and gets the same figures you did. A second group runs the same analysis on data from a different watershed and gets qualitatively similar results. Using the definitions in this module, which labels fit?
+5.  A teammate reruns your scripts on your input data and gets the same figures you did. A second group runs the same analysis on data from a different watershed and gets qualitatively similar results. Using The Turing Way's definitions in this module, which labels fit?
 ... Reproducible means the same analysis on the same data gives the same answer; replicable means the same analysis on different data gives qualitatively similar answers (The Turing Way; National Academies, 2019).
 -   The two words are easy to swap. Remember that reproducibility keeps the data fixed; replicability brings in new data.
 *a) The first is reproducible; the second is replicable.
@@ -62,10 +62,10 @@ d)  Stop documenting, since the scripts now record every step.
 7.  A field spreadsheet marks storm days with blue cell shading, stores discharge as text such as `12.4 cfs`, and has site notes in the rows above the data table. Which change makes it most machine-readable?
 ... Machine-readable data are a tidy table: one value per cell, one type per column, information in the data itself rather than in formatting, and metadata kept in a separate sheet or file.
 -   Color is lost as soon as code reads the file, so a legend does not help, and merged cells break the one-value-per-cell structure code expects.
-a)  Add a legend explaining that blue shading means a storm day.
-b)  Merge the cells for each storm so the events stand out.
-*c) Add a TRUE/FALSE storm column, store discharge as numbers with units in the column name, and move site notes to a separate file.
-d)  Save the sheet as a PDF so the formatting is preserved for others.
+a)  Add a legend for the blue shading, keep `12.4 cfs` as typed, and move the notes to a second tab.
+b)  Merge the cells for each storm, put units in a row under the header, and keep the notes on top.
+*c) Add a TRUE/FALSE storm column, store discharge as numbers, and move the site notes to a separate file.
+d)  Keep the shading and notes, and save the sheet as a PDF so the formatting is preserved.
 
 
 8.  You inherit a project folder containing `data.xlsx`, `data_FINAL.xlsx`, `final_v3_USE_THIS_ONE.xlsx`, `analysis.py`, `analysis_new_TRY.py` and `fig1.png`, with no other files. Which changes would make it easier for someone (including future you) to reproduce? Select all that apply.

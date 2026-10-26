@@ -6,25 +6,25 @@ show correct answers: true
 
 1.  Which statement correctly describes what the NASA SWOT satellite provides for rivers?
 ... SWOT's radar interferometer measures water surface elevation, width and slope (and water area), aggregated to SWORD reaches and nodes. It does not measure discharge; SWOT discharge estimates are a separate product still in development.
--   Only NWM simulates streamflow from weather inputs, and only USGS gages report gage height above a local datum.
+-   Simulating streamflow from weather inputs is what the NWM does, and gage height above a local datum is what USGS gages report.
 *a) Water surface elevation, width and slope, derived from radar returns; no measured discharge
 b)  Discharge measured directly by radar, for every river reach on Earth, each day
-c)  Gage height above a local reference point, at fixed river locations
-d)  Streamflow simulated from weather forecasts and land-surface physics
+c)  Streamflow simulated from weather forecasts and land-surface physics
+d)  Gage height above a local reference point, at fixed river locations
 
 
 2.  Why is USGS discharge generally less certain than USGS gage height, especially at very high flows?
 ... The sensor records gage height every 15 minutes. Discharge is calculated from it with a rating curve, which is calibrated with periodic field measurements of discharge. At very high flows there may be few field measurements, so the rating is extended beyond them.
 -   Discharge is not a daily mean of gage height, and it is not taken from the NWM; it comes from the site's own rating curve.
 a)  Discharge sensors are less precise than gage height sensors in deep water.
-*b) Discharge is computed from gage height with a rating curve, and field measurements at very high flows are scarce.
+*b) It is computed from gage height via a rating curve with few high-flow measurements.
 c)  Discharge is the daily mean of gage height, so short peaks are smoothed out.
 d)  Discharge comes from the NWM and is assimilated into the gage record.
 
 
 3.  You download NWM streamflow for the same reach and the same valid time from two model versions (v2.1 and v3.0), and the numbers differ. What is the best explanation?
 ... NWM values are model output, not measurements. A new model version can change physics, calibration and forcing, which changes the estimates for the same reach and time. Record the model version and configuration with any NWM data, and treat a series that spans a version change as non-homogeneous.
--   NWM output has no approval status and no per-value quality flag; those belong to USGS and SWOT.
+-   NWM output has no approval status (a USGS idea) and no per-value quality flag (SWOT and USGS have those).
 a)  One of the values is still provisional and will be revised to match the other.
 *b) Each model version can produce different estimates; NWM values are model output.
 c)  The NWM quality flag for that value changed between the two downloads.
@@ -32,11 +32,11 @@ d)  The gage the reach is linked to was recalibrated between the two versions.
 
 
 4.  Which statements about data quality information are correct? Select all that apply.
-... The correct options are: SWOT `reach_q` = 1 ("suspect") means processing found something that might affect the value, not that it is wrong; a USGS `Provisional` value has not been reviewed and may be revised; and NWM output has no per-value flag, so its quality depends on model version, configuration and calibration.
+... The correct options are: SWOT `reach_q` = 1 ("suspect") means processing found something that might affect the value, not that it is wrong; NWM output has no per-value flag, so its quality depends on model version, configuration and calibration; and a USGS `Provisional` value has not been reviewed and may be revised.
 -   On the SWOT summary scale 0 is good and 3 is bad, and approval status is a USGS idea that NWM output does not have.
 [*] A SWOT `reach_q` of 1 ("suspect") means something might affect the value, not that it is wrong.
-[*] A USGS value marked `Provisional` has not yet been reviewed and may be revised.
 [*] NWM streamflow has no per-value flag; its quality depends on model version, configuration and calibration.
+[*] A USGS value marked `Provisional` has not yet been reviewed and may be revised.
 [ ] A SWOT `reach_q` of 0 means "bad", so those observations should be dropped.
 [ ] NWM streamflow values carry an approval status that changes from provisional to approved.
 
@@ -71,14 +71,14 @@ c)  NWM reaches are usually longer, so each NWM reach holds several SWOT reaches
 8.  Which of these rivers is SWOT **least** likely to observe reliably?
 ... Plan on rivers at least 100 m wide, SWOT's stated requirement. Usable estimates are sometimes reported for rivers near 50 m, but that is not guaranteed. SWORD includes rivers about 30 m wide, but that is the river network, not what SWOT can measure.
 -   Being in SWORD does not mean SWOT measures the river well: check the observations and flags for your reach.
-*a) A 30 m wide headwater stream
+*a) A 30 m wide river
 b)  A 150 m wide river
 c)  A 300 m wide river
 d)  A 700 m wide river
 
 
 9.  You need a value for every hour of a recent storm at one river location, which has a SWOT reach, an NWM reach and an active USGS gage. Which product **cannot** give you that on its own?
-... SWOT observes a location only when it passes overhead: a few times per 21-day cycle, at irregular times. The NWM analysis is hourly and USGS continuous values are usually every 15 minutes.
+... SWOT observes a location only when it passes overhead: at least once per 21-day cycle, often several times where passes overlap, but at irregular times. The NWM analysis is hourly and USGS continuous values are usually every 15 minutes.
 -   SWOT's strength is spatial coverage, including ungaged rivers, not a continuous record at one point.
 *a) NASA SWOT RiverSP
 b)  NOAA NWM analysis and assimilation

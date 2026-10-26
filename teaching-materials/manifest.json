@@ -1,3 +1,124 @@
 {
-  "outputs": []
+  "outputs": [
+    {
+      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices.txt",
+      "kind": "quiz",
+      "sources": [
+        "01-data-best-practices"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:17Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices.zip",
+      "kind": "quiz",
+      "sources": [
+        "01-data-best-practices"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:17Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices_key.md",
+      "kind": "quiz",
+      "sources": [
+        "01-data-best-practices"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:18Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape.txt",
+      "kind": "quiz",
+      "sources": [
+        "02-federal-water-data-landscape"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:18Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape.zip",
+      "kind": "quiz",
+      "sources": [
+        "02-federal-water-data-landscape"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:18Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape_key.md",
+      "kind": "quiz",
+      "sources": [
+        "02-federal-water-data-landscape"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:18Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
+      "kind": "quiz",
+      "sources": [
+        "03-federal-water-data-access-retrieval"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:19Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.zip",
+      "kind": "quiz",
+      "sources": [
+        "03-federal-water-data-access-retrieval"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:19Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval_key.md",
+      "kind": "quiz",
+      "sources": [
+        "03-federal-water-data-access-retrieval"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:19Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis.txt",
+      "kind": "quiz",
+      "sources": [
+        "04-federal-water-data-synthesis"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:20Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis.zip",
+      "kind": "quiz",
+      "sources": [
+        "04-federal-water-data-synthesis"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:20Z",
+      "builder": "build-quizzes"
+    },
+    {
+      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis_key.md",
+      "kind": "quiz",
+      "sources": [
+        "04-federal-water-data-synthesis"
+      ],
+      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
+      "built_at": "2026-10-26T19:18:20Z",
+      "builder": "build-quizzes"
+    }
+  ]
 }

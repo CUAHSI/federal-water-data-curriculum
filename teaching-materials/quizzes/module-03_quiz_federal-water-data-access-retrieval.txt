@@ -43,38 +43,38 @@ d)  The `print(...)` line, because it prints the USGS key to the screen.
 
 
 4.  Which statements about accounts and keys are correct? Select all that apply.
-... The correct options are: the USGS Water Data APIs work without a key, but a key raises the hourly rate limit; `hydrocron` needs no Earthdata login for normal use; and downloading SWOT granules with `earthaccess` needs a free Earthdata Login.
+... The correct options are: downloading SWOT granules with `earthaccess` needs a free Earthdata Login; `hydrocron` needs no Earthdata login for normal use; and the USGS Water Data APIs work without a key, but a key raises the hourly rate limit.
 -   The NOAA NWM API needs no key, and `dataretrieval` reads the USGS key from the `API_USGS_PAT` environment variable, so you never pass it in your code.
-[*] The USGS Water Data APIs work without a key, but a key raises the hourly rate limit.
-[*] PO.DAAC's `hydrocron` API needs no Earthdata login for normal use.
 [*] Downloading SWOT granules with `earthaccess` requires a free Earthdata Login.
+[*] PO.DAAC's `hydrocron` API needs no Earthdata login for normal use.
 [ ] The NOAA NWM API requires a key, requested from NOAA in advance.
+[*] The USGS Water Data APIs work without a key, but a key raises the hourly rate limit.
 [ ] `dataretrieval` needs the USGS key passed as an argument in every function call.
 
 
 5.  You search the SWOT 100 m Raster collection with `earthaccess` for a small box around the Ohio River at Louisville (UTM zone 16) over two months. Dozens of granules come back, most in UTM zones 01 and 60. What should you do?
 ... Granules on either side of the 180° meridian have metadata footprints that wrap around the whole globe, so they falsely "intersect" almost any box. Screen the results (for example by each granule's footprint polygon, or by UTM zone) before downloading, so you don't spend gigabytes on scenes from the other side of the planet.
--   A granule in your search results is not a guaranteed observation of your site. Always check before you download many.
+-   A granule in your search results is not a guaranteed observation of your site, and the false matches come from metadata footprints, not the product version (Version D is current). Always check before you download many.
 a)  Download them all: SWOT sees Louisville from several UTM zones.
 *b) Screen out false matches, such as by footprint polygon or UTM zone, before downloading.
 c)  Switch to the Version C collection, which doesn't have this problem.
 d)  Make the bounding box larger, so the extra granules overlap your site.
 
 
-6.  You run `waterdata.get_combined_metadata` for stream locations with daily mean discharge in one county. It returns 29 rows for 27 monitoring locations, and one row's `end` date is in 1995. What do these results tell you?
-... Each row is one time series, not one location, so a location with two daily-discharge series appears twice. `begin` and `end` give each series' period, so a series that ended years ago belongs to a gage that no longer reports. Checking this before downloading saves you from requesting records that don't exist.
+6.  You run `waterdata.get_combined_metadata` for stream locations with daily mean discharge in one county. It returns 29 rows for 27 monitoring locations, and one row's `end` date is in 1995, for a location that appears only once. What do these results tell you?
+... Each row is one time series, not one location, so a location with two daily-discharge series appears twice. `begin` and `end` give each series' period, so a series that ended years ago is no longer being recorded (often because its gage no longer reports). Checking this before downloading saves you from requesting records that don't exist.
 -   The extra rows are not errors, and `end` has nothing to do with approval status.
 a)  Two locations returned duplicate rows by mistake, which you should drop.
 b)  The 1995 location's data were approved only up to 1995.
 c)  Two locations failed to return, so the query should be rerun.
-*d) Some locations have more than one series; the 1995 series' gage no longer reports.
+*d) Some locations have more than one series; the 1995 location's gage no longer reports.
 
 
 7.  A `hydrocron` request returns 12 overpasses of an Ohio River reach: 10 with `reach_q` = 1 and 2 with `reach_q` = 2. Filtering to `reach_q == 0` leaves an empty table. What is a reasonable next step?
 ... In Version D RiverSP, nearly all reach-level flags are non-zero, so a strict `reach_q == 0` filter usually returns nothing. A reasonable starting rule: keep `reach_q` ≤ 1, look hard at degraded values (2) by comparing `width` with SWORD's `p_width` and with neighboring overpasses, and write down what you kept and why.
 -   "Suspect" does not mean "wrong", and bad values (3) should still be dropped.
 a)  Conclude that SWOT has no usable data for this reach.
-*b) Keep `reach_q` ≤ 1, check the degraded values against `p_width` and nearby passes, and record your rule.
+*b) Keep `reach_q` ≤ 1, check the degraded ones, and record your rule.
 c)  Keep every overpass, including `reach_q` = 3, since flags are rarely 0.
 d)  Ignore `reach_q` and filter only on the reported uncertainty `wse_u`.
 

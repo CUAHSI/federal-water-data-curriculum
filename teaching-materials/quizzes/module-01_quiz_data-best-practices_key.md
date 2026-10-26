@@ -6,6 +6,13 @@ Quiz: `module-01_quiz_data-best-practices.txt` (QTI: `.zip` of the same name). 1
 Answers are shuffled in Canvas (`shuffle answers: true`), so the letters below are the order in the `.txt` source,
 not what learners see.
 
+## Canvas setup after import
+
+`text2qti` 0.8.0 always writes one allowed attempt into the QTI file, and that can't be changed from the `.txt`.
+After importing the zip, set **Allowed attempts** to Unlimited and **Score to keep** to Highest (the zip already
+sets highest), so the quiz matches its description. Check that code blocks, ³ superscripts and ≤ display, and that
+both feedback lines show after an attempt.
+
 ## Objective coverage
 
 Module objectives (from `01-data-best-practices/00_introduction.md`), using the five sub-objectives:
@@ -22,13 +29,13 @@ Module objectives (from `01-data-best-practices/00_introduction.md`), using the 
 
 | Q | Objective | Type | Correct answer | Lesson section |
 |---|---|---|---|---|
-| 1 | O1 | single | b) Also covers how the work is done (open methods, code, sharing work in progress) | Open Science, intro |
+| 1 | O1 | single | b) It also covers how the work is done, such as sharing work in progress | Open Science, intro |
 | 2 | O1 | select all | Public repository during the project; peer code review in progress; data and code as citable products | Open Science, Putting open science into practice |
 | 3 | O2 | single | b) Largely FAIR, but not fully open | Open Science, FAIR and CARE; Now you try it (dataset 3) |
 | 4 | O2 | single | c) Check the terms attached to the data and the CARE guidance before using or sharing | Open Science, FAIR and CARE |
 | 5 | O3 | single | a) First reproducible, second replicable | Data Management, What do we mean by "reproducible"? |
 | 6 | O3 | single | b) Version control and reusable functions | Data Management, continuum of reproducibility figure and text |
-| 7 | O4 | single | c) TRUE/FALSE storm column, numeric discharge with units in the name, notes in a separate file | Data Management, 2. Machine-readable data |
+| 7 | O4 | single | c) TRUE/FALSE storm column, numeric discharge, site notes in a separate file | Data Management, 2. Machine-readable data |
 | 8 | O4 | select all | Raw data untouched with corrections in code; outputs named after scripts; README with run order | Data Management, 1. Project organization; 3. Documentation; Now you try it |
 | 9 | O4 | single | c) `regression_model_v1.py` makes `2024-08-18_regression_model_v1_output.csv` | Data Management, 1. Project organization |
 | 10 | O5 | single | d) HydroShare | Data Publishing, Comparison of two water-specific repositories; Introduction to HydroShare |
