@@ -28,19 +28,32 @@ Modules 1 and 2, and Module 4 lesson 1, have no code, so they have no notebooks.
 
 | Notebook | Module and lesson | Session | Environment | Time to run (solutions, top to bottom) | Data and accounts |
 |---|---|---|---|---|---|
-| `module-03_lesson-01_retrieve-nasa-swot-data` | Module 3, lesson 1: Retrieve NASA SWOT data | 3 (Tue Nov 10) | `m03-swot` | RUNTIME_SWOT | NASA Earthdata Login. Downloads about 300 MB of SWOT files |
-| `module-03_lesson-02_retrieve-noaa-nwm-data` | Module 3, lesson 2: Retrieve NOAA NWM data | 4 (Thu Nov 12) | `m03-nwm` | RUNTIME_NWM | No account. Downloads about 270 MB of NWM files and needs about 2 GB of memory (the `hydrotools` example) |
-| `module-03_lesson-03_retrieve-usgs-wdfn-data` | Module 3, lesson 3: Retrieve USGS WDFN data | 5 (Tue Nov 17) | `m03-wdfn` | RUNTIME_WDFN | USGS Water Data API key (optional) |
-| `module-04_lesson-02_synthesizing-federal-data-products` | Module 4, lesson 2: Synthesizing Federal data products to build hydrologic confidence | 6 (Thu Nov 19) | `m04-synthesis` | RUNTIME_M4L2 | NASA Earthdata Login; USGS Water Data API key (optional). Downloads about 210 MB of SWOT files |
-| `module-04_lesson-03_additional-federal-water-data` | Module 4, lesson 3: Additional Federal water data | 6 (Thu Nov 19) | `m04-synthesis` | RUNTIME_M4L3 | NASA Earthdata Login (search only; nothing large is downloaded) |
+| `module-03_lesson-01_retrieve-nasa-swot-data` | Module 3, lesson 1: Retrieve NASA SWOT data | 3 (Tue Nov 10) | `m03-swot` | about 2 minutes | NASA Earthdata Login. Downloads about 230 MB of SWOT files |
+| `module-03_lesson-02_retrieve-noaa-nwm-data` | Module 3, lesson 2: Retrieve NOAA NWM data | 4 (Thu Nov 12) | `m03-nwm` | about 3–4 minutes | No account. Downloads about 270 MB of NWM files and needs about 2 GB of memory (the `hydrotools` example) |
+| `module-03_lesson-03_retrieve-usgs-wdfn-data` | Module 3, lesson 3: Retrieve USGS WDFN data | 5 (Tue Nov 17) | `m03-wdfn` | about 1 minute | USGS Water Data API key (optional) |
+| `module-04_lesson-02_synthesizing-federal-data-products` | Module 4, lesson 2: Synthesizing Federal data products to build hydrologic confidence | 6 (Thu Nov 19) | `m04-synthesis` | about 1–2 minutes | NASA Earthdata Login; USGS Water Data API key (optional). Downloads about 200 MB of SWOT files |
+| `module-04_lesson-03_additional-federal-water-data` | Module 4, lesson 3: Additional Federal water data | 6 (Thu Nov 19) | `m04-synthesis` | about 1 minute | NASA Earthdata Login (search only; nothing large is downloaded) |
 
 ## Before you run
 
 - **Run the cells in order.** Later cells reuse variables from earlier ones. If you restart the kernel, run from the
   top again.
-- **Some results depend on the day you run them.** BEFORE_YOU_RUN
+- **Times are from a test run on a home internet connection** (October 2026), downloads included. A second run is
+  faster, because files already downloaded aren't fetched again.
+- **Some results depend on the day you run them**, so your numbers can differ from the ones in the notebook text:
+    - **NWM:** the NOAA NWM API keeps only the last few days of forecasts, so the API examples always return the
+      newest runs, and the example with NOAA's published kerchunk references reads yesterday's forecast. The April
+      2025 and February 2026 forecasts come from the archive and don't change.
+    - **USGS:** provisional values can still be revised, and lists of monitoring locations and the ends of records
+      grow over time. Check `approval_status`.
+    - **SWOT:** search results and values can change when NASA reprocesses the data (a new CRID or version), and
+      recent overpasses are added as they are processed.
+    - **AORC and SoS** (Module 4, lesson 3): the file listings change when new versions are published.
 - **Downloads land next to the notebook**, in folders such as `data/` and `hydrotools_data/`. Delete them when you're
   done if you're short of space.
+- **On Windows, keep the folder path short** (for example `C:\fwdc\`). SWOT file names are about 100 characters
+  long, and Windows refuses paths longer than 260 characters, so a download into a deeply nested folder fails with
+  `FileNotFoundError: [WinError 3]`.
 
 ## Open the notebooks
 

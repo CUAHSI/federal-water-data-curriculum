@@ -18,7 +18,8 @@ attribution and licence cell, a credentials cell, then the lesson in order. Head
   draws a figure stays); externally hosted figures are kept as images;
 - "Now you try it" and "Further reading" are kept whole;
 - paragraphs about creating the environment (``DROP_PARAGRAPHS``) and code blocks the credentials cell replaces
-  (``Lesson.drop_code``) are left out.
+  (``Lesson.drop_code``) are left out;
+- a setup line the lesson tells Jupyter users to add (``Lesson.jupyter_prefix``) is added to its code cell.
 
 Outputs are cleared and notebook metadata is kept to the kernelspec, so rebuilds give small diffs.
 
@@ -86,6 +87,9 @@ class Lesson:
     goal: str                 # from the module's learning objectives
     drop_code: tuple = ()     # substrings: python blocks containing one are left out
     drop_paragraphs: tuple = field(default_factory=tuple)
+    # {substring: lines}: prepend lines to the python block containing substring, for steps the lesson tells
+    # Jupyter users to add (a notebook always runs in Jupyter)
+    jupyter_prefix: dict = field(default_factory=dict)
 
     @property
     def module_folder(self) -> str:
@@ -111,6 +115,17 @@ LESSONS = [
         env="m03-nwm", session=4, credentials=(),
         goal=M3_GOAL.format(product="NOAA NWM"),
         drop_paragraphs=("The environment file pins the Python version",),
+        # Importing hydrotools.nwm_client already calls asyncio.run, which fails inside Jupyter's running loop.
+        # The lesson's fix (nest_asyncio) fails too with Python 3.14 and current aiohttp (tested 2026-10-26), so
+        # import it once in a worker thread, as the lesson's code already does for .get().
+        jupyter_prefix={"from hydrotools.nwm_client.NWMFileClient import NWMFileClient": (
+            "# In Jupyter only: importing hydrotools.nwm_client starts its own event loop, which fails inside the\n"
+            "# notebook's running loop. Import it once in a separate thread first. (nest_asyncio, suggested below,\n"
+            "# doesn't fix this with current packages; plain Python scripts need neither.)\n"
+            "import importlib\n"
+            "from concurrent.futures import ThreadPoolExecutor\n"
+            "with ThreadPoolExecutor(1) as pool:\n"
+            "    pool.submit(importlib.import_module, \"hydrotools.nwm_client.NWMFileClient\").result()\n\n")},
     ),
     Lesson(
         stem="module-03_lesson-03_retrieve-usgs-wdfn-data",
@@ -329,7 +344,9 @@ class Builder:
                     self.after_code = True
                     continue
                 self.flush()
-                self.cells.append(("solution" if solution else "code", item.text.strip("\n")))
+                source = item.text.strip("\n")
+                source = "".join(p for s, p in self.lesson.jupyter_prefix.items() if s in source) + source
+                self.cells.append(("solution" if solution else "code", source))
                 self.after_code = True
             elif item.kind == "fence":
                 if was_after_code or item.lang in ("bash", "sh", "shell", "yaml", "yml", ""):
