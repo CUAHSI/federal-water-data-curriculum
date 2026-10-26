@@ -1,0 +1,115 @@
+Quiz title: Module 1 Quiz: Data Best Practices in Water Research
+Quiz description: About 10–15 minutes. Unlimited attempts; your highest score counts. The correct answer and an explanation are shown after each attempt.
+shuffle answers: true
+show correct answers: true
+
+
+1.  A colleague says, "Open science just means posting your data online when the project is finished." Which response best reflects how this course describes open science?
+... Open science is a spectrum that covers research products (open data, code, publications) and the processes behind them, such as developing code in a public repository and sharing work in progress. It is about how research is carried out, not only what is shared at the end.
+-   Open science is not all-or-nothing, and "open" does not require every file to be public to everyone: it means clear, persistent ways to access the work.
+a)  That is right: open science is only about the final data products.
+*b) It also covers how the work is done, such as open methods, code and sharing work in progress.
+c)  It mainly means publishing the paper in an open-access journal.
+d)  It means every file must be public, with no restrictions of any kind.
+
+
+2.  Which of these are open science practices described in this module? Select all that apply.
+... The correct options are: developing analysis code in a public repository during the project, asking peers to review code while it is still in progress, and publishing data and code as their own citable products. Each makes the work easier for others (and future you) to find, check and build on.
+-   Keeping work private until it is perfect, or keeping methods vague, are the barriers open science tries to lower, not open practices.
+[*] Developing analysis code in a public repository while the project is still under way
+[*] Asking peers to review your code while it is still in progress
+[*] Publishing your data and code as their own citable products, separate from the paper
+[ ] Keeping all code private until the paper is accepted, so no one sees mistakes
+[ ] Leaving out method details so others must contact you before reusing the work
+
+
+3.  A repository record has a DOI, rich metadata that anyone can read, and CSV files. The files themselves are released only on request, because the sites are on private land and the record says who to ask. How does this dataset relate to FAIR and open?
+... FAIR is about how easily people and machines can find, access, combine and reuse data. It allows authentication and restrictions as long as the access rules are clear, so restricted data can still be largely FAIR without being fully open.
+-   FAIR and open are related but not the same thing: a dataset can be open but barely FAIR (a spreadsheet behind a link with no metadata), or largely FAIR but not fully open (this case).
+a)  It is fully open and fully FAIR.
+*b) It is largely FAIR, but not fully open.
+c)  It is open, but not FAIR, because access is restricted.
+d)  It is neither FAIR nor open, because the files are not public.
+
+
+4.  You plan to combine your stream temperature data with a dataset collected on waters within a tribal nation's lands. What do the CARE principles ask you to do?
+... CARE is a check on any project: ask whether the data relate to Indigenous Peoples, lands or waters, and if they might, check the terms attached to the data and GIDA's guidance before you use or share them. Understanding where your data come from is each researcher's responsibility.
+-   CARE complements FAIR rather than replacing it, and it is about people and purpose (collective benefit, authority to control, responsibility, ethics), not file formats.
+a)  Nothing extra, as long as the dataset already meets the FAIR principles.
+b)  Ignore FAIR for this dataset, because CARE replaces FAIR for Indigenous data.
+*c) Check the terms attached to the data and the CARE guidance before you use or share it.
+d)  Convert the dataset to an open, machine-readable format before using it.
+
+
+5.  A teammate reruns your scripts on your input data and gets the same figures you did. A second group runs the same analysis on data from a different watershed and gets qualitatively similar results. Using the definitions in this module, which labels fit?
+... Reproducible means the same analysis on the same data gives the same answer; replicable means the same analysis on different data gives qualitatively similar answers (The Turing Way; National Academies, 2019).
+-   The two words are easy to swap. Remember that reproducibility keeps the data fixed; replicability brings in new data.
+*a) The first is reproducible; the second is replicable.
+b)  The first is replicable; the second is reproducible.
+c)  Both are examples of reproducibility.
+d)  Both are examples of replicability.
+
+
+6.  A lab already documents its work and captures every data transformation in scripts. On the continuum of reproducibility, what is a sensible next step?
+... The continuum has tiers: documentation and scripts first, then version control and modular (reusable) code, then dependency tracking and automated workflows. Each step builds on the one below, so the lab can move up one tier at a time.
+-   Reproducibility is a continuum, not all-or-nothing. You don't need every tool at once, and documentation is the foundation, not something to replace.
+a)  Wait until the whole team can adopt automated pipelines all at once.
+*b) Track code changes with version control and break the code into reusable functions.
+c)  Replace the scripts with careful manual edits, described in a README.
+d)  Stop documenting, since the scripts now record every step.
+
+
+7.  A field spreadsheet marks storm days with blue cell shading, stores discharge as text such as `12.4 cfs`, and has site notes in the rows above the data table. Which change makes it most machine-readable?
+... Machine-readable data are a tidy table: one value per cell, one type per column, information in the data itself rather than in formatting, and metadata kept in a separate sheet or file.
+-   Color is lost as soon as code reads the file, so a legend does not help, and merged cells break the one-value-per-cell structure code expects.
+a)  Add a legend explaining that blue shading means a storm day.
+b)  Merge the cells for each storm so the events stand out.
+*c) Add a TRUE/FALSE storm column, store discharge as numbers with units in the column name, and move site notes to a separate file.
+d)  Save the sheet as a PDF so the formatting is preserved for others.
+
+
+8.  You inherit a project folder containing `data.xlsx`, `data_FINAL.xlsx`, `final_v3_USE_THIS_ONE.xlsx`, `analysis.py`, `analysis_new_TRY.py` and `fig1.png`, with no other files. Which changes would make it easier for someone (including future you) to reproduce? Select all that apply.
+... The correct options are: keep the raw data untouched in its own folder and make corrections in code; name each output after the script that made it; and add a README that says what the project is and the order to run the steps. Together they give a single source of truth that a stranger can follow.
+-   Keeping several "final" copies, or sending everyone their own copy, is exactly what makes it impossible to tell which file is the real one.
+[*] Keep the raw data in its own folder, never edited by hand, and make corrections in code
+[*] Name each output after the script that created it
+[*] Add a README that explains the project and the order to run the steps
+[ ] Keep all three "final" spreadsheets so that readers can choose the right one
+[ ] Email the cleaned spreadsheet to each collaborator so everyone has a copy
+
+
+9.  Which pair of file names best follows this module's project-organization advice?
+... A good convention lets you understand a file without opening it: a sortable date prefix (such as ISO 8601, YYYY-MM-DD), no spaces, and an output named after the script that made it so each result traces back to its code.
+-   The exact convention matters less than having one, but vague names ("final", "copy", "new") and spaces make files hard to trace and to use in code.
+a)  `script.py` makes `output_final.csv`
+b)  `Regression Model (new).py` makes `results copy 2.csv`
+*c) `regression_model_v1.py` makes `2024-08-18_regression_model_v1_output.csv`
+d)  `rm1.py` makes `out.csv`
+
+
+10. You want to share a hydrologic model, its input data and Jupyter notebooks with collaborators before publishing, and keep them together with a place to run them. Which repository fits best, based on this module?
+... HydroShare is domain-specific for hydrology. It supports staged sharing (private, shared, discoverable, public, then published) and links to JupyterHub, so data, models and code stay together with the means to run them.
+-   EDI's strengths are structured EML metadata and automated checks, as a publication and archive step. Generalist repositories are a good choice for many things, but they usually have fewer field-specific metadata options and little curation. A shared drive is not citable or permanent.
+a)  A shared cloud drive folder, because anyone with the link can open it
+b)  A generalist repository, because generalists offer the most field-specific metadata
+c)  EDI, because it is built around staged collaboration and linked compute
+*d) HydroShare, because it supports staged sharing and linked JupyterHub environments
+
+
+11. You built a derived dataset from each of the sources below. For which one is publishing only the **recipe** (your code plus the exact identifiers of what you used) usually enough, rather than a snapshot of the values?
+... If the source is large, stable, open and versioned, a precise pointer plus your code can recreate what you used. If the source is short-lived or gets revised, publish a snapshot of the subset you used. Often doing both is best.
+-   Provisional values can be revised, and short-lived outputs disappear, so in those cases your results could no longer be traced back to the values you actually used.
+*a) A subset of a versioned satellite archive that has a collection DOI
+b)  Gage discharge values that are marked provisional and may be revised
+c)  A flood forecast that the provider deletes after a few days
+d)  Output from a web service that keeps only the most recent month
+
+
+12. You are about to publish a dataset derived from a public agency product. Which steps does this module recommend? Select all that apply.
+... The correct options are: check the source license first (you inherit its restrictions); record the source version, retrieval date and every processing step; and make your product clearly distinct from the original in its title and description. Also cite the source and link back to it.
+-   Mirroring whole archives is costly, goes stale and splits citations, and dropping the citation removes the credit and provenance others need.
+[*] Check the source license first, since you inherit its restrictions
+[*] Record the source version, when you retrieved it and every processing step
+[*] Give the product a title and description that set it apart from the official dataset
+[ ] Mirror the whole source archive so your copy is complete
+[ ] Leave out the citation to the source so no one confuses the two

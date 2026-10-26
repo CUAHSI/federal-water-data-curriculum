@@ -1,0 +1,137 @@
+Quiz title: Module 3 Quiz: Federal Water Data Access & Retrieval
+Quiz description: About 10–15 minutes. Unlimited attempts; your highest score counts. The correct answer and an explanation are shown after each attempt.
+shuffle answers: true
+show correct answers: true
+
+
+1.  Why is an agency-maintained library (`earthaccess`, `hydrotools`, `dataretrieval`) usually a better starting point than calling the web API's URLs yourself?
+... The libraries handle authentication, paging and file formats, and return familiar objects such as DataFrames. When an API changes (endpoints move, parameters are renamed, old services retire), the library is updated, so your code often keeps working after a simple upgrade. Code that calls URLs directly has to be fixed by hand.
+-   Libraries don't lift rate limits, and each page they fetch still counts as a request. Calling an API directly is allowed; it is just more work to maintain.
+a)  Libraries remove the agencies' rate limits, so requests are never throttled.
+b)  The APIs block direct requests, so a library is the only way in.
+*c) Libraries absorb API changes and handle login, paging and formats for you.
+d)  Libraries download the whole dataset once, so later queries are free.
+
+
+2.  Some data are retrieved as whole **files** (SWOT granules, NWM output files) and some through a query **service** that returns only the rows you ask for (`hydrocron`, the USGS Water Data APIs). How does the cost of each grow as your question gets bigger?
+... With files, cost grows with the number of files you touch, however few values you keep from each. With a service, cost grows with the number of requests you send. Knowing which one you are using tells you how to scale.
+-   An NWM file holds every reach, so reading one reach still costs the whole file (or chunk); adding reaches from the same files costs almost nothing extra.
+a)  Both grow with the number of locations you ask for.
+*b) Files: with the number of files touched. Services: with the number of requests sent.
+c)  Files: with the number of locations. Services: with the size of each row.
+d)  Neither grows much, because both only send the values you keep.
+
+
+3.  A learner's notebook starts like this:
+
+    ```python
+    import os
+    import earthaccess
+
+    os.environ["EARTHDATA_PASSWORD"] = "MyS3cretPa55"
+    auth = earthaccess.login()
+    print("API_USGS_PAT is set:", bool(os.getenv("API_USGS_PAT")))
+    ```
+
+    Which line should be removed, and why?
+... The `os.environ[...] = "..."` line writes a password into the notebook, where it ends up in saved files, screenshots and version control. Set credentials as environment variables outside your code (or use a `.netrc` file); `earthaccess.login()` finds them automatically.
+-   The `print` line is safe: it prints only `True` or `False`, never the key itself, which is exactly how the lessons check that a key exists.
+a)  The `import earthaccess` line, because SWOT downloads don't need a login.
+*b) The `os.environ[...] = "..."` line, because it puts a password in the code.
+c)  The `earthaccess.login()` line, because the password must be passed to it.
+d)  The `print(...)` line, because it prints the USGS key to the screen.
+
+
+4.  Which statements about accounts and keys are correct? Select all that apply.
+... The correct options are: the USGS Water Data APIs work without a key, but a key raises the hourly rate limit; `hydrocron` needs no Earthdata login for normal use; and downloading SWOT granules with `earthaccess` needs a free Earthdata Login.
+-   The NOAA NWM API needs no key, and `dataretrieval` reads the USGS key from the `API_USGS_PAT` environment variable, so you never pass it in your code.
+[*] The USGS Water Data APIs work without a key, but a key raises the hourly rate limit.
+[*] PO.DAAC's `hydrocron` API needs no Earthdata login for normal use.
+[*] Downloading SWOT granules with `earthaccess` requires a free Earthdata Login.
+[ ] The NOAA NWM API requires a key, requested from NOAA in advance.
+[ ] `dataretrieval` needs the USGS key passed as an argument in every function call.
+
+
+5.  You search the SWOT 100 m Raster collection with `earthaccess` for a small box around the Ohio River at Louisville (UTM zone 16) over two months. Dozens of granules come back, most in UTM zones 01 and 60. What should you do?
+... Granules on either side of the 180° meridian have metadata footprints that wrap around the whole globe, so they falsely "intersect" almost any box. Screen the results (for example by each granule's footprint polygon, or by UTM zone) before downloading, so you don't spend gigabytes on scenes from the other side of the planet.
+-   A granule in your search results is not a guaranteed observation of your site. Always check before you download many.
+a)  Download them all: SWOT sees Louisville from several UTM zones.
+*b) Screen out false matches, such as by footprint polygon or UTM zone, before downloading.
+c)  Switch to the Version C collection, which doesn't have this problem.
+d)  Make the bounding box larger, so the extra granules overlap your site.
+
+
+6.  You run `waterdata.get_combined_metadata` for stream locations with daily mean discharge in one county. It returns 29 rows for 27 monitoring locations, and one row's `end` date is in 1995. What do these results tell you?
+... Each row is one time series, not one location, so a location with two daily-discharge series appears twice. `begin` and `end` give each series' period, so a series that ended years ago belongs to a gage that no longer reports. Checking this before downloading saves you from requesting records that don't exist.
+-   The extra rows are not errors, and `end` has nothing to do with approval status.
+a)  Two locations returned duplicate rows by mistake, which you should drop.
+b)  The 1995 location's data were approved only up to 1995.
+c)  Two locations failed to return, so the query should be rerun.
+*d) Some locations have more than one series; the 1995 series' gage no longer reports.
+
+
+7.  A `hydrocron` request returns 12 overpasses of an Ohio River reach: 10 with `reach_q` = 1 and 2 with `reach_q` = 2. Filtering to `reach_q == 0` leaves an empty table. What is a reasonable next step?
+... In Version D RiverSP, nearly all reach-level flags are non-zero, so a strict `reach_q == 0` filter usually returns nothing. A reasonable starting rule: keep `reach_q` ≤ 1, look hard at degraded values (2) by comparing `width` with SWORD's `p_width` and with neighboring overpasses, and write down what you kept and why.
+-   "Suspect" does not mean "wrong", and bad values (3) should still be dropped.
+a)  Conclude that SWOT has no usable data for this reach.
+*b) Keep `reach_q` ≤ 1, check the degraded values against `p_width` and nearby passes, and record your rule.
+c)  Keep every overpass, including `reach_q` = 3, since flags are rarely 0.
+d)  Ignore `reach_q` and filter only on the reported uncertainty `wse_u`.
+
+
+8.  For the Ohio River at Louisville, the continuous discharge record peaks at 719,000 ft³/s, while the daily mean for the same day is 712,000 ft³/s. Why are they different?
+... Daily values are summaries of the continuous record: here the daily mean, the average of all the day's 15-minute values. An average sits below the highest value in it, so daily means flatten flood crests.
+-   Both values come from the same rating and the same sensor; nothing is wrong with either.
+a)  Daily values use an older rating curve than continuous values.
+*b) The daily mean averages the day's 15-minute values, which smooths the crest.
+c)  The continuous values are provisional and will be revised down to match.
+d)  Continuous values are in ft³/s, while daily values are in m³/s.
+
+
+9.  A `hydrotools` result for one reach has two rows with the same `value_time` (6 April 2025 12:00 UTC) but different `reference_time` values (00Z and 06Z that day). What do these two rows represent?
+... Every NWM forecast value has two times: the reference time (when the model run was initialized) and the valid time (the time it predicts). The same valid time appears in many forecasts issued at different reference times, so these are two separate forecasts of the same hour.
+-   Both rows are model forecasts. NWM output contains no observations, and `hydrotools` reports both in the same units.
+a)  Duplicate rows that should be removed before analysis
+b)  An observation and a forecast of the same hour
+*c) Two forecasts, issued at different times, of the same hour
+d)  The same forecast, once in m³/s and once in ft³/s
+
+
+10. You need every short-range NWM forecast issued during one month in 2025, for a single reach. Which approach scales best?
+... Each forecast run is a separate set of CONUS-wide files, so cost grows with the number of runs (720 a month for short range), not the number of reaches. Kerchunk references, built once and reused, read only the `streamflow` chunks, ideally from a cloud machine in the same region as the archive.
+-   The NOAA NWM API keeps only the last few days, and `hydrotools` downloads every whole file of every run (around 200 GB for a month), even for one reach.
+a)  Call the NOAA NWM API once with `min_reference_datetime` set to the start of the month.
+b)  Loop `hydrotools` over each run on a laptop; it is cheap because you need only one reach.
+*c) Build kerchunk references for each run once and read them, ideally on a cloud machine.
+d)  Use the retrospective simulation, which holds every archived forecast.
+
+
+11. A script needs one day's daily mean discharge at every USGS stream gage:
+
+    ```python
+    for site_id in all_site_ids:          # about 9,000 IDs
+        df, md = waterdata.get_daily(
+            monitoring_location_id=site_id,
+            parameter_code="00060",
+            statistic_id="00003",
+            time="2025-04-09",
+        )
+    ```
+
+    What is the main problem, and what is the better approach?
+... The loop sends about 9,000 requests and will quickly use up the rate limit (even with a key). Leave out `monitoring_location_id` and make one `get_daily` call for that date; add a `bbox` or a list of sites to narrow the area.
+-   Running the loop in parallel threads makes things worse: each request still spends your quota, and a burst of parallel calls is the fastest way to be throttled.
+a)  The `time` value must be a full UTC timestamp, not a date.
+b)  Run the loop in many parallel threads so it finishes faster.
+*c) It sends thousands of requests; make one call with no site ID (optionally with a `bbox`).
+d)  Request `statistic_id="00011"` instead, since daily means are slow to return.
+
+
+12. Which of these are good practice for parallel or repeated downloads in this module? Select all that apply.
+... The correct options are: let `earthaccess.download()` handle parallel downloads (it already fetches several files at once); for NWM files, parallelize over files, not reaches, because reaches share chunks; and save what you downloaded so you don't download it again on every run.
+-   Firing many `hydrocron` or `dataretrieval` requests at once overloads shared agency services and gets you throttled; send them one after another or a few at a time, and let the library handle paging.
+[*] Let `earthaccess.download()` handle parallel downloads for you.
+[*] For NWM files, split work across files (forecast hours or runs), not across reaches.
+[*] Save downloaded data and skip re-downloading it on later runs.
+[ ] Send many `hydrocron` requests in parallel to finish a long reach list faster.
+[ ] Launch many simultaneous `dataretrieval` requests from your own threads instead of paging.

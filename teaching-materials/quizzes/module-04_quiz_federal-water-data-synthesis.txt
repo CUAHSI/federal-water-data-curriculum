@@ -1,0 +1,121 @@
+Quiz title: Module 4 Quiz: Federal Water Data Synthesis
+Quiz description: About 10–15 minutes. Unlimited attempts; your highest score counts. The correct answer and an explanation are shown after each attempt.
+shuffle answers: true
+show correct answers: true
+
+
+1.  Your research question is: "Where did floodwater spread across the floodplain on the day of the crest?" Which product should you start with?
+... SWOT Raster maps water fraction and water area across the whole swath on a 100 m grid, so it can show water outside the channel, as long as a pass lines up with your date.
+-   RiverSP is tied to SWORD river centerlines, so it describes the channel, not how far water spread out of bank. NWM and USGS give values on reaches and at points, not maps of water extent.
+*a) NASA SWOT Raster
+b)  NASA SWOT RiverSP
+c)  NOAA NWM short-range forecasts
+d)  USGS continuous discharge
+
+
+2.  You want to judge how much to trust the USGS discharge reported at a flood crest. Which evidence helps? Select all that apply.
+... The correct options are: the field measurements made near the peak flow, with their `measurement_rated`; and whether the reported peak is above the highest flow measured during the event, which means it was computed by extending the rating curve. Discharge is computed from stage, so its accuracy depends on how well the rating is supported at that flow.
+-   Approved does not mean directly measured: approved discharge is still computed from stage through the rating. A daily mean flattens the crest, so it tells you less about the peak, not more.
+[*] The field measurements made near the peak flow, and their `measurement_rated`
+[*] Whether the reported peak is above the highest flow measured during the event
+[ ] The daily mean for the crest day, which is more accurate than the 15-minute values
+[ ] Whether the value is `Approved`, which means the discharge was directly measured
+
+
+3.  Which statements describe what each product could and could not show during the December 2025 Skagit River flood? Select all that apply.
+... The correct options are: the USGS peak (133,000 ft³/s) was above any flow measured during the flood, so it was computed from the rating; NWM short-range forecasts gave many hours' warning of an exceptional flood, on a network that also covers ungaged reaches; and the SWOT pass nearest the peak missed the gage's reach entirely.
+-   SWOT RiverSP follows river centerlines and doesn't show out-of-bank extent, and the daily mean understated the crest (112,000 vs. 133,000 ft³/s).
+[*] The USGS-reported peak was above any flow directly measured during the event.
+[*] NWM forecasts gave many hours' warning of an exceptional flood.
+[*] The SWOT pass nearest the peak did not observe the gage's own reach.
+[ ] SWOT RiverSP showed how far the water spread out of bank.
+[ ] The USGS daily mean captured the full height of the 15-minute crest.
+
+
+4.  Each agency describes "the river at Mount Vernon" with its own location identifier. Which matching is correct?
+... A USGS monitoring location ID is a single gage (a point on the bank); an NWM `feature_id` is one NHDPlus segment (its COMID); and a SWORD reach is a ~10 km stretch of the SWOT River Database centerline. They describe the same place at different sizes.
+-   The three identifiers come from three separate systems, so none of them can be derived from another.
+a)  USGS ID: a ~10 km reach. NWM `feature_id`: a single gage. SWORD reach: one NHDPlus segment.
+*b) USGS ID: a single gage. NWM `feature_id`: one NHDPlus segment. SWORD reach: a ~10 km reach.
+c)  USGS ID: one NHDPlus segment. NWM `feature_id`: a ~10 km reach. SWORD reach: a single gage.
+d)  All three: the same NHDPlus segment, under three different names.
+
+
+5.  What is the most reliable way to find the NWM reach for a USGS gage, as done in the case study?
+... Start from the gage, because its location is surveyed and fixed. Ask the NLDI which NHDPlus reach the gage is indexed to; that COMID is the NWM `feature_id`. Then cross-check it, for example against NOAA's gauge page, which lists the same NWM reach.
+-   The COMID is not the USGS site number, and NWM streamflow files carry no coordinates, only `feature_id` values.
+*a) Ask the NLDI for the reach the gage is indexed to, then cross-check it.
+b)  Use the USGS site number as the `feature_id`, since the two are the same number.
+c)  Search the NWM output files for the reach whose coordinates are nearest the gage.
+d)  Use the SWORD reach ID, because the NWM runs on the SWORD network.
+
+
+6.  To decide which SWORD reach holds the gage, why isn't the reach whose prior center point (`p_lat`, `p_lon`) is nearest the gage enough?
+... A reach is about 10 km long, so the gage can sit far from its center point, closer to a neighbor's center. Compare the reach centerlines (`hydrocron` returns them with `output=geojson`) with the gage location, and confirm the result on a map.
+-   SWORD reach IDs encode region and reach type, not gage numbers, and the number of observations says nothing about where the gage is.
+a)  It is enough; the nearest center point always marks the gage's reach.
+*b) A gage can be nearer a neighbor's center, so compare centerlines on a map.
+c)  Reach IDs encode the gage number, so read the gage from the reach ID instead.
+d)  Choose the reach with the most overpasses, since it is the best observed one.
+
+
+7.  The case study compares SWOT water surface elevation with USGS gage height during the flood. Which approach does it use, and why?
+... SWOT water surface elevation is in meters above a global geoid, while USGS gage height is in feet above a local gage datum. Rather than comparing raw values, the case study compares the change in each since a common baseline (the 1 December pass), converted to meters.
+-   Converting feet to meters is needed but not enough: the two still start from different reference points.
+a)  Convert gage height from feet to meters, then compare the raw values.
+*b) Compare the change in each from a common baseline pass, because the references differ.
+c)  Compare discharge instead, because SWOT measures discharge at each reach.
+d)  Add the gage height to SWOT's value, because both measure depth.
+
+
+8.  You plot NWM forecasts and USGS data for the same flood on one axis:
+
+    ```python
+    nwm_cfs = forecast_cms * 35.31                    # m³/s to ft³/s
+    obs = usgs_continuous.set_index("time")["value"]  # ft³/s, 15-minute
+    daily = usgs_daily.set_index("time")["value"]     # ft³/s, daily mean
+    ```
+
+    Which series needs extra care when you line them up in time?
+... USGS daily values are computed over the monitoring location's local calendar day, not a UTC day, so plotting them at UTC midnight shifts each step by several hours (about 8 on the Skagit), and a daily mean also flattens the crest. NWM times and USGS continuous times are both in UTC.
+-   The unit conversion is correct (1 m³/s ≈ 35.31 ft³/s), and USGS continuous timestamps are UTC, not local time.
+a)  `nwm_cfs`, because NWM valid times are in Pacific time
+b)  `obs`, because USGS continuous timestamps are in local time
+*c) `daily`, because its dates are the gage's local days, not UTC
+d)  `nwm_cfs`, because the conversion factor runs the wrong way
+
+
+9.  In December 2025, 18 valid SWOT RiverSP reach-passes were available near the gage: 4 suspect (`reach_q` = 1) and 14 degraded (`reach_q` = 2). Keeping only `reach_q` ≤ 1 left no pass on the gage's reach. What did the case study do?
+... It kept `reach_q` ≤ 2 and then checked the degraded values instead of trusting them: against the gage's change, and with `wse_u` and the bitwise flag `reach_q_b`. The passes flagged `few_wse_observations` were the ones that disagreed with the gage.
+-   Neither extreme works: a strict filter left almost nothing to compare, and trusting every pass would have kept the outliers.
+a)  Concluded that SWOT can't be used for this flood.
+b)  Kept every pass and treated them all as equally reliable.
+*c) Kept `reach_q` ≤ 2, then checked degraded passes against the gage, `wse_u` and `reach_q_b`.
+d)  Used only `reach_q` = 0 passes from neighboring rivers instead.
+
+
+10. Three NWM short-range forecasts (18 hours each) were issued on 11 December 2025 at 00Z, 12Z and 18Z. The observed crest came at 08:00 UTC on 12 December. Why can't the 00Z forecast tell you whether the NWM got the timing of the crest right?
+... A short-range forecast looks 18 hours ahead of its reference time, so the 00Z run ends at 18:00 UTC on 11 December, before the crest. Only the 18Z run's window reached past the crest. Comparing forecasts issued at different times shows how the prediction evolved.
+-   All times here are UTC, and the 00Z run is in the archive; the limit is its forecast horizon.
+a)  00Z is local midnight, so its values belong to the wrong calendar day.
+b)  The 00Z forecast isn't kept in the cloud archive.
+*c) Its 18-hour window ends at 18:00 UTC on 11 December, before the crest.
+d)  The 00Z run has no ensemble members to compare.
+
+
+11. An NWM short-range forecast peaked at 154,000 ft³/s, against an observed USGS crest of 133,000 ft³/s. Why shouldn't you simply conclude that "the model was 16% too high"?
+... The observed peak is itself computed from the rating curve, above the highest flow measured during the flood, so it is uncertain too. And an NWM value is a model estimate for a whole reach, not a point measurement. The forecasts' value was a consistent signal of an exceptional flood many hours ahead.
+-   The units were already converted, and the NWM is model guidance that complements official NWS forecasts; it is not right (or wrong) by definition.
+a)  The NWM value is in m³/s, so the two numbers can't be compared at all.
+b)  NWM output is the official NWS forecast, so it is correct by definition.
+*c) The observed peak is extrapolated from the rating, and NWM estimates a whole reach.
+d)  The USGS value is a daily mean, so it is always lower than a forecast.
+
+
+12. The Skagit at Mount Vernon set a record **stage** in December 2025 (37.73 ft, above the 37.37 ft of 1990), but its peak discharge (133,000 ft³/s) was below the 1990 crest (152,000 ft³/s). What does this suggest?
+... A record stage without a record flow is a clue that the relationship between stage and flow at this site isn't fixed. Out-of-bank flow and channel scour or fill change the rating, which is why ratings are least certain at extreme flows.
+-   This is not a datum error or a provisional glitch; it is how ratings behave during extreme floods.
+a)  The gage datum was moved, so one of the two stages is wrong.
+b)  The 2025 discharge is provisional and will be revised up to match.
+*c) The stage–discharge relationship at the site has changed over time.
+d)  The NWM assimilated the 1990 record into the 2025 discharge.
