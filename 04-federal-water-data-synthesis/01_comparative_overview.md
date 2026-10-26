@@ -154,16 +154,8 @@ _Course note (not agency guidance):_ NWM output can be reached several ways, and
 
 - **Check whether data are provisional before relying on them.** Provisional information "is subject to revision", and USGS cautions users to "consider carefully the provisional nature of the information" ([USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
 - **Use the modernized Water Data APIs.** The legacy NWISWeb pages and WaterServices are being retired (the final decommission campaign runs November 2026 to February 2027). Use the `waterdata` module of `dataretrieval` for new code ([NWISWeb decommission summary](https://waterdata.usgs.gov/blog/nwisweb-decommission-summary/)).
-- **Get a free API key for repeated or large requests**, and keep it out of your code ([API keys](https://api.waterdata.usgs.gov/docs/ogcapi/keys/)).
+- **Get a free API key**, and keep it out of your code ([API keys](https://api.waterdata.usgs.gov/docs/ogcapi/keys/)).
 - **Cite the data with the publication year, access date and DOI** ([How should I cite USGS Water Data for the Nation data?](https://waterdata.usgs.gov/citation/)).
-
-:::{admonition} Partner review (USGS): USGS (Water Data for the Nation)
-:class: important
-- Confirm this recommendation: *Check whether data are provisional before relying on them.* Confirmed
-- Confirm this recommendation: *Use the modernized Water Data APIs.* Confirmed, recommend reducing reference to legacy services
-- Confirm this recommendation: *Get a free API key for repeated or large requests.* Confirmed, really for all requests.
-- Confirm this recommendation: *Cite the data with the publication year, access date and DOI.* Confirmed
-:::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention

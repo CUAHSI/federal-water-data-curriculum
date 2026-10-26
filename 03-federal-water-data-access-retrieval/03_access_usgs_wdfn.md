@@ -164,16 +164,11 @@ print(site_info[["monitoring_location_id", "monitoring_location_name", "drainage
 4          USGS-02380006  STUDENT6 CREEK NEAR LOUISVILLE, KY            NaN
 ```
 
-This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't real gages: on 2026-10-08, ten "STUDENT" creeks and five "TEST" entries (such as "SANDY TEST NO 1" and "LOUISVILLE TEST SITE"). This is one reason to look at discovery results before you download anything.
-
-:::{admonition} Partner review (USGS): Test entries in monitoring-location results
-:class: important
-Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out. - I wouldn't filter these out since they don't have discharge data, anyway. Also, unless it is important to show which monitoring locations have discharge and which do not, you could save a call or two by running the function below without running `get_monitoring_locations`. It has the geometry and site info you need to make the map.
-:::
+This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't usable gages: on 2026-10-08, ten "STUDENT" creeks and five "TEST" entries (such as "SANDY TEST NO 1" and "LOUISVILLE TEST SITE"). This is one reason to look at discovery results before you download anything.
 
 **Example: which of those have daily mean discharge?**
 
-`get_combined_metadata` combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same query:
+`get_combined_metadata` can be used as an alternative to `get_monitoring_locations` (used above) to discover monitoring locations. It combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same query. 
 
 ```python
 sites_with_q, md = waterdata.get_combined_metadata(
@@ -355,7 +350,7 @@ There are 62 daily values, one per day. The daily mean peaked at 712,000 ft³/s 
 
 ### Field  measurements
 
-**{term}`Field measurements <Field measurement>`** are the discharge and gage-height measurements that hydrographers make in person at the gage. USGS uses them to build and check the {term}`rating curve <Rating curve>` that turns the sensor's gage height into the continuous discharge record, so they are the closest thing to "ground truth" for discharge:
+**{term}`Field measurements <Field measurement>`** are the discharge, gage-height, and groundwater level measurements that hydrographers make in person at the gage. USGS uses discharge and gage-height to build and check the {term}`rating curve <Rating curve>` that turns the sensor's gage height into the continuous discharge record, so they are the closest thing to "ground truth" for discharge:
 
 ```python
 fm, md = waterdata.get_field_measurements(
@@ -375,18 +370,7 @@ print(discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "
 12 2025-12-04   46900.0          ft^3/s  Acoustic Doppler Current Profiler              Good     Provisional
 ```
 
-Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. In 2025, hydrographers measured discharge five times, including on the day of the crest. `observing_procedure` records how each measurement was made, here always with an acoustic Doppler current profiler (ADCP) towed across the river. `measurement_rated` is each measurement's quality rating: the hydrographer's judgment of its accuracy. The crest-day measurement (738,000 ft³/s) is rated `Poor`, which is common for measurements in fast, debris-laden flood water. It is about 3% above the continuous record's peak, well within what a `Poor` rating allows. The field measurement `time` is a date; the time of day is in a separate `time_of_day` column.
-
-:::{admonition} Partner review (USGS): Field measurements and ratings
-:class: important
-Confirm the description of field measurements, measurement ratings and rating curves, and the statement that `Poor` ratings are common for flood measurements (and what accuracy each rating implies).
-From Water Data APIs: "Field measurements are physically measured values collected during a visit to the monitoring location. Field measurements consist of measurements of gage height and discharge, and readings of groundwater levels, and are primarily used as calibration readings for the automated sensors collecting continuous data. They are collected at a low frequency, and delivery of the data in WDFN may be delayed due to data processing time."
-
-From Water Data APIs: "`measurement_rated`: A qualitative estimate of the quality of a measurement."
-
-I don't know if `Poor` is a common rating for a flood measurement, but it makes logical sense to me.
-
-:::
+Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. In 2025, hydrographers measured discharge five times, including on the day of the crest. `observing_procedure` records how each measurement was made, here always with an acoustic Doppler current profiler (ADCP) towed across the river. `measurement_rated` is a qualitative estimate of the quality of a measurement: the hydrographer's judgment of its accuracy. The crest-day measurement (738,000 ft³/s) is rated `Poor`, which is common for measurements in fast, debris-laden flood water. It is about 3% above the continuous record's peak, well within what a `Poor` rating allows. The field measurement `time` is a date; the time of day is in a separate `time_of_day` column.
 
 ### Plot the data
 
@@ -426,11 +410,6 @@ Continuous discharge at USGS-03294500, Ohio River at Louisville, KY, 15 March to
 **A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`. This calls the legacy Water Services which will be [decommissioned February 22nd, 2027](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/).
 
 For those curious, here are some differences in the data returned by legacy `nwis` when compared to the modernized `waterdata` module. The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column.
-
-:::{admonition} Partner review (USGS): Legacy Water Services retirement
-:class: important
-Confirm the retirement timeline for the legacy Water Services to cite here. - It's actually Feb 22, 2027: https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/
-:::
 
 (wdfn-understanding)=
 ## Understanding what you downloaded
@@ -535,13 +514,8 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Do** ask for more in each request before reaching for parallel code. Most `waterdata` functions accept lists (several `monitoring_location_id`s or `parameter_code`s), a `bbox`, or a time interval. One request that returns 10,000 rows is cheaper for you and for USGS than 100 requests that return 100 rows each.
 - **Do** use an API key (`API_USGS_PAT`) for any repeated or large workflow, and expect HTTP `429 Too Many Requests` if you go over your hourly limit.
 - **Do** let `dataretrieval` handle paging (`limit` sets the page size, `max_rows` caps the total) instead of writing your own loop of requests.
-- **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you. Use that sparingly, and only for pulls you know are large.
+- **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. `dataretrieval` will automatically chunk queries that go over the byte limit and run them in parallel. Parallelization settings can be adjusted, but is not recommended.
 - **Avoid** re-downloading the same historical record every time you run your code. Approved data rarely change, so save results to a file and only request what is new (the `last_modified` argument helps).
-
-:::{admonition} Partner review (USGS): Parallelization
-:class: important
-Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates. - Noting that `dataretrieval` will automatically chunk up queries that go over the byte limit and run those chunked queries in parallel. However, if a query does not go over the byte limit, no parallelization happens, and paging occurs synchronously. Users can adjust parallelization settings, and I'd generally recommend against it (as you have), but want to point out that it does happen automatically under the hood, depending upon the query.
-:::
 
 ## Now you try it
 

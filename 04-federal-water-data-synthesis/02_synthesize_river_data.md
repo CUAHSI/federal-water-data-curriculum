@@ -259,11 +259,6 @@ print(f"Peak event stage:     {peak_h['value']} {peak_h['unit_of_measure']} at {
 
 The river peaked at **133,000 ft³/s at 08:00 UTC on 12 December 2025** (midnight local time), with a gage height of **37.73 ft** at 08:15 UTC. That stage is the highest on [NOAA's list of historic crests at this gauge](https://water.noaa.gov/gauges/MVEW1) (37.37 ft in November 1990), but the discharge isn't: NOAA's list shows 152,000 ft³/s for that 1990 crest. A record *stage* without a record *flow* is a clue that the relationship between stage and flow at this site isn't fixed.
 
-:::{admonition} Partner review (USGS): Starting on the ground: observations from USGS
-:class: important
-Confirm interpretation of record stage vs. non-record discharge at 12200500. Confirmed. Here is the latest rating curve: https://api.waterdata.usgs.gov/stac-files/ratings/USGS.12200500.exsa.rdb
-:::
-
 ### Field measurements and the limits of out-of-bank flow
 
 USGS doesn't measure discharge continuously. It records stage and converts it to discharge with a {term}`rating curve <Rating curve>` built from occasional {term}`field measurements <Field measurement>` of flow ([USGS: How streamflow is measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured)). So during a flood, check which field measurements support the numbers.
@@ -277,16 +272,11 @@ print(q_meas[["time", "time_of_day", "value", "unit_of_measure", "measurement_ra
 
 Field measurements come back as one row per reading, with gage-height readings and discharge readings from the same `field_visit_id`. `time` holds only the date, and `time_of_day` only the time of day in UTC (for example `17:07:50+00:00`). To place a measurement on a timeline, join the two; converting `time_of_day` on its own would fill in today's date. `measurement_rated` is the hydrographer's rating of the measurement's accuracy (for example `Good` or `Fair`), and `observing_procedure` records how it was made.
 
-USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**; it was computed from stage through the rating curve, not measured. Whether that part of the rating is supported by measurements from earlier floods is worth checking. When the river spills out of its banks or over levees, the stage–discharge relationship can change, and some water may bypass the gage entirely.
+USGS crews measured **111,000 ft³/s** with an acoustic Doppler current profiler (ADCP) at 17:07 UTC on 12 December, about nine hours after the crest, at a gage height of about 35.9 ft; the measurement was rated `Fair`. That is the highest discharge measured during the event. The reported peak of 133,000 ft³/s is therefore **above any flow measured in this flood**. It was computed from stage through the rating curve, which has more uncertainty than a field measurement. That doesn't mean the calculated peak can't be trusted, but it is worth checking whether that part of the rating is supported by measurements from earlier floods. The rating curve/stage-discharge relationship can change; some water may bypass the gage entirely when the river spills out of its banks or over levees, and changes to the river channel morphology often necessitate amendments to the rating curve.
 
 :::{admonition} TODO (dev team): Rating measurements above 111,000 ft³/s
 :class: attention
 Verify whether the 12200500 rating has measurements above 111,000 ft³/s from earlier floods, e.g. via `waterdata.get_ratings`.
-:::
-
-:::{admonition} Partner review (USGS): Field measurements and the limits of out-of-bank flow
-:class: important
-Wording on rating extrapolation and out-of-bank flow at this site. - From the rating curve linked above, it was most recently amended in 2015. It was used to estimate discharge for this flood, and both the instantaneous gage height and discharge were approved (`approval_status` = "Approved"). I think it's fair to consider that the instantaneous discharge measurement has more uncertainty than the field measurement, but to me this reads as though we shouldn't trust an approved measurement. Maybe I'm misinterpreting. I think it is accurate to say that changes to the river channel morphology often necessitate amendments to the rating curve/stage-discharge relationship.
 :::
 
 Plot the continuous and daily discharge, with the December field measurement overlaid:
