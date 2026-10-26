@@ -1,11 +1,12 @@
-# Environment for Module 3, "Retrieve NASA SWOT data" (03-federal-water-data-access-retrieval/01_access_nasa_swot.md)
-# Create:   mamba env create -f module-03_lesson-01_retrieve-nasa-swot-data_environment.yml   (or: conda env create -f module-03_lesson-01_retrieve-nasa-swot-data_environment.yml)
-# Activate: conda activate m03-swot
+# Conda environment for module-03_lesson-01_retrieve-nasa-swot-data.ipynb (and its _solutions copy),
+# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# Create:  conda env create -f module-03_lesson-01_retrieve-nasa-swot-data_environment.yml
+# Kernel:  conda run -n m03-swot python -m ipykernel install --user --name m03-swot --display-name "Python (m03-swot)"
 name: m03-swot
 channels:
   - conda-forge
 dependencies:
-  - python=3.14         # 3.12+ avoids the earthaccess SSL import error noted on the page
+  - python=3.14         # 3.12+ avoids the earthaccess SSL import error noted in the notebook
   - earthaccess
   - xarray
   - netcdf4
@@ -19,6 +20,6 @@ dependencies:
   - requests
   - matplotlib
   # For running inside Jupyter
-  - ipykernel     # optional: run the lesson in Jupyter
+  - ipykernel     # needed to run the notebooks in Jupyter
   - jupyterlab
   - ipywidgets

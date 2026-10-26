@@ -3,6 +3,7 @@
 # If the lesson's example answer changes, check that this starter still fits it.
 try_it:
   - |
+    # This cell raises an error until every ... is filled in.
     from pynhd import NLDI
     import requests
 
@@ -19,6 +20,6 @@ try_it:
     # Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
     # (uses build_refs and open_refs from the kerchunk examples above)
     refs_feb = build_refs(...)   # TODO: day "YYYYMMDD" and issue hour
-    q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=...).load().to_series()   # TODO
+    q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=...).load().to_series()   # TODO: the Willamette COMID
     print(len(q_feb), "hourly values")
     print(q_feb.iloc[[0, 8, 17]])

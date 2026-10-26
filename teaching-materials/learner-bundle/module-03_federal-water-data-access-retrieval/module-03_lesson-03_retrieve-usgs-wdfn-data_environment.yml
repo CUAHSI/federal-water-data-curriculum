@@ -1,6 +1,7 @@
-# Environment for Module 3, "Retrieve USGS WDFN data" (03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md)
-# Create:   mamba env create -f module-03_lesson-03_retrieve-usgs-wdfn-data_environment.yml   (or: conda env create -f module-03_lesson-03_retrieve-usgs-wdfn-data_environment.yml)
-# Activate: conda activate m03-wdfn
+# Conda environment for module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb (and its _solutions copy),
+# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# Create:  conda env create -f module-03_lesson-03_retrieve-usgs-wdfn-data_environment.yml
+# Kernel:  conda run -n m03-wdfn python -m ipykernel install --user --name m03-wdfn --display-name "Python (m03-wdfn)"
 name: m03-wdfn
 channels:
   - conda-forge
@@ -12,6 +13,6 @@ dependencies:
   - matplotlib          # figures and maps in the lesson
   - requests            # river line for the location map (NLDI)
   # For running inside Jupyter
-  - ipykernel     # optional: run the lesson in Jupyter
+  - ipykernel     # needed to run the notebooks in Jupyter
   - jupyterlab
   - ipywidgets

@@ -11,15 +11,19 @@ no internal course links) and has, in order: a title cell (title, learning goal,
 attribution and licence cell, a credentials cell, then the lesson in order. Headings keep the lesson's text, every
 ``python`` code block becomes a code cell, and prose is condensed by these rules:
 
-- each run of prose between two code cells keeps at most ``SENTENCE_BUDGET`` sentences of paragraph text (a
-  sentence ending in ":" that leads into a table, list or code block is always kept);
+- each paragraph keeps at most ``SENTENCE_BUDGET`` sentences (a sentence ending in ":" that leads into a table,
+  list or code block is always kept);
 - lists, tables, block quotes and notes are kept whole: they hold the "what comes back" details;
 - printed outputs, shell and YAML blocks (environment creation) and lesson figures are dropped (the code cell that
   draws a figure stays); externally hosted figures are kept as images;
 - "Now you try it" and "Further reading" are kept whole;
 - paragraphs about creating the environment (``DROP_PARAGRAPHS``) and code blocks the credentials cell replaces
   (``Lesson.drop_code``) are left out;
-- a setup line the lesson tells Jupyter users to add (``Lesson.jupyter_prefix``) is added to its code cell.
+- sections that repeat the Credentials cell or have no content yet (``Lesson.drop_sections``) are left out;
+- a setup line the lesson tells Jupyter users to add (``Lesson.jupyter_prefix``) is added to its code cell;
+- wording that only works on the website, or that the lesson gets wrong, is corrected (``Lesson.replacements``;
+  fix the lesson too), and pointers to the Module 2 "Meet ..." pages name them as readings;
+- a note before each "Now you try it" code cell says to make the changes there, not in earlier cells.
 
 Outputs are cleared and notebook metadata is kept to the kernelspec, so rebuilds give small diffs.
 
@@ -57,8 +61,15 @@ REPO_ROOT = TOOLS.parents[1]
 BUNDLE = REPO_ROOT / "teaching-materials" / "learner-bundle"
 SCAFFOLDS = BUNDLE / "scaffolds"
 
-SENTENCE_BUDGET = 4
+SENTENCE_BUDGET = 4       # sentences kept per paragraph
 KEEP_WHOLE_SECTIONS = ("Now you try it", "Further reading")
+TRY_IT_NOTE = ("**In this notebook:** make the changes in the code cell below rather than editing the earlier cells. "
+               "It sets the shared variables (such as the place and dates) to the new river's values, so to go back to "
+               "the earlier examples, run the notebook again from the top.")
+# Pointers to the Module 2 readings, which learners get in Canvas, not as links
+MEET_PAGE = re.compile(r"(?<![*\w])(Meet (?:NASA SWOT|NOAA NWM|USGS WDFN))(?! \(Module 2\))")
+# Every lesson's task opens with this sentence; the example rivers come from the Module 3 overview, not the notebook.
+EXAMPLE_RIVERS = "For helpful context, refer back to the example rivers we covered in the overview."
 # Paragraphs about creating the conda environment: the bundle ships the environment file and the README covers setup.
 DROP_PARAGRAPHS = (
     "Create an empty YAML file",
@@ -69,6 +80,7 @@ DROP_PARAGRAPHS = (
     "You will create a {term}",
     "You will create a conda environment",
     "Log in to earthaccess",
+    "To log in with `earthaccess`",
     "Check that the key is available",
 )
 CREDENTIALS = ("earthdata", "usgs")
@@ -90,6 +102,12 @@ class Lesson:
     # {substring: lines}: prepend lines to the python block containing substring, for steps the lesson tells
     # Jupyter users to add (a notebook always runs in Jupyter)
     jupyter_prefix: dict = field(default_factory=dict)
+    drop_sections: tuple = ()   # headings whose whole section is left out (repeats the Credentials cell, or empty)
+    drop_headings: tuple = ()   # headings left out; their content joins the section above
+    # {learner-copy text: notebook text}: wording that only makes sense on the website (pointers to removed figures
+    # or callouts) or that the lesson gets wrong. Whitespace in the old text matches any whitespace, and the build
+    # stops if the old text isn't found, so a lesson edit can't silently undo a fix. Fix the lesson too.
+    replacements: dict = field(default_factory=dict)
 
     @property
     def module_folder(self) -> str:
@@ -108,6 +126,13 @@ LESSONS = [
         env="m03-swot", session=3, credentials=("earthdata",),
         goal=M3_GOAL.format(product="NASA SWOT"),
         drop_code=("auth = earthaccess.login()",),
+        drop_sections=("Make an Earthdata Login account",),
+        drop_headings=("Create the lesson's environment",),
+        replacements={
+            "You can also use SWOTviz, a CUAHSI": "You can also use [SWOTviz](https://swotviz.cuahsi.io/), a CUAHSI",
+            "The location map at the top of this page was drawn from this one file:":
+                "This block draws a location map from this one file:",
+        },
     ),
     Lesson(
         stem="module-03_lesson-02_retrieve-noaa-nwm-data",
@@ -119,13 +144,30 @@ LESSONS = [
         # The lesson's fix (nest_asyncio) fails too with Python 3.14 and current aiohttp (tested 2026-10-26), so
         # import it once in a worker thread, as the lesson's code already does for .get().
         jupyter_prefix={"from hydrotools.nwm_client.NWMFileClient import NWMFileClient": (
-            "# In Jupyter only: importing hydrotools.nwm_client starts its own event loop, which fails inside the\n"
-            "# notebook's running loop. Import it once in a separate thread first. (nest_asyncio, suggested below,\n"
-            "# doesn't fix this with current packages; plain Python scripts need neither.)\n"
+            "# Optional cell: it needs about 2 GB of memory, and nothing later uses its result.\n"
+            "# In Jupyter, importing hydrotools.nwm_client starts its own event loop, which fails inside the\n"
+            "# notebook's running loop, so import it once in a separate thread first (plain scripts don't need this).\n"
             "import importlib\n"
             "from concurrent.futures import ThreadPoolExecutor\n"
             "with ThreadPoolExecutor(1) as pool:\n"
             "    pool.submit(importlib.import_module, \"hydrotools.nwm_client.NWMFileClient\").result()\n\n")},
+        replacements={
+            "**In Jupyter**, run `import nest_asyncio; nest_asyncio.apply()` once first (the first line of the block, "
+            "commented out); plain Python scripts don't need it.":
+                "In this notebook, the first lines of the cell handle Jupyter's event loop for you. If your Jupyter "
+                "environment has less than about 2 GB of memory, skip this cell: nothing later uses its result.",
+            "Run `import nest_asyncio; nest_asyncio.apply()` once before calling `.get()` (`nest-asyncio` is in the "
+            "course environment). Plain Python scripts don't need it.":
+                "The first lines of the `hydrotools` cell above prevent this; if you still see it, restart the kernel "
+                "and run the notebook again from the top.",
+            "If your plot looks like this, your code is right:":
+                "If your plot shows the 3 April medium-range run peaking near 13,900 m³/s on 8 April, and each "
+                "short-range run starting near 15,000–18,000 m³/s and falling quickly, your code is right:",
+            " (we've asked NOAA why the short-range runs drop so fast; see the note below)": "",
+            # the task builds its own references from the Google Cloud archive (build_refs), not NOAA's published ones
+            " (the API's `name` field is blank for this reach)": "",
+            "and 18 published reference files for 25 February": "and 18 hourly values from your references for 25 February",
+        },
     ),
     Lesson(
         stem="module-03_lesson-03_retrieve-usgs-wdfn-data",
@@ -134,6 +176,9 @@ LESSONS = [
         goal=M3_GOAL.format(product="USGS WDFN"),
         drop_code=('print("API_USGS_PAT is set:"',),
         drop_paragraphs=("The environment file lets most packages float",),
+        drop_sections=("USGS Water Data API key",),
+        drop_headings=("Create the conda environment",),
+        replacements={"Repeat the main steps for accessing NWM data": "Repeat the main steps for accessing USGS WDFN data"},
     ),
     Lesson(
         stem="module-04_lesson-02_synthesizing-federal-data-products",
@@ -144,6 +189,13 @@ LESSONS = [
               "what each product can and cannot show."),
         drop_paragraphs=("A pinned conda environment is what lets", "You will need the same credentials as in Module 3",
                          "The sections below walk through the data you would collect"),
+        replacements={
+            "(NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html) (NLDI)":
+                "(NLDI)](https://api.water.usgs.gov/nldi/swagger-ui/index.html)",
+            "(`Provisional` or `Approved`; see approval status)": "(`Provisional` or `Approved`)",
+            " (see UTM zone)": "",
+            "Search the page's code": "Search this notebook's code",
+        },
     ),
     Lesson(
         stem="module-04_lesson-03_additional-federal-water-data",
@@ -151,6 +203,12 @@ LESSONS = [
         env="m04-synthesis", session=6, credentials=("earthdata",),
         goal=("Take a first step with related Federal water data products (SWOT discharge from the SWORD of Science "
               "and NOAA AORC precipitation) using the same discover-before-download habits as Module 3."),
+        # USDA and USACE are a placeholder in the lesson; leave them out until there is content
+        drop_sections=("Other agencies' water data: USDA and USACE",),
+        replacements={
+            "\n- Other agencies' water data: USDA and USACE (placeholder)": "",
+            " and a placeholder for USDA and USACE data": "",
+        },
     ),
 ]
 
@@ -220,7 +278,8 @@ def parse(lines: list[str]) -> list[Item]:
             j = i + 1
             while j < len(lines):
                 if lines[j].strip():
-                    if not (lines[j].startswith((" ", "\t")) or LIST_ITEM.match(lines[j])):
+                    lazy = lines[j - 1].strip() and not _starts_block(lines[j])  # Markdown lazy continuation
+                    if not (lines[j].startswith((" ", "\t")) or LIST_ITEM.match(lines[j]) or lazy):
                         break
                 else:
                     nxt = next((ln for ln in lines[j:] if ln.strip()), "")
@@ -275,9 +334,10 @@ class Builder:
         self.lesson = lesson
         self.cells: list[tuple[str, str]] = []
         self.prose: list[str] = []
-        self.budget = SENTENCE_BUDGET
         self.section = ""
         self.after_code = False
+        self.skip_level = 0       # inside a dropped section: skip until a heading at this level or above
+        self.try_it_noted = False
         self.drop_paragraphs = DROP_PARAGRAPHS + lesson.drop_paragraphs
 
     @property
@@ -288,7 +348,6 @@ class Builder:
         if self.prose:
             self.cells.append(("markdown", "\n\n".join(self.prose)))
             self.prose = []
-        self.budget = SENTENCE_BUDGET
 
     def para(self, text: str):
         if any(text.startswith(p) or text.lstrip("*").startswith(p) for p in self.drop_paragraphs):
@@ -297,24 +356,27 @@ class Builder:
             self.prose.append(text)
             return
         parts = sentences(text)
-        kept = parts[: max(self.budget, 0)]
+        kept = parts[:SENTENCE_BUDGET]
         if len(parts) > len(kept) and parts[-1].endswith(":"):
             # The lead-in to the next table, list or code block; a very short one ("The main ones:") needs the
             # sentence before it too.
             lead = parts[-2:] if len(parts[-1].split()) < 8 and len(parts) - len(kept) > 1 else parts[-1:]
             kept += lead
-        if not kept:
-            return
-        self.budget -= len(kept)
         self.prose.append(" ".join(kept))
 
     def add(self, items: list[Item], solution: bool = False):
         for item in items:
+            if item.kind == "heading" and self.skip_level and item.level <= self.skip_level:
+                self.skip_level = 0
+            if item.kind == "heading" and item.text in self.lesson.drop_sections:
+                self.skip_level = item.level
+            if self.skip_level:
+                continue
             was_after_code, self.after_code = self.after_code, False
             if item.kind == "heading":
                 self.flush()
                 self.section = item.text
-                if item.level > 1:
+                if item.level > 1 and item.text not in self.lesson.drop_headings:
                     self.prose.append(f"{'#' * item.level} {item.text}")
                 if item.text == SETUP_SECTION:
                     self.prose.append(SETUP_NOTE.format(env=self.lesson.env, stem=self.lesson.stem))
@@ -343,6 +405,9 @@ class Builder:
                 if any(s in item.text for s in self.lesson.drop_code):
                     self.after_code = True
                     continue
+                if solution and not self.try_it_noted:
+                    self.prose.append(TRY_IT_NOTE)
+                    self.try_it_noted = True
                 self.flush()
                 source = item.text.strip("\n")
                 source = "".join(p for s, p in self.lesson.jupyter_prefix.items() if s in source) + source
@@ -449,16 +514,49 @@ def make_notebook(cells: list[tuple[str, str]]) -> nbformat.NotebookNode:
     return nb
 
 
+def apply_replacements(lesson: Lesson, text: str) -> str:
+    """Notebook-only wording fixes (Lesson.replacements), plus plain-text pointers to the Module 2 readings."""
+    for old, new in {**lesson.replacements, EXAMPLE_RIVERS: ""}.items():
+        pattern = r"\s+".join(re.escape(word) for word in re.split(r"(\s+)", old) if word.strip())
+        if old[:1].isspace():
+            pattern = r"\s+" + pattern
+        text, n = re.subn(pattern, lambda m: new, text, count=1)
+        if not n and old != EXAMPLE_RIVERS:
+            raise SystemExit(f"{lesson.stem}: replacement text not found in the lesson (did it change?): {old!r}")
+    def reading(m):
+        before = text[:m.start()]
+        start_of_sentence = (not before.strip() or before.rstrip().endswith((".", "**")) or before.endswith("\n\n")
+                             or bool(re.search(r"(^|\n)\s*(?:[-*]|\d+\.)\s*$", before)))
+        return f"{'The' if start_of_sentence else 'the'} Module 2 reading *{m.group(1)}*"
+
+    return MEET_PAGE.sub(reading, text)
+
+
+def environment_file(lesson: Lesson) -> str:
+    """The lesson's environments/<env>.yml with a header for the bundle (no paths into the course repo)."""
+    text = (REPO_ROOT / "environments" / f"{lesson.env}.yml").read_text(encoding="utf-8")
+    body = text[text.index("name:"):]
+    body = (body.replace("noted on the page", "noted in the notebook")
+                .replace("# optional: run the lesson in Jupyter", "# needed to run the notebooks in Jupyter"))
+    file = f"{lesson.stem}_environment.yml"
+    return (f"# Conda environment for {lesson.stem}.ipynb (and its _solutions copy),\n"
+            f"# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.\n"
+            f"# Create:  conda env create -f {file}\n"
+            f"# Kernel:  conda run -n {lesson.env} python -m ipykernel install --user --name {lesson.env} "
+            f"--display-name \"Python ({lesson.env})\"\n"
+            + body)
+
+
 def build(lesson: Lesson) -> tuple[dict[str, str], dict]:
     """Return {bundle-relative path: file text} for one lesson, and the learner-copy counts."""
     raw = (REPO_ROOT / lesson.page).read_text(encoding="utf-8")
     text, counts = prepare(raw)
-    items = parse(text.splitlines())
+    items = parse(apply_replacements(lesson, text).splitlines())
 
     title = next(i.text for i in items if i.kind == "heading" and i.level == 1)
     first_section = next(n for n, i in enumerate(items) if i.kind == "heading" and i.level == 2)
-    intro_paras = [i.text for i in items[:first_section] if i.kind == "para"]
-    intro = " ".join(sentences(" ".join(intro_paras[:2]))[:SENTENCE_BUDGET])
+    lead = [i for i in items[:first_section] if i.kind in ("para", "list")][:3]
+    intro = "\n\n".join(i.text if i.kind == "list" else " ".join(sentences(i.text)[:SENTENCE_BUDGET]) for i in lead)
 
     body = Builder(lesson).add(items[first_section:])
     body.flush()
@@ -496,9 +594,7 @@ def build(lesson: Lesson) -> tuple[dict[str, str], dict]:
         name = f"{lesson.module_folder}/{lesson.stem}{'_solutions' if solutions else ''}.ipynb"
         outputs[name] = nbformat.writes(make_notebook(cells)) + "\n"
 
-    env_text = (REPO_ROOT / "environments" / f"{lesson.env}.yml").read_text(encoding="utf-8")
-    env_text = env_text.replace(f"environments/{lesson.env}.yml", f"{lesson.stem}_environment.yml")
-    outputs[f"{lesson.module_folder}/{lesson.stem}_environment.yml"] = env_text
+    outputs[f"{lesson.module_folder}/{lesson.stem}_environment.yml"] = environment_file(lesson)
     counts["has_try_it"] = bool(solution_cells)
     return outputs, counts
 

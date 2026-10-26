@@ -1,6 +1,7 @@
-# Conda environment for Module 4: Synthesizing Federal water data products.
-# Create with:  conda env create -f module-04_lesson-02_synthesizing-federal-data-products_environment.yml
-# Then:         conda activate m04-synthesis
+# Conda environment for module-04_lesson-02_synthesizing-federal-data-products.ipynb (and its _solutions copy),
+# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# Create:  conda env create -f module-04_lesson-02_synthesizing-federal-data-products_environment.yml
+# Kernel:  conda run -n m04-synthesis python -m ipykernel install --user --name m04-synthesis --display-name "Python (m04-synthesis)"
 name: m04-synthesis
 channels:
   - conda-forge
@@ -31,7 +32,7 @@ dependencies:
   - geopandas
   - matplotlib
   # For running inside Jupyter
-  - ipykernel     # optional: run the lesson in Jupyter
+  - ipykernel     # needed to run the notebooks in Jupyter
   - jupyterlab
   - ipywidgets
   - pip
