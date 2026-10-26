@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+message: "If you use or adapt these course materials, please cite them as below."
+title: "Federal Open Water Data for Researchers"
+abstract: >-
+  Learning materials for a CUAHSI micro-credentialing course on finding, retrieving and combining
+  federal open water data (NASA SWOT, the NOAA National Water Model and USGS Water Data for the Nation)
+  with Python. Includes the course website (MyST Markdown lessons) and generated teaching materials
+  (slides, readings, notebooks, quizzes and an instructor guide).
+authors:
+  - given-names: Lindsay
+    family-names: Platt
+    affiliation: CUAHSI
+  - given-names: Kimberlee
+    family-names: Wong
+    affiliation: CUAHSI
+  - given-names: Kaysa
+    family-names: Vaarre-Lamoureux
+    affiliation: CUAHSI
+  - given-names: Abner
+    family-names: Bogan
+    affiliation: CUAHSI
+contact:
+  - given-names: Lindsay
+    family-names: Platt
+    affiliation: CUAHSI
+version: pilot-2026-11
+license: GPL-3.0
+repository-code: "https://github.com/CUAHSI/federal-water-data-curriculum"
+url: "https://cuahsi.github.io/federal-water-data-curriculum/"
+keywords:
+  - learning material
+  - open educational resource
+  - hydrology
+  - federal water data
+  - NASA SWOT
+  - National Water Model
+  - USGS Water Data for the Nation
+preferred-citation:
+  type: generic
+  title: "Federal Open Water Data for Researchers"
+  medium: "Learning material (online course)"
+  authors:
+    - given-names: Lindsay
+      family-names: Platt
+      affiliation: CUAHSI
+    - given-names: Kimberlee
+      family-names: Wong
+      affiliation: CUAHSI
+    - given-names: Kaysa
+      family-names: Vaarre-Lamoureux
+      affiliation: CUAHSI
+    - given-names: Abner
+      family-names: Bogan
+      affiliation: CUAHSI
+  publisher:
+    name: CUAHSI
+  version: pilot-2026-11
+  license: GPL-3.0
+  repository-code: "https://github.com/CUAHSI/federal-water-data-curriculum"
+  url: "https://cuahsi.github.io/federal-water-data-curriculum/"
