@@ -1,0 +1,19 @@
+# "Now you try it" starter for module-03_lesson-03_retrieve-usgs-wdfn-data (student notebook).
+# Hand-edited source read by tools/build_notebooks.py: one try_it entry per example-answer code block in the lesson.
+# If the lesson's example answer changes, check that this starter still fits it.
+try_it:
+  - |
+    site = ...          # TODO: the Willamette River at Salem monitoring location ID from the task
+    START, END = ...    # TODO: the new dates from the task
+
+    series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
+    print(series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
+    daily_w, md = waterdata.get_daily(monitoring_location_id=site, parameter_code=...,
+                                      statistic_id=..., time=f"{START}/{END}")   # TODO: daily mean discharge
+    print(len(daily_w), daily_w["approval_status"].value_counts().to_dict())
+    print(daily_w.loc[..., ["time", "value", "unit_of_measure", "approval_status"]])   # TODO: the row with the highest value
+
+    cont_w, md = waterdata.get_continuous(monitoring_location_id=site, parameter_code=...,   # TODO: discharge and gage height
+                                          time=f"{START}T00:00:00Z/{END}T23:59:59Z")
+    peaks_w = ...   # TODO: the row with the largest value for each parameter_code
+    print(peaks_w[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])

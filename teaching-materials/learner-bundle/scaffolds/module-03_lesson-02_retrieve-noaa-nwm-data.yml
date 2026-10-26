@@ -1,0 +1,24 @@
+# "Now you try it" starter for module-03_lesson-02_retrieve-noaa-nwm-data (student notebook).
+# Hand-edited source read by tools/build_notebooks.py: one try_it entry per example-answer code block in the lesson.
+# If the lesson's example answer changes, check that this starter still fits it.
+try_it:
+  - |
+    from pynhd import NLDI
+    import requests
+
+    POINT = ...   # TODO: (longitude, latitude) of the Willamette River at Salem, from the task
+    comid = ...   # TODO: snap POINT to an NHDPlus reach with NLDI().feature_byloc and keep its COMID as an int
+    print("COMID:", comid)
+
+    url = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{comid}/"
+    resp = requests.get(url, params=..., timeout=60)   # TODO: ask for the latest short-range forecast
+    resp.raise_for_status()
+    run = resp.json()[0]
+    print(run["reference_datetime"], run["units"], len(run["forecast"][0]["timeseries"]), "values")
+
+    # Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
+    # (uses build_refs and open_refs from the kerchunk examples above)
+    refs_feb = build_refs(...)   # TODO: day "YYYYMMDD" and issue hour
+    q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=...).load().to_series()   # TODO
+    print(len(q_feb), "hourly values")
+    print(q_feb.iloc[[0, 8, 17]])
