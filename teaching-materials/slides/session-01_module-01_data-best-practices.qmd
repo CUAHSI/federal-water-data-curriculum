@@ -48,6 +48,10 @@ execute:
 
 # Welcome {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Welcome.
+:::
+
 ## Welcome and introductions
 
 - This course: **Federal Open Water Data for Researchers**, about 20 hours over four modules.
@@ -77,6 +81,10 @@ execute:
 :::
 
 # How the course works {background-color="#1f4e79"}
+
+::: notes
+- Section divider: How the course works.
+:::
 
 ## Course schedule {.smaller}
 
@@ -144,10 +152,14 @@ Modules 3 and 4 run Python notebooks. Before **Session 3 (Nov 10)**:
 ::: notes
 - An API key is a personal token that identifies you to a web service, often allowing higher request limits.
 - This is the first data best practice of the course: secrets don't belong in shared code.
-- Expect: "What's an environment variable?" A named value your operating system passes to programs; Sessions 3 and 5 show how to set them.
+- Expect: "What's an environment variable?" A named value your operating system passes to programs; the Session 5 pre-reading shows how to store one in a conda environment, and Session 3 shows `earthaccess` finding them.
 :::
 
 # Module 1 overview {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Module 1 overview.
+:::
 
 ## Every dataset was shaped by someone's decisions
 
@@ -174,6 +186,10 @@ Modules 3 and 4 run Python notebooks. Before **Session 3 (Nov 10)**:
 :::
 
 # Lesson 1: Open Science {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Lesson 1: Open Science.
+:::
 
 ## What is open science?
 
@@ -287,6 +303,10 @@ No dataset gets a clear ✓ for **Reusable**: it depends on the *quality* of met
 :::
 
 # Lesson 2: Data Management {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Lesson 2: Data Management.
+:::
 
 ## A message you don't want to get
 
@@ -506,6 +526,10 @@ storm_response/
 
 # Lesson 3: Data Publishing {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Lesson 3: Data Publishing.
+:::
+
 ## Why publish data and code on their own?
 
 - A paper summarizes one analysis; the data and code are the **evidence** behind it, and can support many more.
@@ -631,6 +655,10 @@ In every case: cite the source, carry its license, publish with a DOI.
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 

@@ -48,6 +48,10 @@ execute:
 
 # Retrieve USGS WDFN data {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Retrieve USGS WDFN data.
+:::
+
 ## What we'll retrieve
 
 - Find the stream monitoring locations around **Louisville, Kentucky**.
@@ -415,7 +419,7 @@ Retrieve discharge from a monitoring location on the Willamette. Use new names (
 4. Daily mean discharge: find the highest daily mean and its approval status.
 5. Continuous discharge and gage height: find the crest.
 
-**Notebook cell:** "Now you try it" in `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb`.
+**Notebook cell:** "Now you try it" in `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb`. **Start now; finish after the session.**
 
 ::: notes
 - Start now; finish after the session. What you should see and an example answer are in the post-reading.
@@ -423,6 +427,10 @@ Retrieve discharge from a monitoring location on the Willamette. Use new names (
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 

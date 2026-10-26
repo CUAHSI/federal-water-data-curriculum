@@ -49,6 +49,10 @@ execute:
 
 # Module 4 overview {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Module 4 overview.
+:::
+
 ## Each agency fills a niche
 
 - Hydrologic systems are complex; several Federal agencies each fill an important niche.
@@ -73,6 +77,10 @@ execute:
 :::
 
 # Comparative overview {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Comparative overview.
+:::
 
 ## Spatial coverage
 
@@ -136,7 +144,7 @@ execute:
 | Caution | Sparse in time | Model error; no flag | Points; ratings at extremes |
 
 ::: notes
-- Sources: the Module 2 agency pages, NOAA OWP and the Module 3 lessons.
+- Sources: the agency material from Sessions 2–5 and NOAA OWP.
 :::
 
 ## Which product for which question? {.smaller}
@@ -169,6 +177,10 @@ Most real questions need more than one row.
 :::
 
 # Case study: the December 2025 Skagit River flood {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Case study: the December 2025 Skagit River flood.
+:::
 
 ## The event
 
@@ -422,6 +434,10 @@ December: **18** valid reach-passes, **4 suspect, 14 degraded**, none good. `rea
 
 # Additional Federal water data {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Additional Federal water data.
+:::
+
 ## SWOTViz: look before you code
 
 - [SWOTViz](https://swotviz.cuahsi.io/): a CUAHSI web viewer for SWOT river and lake data (in development).
@@ -481,10 +497,14 @@ aorc = xr.open_zarr(store)   # lazy: only metadata is read
 - The **Environmental Protection Agency (EPA)** also produces or uses water data.
 
 ::: notes
-- The lesson's USDA and USACE section is still a placeholder; no specific datasets to present yet.
+- Ask learners which USDA, USACE or EPA water data they already use.
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 

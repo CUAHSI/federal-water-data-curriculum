@@ -49,6 +49,10 @@ execute:
 
 # Retrieve NOAA NWM data {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Retrieve NOAA NWM data.
+:::
+
 ## What we'll retrieve
 
 - NWM **forecasts** for the Ohio River at Louisville: **today's**, and **archived** forecasts from the **April 2025 flood**.
@@ -88,7 +92,6 @@ Cost depends on **how many forecast runs** you need, much less on how many reach
 
 ::: notes
 - CONUS: the contiguous U.S.
-- The lesson's table also lists the CIROH NWM BigQuery API, for researchers on CIROH projects (by request); not covered.
 :::
 
 ## Programmatic data discovery
@@ -246,6 +249,7 @@ print(run["configuration"], run["reference_datetime"], run["units"])
 ## A past short-range forecast with `hydrotools`
 
 ```python
+from concurrent.futures import ThreadPoolExecutor
 from hydrotools.nwm_client.NWMFileClient import NWMFileClient
 
 def get_forecast():
@@ -262,7 +266,7 @@ with ThreadPoolExecutor(1) as pool:
 Downloads **all 18 files** of the run (~270 MB, ~1.7 GB memory, 2–3 minutes).
 
 ::: notes
-- In Jupyter, run `import nest_asyncio; nest_asyncio.apply()` once first.
+- The thread wrapper on the slide works in Jupyter and in scripts. Fallback if you call `.get()` directly in Jupyter: run `import nest_asyncio; nest_asyncio.apply()` once first.
 - Result: long-format table, one row per COMID and valid time: `reference_time`, `nwm_feature_id`, `value_time`, `value`, `measurement_unit` (`m3 s-1`), `configuration`, `usgs_site_code`.
 - If `.get()` fails with NetCDF/HDF errors, a half-downloaded file is in `hydrotools_data/`: delete that folder and retry.
 - `FutureWarning`/`UserWarning` messages are harmless.
@@ -283,13 +287,13 @@ Downloads **all 18 files** of the run (~270 MB, ~1.7 GB memory, 2–3 minutes).
 
 ## Kerchunk: read only the chunks you need {.smaller}
 
-- Inside a NetCDF file, each variable is stored in compressed **chunks**; you must fetch a whole chunk to read any value in it.
-- **Zarr** keeps each chunk as a separate object, so cloud tools fetch only what they need.
-- **Kerchunk** scans each NetCDF file once and writes a small JSON **reference**: where each chunk lives (byte offset, length).
-- `xarray` opens the references as one Zarr dataset and fetches **only the chunks you touch**.
+- NetCDF stores each variable in compressed **chunks**; reading any value means fetching its whole chunk.
+- **Kerchunk** scans each file once and writes a small JSON **reference**: where each chunk lives.
+- `xarray` opens the references like one **Zarr** dataset and fetches **only the chunks you touch**.
 
 ::: notes
 - Analogy: taking a whole box off the shelf to get one book.
+- Zarr keeps each chunk as a separate object, so cloud tools fetch only what they need. The reference records byte offset and length per chunk.
 - Virtual Zarr: a small reference file that lets software read existing files as if they were one Zarr dataset.
 - Sources: kerchunk documentation; Element 84's 2023 write-up.
 :::
@@ -320,8 +324,10 @@ def build_refs(day, cycle, runinput=1, meminput=None, hours=18):
         singles = list(pool.map(index_one, urls))
     return combine_refs(singles)                   # stitch along time
 
-refs = build_refs("20250406", 0)                   # 134 reference entries
+refs = build_refs("20250406", 0)
 ```
+
+*Simplified; the full code (imports, `nwmurl` arguments, `combine_refs`) is in the notebook.*
 
 ::: notes
 - Simplified: the `nwmurl` arguments and `combine_refs` are in the notebook.
@@ -443,7 +449,7 @@ Find the COMID and retrieve short-range forecasts. Use new names (e.g. `_salem`)
 2. The latest short-range forecast for that COMID from the **NOAA NWM API**.
 3. References for the run issued **12Z on 25 February 2026**: `build_refs("20260225", 12)`; read `streamflow` with `open_refs`.
 
-**Notebook cell:** "Now you try it" in `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb`.
+**Notebook cell:** "Now you try it" in `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb`. **Start now; finish after the session.**
 
 ::: notes
 - Start now; finish after the session. What you should see and an example answer are in the post-reading.
@@ -451,6 +457,10 @@ Find the COMID and retrieve short-range forecasts. Use new names (e.g. `_salem`)
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 

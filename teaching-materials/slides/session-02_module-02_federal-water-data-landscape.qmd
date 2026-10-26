@@ -46,6 +46,10 @@ execute:
 
 # Module 2 overview {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Module 2 overview.
+:::
+
 ## Know what a product *is* before you code
 
 - What it measures or models, and how the values are made.
@@ -77,9 +81,9 @@ execute:
 
 ## Four things to watch for
 
-- **Quality flags mean different things:** a SWOT flag rates one observation; a USGS approval status says whether a person has reviewed it; NWM output has no per-value flag.
-- **Units and reference points differ:** NWM streamflow is in m³/s, USGS discharge in ft³/s (1 m³/s ≈ 35.31 ft³/s).
-- **"Reach" means different things:** a SWOT reach (~10 km, SWORD) and an NWM reach (an NHDPlus segment) come from separate networks.
+- **Quality flags differ:** SWOT rates each observation; USGS says whether a person reviewed it; NWM has none per value.
+- **Units and references differ:** NWM m³/s, USGS ft³/s (1 m³/s ≈ 35.31 ft³/s).
+- **"Reach" differs:** SWOT reaches (~10 km, SWORD, SWOT's river database) and NWM reaches (NHDPlus, the USGS stream network) are separate networks.
 - **Version and provenance** make your work repeatable.
 
 ::: notes
@@ -100,6 +104,10 @@ execute:
 :::
 
 # Meet NASA SWOT {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Meet NASA SWOT.
+:::
 
 ## NASA Surface Water and Ocean Topography (SWOT)
 
@@ -251,6 +259,10 @@ One row per overpass: `wse` (m), `width` (m), `reach_q`, and `collection_shortna
 :::
 
 # Meet NOAA NWM {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Meet NOAA NWM.
+:::
 
 ## NOAA National Water Model (NWM)
 
@@ -426,6 +438,10 @@ No key needed. The API serves only the **latest** runs, so your numbers will dif
 
 # Meet USGS WDFN {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Meet USGS WDFN.
+:::
+
 ## USGS Water Data for the Nation (WDFN) {.smaller}
 
 - USGS collects water data at **monitoring locations** with automated sensors and manual measurements, stored in **NWIS**.
@@ -544,6 +560,10 @@ One row per day with a value: `time`, `value`, `unit_of_measure`, `approval_stat
 
 # Putting it together {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Putting it together.
+:::
+
 ## Activity: compare the three products {.smaller}
 
 Without looking back, fill in what you can, then check with a neighbor:
@@ -575,6 +595,10 @@ These differences start to matter in Module 4, when all three meet one flood.
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 

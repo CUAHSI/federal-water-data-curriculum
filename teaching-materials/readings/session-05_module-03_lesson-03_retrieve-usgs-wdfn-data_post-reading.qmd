@@ -24,6 +24,8 @@ values, and 1909 for daily values. From 1 February to 31 March 2026 there are 59
 numbers may differ slightly.
 
 ```python
+from dataretrieval import waterdata
+
 site = "USGS-14191000"                  # Willamette River at Salem, OR
 START, END = "2026-02-01", "2026-03-31"
 

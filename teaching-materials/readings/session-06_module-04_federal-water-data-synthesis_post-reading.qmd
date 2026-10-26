@@ -22,7 +22,11 @@ Save the comparison you built separately from the raw downloads, with the identi
 This is the "recipe plus snapshot" idea from Module 1's publishing derivative data: someone can rerun the query
 block, or check your numbers against the saved table.
 
+Run this at the end of the Module 4 notebook, after the Raster section: it uses `dec`, `forecasts`, `discharge`,
+`nwm_version`, `comid`, `skagit`, `site`, `usgs_window`, `sword_reaches`, `swot_window` and `raster_short_name` from there.
+
 ```python
+import pandas as pd
 from pathlib import Path
 derived = Path("data/derived")
 derived.mkdir(parents=True, exist_ok=True)

@@ -64,6 +64,17 @@ also tends to break when those systems change, which creates support work for th
 | Version / provenance | product version (e.g. `D`), collection DOI | model version (e.g. v3.0), run configuration | service, retrieval date |
 | Data unit | granule | one output file per timestep | one time series per location + parameter |
 
+## Two ways to run the course notebooks
+
+- **Hosted:** open the learner bundle in the hosted HydroShare environment, following the instructions on Canvas, and
+  pick the lesson's kernel (here `Python (m03-swot)`). If that kernel isn't listed, ask the instructor before the
+  session.
+- **On your own computer:** install conda (for example [Miniforge](https://conda-forge.org/download/)), download the
+  learner bundle from HydroShare and unzip it, open a terminal, `cd` into the folder that holds the lesson's
+  `_environment.yml` file, then run the commands in setup step 2 below.
+
+Sessions 4–6 use the same two routes, each with its own environment.
+
 ## Setup step 1: an Earthdata Login account
 
 Downloading SWOT files requires a free Earthdata account. Register at

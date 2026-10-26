@@ -170,7 +170,8 @@ available after August 2023). For big jobs, run on a cloud machine in the same r
 `US` multi-region for `gs://national-water-model`; AWS `us-east-1` for `s3://noaa-nwm-pds`).
 
 **Many reaches with kerchunk.** Keep only the COMIDs that are NWM reaches (almost all NHDPlus reaches are, but check),
-then select them all at once:
+then select them all at once. This runs in the lesson notebook after the kerchunk example (it uses `ds` and
+`upstream_comids` from there):
 
 ```python
 import numpy as np

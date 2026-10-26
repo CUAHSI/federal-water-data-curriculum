@@ -46,6 +46,8 @@ the story in the order you would meet the flood, so unlike the rest of the cours
 
 ## Setup step 1: the Module 4 environment
 
+If you use the hosted HydroShare environment, pick the `Python (m04-synthesis)` kernel and skip the commands below; on your own computer, `cd` into the unzipped learner bundle first (see "Two ways to run the course notebooks" in the Session 3 pre-reading).
+
 All Module 4 code runs in one conda environment, `m04-synthesis`, which reuses the Module 3 access patterns:
 `dataretrieval` for USGS, `earthaccess` and `requests` (for `hydrocron`) for SWOT, and `pynhd`, `kerchunk`, `fsspec` and
 `xarray` for NWM forecasts. In the learner bundle, the file is

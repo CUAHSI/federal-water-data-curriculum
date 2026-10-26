@@ -49,6 +49,10 @@ execute:
 
 # Module 3 overview {background-color="#1f4e79"}
 
+::: notes
+- Section divider: Module 3 overview.
+:::
+
 ## How you get the data matters
 
 - Downloading a whole national file to read one value, or sending thousands of requests where a few would do, **wastes your time and loads shared agency systems**.
@@ -114,6 +118,10 @@ Every agency's product has good data at both. The narrower Willamette tests how 
 :::
 
 # Retrieve NASA SWOT data {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Retrieve NASA SWOT data.
+:::
 
 ## Where today's data come from
 
@@ -352,7 +360,7 @@ def water_area_near(path, lon=site_lon, lat=site_lat, half_width_m=5000):
     ...  # count pixels per flag; sum area for qual <= 1 and qual <= 2
 ```
 
-Raster files are NetCDF (`xarray`); compare scenes only from the **same pass**.
+*Simplified; the full function is in the notebook.* Raster files are NetCDF (`xarray`); compare scenes only from the **same pass**.
 
 ::: notes
 - Simplified from the lesson's function; the full version is in the notebook.
@@ -486,7 +494,7 @@ Find the SWORD reach and retrieve its water surface elevation with `hydrocron`. 
 3. Search RiverSP reach granules from those passes; download **one**; find the nearest reach.
 4. `get_reach_timeseries(reach_id, start, end)`.
 
-**Notebook cell:** "Now you try it" in `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`.
+Copy and edit the Louisville cells from "Programmatic data discovery" and "Programmatic data downloads". **Notebook cell:** "Now you try it" in `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`. **Start now; finish after the session.**
 
 ::: notes
 - Start now; finish after the session. What you should get, and an example answer, are in the post-reading.
@@ -494,6 +502,10 @@ Find the SWORD reach and retrieve its water surface elevation with `hydrocron`. 
 :::
 
 # Wrap-up {background-color="#1f4e79"}
+
+::: notes
+- Section divider: Wrap-up.
+:::
 
 ## Recap
 
@@ -508,7 +520,7 @@ Find the SWORD reach and retrieve its water surface elevation with `hydrocron`. 
 ## What's due and what to read
 
 - **Module 3 quiz:** see Canvas (covers Sessions 3–5).
-- **Post-reading:** `session-03_module-03_lesson-01_retrieve-nasa-swot-data_post-reading.pdf` (the Willamette answer, decoding bitwise flags, the full record, and the map code).
+- **Post-reading:** `session-03_module-03_lesson-01_retrieve-nasa-swot-data_post-reading.pdf` (the Willamette answer, decoding bitwise flags, and the full record).
 - **Next session (Thu Nov 12):** Retrieve NOAA NWM data. Have the `m03-nwm` environment ready; no credentials needed.
 
 ::: notes

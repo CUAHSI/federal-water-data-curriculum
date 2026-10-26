@@ -55,6 +55,8 @@ in your code.
 
 ## Setup step 2: the lesson's environment
 
+If you use the hosted HydroShare environment, pick the `Python (m03-wdfn)` kernel and skip the commands below; on your own computer, `cd` into the unzipped learner bundle first (see "Two ways to run the course notebooks" in the Session 3 pre-reading).
+
 The `m03-wdfn` environment file is in the learner bundle as
 `module-03_lesson-03_retrieve-usgs-wdfn-data_environment.yml`. Its contents:
 

@@ -54,6 +54,8 @@ from Python with the [`pynhd`](https://docs.hyriver.io/readme/pynhd.html) packag
 
 ## Setup: the lesson's environment
 
+If you use the hosted HydroShare environment, pick the `Python (m03-nwm)` kernel and skip the commands below; on your own computer, `cd` into the unzipped learner bundle first (see "Two ways to run the course notebooks" in the Session 3 pre-reading).
+
 The `m03-nwm` conda environment installs everything for discovery (`pynhd`) and for all three download routes
 (`requests` for the NWM API, `hydrotools.nwm_client`, and `kerchunk` + `xarray` + `fsspec`), plus `matplotlib` for the
 figures and `ipykernel` for Jupyter. The file is in the learner bundle as

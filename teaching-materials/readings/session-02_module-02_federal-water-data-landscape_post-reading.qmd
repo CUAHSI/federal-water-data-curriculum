@@ -313,6 +313,14 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 
 ## Key terms
 
+- **Geoid:** the shape the ocean surface would take under gravity alone, extended under the land; the reference for
+  heights "above sea level". SWOT water surface elevations are given relative to a geoid model (EGM2008).
+- **Swath:** the strip of ground a satellite instrument images as it passes over. SWOT images two swaths, one on each
+  side of its path; data outside them are missing.
+- **UTM zone:** the Universal Transverse Mercator system divides the globe into 60 numbered zones, each 6° of longitude
+  wide, each with its own flat x/y grid in meters. The SWOT Raster product uses UTM grids.
+- **Forcing:** the weather inputs that drive a hydrologic model, such as precipitation, temperature and radiation.
+- **Data assimilation:** adjusting a model while it runs so it stays close to observations.
 - **Ensemble member:** one of several runs of the same forecast with slightly different inputs; their spread is a
   rough guide to forecast uncertainty.
 - **Fill value:** a placeholder value when there is no valid measurement.
