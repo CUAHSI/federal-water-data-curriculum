@@ -388,6 +388,8 @@ I don't know if `Poor` is a common rating for a flood measurement, but it makes 
 
 :::
 
+### Plot the data
+
 **What the data look like.** Plotting the continuous record by approval status, with the field measurement on top, shows the flood, the crest and where provisional data begin:
 
 ```python
@@ -421,26 +423,9 @@ Continuous discharge at USGS-03294500, Ohio River at Louisville, KY, 15 March to
 :::
 
 (wdfn-legacy)=
-**A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. For contrast, here is the same daily-mean request the old way:
+**A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`. This calls the legacy Water Services which will be [decommissioned February 22nd, 2027](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/).
 
-```python
-from dataretrieval import nwis
-
-# legacy Water Services: bare site number, parameter in the column name, approval as a code
-legacy, md = nwis.get_dv(sites="03294500", parameterCd="00060", start="2025-04-08", end="2025-04-10")
-print(legacy)
-```
-
-```text
-DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
-                           00060_Mean 00060_Mean_cd   site_no
-datetime
-2025-04-08 00:00:00+00:00      710000             A  03294500
-2025-04-09 00:00:00+00:00      712000             P  03294500
-2025-04-10 00:00:00+00:00      691000             P  03294500
-```
-
-The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column. `dataretrieval` warns that `nwis.get_dv` will be removed on or after 2027-02-22. Write new code with `waterdata`, as in this lesson.
+For those curious, here are some differences in the data returned by legacy `nwis` when compared to the modernized `waterdata` module. The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column.
 
 :::{admonition} Partner review (USGS): Legacy Water Services retirement
 :class: important
@@ -467,11 +452,6 @@ The continuous values, daily values and field measurements share their core colu
 **Keep raw and derived data apart.** Save each download unchanged (for example `data/raw/usgs_03294500_continuous_2025-03-15_2025-05-15.csv`), and write anything you compute from it, such as the crest table or a cleaned series, to a separate folder (`data/derived/`). Then you can always trace a number back to the download it came from ([Data Management](../01-data-best-practices/02_data_management.md), Module 1).
 
 **Cite what you used.** USGS water data have a DOI, [https://doi.org/10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN) (U.S. Geological Survey, National Water Information System). Cite it with the monitoring location IDs, parameter codes, dates and your access date, and cite `dataretrieval` too: Hodson and Hariharan, [https://doi.org/10.5066/P94I5TX3](https://doi.org/10.5066/P94I5TX3). [Data Publishing](../01-data-best-practices/03_data_publishing.md) in Module 1 covers citing data.
-
-:::{admonition} Partner review (USGS): Data citation
-:class: important
-Confirm the recommended citation for data retrieved through the Water Data APIs (DOI 10.5066/F7P55KJN, and the preferred wording now that NWISWeb is replaced by WDFN). Defer to Mike, et al.
-:::
 
 ## Best practices FAQs
 
@@ -620,6 +600,7 @@ Name: 24, dtype: object
 * USGS Water Data for the Nation: https://waterdata.usgs.gov/
 * Water Data For The Nation - Explore (GUI): https://waterdata.usgs.gov/explore/
 * USGS provisional data statement: https://waterdata.usgs.gov/provisional-data-statement/
+* NWIS WaterServices decommissioning: https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/
 * Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here.
 
   :::{admonition} TODO (dev team): confirm this link
