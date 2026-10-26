@@ -2,8 +2,6 @@ version: 1
 project:
   id: federal-water-data-course
   title: "Federal Open Water Data for Researchers"
-  authors:
-    - name: Lindsay Platt, Kimberlee Wong, Kaysa Vaarre-Lamoureux
   github: https://github.com/CUAHSI/federal-water-data-curriculum
   # Teaching materials are generated from the pages and are not part of the website (STYLE_GUIDE §11).
   exclude:
@@ -36,5 +34,6 @@ project:
         - file: '04-federal-water-data-synthesis/03_additional_data.md'
     - file: glossary.md
     - file: references.md
+    - file: acknowledgements.md
 site:
   template: book-theme
