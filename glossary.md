@@ -95,6 +95,9 @@ Long-format table
 : A table with one row per value, where columns such as location, time or ensemble member say which value it is
   (instead of one column per location or member). Easy to filter and group; pivot it to "wide" form for some plots.
 
+Query
+: A request to retrieve specific data from a database
+
 Streamflow
 : See {term}`Discharge`.
 
@@ -358,6 +361,9 @@ Field measurement
 : A direct measurement of discharge (or gage height) made by USGS staff at a monitoring location,
   used to build and check the rating curve.
 
+Function call
+: When you make a function call for tabular data using `dataretrieval`, you are sending a {term}`query<Query>` to the USGS water data API
+
 Gage datum
 : The local reference level that {term}`gage height <Gage height>` is measured from at a monitoring location. It is
   chosen for each site, so gage heights from different sites (or a gage height and a satellite elevation) can't be
@@ -373,6 +379,9 @@ Monitoring location ID
 NWIS
 : The National Water Information System, the USGS database behind WDFN. Its older website and web services
   (NWISWeb, WaterServices) are being retired.
+
+Page/Request
+: Each {term}`query<Query>` to the water data API is made up of one or more requests, where a single request is a page of data. Pages have a maximum capacity of 50,000 rows of data. If your query matches over 50,000 rows of data, then it will require multiple pages or requests to return all results for your query.
 
 Parameter code
 : A five-digit USGS code for a variable, for example `00060` for discharge and `00065` for gage height.

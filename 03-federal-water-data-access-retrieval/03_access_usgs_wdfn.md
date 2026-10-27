@@ -19,16 +19,16 @@ If you already know your monitoring location ID(s), you can skip discovery.
 (wdfn-access-routes)=
 ## Choosing an access route
 
-All the routes below use the same Water Data APIs, so the choice is mostly about *which function* matches your question. None of them needs a key, but USGS recommends one for repeated or large requests.
+All the routes below use the same Water Data APIs, so the choice is mostly about *which function* matches your question. None of them needs a key, but USGS recommends one for repeated or large requests. If you do not have an API key your {term}`queries<Query>` have a limit of 50 requests per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
 | Explore by clicking, spot-check a site | [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) | No | Manual; not reproducible on its own |
-| Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in pages with a maximum of 50,000 rows per page; each page is one request |
+| Find monitoring locations and what they measure | `waterdata.get_monitoring_locations`, `get_time_series_metadata`, `get_combined_metadata` | No (key recommended) | Results come in {term}`pages<Page/Request>` with a maximum of 50,000 rows per page; each page is one {term}`request<Page/Request>` |
 | Daily values (e.g. daily mean discharge), any length of record | `waterdata.get_daily` | No (key recommended) | The whole record for a site in one query (paged for you) |
 | The sensor record (every 5–15 minutes) | `waterdata.get_continuous` | No (key recommended) | Up to three years per query |
 | Discharge measured by hydrographers in the field | `waterdata.get_field_measurements` | No (key recommended) | About one measurement a month per site |
-| One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page (request) count |
+| One day (or a short window) at many sites | `waterdata.get_daily` with no sites, a list of sites, or optionally a `bbox` | No (key recommended) | Fewer requests than iterating by site; mind the page/request count |
 | Code that uses the legacy Water Services | `dataretrieval.nwis` | No | Being retired; port it to `waterdata` (see [the note below](#wdfn-legacy)) |
 
 ## Tools and environment setup
@@ -135,7 +135,7 @@ print(statistic_codes.loc[statistic_codes["statistic_code"].isin(["00003", "0001
 
 **The point-and-click way.** The [WDFN website](https://waterdata.usgs.gov/) and [Water Data For The Nation - Explore](https://waterdata.usgs.gov/explore/) let you search by place name, address, state or watershed and click on sites. That's fine for exploring. A programmatic discovery step keeps your search reproducible, so capture it in code too.
 
-Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each function call. Your query is then recorded in one spot and easy to change.
+Keep what you're asking for (place, site type, codes, dates) in variables at the top of your script, rather than typing them into the middle of each {term}`function call<Function call>`. Your query is then recorded in one spot and easy to change.
 
 **Example: which stream monitoring locations are in Jefferson County, Kentucky (Louisville)?**
 
@@ -164,16 +164,11 @@ print(site_info[["monitoring_location_id", "monitoring_location_name", "drainage
 4          USGS-02380006  STUDENT6 CREEK NEAR LOUISVILLE, KY            NaN
 ```
 
-This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't real gages: on 2026-10-08, ten "STUDENT" creeks and five "TEST" entries (such as "SANDY TEST NO 1" and "LOUISVILLE TEST SITE"). This is one reason to look at discovery results before you download anything.
-
-:::{admonition} Partner review (USGS): Test entries in monitoring-location results
-:class: important
-Confirm what the "STUDENT… CREEK", "SANDY TEST" and "LOUISVILLE TEST SITE" monitoring locations in Jefferson County, KY are (training or test records?), and whether users should filter them out. - I wouldn't filter these out since they don't have discharge data, anyway. Also, unless it is important to show which monitoring locations have discharge and which do not, you could save a call or two by running the function below without running `get_monitoring_locations`. It has the geometry and site info you need to make the map.
-:::
+This returns a `GeoDataFrame` with one row per monitoring location (120 on 2026-10-08) and 44 columns. Key columns are `monitoring_location_id` (the *{term}`Location identifier`*), `monitoring_location_name`, `site_type`, `drainage_area` (square miles) and `geometry` (a point you can map). The list includes inactive sites, and, as the first rows show, a few entries that aren't usable gages: on 2026-10-08, ten "STUDENT" creeks and five "TEST" entries (such as "SANDY TEST NO 1" and "LOUISVILLE TEST SITE"). This is one reason to look at discovery results before you download anything.
 
 **Example: which of those have daily mean discharge?**
 
-`get_combined_metadata` combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same query:
+`get_combined_metadata` can be used as an alternative to `get_monitoring_locations` (used above) to discover monitoring locations. It combines monitoring-location details with the list of time series each location records, so you can filter on parameter and statistic codes in the same query. 
 
 ```python
 sites_with_q, md = waterdata.get_combined_metadata(
@@ -355,7 +350,7 @@ There are 62 daily values, one per day. The daily mean peaked at 712,000 ft³/s 
 
 ### Field  measurements
 
-**{term}`Field measurements <Field measurement>`** are the discharge and gage-height measurements that hydrographers make in person at the gage. USGS uses them to build and check the {term}`rating curve <Rating curve>` that turns the sensor's gage height into the continuous discharge record, so they are the closest thing to "ground truth" for discharge:
+**{term}`Field measurements <Field measurement>`** are the discharge, gage-height, and groundwater level measurements that hydrographers make in person at the gage. USGS uses discharge and gage-height to build and check the {term}`rating curve <Rating curve>` that turns the sensor's gage height into the continuous discharge record, so they are the closest thing to "ground truth" for discharge:
 
 ```python
 fm, md = waterdata.get_field_measurements(
@@ -375,18 +370,9 @@ print(discharge_fm[["time", "value", "unit_of_measure", "observing_procedure", "
 12 2025-12-04   46900.0          ft^3/s  Acoustic Doppler Current Profiler              Good     Provisional
 ```
 
-Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. In 2025, hydrographers measured discharge five times, including on the day of the crest. `observing_procedure` records how each measurement was made, here always with an acoustic Doppler current profiler (ADCP) towed across the river. `measurement_rated` is each measurement's quality rating: the hydrographer's judgment of its accuracy. The crest-day measurement (738,000 ft³/s) is rated `Poor`, which is common for measurements in fast, debris-laden flood water. It is about 3% above the continuous record's peak, well within what a `Poor` rating allows. The field measurement `time` is a date; the time of day is in a separate `time_of_day` column.
+Field measurements include both discharge (`00060`) and gage-height (`00065`) readings; we kept only discharge. In 2025, hydrographers measured discharge five times, including on the day of the crest. `observing_procedure` records how each measurement was made, here always with an acoustic Doppler current profiler (ADCP) towed across the river. `measurement_rated` is a qualitative estimate of the quality of a measurement: the hydrographer's judgment of its accuracy. The crest-day measurement (738,000 ft³/s) is rated `Poor`, which is common for measurements in fast, debris-laden flood water. It is about 3% above the continuous record's peak, well within what a `Poor` rating allows. The field measurement `time` is a date; the time of day is in a separate `time_of_day` column.
 
-:::{admonition} Partner review (USGS): Field measurements and ratings
-:class: important
-Confirm the description of field measurements, measurement ratings and rating curves, and the statement that `Poor` ratings are common for flood measurements (and what accuracy each rating implies).
-From Water Data APIs: "Field measurements are physically measured values collected during a visit to the monitoring location. Field measurements consist of measurements of gage height and discharge, and readings of groundwater levels, and are primarily used as calibration readings for the automated sensors collecting continuous data. They are collected at a low frequency, and delivery of the data in WDFN may be delayed due to data processing time."
-
-From Water Data APIs: "`measurement_rated`: A qualitative estimate of the quality of a measurement."
-
-I don't know if `Poor` is a common rating for a flood measurement, but it makes logical sense to me.
-
-:::
+### Plot the data
 
 **What the data look like.** Plotting the continuous record by approval status, with the field measurement on top, shows the flood, the crest and where provisional data begin:
 
@@ -421,31 +407,9 @@ Continuous discharge at USGS-03294500, Ohio River at Louisville, KY, 15 March to
 :::
 
 (wdfn-legacy)=
-**A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`, which calls the legacy Water Services. For contrast, here is the same daily-mean request the old way:
+**A note on the legacy `nwis` module.** Many older tutorials, including the CUAHSI notebook this lesson draws on, use `dataretrieval.nwis`. This calls the legacy Water Services which will be [decommissioned February 22nd, 2027](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/).
 
-```python
-from dataretrieval import nwis
-
-# legacy Water Services: bare site number, parameter in the column name, approval as a code
-legacy, md = nwis.get_dv(sites="03294500", parameterCd="00060", start="2025-04-08", end="2025-04-10")
-print(legacy)
-```
-
-```text
-DeprecationWarning: `nwis.get_dv` is deprecated and will be removed from `dataretrieval` on or after 2027-05-06; use `waterdata.get_daily()` instead.
-                           00060_Mean 00060_Mean_cd   site_no
-datetime
-2025-04-08 00:00:00+00:00      710000             A  03294500
-2025-04-09 00:00:00+00:00      712000             P  03294500
-2025-04-10 00:00:00+00:00      691000             P  03294500
-```
-
-The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column. `dataretrieval` warns that `nwis.get_dv` will be removed on or after 2027-02-22. Write new code with `waterdata`, as in this lesson.
-
-:::{admonition} Partner review (USGS): Legacy Water Services retirement
-:class: important
-Confirm the retirement timeline for the legacy Water Services to cite here. - It's actually Feb 22, 2027: https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/
-:::
+For those curious, here are some differences in the data returned by legacy `nwis` when compared to the modernized `waterdata` module. The values are the same, but the shape differs: a bare site number (`03294500` instead of `USGS-03294500`), one column per parameter and statistic (`00060_Mean`), and approval as a one-letter code (`A` approved, `P` provisional) in a `_cd` column.
 
 (wdfn-understanding)=
 ## Understanding what you downloaded
@@ -467,11 +431,6 @@ The continuous values, daily values and field measurements share their core colu
 **Keep raw and derived data apart.** Save each download unchanged (for example `data/raw/usgs_03294500_continuous_2025-03-15_2025-05-15.csv`), and write anything you compute from it, such as the crest table or a cleaned series, to a separate folder (`data/derived/`). Then you can always trace a number back to the download it came from ([Data Management](../01-data-best-practices/02_data_management.md), Module 1).
 
 **Cite what you used.** USGS water data have a DOI, [https://doi.org/10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN) (U.S. Geological Survey, National Water Information System). Cite it with the monitoring location IDs, parameter codes, dates and your access date, and cite `dataretrieval` too: Hodson and Hariharan, [https://doi.org/10.5066/P94I5TX3](https://doi.org/10.5066/P94I5TX3). [Data Publishing](../01-data-best-practices/03_data_publishing.md) in Module 1 covers citing data.
-
-:::{admonition} Partner review (USGS): Data citation
-:class: important
-Confirm the recommended citation for data retrieved through the Water Data APIs (DOI 10.5066/F7P55KJN, and the preferred wording now that NWISWeb is replaced by WDFN). Defer to Mike, et al.
-:::
 
 ## Best practices FAQs
 
@@ -555,13 +514,8 @@ If I am working on improving efficiency of my code through parallelization, what
 - **Do** ask for more in each request before reaching for parallel code. Most `waterdata` functions accept lists (several `monitoring_location_id`s or `parameter_code`s), a `bbox`, or a time interval. One request that returns 10,000 rows is cheaper for you and for USGS than 100 requests that return 100 rows each.
 - **Do** use an API key (`API_USGS_PAT`) for any repeated or large workflow, and expect HTTP `429 Too Many Requests` if you go over your hourly limit.
 - **Do** let `dataretrieval` handle paging (`limit` sets the page size, `max_rows` caps the total) instead of writing your own loop of requests.
-- **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. Recent versions of `dataretrieval` can split a large pull into chunks and run them concurrently for you. Use that sparingly, and only for pulls you know are large.
+- **Avoid** launching many simultaneous requests from your own threads or processes. Each request spends your rate-limit quota, and a burst of parallel calls is the quickest way to get throttled. `dataretrieval` will automatically chunk queries that go over the byte limit and run them in parallel. Parallelization settings can be adjusted, but is not recommended.
 - **Avoid** re-downloading the same historical record every time you run your code. Approved data rarely change, so save results to a file and only request what is new (the `last_modified` argument helps).
-
-:::{admonition} Partner review (USGS): Parallelization
-:class: important
-Confirm these recommendations, especially the guidance on concurrency and on using `last_modified` for incremental updates. - Noting that `dataretrieval` will automatically chunk up queries that go over the byte limit and run those chunked queries in parallel. However, if a query does not go over the byte limit, no parallelization happens, and paging occurs synchronously. Users can adjust parallelization settings, and I'd generally recommend against it (as you have), but want to point out that it does happen automatically under the hood, depending upon the query.
-:::
 
 ## Now you try it
 
@@ -620,6 +574,7 @@ Name: 24, dtype: object
 * USGS Water Data for the Nation: https://waterdata.usgs.gov/
 * Water Data For The Nation - Explore (GUI): https://waterdata.usgs.gov/explore/
 * USGS provisional data statement: https://waterdata.usgs.gov/provisional-data-statement/
+* NWIS WaterServices decommissioning: https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/
 * Adapted from [Notebook to Demonstrate Collecting USGS Data](https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/USGS%20-%20Plotting%20Streamflow%20using%20NWIS%20DataRetrieval) by CUAHSI, CUAHSI notebooks (GPL-3.0). Its legacy `nwis` calls are ported to `waterdata` here.
 
   :::{admonition} TODO (dev team): confirm this link
