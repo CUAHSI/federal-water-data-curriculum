@@ -227,7 +227,7 @@ Product counter
 
 Product description document (PDD)
 : The technical document for one SWOT product and version, defining every variable, unit and quality flag.
-  Check it before interpreting a flag value.
+  Check it before interpreting a flag value. 
 
 Reach
 : A river segment. In SWOT data, a reach is a segment of about 10 km defined in SWORD (`reach_id`). In the NWM, a reach

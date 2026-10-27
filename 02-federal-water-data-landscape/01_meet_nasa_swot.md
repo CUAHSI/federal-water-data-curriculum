@@ -17,7 +17,7 @@ This course only covers open surface and hydrology related measurements from SWO
 | {term}`Time` | {term}`overpass <Overpass>` time | The time the satellite observed that reach (UTC), for example `time_str` = `2025-01-09T11:18:10Z`. Most locations are seen at least once per 21-day {term}`cycle <Cycle and pass>`, often several times where passes overlap, not on a regular daily schedule. |
 | {term}`Data quality flag(s)` | summary flags (`reach_q`, `node_q`, `wse_qual`, …) plus detailed bitwise flags | **Summary flags** use one simple scale: 0 = good, 1 = suspect, 2 = degraded, 3 = bad. RiverSP's `reach_q` rates a whole reach observation; the Raster product's `wse_qual` rates one variable. Each summary flag has a **{term}`bitwise <Bitwise quality flag>`** partner (for example `reach_q_b`) that records *which* problems were found, packed into one integer as a sum of powers of two, so its values look arbitrary (`14`, `524298`). Start with the summary flag; decode the bitwise flag with the {term}`product description document (PDD) <Product description document (PDD)>` for your product version only when you need to know why. |
 | {term}`Version / provenance` | product version (e.g. `D`) and collection DOI | The version letter is part of each collection’s short name, e.g. `SWOT_L2_HR_RiverSP_D` (reaches and nodes together; `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` hold reach only and node only data, respectively). Module 3 searches the combined `SWOT_L2_HR_RiverSP_D` collection. Version D of the RiverSP product has the {term}`DOI` [10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D). |
-| {term}`Data unit` | {term}`granule <Granule>` | One file for one stretch of one satellite pass. A RiverSP granule holds every reach (or node) observed along one pass over one continent; a Raster granule holds one scene along one pass. |
+| {term}`Data unit` | {term}`granule <Granule>` | One file for one stretch of one satellite pass. A RiverSP granule stores observations for every reach (or node) observed along one pass over one continent; a Raster granule stores one scene along one pass. |
 
 :::{admonition} Partner review (NASA): Vertical reference for water surface elevation
 :class: important
@@ -158,6 +158,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [`hydrocron` documentation (PO.DAAC)](https://podaac.github.io/hydrocron/)
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/)
 - [SWOT Level 2 River Single-Pass Vector Data Product, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) (dataset landing page)
+     - You will find the **Product Description Document** under the "Documents and Resources" tab.
 - [SWOT River Database (SWORD)](https://zenodo.org/records/10013982)
 - [NASA Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance), including how to cite data
 - [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3)
