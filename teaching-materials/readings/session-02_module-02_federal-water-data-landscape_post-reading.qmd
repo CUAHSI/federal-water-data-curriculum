@@ -1,15 +1,7 @@
 ---
 title: "The three products in more depth"
 subtitle: "Federal Open Water Data for Researchers · Session 2 (Module 2) · Read after the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** the session covered what each product is and how far to trust it. This reading holds the

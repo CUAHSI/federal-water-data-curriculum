@@ -1,15 +1,7 @@
 ---
 title: "Getting ready to retrieve NWM data"
 subtitle: "Federal Open Water Data for Researchers · Session 4 (Module 3, Lesson 2) · Read before the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** NWM data are organized differently from SWOT and USGS data: by forecast run and forecast

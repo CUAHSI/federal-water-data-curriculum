@@ -3,16 +3,8 @@ title: "Module 3, Lesson 1: Retrieve NASA SWOT data"
 subtitle: "Federal Open Water Data for Researchers · Session 3"
 date: "Tuesday, November 10, 2026 · 2:00–3:30 pm ET"
 format:
-  revealjs:
-    embed-resources: true
-    slide-number: true
-    code-line-numbers: false
-    include-in-header:
-      text: |
-        <style>.reveal pre { font-size: 0.5em; }</style>
+  revealjs: default
   pptx: default
-execute:
-  enabled: false
 ---
 
 ## Today's agenda {.smaller}

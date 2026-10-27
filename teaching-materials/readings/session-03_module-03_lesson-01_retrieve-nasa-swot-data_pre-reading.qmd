@@ -1,15 +1,7 @@
 ---
 title: "Getting ready to retrieve SWOT data"
 subtitle: "Federal Open Water Data for Researchers · Session 3 (Module 3, Lesson 1) · Read before the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** Session 3 is the first coding session. This reading covers the ideas every Module 3 lesson

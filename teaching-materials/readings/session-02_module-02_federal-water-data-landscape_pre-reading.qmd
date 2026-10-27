@@ -1,15 +1,7 @@
 ---
 title: "Meet the three Federal water data products"
 subtitle: "Federal Open Water Data for Researchers · Session 2 (Module 2) · Read before the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** Session 2 compares three products side by side. Knowing in advance who makes each one, and

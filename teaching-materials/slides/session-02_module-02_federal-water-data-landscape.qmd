@@ -3,16 +3,8 @@ title: "Module 2: Federal Water Data Landscape"
 subtitle: "Federal Open Water Data for Researchers · Session 2"
 date: "Thursday, November 5, 2026 · 2:00–4:00 pm ET"
 format:
-  revealjs:
-    embed-resources: true
-    slide-number: true
-    code-line-numbers: false
-    include-in-header:
-      text: |
-        <style>.reveal pre { font-size: 0.5em; }</style>
+  revealjs: default
   pptx: default
-execute:
-  enabled: false
 ---
 
 ## Today's agenda {.smaller}

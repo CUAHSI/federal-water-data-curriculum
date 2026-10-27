@@ -1,15 +1,7 @@
 ---
 title: "Getting ready to retrieve USGS WDFN data"
 subtitle: "Federal Open Water Data for Researchers · Session 5 (Module 3, Lesson 3) · Read before the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** USGS water data come through two generations of web service, and older tutorials use the one

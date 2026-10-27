@@ -1,15 +1,7 @@
 ---
 title: "Federal water data synthesis: taking it further"
 subtitle: "Federal Open Water Data for Researchers · Session 6 (Module 4) · Read after the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** this reading has what you need to take the case study to your own river: how to save what you

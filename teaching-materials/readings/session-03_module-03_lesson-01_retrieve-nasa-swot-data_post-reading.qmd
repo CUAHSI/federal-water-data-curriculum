@@ -1,15 +1,7 @@
 ---
 title: "Retrieving SWOT data: answers and more depth"
 subtitle: "Federal Open Water Data for Researchers · Session 3 (Module 3, Lesson 1) · Read after the session"
-format:
-  typst:
-    margin:
-      x: 2cm
-      y: 2cm
-    include-in-header:
-      text: |
-        #show raw.where(block: true): set text(size: 0.75em)
-        #show raw.where(block: true): it => { set par(justify: false); it }
+format: typst
 ---
 
 **Why this matters:** this reading has what you need to check your "Now you try it" work on the Willamette, plus
@@ -124,7 +116,7 @@ print("CRIDs:", full_record["crid"].value_counts().to_dict())
 CRIDs: {'PGD0': 118, 'PID0': 94}
 ```
 
-![The full science-orbit record of SWORD reach `74267300251` from one `hydrocron` request: 212 valid observations, 26 July 2023 to 27 September 2026. Data: NASA SWOT Level 2 River Single-Pass Vector product, Version D ([doi:10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D)), CRIDs `PGD0` (to May 2025) and `PID0` (after), via `hydrocron`, accessed 2026-10-08.](images/m03/swot-hydrocron-wse-full-record.png){fig-alt="Line chart of SWOT water surface elevation for reach 74267300251 from July 2023 to September 2026. Most values lie between 119 and 124 m. The highest peaks, about 131.5 m, are in February 2025 and April 2025; smaller peaks of about 127 m appear in January and April 2024."}
+![The full science-orbit record of SWORD reach `74267300251` from one `hydrocron` request: 212 valid observations, 26 July 2023 to 27 September 2026. Data: NASA SWOT Level 2 River Single-Pass Vector product, Version D ([doi:10.5067/SWOT-RIVERSP-D](https://doi.org/10.5067/SWOT-RIVERSP-D)), CRIDs `PGD0` (to May 2025) and `PID0` (after), via `hydrocron`, accessed 2026-10-08.](../../images/m03/swot-hydrocron-wse-full-record.png){fig-alt="Line chart of SWOT water surface elevation for reach 74267300251 from July 2023 to September 2026. Most values lie between 119 and 124 m. The highest peaks, about 131.5 m, are in February 2025 and April 2025; smaller peaks of about 127 m appear in January and April 2024."}
 
 Two things to notice:
 
