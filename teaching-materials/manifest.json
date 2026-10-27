@@ -66,8 +66,8 @@
         "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:51Z",
+      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
+      "built_at": "2026-10-27T16:14:38Z",
       "builder": "build-slides"
     },
     {
@@ -121,8 +121,8 @@
         "04-federal-water-data-synthesis",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:54Z",
+      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
+      "built_at": "2026-10-27T16:14:38Z",
       "builder": "build-slides"
     },
     {
@@ -144,8 +144,8 @@
         "glossary.md",
         "images/m01"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:47Z",
+      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
+      "built_at": "2026-10-27T16:14:37Z",
       "builder": "build-slides"
     },
     {
