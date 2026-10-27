@@ -107,8 +107,7 @@ The case study sidesteps converting between them by comparing changes. The CUAHS
 
 ## Agency recommendations, with sources
 
-The recommendations below are drafted from each agency's published guidance, each linked to its source, and are
-waiting for confirmation from the agencies.
+The recommendations below are drafted from each agency's published guidance, each linked to its source.
 
 **NASA (SWOT)**
 

@@ -134,11 +134,11 @@ Modules 3 and 4 run Python notebooks. Before **Session 3 (Nov 10)**:
 
 - Create a free **NASA Earthdata login** at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) (needed to download SWOT files).
 - Request a **USGS Water Data API key** at [api.waterdata.usgs.gov/signup](https://api.waterdata.usgs.gov/signup/) (optional; it raises your request limits).
-- Open the learner bundle from HydroShare; each lesson has its own **conda environment** file.
+- Open the learner bundle from HydroShare; each lesson has its own **conda environment** file. See 'How to' guide for launching HydroShare compute session.
 
 ::: notes
 - A conda environment is an isolated set of Python packages, defined by a file, so a lesson's code runs with known package versions.
-- Instructions for opening the bundle in the hosted HydroShare environment are on Canvas.
+- See 'How to' guide for launching HydroShare compute session: it covers opening the bundle in the hosted HydroShare environment.
 - Expect: "Do I need an NOAA account?" No: the NWM lesson needs no credentials.
 :::
 

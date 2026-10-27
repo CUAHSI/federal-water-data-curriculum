@@ -66,7 +66,7 @@ also tends to break when those systems change, which creates support work for th
 
 ## Two ways to run the course notebooks
 
-- **Hosted:** open the learner bundle in the hosted HydroShare environment, following the instructions on Canvas, and
+- **Hosted:** open the learner bundle in the hosted HydroShare environment (See 'How to' guide for launching HydroShare compute session), and
   pick the lesson's kernel (here `Python (m03-swot)`). If that kernel isn't listed, ask the instructor before the
   session.
 - **On your own computer:** install conda (for example [Miniforge](https://conda-forge.org/download/)), download the
