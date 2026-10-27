@@ -6,11 +6,12 @@
       "sources": [
         "01-data-best-practices/02_data_management.md",
         "01-data-best-practices/03_data_publishing.md",
+        "_quarto.yml",
         "glossary.md",
         "images/m01/02_data_management-dmp-guide.png"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:49Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:01Z",
       "builder": "build-slides"
     },
     {
@@ -18,10 +19,11 @@
       "kind": "reading",
       "sources": [
         "01-data-best-practices/01_open_science.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:50Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:01Z",
       "builder": "build-slides"
     },
     {
@@ -29,10 +31,11 @@
       "kind": "reading",
       "sources": [
         "02-federal-water-data-landscape",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:50Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:02Z",
       "builder": "build-slides"
     },
     {
@@ -40,10 +43,11 @@
       "kind": "reading",
       "sources": [
         "02-federal-water-data-landscape",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:50Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:02Z",
       "builder": "build-slides"
     },
     {
@@ -51,11 +55,12 @@
       "kind": "reading",
       "sources": [
         "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "_quarto.yml",
         "glossary.md",
         "images/m03/swot-hydrocron-wse-full-record.png"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:51Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:02Z",
       "builder": "build-slides"
     },
     {
@@ -64,10 +69,11 @@
       "sources": [
         "03-federal-water-data-access-retrieval/00_introduction.md",
         "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
-      "built_at": "2026-10-27T16:14:38Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:03Z",
       "builder": "build-slides"
     },
     {
@@ -75,10 +81,11 @@
       "kind": "reading",
       "sources": [
         "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:51Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:03Z",
       "builder": "build-slides"
     },
     {
@@ -86,10 +93,11 @@
       "kind": "reading",
       "sources": [
         "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:52Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:03Z",
       "builder": "build-slides"
     },
     {
@@ -97,10 +105,11 @@
       "kind": "reading",
       "sources": [
         "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:52Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:03Z",
       "builder": "build-slides"
     },
     {
@@ -108,10 +117,11 @@
       "kind": "reading",
       "sources": [
         "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:53Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:04Z",
       "builder": "build-slides"
     },
     {
@@ -119,10 +129,11 @@
       "kind": "reading",
       "sources": [
         "04-federal-water-data-synthesis",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
-      "built_at": "2026-10-27T16:14:38Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:04Z",
       "builder": "build-slides"
     },
     {
@@ -130,10 +141,11 @@
       "kind": "reading",
       "sources": [
         "04-federal-water-data-synthesis",
+        "_quarto.yml",
         "glossary.md"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:54Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:04Z",
       "builder": "build-slides"
     },
     {
@@ -141,11 +153,12 @@
       "kind": "slides",
       "sources": [
         "01-data-best-practices",
+        "_quarto.yml",
         "glossary.md",
         "images/m01"
       ],
-      "source_commit": "d811b1bd221fa5534679a101505daecb1f60d30e",
-      "built_at": "2026-10-27T16:14:37Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:04Z",
       "builder": "build-slides"
     },
     {
@@ -153,11 +166,12 @@
       "kind": "slides",
       "sources": [
         "02-federal-water-data-landscape",
+        "_quarto.yml",
         "glossary.md",
         "images/m02"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:47Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:05Z",
       "builder": "build-slides"
     },
     {
@@ -166,11 +180,12 @@
       "sources": [
         "03-federal-water-data-access-retrieval/00_introduction.md",
         "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
+        "_quarto.yml",
         "glossary.md",
         "images/m03"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:47Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:05Z",
       "builder": "build-slides"
     },
     {
@@ -178,11 +193,12 @@
       "kind": "slides",
       "sources": [
         "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
+        "_quarto.yml",
         "glossary.md",
         "images/m03"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:48Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:05Z",
       "builder": "build-slides"
     },
     {
@@ -190,11 +206,12 @@
       "kind": "slides",
       "sources": [
         "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
+        "_quarto.yml",
         "glossary.md",
         "images/m03"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:48Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:05Z",
       "builder": "build-slides"
     },
     {
@@ -202,11 +219,12 @@
       "kind": "slides",
       "sources": [
         "04-federal-water-data-synthesis",
+        "_quarto.yml",
         "glossary.md",
         "images/m04"
       ],
-      "source_commit": "9f3ce9441b745144d8d76f43802b77b3fe81feb8",
-      "built_at": "2026-10-26T03:37:49Z",
+      "source_commit": "f2a3063e52df07262ea8358bb42127909889131d",
+      "built_at": "2026-10-27T21:51:05Z",
       "builder": "build-slides"
     }
   ]
