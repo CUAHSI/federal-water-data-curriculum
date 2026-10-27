@@ -2,3 +2,7 @@
 _build/*
 .vscode/*
 __pycache__/
+
+# Quarto project cache (teaching-materials renders)
+/.quarto/
+**/*.quarto_ipynb
