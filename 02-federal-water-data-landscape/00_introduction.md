@@ -1,6 +1,6 @@
 # Module overview
 
-In this course, we cover three open river datasets published from Federal agencies. The *NASA Surface Water and Ocean Topography (SWOT)* satellite measures rivers from space. The *NOAA National Water Model (NWM)* simulates and forecasts streamflow for millions of river reaches. *USGS Water Data for the Nation (WDFN)* publishes measurements from thousands of monitoring locations on the ground.
+In this course, we cover three open river datasets published from Federal agencies. The *{term}`NASA Surface Water and Ocean Topography (SWOT)<SWOT>`* satellite measures rivers from space. The *{term}`NOAA National Water Model (NWM)<NWM>`* simulates and forecasts streamflow for millions of river reaches. *{term}`USGS Water Data for the Nation (WDFN)<WDFN>`* publishes measurements from thousands of monitoring locations on the ground.
 
 Before you write any code to retrieve these data (Module 3) or combine them (Module 4), it helps to know what each product
 *is*: what it measures or models, how the values are made, where and when they exist, and what can go wrong. That is the

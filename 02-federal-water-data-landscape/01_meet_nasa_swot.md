@@ -153,8 +153,8 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [SWOT Level 2 River Single-Pass Vector Data Product, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) (The **Product Description Document** is under the "Documents and Resources" tab)
 - [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3)
 - [NASA PO.DAAC Cookbook > SWOT Chapter](https://podaac.github.io/tutorials/quarto_text/SWOT.html) (e.g. guides and tutorials on data access, including via earthaccess python library, Hydrocron API, EGIS services, command line tools)
-- [`hydrocron` documentation (NASA PO.DAAC)](https://podaac.github.io/hydrocron/)
-- [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/)
+- [`hydrocron` documentation (NASA PO.DAAC)](https://podaac.github.io/hydrocron/) (Zenodo: https://doi.org/10.5281/zenodo.11176233)
+- [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/) (Zenodo: https://doi.org/10.5281/zenodo.8365009)
 - [SWOT River Database (SWORD) on Zenodo](https://zenodo.org/records/10013982) and [SWORD Explorer](https://www.swordexplorer.com/)
 - [NASA Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance), including how to cite data
 - Tools developed by USGS and CUAHSI working with the SWOT team and stakeholders:

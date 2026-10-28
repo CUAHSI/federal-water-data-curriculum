@@ -37,7 +37,7 @@ A **{term}`Data Management Plan <Data management plan>` (DMP; or DMSP for Data M
 
 Planning ahead also makes reproducibility easier. [Rosenberg et al. (2020)](https://doi.org/10.1061/%28ASCE%29WR.1943-5452.0001215) recommend building reproducibility into a project from the beginning, including budgeting the time and storage it takes.
 
-Many funders now require a DMP or DMSP as part of a proposal. While the specifics differ by agency and program, most ask you to address a similar set of questions outlined in the table below.
+Many funders now require a DMP or DMSP as part of a proposal, for example, [NASA Science Mission Directorate DMP guidance](https://www.earthdata.nasa.gov/engage/data-management-guidance/create-maintain-open-science-data-management-plan). While the specifics differ by agency and program, most ask you to address a similar set of questions outlined in the table below.
 
 | A DMP or DMSP often provides answers to... | What that can look like in a water project |
 | --- | --- |
