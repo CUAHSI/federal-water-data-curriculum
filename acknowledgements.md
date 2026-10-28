@@ -48,13 +48,16 @@ the page that uses it and listed on the [References](references.md) page.
   tutorials). https://podaac.github.io/tutorials/quarto_text/SWOT.html (accessed 2026-10-28).
 - SWOT Project. (2025). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset). NASA
   PO.DAAC. https://doi.org/10.5067/SWOT-RIVERSP-D (accessed 2026-10-28).
+- SWOT Project. (2025). *SWOT Level 2 Water Mask Raster Image Data Product, Version D* (dataset). NASA
+  PO.DAAC. https://doi.org/10.5067/SWOT-RASTER-D (accessed 2026-10-28).
 - SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science
   Data Products* (April 23, 2025). PO.DAAC.
   https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf
 - Tebaldi, N., Nickles, C., & Downs, B. (n.d.). *Hydrocron API: Getting Started with SWOT Time Series*.
   PO.DAAC Cookbook.
   https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html
-  (accessed 2026-10-28). This tutorial gave the course the idea for its Skagit River case study.
+  (accessed 2026-10-28). This tutorial gave the course the idea for its Skagit River case study and the Skagit SWORD reach IDs used
+  in Module 4.
 
 ### NOAA
 
@@ -76,6 +79,8 @@ the page that uses it and listed on the [References](references.md) page.
   https://doi.org/10.5066/P94I5TX3
 - U.S. Geological Survey. (n.d.). *How should I cite USGS Water Data for the Nation data?*
   https://waterdata.usgs.gov/citation/ (accessed 2026-10-28).
+- U.S. Geological Survey. (n.d.). *National Water Information System data available on the World Wide Web
+  (USGS Water Data for the Nation)* (dataset). https://doi.org/10.5066/F7P55KJN (accessed 2026-10-28).
 - U.S. Geological Survey. (n.d.). *Network Linked Data Index (NLDI) documentation*.
   https://api.water.usgs.gov/docs/nldi (accessed 2026-10-28).
 - U.S. Geological Survey. (n.d.). *Provisional data statement*.

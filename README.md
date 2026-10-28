@@ -112,7 +112,7 @@ Course planning lives in [`ROADMAP.md`](ROADMAP.md). Contributors working with C
 
 ## License and how to cite
 
-The course is licensed under the [GNU General Public License v3.0](LICENSE) (GPL-3.0), the same licence as the
+The course is licensed under the [GNU General Public License v3.0](LICENSE) (GPL-3.0), the same license as the
 [CUAHSI notebooks](https://github.com/CUAHSI/notebooks) it adapts code from. Each lesson credits its sources,
 and the References page lists them all. Contributors, the agency sources the course relies on most, funding and the use of AI tools are
 described on the Acknowledgements page. Both are on the [course site](https://cuahsi.github.io/federal-water-data-curriculum/)
