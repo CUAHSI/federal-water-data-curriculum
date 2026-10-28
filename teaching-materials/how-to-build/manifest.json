@@ -6,8 +6,8 @@
       "sources": [
         "01-data-best-practices"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:17Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:35Z",
       "builder": "build-quizzes"
     },
     {
@@ -16,8 +16,8 @@
       "sources": [
         "01-data-best-practices"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:17Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:35Z",
       "builder": "build-quizzes"
     },
     {
@@ -26,8 +26,8 @@
       "sources": [
         "01-data-best-practices"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:18Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:36Z",
       "builder": "build-quizzes"
     },
     {
@@ -36,8 +36,8 @@
       "sources": [
         "02-federal-water-data-landscape"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:18Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:36Z",
       "builder": "build-quizzes"
     },
     {
@@ -46,8 +46,8 @@
       "sources": [
         "02-federal-water-data-landscape"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:18Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:36Z",
       "builder": "build-quizzes"
     },
     {
@@ -56,8 +56,8 @@
       "sources": [
         "02-federal-water-data-landscape"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:18Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:36Z",
       "builder": "build-quizzes"
     },
     {
@@ -66,8 +66,8 @@
       "sources": [
         "03-federal-water-data-access-retrieval"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:19Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:37Z",
       "builder": "build-quizzes"
     },
     {
@@ -76,8 +76,8 @@
       "sources": [
         "03-federal-water-data-access-retrieval"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:19Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:37Z",
       "builder": "build-quizzes"
     },
     {
@@ -86,8 +86,8 @@
       "sources": [
         "03-federal-water-data-access-retrieval"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:19Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:37Z",
       "builder": "build-quizzes"
     },
     {
@@ -96,8 +96,8 @@
       "sources": [
         "04-federal-water-data-synthesis"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:20Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:37Z",
       "builder": "build-quizzes"
     },
     {
@@ -106,8 +106,8 @@
       "sources": [
         "04-federal-water-data-synthesis"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:20Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:37Z",
       "builder": "build-quizzes"
     },
     {
@@ -116,8 +116,8 @@
       "sources": [
         "04-federal-water-data-synthesis"
       ],
-      "source_commit": "bd8a9f43bd386ca97168138f876911115714a566",
-      "built_at": "2026-10-26T19:18:20Z",
+      "source_commit": "e5407461a22724112348580a20ca86be23267c1a",
+      "built_at": "2026-10-28T20:21:38Z",
       "builder": "build-quizzes"
     }
   ]
