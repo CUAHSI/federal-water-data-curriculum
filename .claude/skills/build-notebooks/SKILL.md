@@ -44,6 +44,9 @@ hand-write notebooks. For each lesson with code, it:
       them), prose is condensed to the explanation needed to run and read the code (2–4 sentences per
       block), and every code block becomes a code cell.
     - **Figures:** where the lesson shows a figure, the cell that makes it stays.
+    - **"Going further":** rows in the session's topic list (`teaching-materials/deck-prompts/topics/`)
+      whose "Where" is `notebook` only go in an optional "Going further" section at the end, after "Now you
+      try it", with the lesson's own headings and code.
 3. **"Now you try it":** the task text becomes a Markdown cell. The solution:
     - **Solutions notebook:** the full solution.
     - **Student notebook:** a scaffold from `scaffolds/<lesson>.yml` (cell → partially completed code with

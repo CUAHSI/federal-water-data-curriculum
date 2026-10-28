@@ -3,9 +3,9 @@
 Every generated output has an entry in ``teaching-materials/manifest.json``:
 
     {
-      "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd",
+      "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx",
       "kind": "slides",
-      "sources": ["03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03/..."],
+      "sources": ["teaching-materials/deck-prompts/topics/session-03.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03/..."],
       "source_commit": "<full SHA the output was built from>",
       "built_at": "2026-10-24T15:02:11Z",
       "builder": "build-slides"

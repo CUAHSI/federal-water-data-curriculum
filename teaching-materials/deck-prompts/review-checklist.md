@@ -1,0 +1,30 @@
+# Review checklist for a generated deck
+
+Go through this before a deck is used or committed. It takes about 20 minutes per deck.
+
+## Content
+- [ ] Every `deck` row in the topic list is on a slide, in order, and nothing else is.
+- [ ] Every claim, number, date and code line matches the lesson page. Spot-check at least five.
+- [ ] No `CONTENT NEEDED` or `FIGURE NEEDED` placeholder is left (or each one has an owner).
+- [ ] No internal course links, no dev-team or partner-review notes.
+- [ ] Agency order NASA → NOAA → USGS; "WDFN", not "NWIS" (except the legacy contrast).
+- [ ] Live-coding slides name the right notebook file and sections, and give the time to come back.
+
+## Look
+- [ ] Flip through at full screen: it looks like your other decks, not like a different designer's.
+- [ ] No layered shapes, decorative icons, cards, gradients, shadows or emoji (design rules §10).
+- [ ] One emphasis device per slide, and it points at what you'll talk about.
+- [ ] No text below 16 pt except credit lines; nothing overflows or overlaps.
+- [ ] Builds line up: flick back and forth, and only the one change should move.
+- [ ] No PowerPoint animations or transitions (Transitions and Animations tabs are empty).
+- [ ] Every borrowed image has a credit line and alt text.
+
+## Pacing
+- [ ] Rehearse, or at least click through with a timer: each block lands near its minutes in the topic list.
+- [ ] Speaker notes on every slide; "If short on time:" marks what you can skip.
+
+## Record it
+- [ ] Save the deck under the name in the topic list header, in `teaching-materials/slides/`.
+- [ ] Record it in the manifest (see README.md, step 6) and commit the deck, the manifest and any topic-list
+      edits together.
+- [ ] If you fixed content on a slide, fix the lesson page too, or the next build undoes it.

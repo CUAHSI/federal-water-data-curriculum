@@ -1,7 +1,6 @@
 # Teaching materials
 
-Everything needed to *run* *Federal Open Water Data for Researchers*: session slides, pre- and post-session
-readings, the learner bundle for HydroShare, the module quizzes and the instructor guide. These files are
+Everything needed to *run* *Federal Open Water Data for Researchers*: session slides, module readings, the learner bundle for HydroShare, the module quizzes and the instructor guide. These files are
 generated from the lesson pages (`0*/`), which stay the single source of truth. To fix content, edit the
 lesson, then rebuild. This folder isn't part of the website build (`myst.yml` excludes it).
 
@@ -19,7 +18,8 @@ the skill's steps. Only some steps are plain scripts you run yourself:
 - `tools/prepare_learner_copy.py` and `tools/check_stale.py` (standard library only, any Python 3.9 or later; no
   conda environment needed);
 - `tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
-- rendering: `quarto render` locally, or Actions → Render slides → Run workflow;
+- `tools/check_topics.py`, which checks the session topic lists in `deck-prompts/topics/`;
+- rendering readings: `quarto render` locally, or Actions → Render readings → Run workflow;
 - quizzes: `text2qti <file>.txt` makes the QTI zip.
 
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
@@ -32,7 +32,7 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 
 | Skill | Needs | Used for |
 |---|---|---|
-| `build-slides` | [Quarto](https://quarto.org/docs/get-started/) 1.4 or later (it bundles Typst, so no LaTeX) | rendering decks and readings on your machine. Optional: the Render slides action installs its own Quarto |
+| `build-slides` | Your template and example decks in `deck-prompts/reference/` (see its README); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings. The Render readings action installs its own Quarto |
 | `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
@@ -99,14 +99,15 @@ works outside this folder.
 
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
-| `slides/` | One Quarto reveal.js deck (`.qmd`, with speaker notes) per session; `slides/rendered/` holds the HTML, PPTX and PDF renders of the decks **and the reading PDFs**, from the "Render slides" workflow | `build-slides` skill | Yes, via Canvas | E |
-| `readings/` | Pre- and post-session readings (`.qmd`; rendered to PDF) | `build-slides` skill | Yes, via Canvas | E |
+| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck and reading prompts, and a review checklist. **Source, not generated**; `reference/` holds each builder's own template and example decks and isn't committed | people | No | E |
+| `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
+| `readings/` | At most one reading per module for Modules 2–4 (`.qmd`; rendered to PDF in `readings/rendered/` by the "Render readings" workflow) | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
 | `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
 | `quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
 | `quizzes/*_key.md` | Answer key and objective coverage per quiz | `build-quizzes` skill | **No**, instructors only | H |
 | `instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
-| `tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `build_notebooks.py` (lane F) | | No | |
+| `tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `check_topics.py` (lane E); `build_notebooks.py` (lane F) | | No | |
 | `manifest.json` | One entry per generated output: its sources and the commit it was built from | `check_stale.py --update` | No | every lane |
 
 Decks are built from learner copies, so their speaker notes follow the learner-facing rules too (no internal
@@ -159,7 +160,7 @@ To rebuild an output, on your feature branch:
 it for each path) replaces the recorded sources. Paths are repo-relative. A directory in `sources` (e.g.
 `01-data-best-practices` or `images/m03`) covers every file under it.
 
-Renders in `slides/rendered/` have no manifest entries: they follow their `.qmd`, so re-render a deck
+Reading PDFs in `readings/rendered/` have no manifest entries: they follow their `.qmd`, so re-render a reading
 whenever its `.qmd` is rebuilt. Recorded commits must stay reachable, so merge PRs with merge commits, not
 squash merges; otherwise `check_stale.py` reports the entry's commit as "not in this clone" and it needs
 recording again.
@@ -168,9 +169,9 @@ Each manifest entry looks like this:
 
 ```json
 {
-  "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd",
+  "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx",
   "kind": "slides",
-  "sources": ["03-federal-water-data-access-retrieval/00_introduction.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03"],
+  "sources": ["teaching-materials/deck-prompts/topics/session-03.md", "teaching-materials/deck-prompts/design-rules.md", "03-federal-water-data-access-retrieval/00_introduction.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03"],
   "source_commit": "<full SHA>",
   "built_at": "2026-10-26T15:02:11Z",
   "builder": "build-slides"
@@ -207,17 +208,23 @@ shortened to `synthesizing-federal-data-products`. So `module-03_lesson-01_retri
 
 | Session | Deck (`slides/`) |
 |---|---|
-| 1 | `session-01_module-01_data-best-practices.qmd` |
-| 2 | `session-02_module-02_federal-water-data-landscape.qmd` |
-| 3 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd` |
-| 4 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.qmd` |
-| 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.qmd` |
-| 6 | `session-06_module-04_federal-water-data-synthesis.qmd` |
+| 1 | `session-01_module-01_data-best-practices.pptx` |
+| 2 | `session-02_module-02_federal-water-data-landscape.pptx` |
+| 3 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx` |
+| 4 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx` |
+| 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` |
+| 6 | `session-06_module-04_federal-water-data-synthesis.pptx` |
 
-A reading has its deck's name plus `_pre-reading.qmd` or `_post-reading.qmd`, in `readings/`, e.g.
-`readings/session-03_module-03_lesson-01_retrieve-nasa-swot-data_pre-reading.qmd`. Skip a reading when nothing
-needs to go in it. Renders keep the same base name (`.html`, `.pptx`, `.pdf`); deck renders and reading PDFs
-both land in `slides/rendered/`.
+Readings are per module, for Modules 2–4 only, named `module-NN_reading_<module slug>.qmd`:
+
+| Module | Reading (`readings/`) | From the `reading` rows of |
+|---|---|---|
+| 2 | `module-02_reading_federal-water-data-landscape.qmd` | session 2 |
+| 3 | `module-03_reading_federal-water-data-access-retrieval.qmd` | sessions 3–5 |
+| 4 | `module-04_reading_federal-water-data-synthesis.qmd` | session 6 |
+
+Skip a reading when its topic lists have no `reading` rows. Its PDF keeps the same base name, in
+`readings/rendered/`.
 
 ### Learner bundle (lane F)
 
@@ -256,7 +263,7 @@ in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are show
 ### Instructor guide (P8.5)
 
 `instructor-guide/00_start-here.md`, `01_prepare-to-teach.md`, `02_how-the-course-is-built.md`, and one
-`session-NN_<deck slug>.md` per session using the deck names above without `.qmd`, e.g.
+`session-NN_<deck slug>.md` per session using the deck names above without `.pptx`, e.g.
 `session-03_module-03_lesson-01_retrieve-nasa-swot-data.md`.
 
 ## Learner-facing outputs

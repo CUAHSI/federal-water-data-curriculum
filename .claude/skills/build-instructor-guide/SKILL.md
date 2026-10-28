@@ -36,7 +36,8 @@ Output: `teaching-materials/instructor-guide/`
       labelled for these lessons (`gh issue list`), and reviewer findings
     - the quiz: which module quiz, the objectives it covers (from its `_key.md`), and the questions learners
       most often miss (after the pilot, from Canvas reports)
-    - the pre- and post-session readings: what's in them and when to post them in Canvas
+    - the module reading (Modules 2–4 only): what's in it and when to post it in Canvas; the session's topic
+      list (`teaching-materials/deck-prompts/topics/`) says what was left out of the deck and where it went
 4. **`02_how-the-course-is-built.md`**: how content flows (lesson pages → skills → teaching materials), how to
    fix a mistake (edit the lesson, rebuild, check stale), and the review process.
 
