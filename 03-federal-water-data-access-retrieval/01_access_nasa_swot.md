@@ -5,7 +5,7 @@ the files that cover a river, download them, and pull a water surface elevation 
 SWOT, its products and its quality flags in [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md). Here
 you put that into code.
 
-You will be using SWOT data to investigate the 2025 spring flood of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers). It is well above the roughly 100 m that SWOT observes reliably, and SWOT passes over Louisville several times in each
+You will be using SWOT data to investigate the 2025 spring flood of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers). It is well above the roughly 100 m river width that SWOT observes reliably, and SWOT passes over Louisville several times in each
 21-day {term}`cycle<Cycle and pass>`. The window includes the flood, so you can watch the river's water surface rise and fall in
 SWOT's own data.
 
@@ -26,12 +26,10 @@ SWOT has two hydrology products you will use. They answer different questions, s
 
 | Your question | Product | Collection short name (Version D) | What you get |
 |---|---|---|---|
-| How did a river reach's water surface elevation (and width) change over time? | River single-pass vector (**RiverSP**) | `SWOT_L2_HR_RiverSP_D` (reaches and nodes) | One row per {term}`reach <Reach>` (~10 km) or {term}`node <Node>` (~200 m) per overpass: `wse`, `width`, quality flags |
+| What was a river's water surface elevation (and width) on one overpass? | River single-pass vector (**RiverSP**) | `SWOT_L2_HR_RiverSP_D` (reaches and nodes) | One observation/row per {term}`reach <Reach>` (~10 km) or {term}`node <Node>` (~200 m) per overpass: `wse`, `width`, quality flags |
 | Where was there water, and how much area did it cover, on one overpass? | Water mask raster (**Raster**) | `SWOT_L2_HR_Raster_100m_D` (also `_250m_D`) | A gridded scene (100 m or 250 m pixels) per overpass: `water_area`, `water_frac`, `wse` and their quality flags |
 
-RiverSP is tied to the river centerlines of the {term}`SWOT River Database (SWORD) <SWORD>`, so it describes the channel. It
-does not tell you how far water spread out of bank. Raster is not tied to a river network, so it can show water anywhere in
-the scene, including floodplains.
+SWOT Observations in the RiverSP data product are tied/mapped to the river centerlines of the {term}`SWOT River Database (SWORD) <SWORD>`, so they provide measurements (wse, width, slope, etc.) describing the river channel. It does not tell you how far water might spread out of bank.
 
 There are two ways to get these products with code, and they scale differently:
 
