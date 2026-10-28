@@ -1,10 +1,11 @@
 ![Static Badge](https://img.shields.io/badge/course_status-under_development-%23fcc200?style=for-the-badge)
 
-# Federal Open Water Data for Researchers
+# Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access
 
-This repo holds the course materials for *Federal Open Water Data for Researchers*, a micro-credentialing
-course from CUAHSI (the Consortium of Universities for the Advancement of Hydrologic Science, Inc.) (about 20 hours). Researchers and graduate students with some Python learn to
-find, retrieve and combine federal open water data: NASA SWOT, the NOAA National Water Model (NWM) and
+This repo holds the course materials for *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a micro-credentialing course
+(about 20 hours) from CUAHSI (the Consortium of Universities for the Advancement of Hydrologic Science, Inc.).
+Researchers and graduate students with some Python learn to build reproducible workflows that find, retrieve
+and combine federal open water data: NASA SWOT, the NOAA National Water Model (NWM) and
 USGS Water Data for the Nation (WDFN). The course will later move into
 [CUAHSI's Water Content Portal](https://water-content-portal.cuahsi.io/).
 
@@ -55,32 +56,45 @@ myst start
 
 ## Teaching materials
 
-`teaching-materials/` holds what's needed to *run* the course. It isn't part of the website:
+`teaching-materials/` holds what's needed to *run* the course. It isn't part of the website. It has two
+folders:
 
-- `slides/`: one Quarto reveal.js deck per session, with speaker notes (`slides/rendered/` holds the HTML,
-  PPTX and PDF renders, plus the reading PDFs)
-- `readings/`: pre- and post-session readings for the content the session time can't cover
-- `learner-bundle/`: student and solutions notebooks, environment files and a README, for HydroShare
-- `quizzes/`: one quiz per module, as `text2qti` text plus a QTI zip for Canvas
-- `instructor-guide/`: prep material for a new or substitute instructor
+- **`materials/`: what learners and instructors use.**
+  - `slides/`: one PowerPoint deck per session, with speaker notes
+  - `readings/`: one reading per module for Modules 2–4, with the detail the sessions don't cover (Word,
+    exported to PDF)
+  - `learner-bundle/`: student and solutions notebooks, environment files and a README, for HydroShare
+  - `quizzes/`: one quiz per module, as `text2qti` text plus a QTI zip for Canvas, with answer keys for
+    instructors
+  - `instructor-guide/`: prep material for a new or substitute instructor
 
-These files are generated from the lesson pages. To change content, edit the lesson, then rebuild.
-[`teaching-materials/README.md`](teaching-materials/README.md) explains the session map, the file names, the
-setup each builder needs, and the tools.
+  Decks and readings are built locally and shared through Canvas. They're git-ignored and never committed.
+- **`how-to-build/`: how the materials are made.** The guide for decks and readings (`guide.md`), the
+  per-session topic lists, the prompts, design rules and review checklist, the deck template, the notebook
+  scaffolds, and the tools (`check_stale.py`, `check_topics.py`, `prepare_learner_copy.py`,
+  `build_notebooks.py`). Nothing in it goes to learners.
+
+Everything in `materials/` is generated from the lesson pages. To change content, edit the lesson, then
+rebuild. [`teaching-materials/README.md`](teaching-materials/README.md) explains the session map, the file
+names, the setup each builder needs, and the tools.
 
 ### How to rebuild
 
-- **Regenerate content** with the [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`: `build-slides`, `build-notebooks`,
-  `build-quizzes` and `build-instructor-guide`. Ask an agent to run the skill, or follow its `SKILL.md` steps
-  by hand. [`AGENT_SETUP.md`](AGENT_SETUP.md) explains how to set up Claude Code for this repo.
-- **Render the slides and readings** with the "Render slides" action (**Actions → Render slides → Run
-  workflow**). It can open a draft PR with the rendered files. To render locally, run `quarto render` on a
-  deck or reading (needs [Quarto](https://quarto.org/docs/get-started/)).
+The builders are [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`. Ask an agent to
+run one, or follow its `SKILL.md` steps by hand. [`AGENT_SETUP.md`](AGENT_SETUP.md) explains how to set up
+Claude Code for this repo.
+
+- **Build or update decks and readings** with `/build-slides` (see
+  [`teaching-materials/how-to-build/guide.md`](teaching-materials/how-to-build/guide.md), which also covers
+  building them in Claude on the web or desktop). They're built on your machine and shared through Canvas,
+  never committed.
+- **Regenerate notebooks and quizzes** with the `build-notebooks` and `build-quizzes` skills, and the
+  instructor guide with `build-instructor-guide`.
 - **Rebuild a quiz's QTI zip** with `text2qti <file>.txt` (`pip install text2qti`).
-- **Find stale outputs** (outputs whose lesson pages changed since they were built):
+- **Find stale outputs** (committed outputs whose lesson pages changed since they were built):
 
   ```bash
-  python teaching-materials/tools/check_stale.py
+  python teaching-materials/how-to-build/tools/check_stale.py
   ```
 
 ## Contributing
@@ -98,10 +112,10 @@ Course planning lives in [`ROADMAP.md`](ROADMAP.md). Contributors working with C
 
 ## License and how to cite
 
-The course is licensed under GPL-3.0, matching the
+The course is licensed under the [GNU General Public License v3.0](LICENSE) (GPL-3.0), the same licence as the
 [CUAHSI notebooks](https://github.com/CUAHSI/notebooks) it adapts code from. Each lesson credits its sources,
-and the References page lists them all. Contributors, funding and the use of AI tools are described on the
-Acknowledgements page. Both are on the [course site](https://cuahsi.github.io/federal-water-data-curriculum/)
+and the References page lists them all. Contributors, the agency sources the course relies on most, funding and the use of AI tools are
+described on the Acknowledgements page. Both are on the [course site](https://cuahsi.github.io/federal-water-data-curriculum/)
 (sources: [`references.md`](references.md), [`acknowledgements.md`](acknowledgements.md)).
 
 To cite the course, use [`CITATION.cff`](CITATION.cff) (on GitHub, **Cite this repository** in the sidebar

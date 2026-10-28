@@ -1,7 +1,7 @@
 version: 1
 project:
   id: federal-water-data-course
-  title: "Federal Open Water Data for Researchers"
+  title: "Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access"
   github: https://github.com/CUAHSI/federal-water-data-curriculum
   # Teaching materials are generated from the pages and are not part of the website (STYLE_GUIDE §11).
   exclude:

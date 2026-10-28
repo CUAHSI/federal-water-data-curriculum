@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use or adapt these course materials, please cite them as below."
-title: "Federal Open Water Data for Researchers"
+title: "Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access"
 abstract: >-
-  Learning materials for a CUAHSI micro-credentialing course on finding, retrieving and combining
-  federal open water data (NASA SWOT, the NOAA National Water Model and USGS Water Data for the Nation)
+  Learning materials for a CUAHSI micro-credentialing course on building reproducible workflows that find,
+  retrieve and combine federal open water data (NASA SWOT, the NOAA National Water Model and USGS Water Data for the Nation)
   with Python. Includes the course website (MyST Markdown lessons) and generated teaching materials
   (slides, readings, notebooks, quizzes and an instructor guide).
 authors:
@@ -29,6 +29,7 @@ repository-code: "https://github.com/CUAHSI/federal-water-data-curriculum"
 url: "https://cuahsi.github.io/federal-water-data-curriculum/"
 keywords:
   - learning material
+  - reproducible workflows
   - open educational resource
   - hydrology
   - federal water data
@@ -37,7 +38,7 @@ keywords:
   - USGS Water Data for the Nation
 preferred-citation:
   type: generic
-  title: "Federal Open Water Data for Researchers"
+  title: "Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access"
   medium: "Learning material (online course)"
   authors:
     - given-names: Lindsay

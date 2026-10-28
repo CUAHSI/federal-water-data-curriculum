@@ -2,7 +2,7 @@
 title: Acknowledgements
 ---
 
-*Federal Open Water Data for Researchers* was developed by CUAHSI with contributions from colleagues at NOAA,
+*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI with contributions from colleagues at NOAA,
 USGS and NASA. Contributions are described with the [CRediT contributor roles](https://credit.niso.org/).
 
 ## Contributors
@@ -33,6 +33,55 @@ endorsement of this course by NASA, NOAA or USGS.
 
 This course adapts code and examples from the [CUAHSI notebooks](https://github.com/CUAHSI/notebooks)
 repository (GPL-3.0); individual lessons credit the notebooks they draw on.
+
+## Agency sources
+
+The lessons rely heavily on documentation, tutorials, data and software that NASA, NOAA and USGS publish
+openly. The sources used most across the course are listed below. Every source, including these, is cited on
+the page that uses it and listed on the [References](references.md) page.
+
+### NASA
+
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *Hydrocron documentation*
+  (software). https://podaac.github.io/hydrocron/ (accessed 2026-10-28).
+- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *SWOT* (PO.DAAC Cookbook
+  tutorials). https://podaac.github.io/tutorials/quarto_text/SWOT.html (accessed 2026-10-28).
+- SWOT Project. (2025). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset). NASA
+  PO.DAAC. https://doi.org/10.5067/SWOT-RIVERSP-D (accessed 2026-10-28).
+- SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science
+  Data Products* (April 23, 2025). PO.DAAC.
+  https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf
+- Tebaldi, N., Nickles, C., & Downs, B. (n.d.). *Hydrocron API: Getting Started with SWOT Time Series*.
+  PO.DAAC Cookbook.
+  https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html
+  (accessed 2026-10-28). This tutorial gave the course the idea for its Skagit River case study.
+
+### NOAA
+
+- NOAA National Water Model. (n.d.). *NOAA National Water Model CONUS retrospective dataset* (dataset).
+  Registry of Open Data on AWS. https://registry.opendata.aws/nwm-archive/ (accessed 2026-10-28).
+- NOAA National Water Model. (n.d.). *NOAA National Water Model short-range forecast* (dataset; operational
+  NWM output). Registry of Open Data on AWS. https://registry.opendata.aws/noaa-nwm-pds/ (accessed 2026-10-28).
+- NOAA Office of Water Prediction. (n.d.). *About the National Water Model*. https://water.noaa.gov/about/nwm
+  (accessed 2026-10-28).
+- NOAA Office of Water Prediction. (n.d.). *National Water Model API* (experimental; documentation).
+  https://api.water.noaa.gov/nwm/v1/docs (accessed 2026-10-28).
+- NOAA Office of Water Prediction. (n.d.). *OWPHydroTools* (software). GitHub.
+  https://github.com/NOAA-OWP/hydrotools (accessed 2026-10-28).
+
+### USGS
+
+- Hodson, T. O., & Hariharan, J. A. (2023). *dataretrieval (python): a Python package for discovering and
+  retrieving water data available from Federal hydrologic web services* (software). U.S. Geological Survey.
+  https://doi.org/10.5066/P94I5TX3
+- U.S. Geological Survey. (n.d.). *How should I cite USGS Water Data for the Nation data?*
+  https://waterdata.usgs.gov/citation/ (accessed 2026-10-28).
+- U.S. Geological Survey. (n.d.). *Network Linked Data Index (NLDI) documentation*.
+  https://api.water.usgs.gov/docs/nldi (accessed 2026-10-28).
+- U.S. Geological Survey. (n.d.). *Provisional data statement*.
+  https://waterdata.usgs.gov/provisional-data-statement/ (accessed 2026-10-28).
+- U.S. Geological Survey. (n.d.). *USGS Water Data APIs* (documentation). https://api.waterdata.usgs.gov/
+  (accessed 2026-10-28).
 
 ## Funding
 
