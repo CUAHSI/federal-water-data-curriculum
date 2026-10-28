@@ -1,6 +1,6 @@
 ---
 name: build-quizzes
-description: Draft or rebuild the module quizzes (one per module, multiple choice with some select-all-that-apply, aligned to the module's learning objectives) as text2qti files and QTI zips for Canvas New Quizzes. Use when asked to make or update quizzes, or when check_stale.py lists a quiz.
+description: Draft or rebuild the module quizzes (one per module, multiple choice with some select-all-that-apply, aligned to the module's learning objectives) as text2qti files and QTI zips for Canvas New Quizzes. Quizzes are built locally and never committed. Use when asked to make or update quizzes.
 ---
 
 # Build module quizzes
@@ -46,12 +46,33 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
       and an explanation are shown after each attempt."
     - `shuffle answers: true` if the installed `text2qti` supports it (check `text2qti --help` or its docs)
     - one point per question
-- Build: `text2qti <file>.txt` → `<file>.zip` (commit both). Fix any parse errors.
+- Build: `text2qti <file>.txt` → `<file>.zip`. Fix any parse errors.
 - Key: `teaching-materials/materials/quizzes/module-NN_quiz_<module-slug>_key.md`, containing the coverage table plus,
   per question, its objective, the correct option and the lesson section it draws on. It's for spot-checking
-  and for the instructor guide.
+  and for the instructor guide. Its first lines record `Built from <short commit>` and the build date. Build on
+  an `upstream/dev` commit (one that's already pushed), so anyone can later check whether the lessons changed
+  since, e.g. `git diff abc1234 HEAD -- 03-federal-water-data-access-retrieval`.
+- The key ends with the "In Canvas after import" checklist below.
+- **Save, don't commit.** `teaching-materials/materials/quizzes/` is git-ignored, like the slides and readings:
+  quiz questions and answer keys never go into the repo, a PR, an issue or `manifest.json`. Commit only changes
+  to these instructions.
+- **Hand over all three files** (`.txt`, `.zip`, `_key.md`) together to Lindsay, who keeps them in a private,
+  backed-up course folder outside the repo. Canvas can't give back the `.txt`, so without that copy nobody
+  else can update the quiz. To update a quiz someone else built, get the three files from that folder first.
 
-## Review before the PR
+## In Canvas after import
+Import each `.zip` into the module's Canvas course as a QTI package (Settings → Import course content →
+QTI .zip file); it arrives as a New Quiz. Then check, and set by hand where needed:
+- **Allowed attempts:** Unlimited. The installed `text2qti` (0.8.0 at the time of writing) always writes one
+  attempt into the zip, so this always needs changing.
+- **Score to keep:** Highest.
+- **What students see after an attempt:** their responses, the correct answers and the feedback, as the quiz
+  description promises.
+- **Shuffle answers** is on, each question is worth one point, and code blocks, superscripts and the general
+  and incorrect-answer feedback display.
+- Any course-wide passing score for the module (issue #32) is set as decided for the course.
+
+## Review before handing over
 Re-read each question as the target learner (STYLE_GUIDE §3):
 - Is it answerable from the session plus its readings alone?
 - Is exactly one option defensible (or, for select-all, is each option clearly right or wrong)?
@@ -59,7 +80,16 @@ Re-read each question as the target learner (STYLE_GUIDE §3):
 
 Run `learner-reviewer` on the quiz files if time allows.
 
-## Record and report
-Update `manifest.json` for each `.txt` and `.zip` (`check_stale.py --update`), with the overview, lesson pages
-and deck as `sources`. The PR reports the coverage tables, question counts, estimated minutes per quiz, and
-anything you couldn't test because the lessons don't teach it clearly (a lesson gap).
+## Report
+Report in your Claude Code chat or directly to Lindsay, not in a PR or issue (they're public; unlike decks,
+whose report can go in a PR): where the files were saved, the build commit,
+question counts, estimated minutes per quiz, the reviewers' summary lines, and anything you couldn't test
+because the lessons don't teach it clearly (a lesson gap). Lesson gaps can go in a PR or issue, as long as
+they don't quote or give away quiz questions.
+
+## Update
+To update a quiz after lesson changes, run `git diff <built-from commit> HEAD -- <module folder>` with the
+commit from the key. A changed deck or reading for that module can also call for a quiz review. Revise only the
+questions those changes affect, rebuild the zip, record the new commit in the key, and hand the three files
+over again. In Canvas, import the new zip as a new quiz and work through the checklist above; if learners have
+already taken the old one, ask Lindsay before unpublishing or deleting it, since that affects their scores.

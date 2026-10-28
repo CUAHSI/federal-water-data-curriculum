@@ -266,8 +266,11 @@ to run, what to point out, and when to come back.
 
 **Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
+Quiz questions and answer keys never go into the repo, a PR or an issue.
 
-**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks
-and module readings are the exception: they're built locally, never committed (`materials/slides/` and `materials/readings/` are
-git-ignored), and record their build commit in the file itself.
-`python teaching-materials/how-to-build/tools/check_stale.py` lists what needs rebuilding.
+**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks,
+module readings and quizzes are the exception: they're built locally, never committed (`materials/slides/`,
+`materials/readings/` and `materials/quizzes/` are git-ignored), and record their build commit in the file itself
+(for a quiz, in its answer key).
+`python teaching-materials/how-to-build/tools/check_stale.py` lists which committed outputs need rebuilding. For the
+local-only files, compare their recorded commit with `git diff <commit> HEAD -- <sources>`.

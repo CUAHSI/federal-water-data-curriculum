@@ -12,7 +12,7 @@ teaching-materials/
 │   ├── slides/              session decks (PowerPoint; local only, never committed)
 │   ├── readings/            module readings (Word and PDF; local only, never committed)
 │   ├── learner-bundle/      notebooks and environments for HydroShare
-│   ├── quizzes/             Canvas quizzes and answer keys
+│   ├── quizzes/             Canvas quizzes and answer keys (local only, never committed)
 │   └── instructor-guide/    prep for a new or substitute instructor
 └── how-to-build/    HOW IT'S MADE: instructions, prompts, templates and tools
     ├── guide.md             start here to build or update slides and readings
@@ -128,8 +128,8 @@ works outside this folder.
 | `materials/slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
 | `materials/readings/` | At most one reading per module for Modules 2–4 (a Word document, exported to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
 | `materials/learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `how-to-build/tools/build_notebooks.py` | Yes, via HydroShare | F |
-| `materials/quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
-| `materials/quizzes/*_key.md` | Answer key and objective coverage per quiz | `build-quizzes` skill | **No**, instructors only | H |
+| `materials/quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas. **Git-ignored: quizzes are built locally and never committed**, and aren't in `manifest.json`. Kept with their keys in a private course folder and loaded into Canvas | `build-quizzes` skill | Yes, via Canvas | H |
+| `materials/quizzes/*_key.md` | Answer key and objective coverage per quiz, with the commit it was built from. **Git-ignored**, like the quizzes | `build-quizzes` skill | **No**, instructors only | H |
 | `materials/instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
 
 **`how-to-build/`: how it's made** (nothing here goes to learners)
@@ -177,20 +177,21 @@ text, counts = prepare(open(page, encoding="utf-8").read())
 **`how-to-build/tools/check_stale.py`.** Lists outputs whose sources changed since they were built (exit code 1 if any).
 A `STALE` line names the output; its manifest entry's `builder` says which skill rebuilds it.
 
-To rebuild an output, on your feature branch:
+To rebuild an output, on your feature branch (slides, readings and quizzes are local only: skip steps 3–5 and
+record the build commit in the file itself, for a quiz in its answer key):
 
 1. Commit the lesson change. Staleness is measured against commits, so uncommitted edits don't count.
 2. Run the builder (the skill, or the script).
 3. Record the rebuild:
    ```bash
-   python teaching-materials/how-to-build/tools/check_stale.py --update teaching-materials/materials/quizzes/module-01_quiz_data-best-practices.txt \
-       --kind quiz --builder build-quizzes --source 01-data-best-practices
+   python teaching-materials/how-to-build/tools/check_stale.py --update teaching-materials/materials/learner-bundle/README.md \
+       --kind bundle-readme --builder build-notebooks --source 03-federal-water-data-access-retrieval
    ```
 4. Commit the output and `manifest.json` together.
 5. Run `python teaching-materials/how-to-build/tools/check_stale.py`: the output should no longer be listed.
 
-`--kind` is one of `slides`, `reading`, `notebook`, `environment`, `bundle-readme`, `quiz`,
-`instructor-guide` (answer keys use `quiz`). `--kind`, `--builder` and `--source` are needed only for a new entry; `--source` (repeat
+`--kind` is one of `notebook`, `environment`, `bundle-readme` or `instructor-guide` (`slides`, `reading` and
+`quiz` are still accepted, but those outputs are local only and never recorded). `--kind`, `--builder` and `--source` are needed only for a new entry; `--source` (repeat
 it for each path) replaces the recorded sources. Paths are repo-relative. A directory in `sources` (e.g.
 `01-data-best-practices` or `images/m03`) covers every file under it.
 
@@ -202,12 +203,12 @@ Each manifest entry looks like this:
 
 ```json
 {
-  "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
-  "kind": "quiz",
+  "output": "teaching-materials/materials/learner-bundle/README.md",
+  "kind": "bundle-readme",
   "sources": ["03-federal-water-data-access-retrieval"],
   "source_commit": "<full SHA>",
   "built_at": "2026-10-26T15:02:11Z",
-  "builder": "build-slides"
+  "builder": "build-notebooks"
 }
 ```
 
@@ -286,6 +287,8 @@ Module 4 lesson 3 has three short code blocks; lane F decides whether they make 
 in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are shown on slides).
 
 ### Quizzes (lane H)
+
+Local only (git-ignored) and never committed: see the `build-quizzes` skill for handover and Canvas setup.
 
 | Module | Quiz source | QTI zip | Answer key |
 |---|---|---|---|
