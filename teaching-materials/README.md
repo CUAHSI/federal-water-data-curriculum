@@ -22,7 +22,7 @@ teaching-materials/
     ├── scaffolds/           hand-edited "Now you try it" starters for the notebooks
     ├── tools/               scripts (check_stale, check_topics, prepare_learner_copy, build_notebooks)
     ├── manifest.json        what each committed output was built from
-    ├── templates/           deck and reading templates (local only)
+    ├── templates/           the deck template (committed); reading template, example decks (local only)
     └── to-update/           existing decks or readings to update (local only)
 ```
 
@@ -139,7 +139,8 @@ works outside this folder.
 | `how-to-build/guide.md`, `*-prompt.md`, `design-rules.md`, `review-checklist.md` | How to build and update decks and readings, the prompts Claude follows, the look, and the review checklist | people | E |
 | `how-to-build/topics/` | One topic list per session: what goes on the deck, in a notebook, in a reading or nowhere | people | E |
 | `how-to-build/scaffolds/` | Hand-edited "Now you try it" starters (`<lesson file stem>.yml`) that `build_notebooks.py` turns into the student notebooks' starter cells | people (lane F drafts them) | F |
-| `how-to-build/templates/`, `how-to-build/to-update/` | Each builder's deck and reading templates and example decks, and existing decks or readings to update. **Local only:** git-ignored, never committed | people | E |
+| `how-to-build/templates/template.pptx` | The course deck template: one example slide per slide type, copied by every deck build. **Committed** | people | E |
+| `how-to-build/templates/` (everything else), `how-to-build/to-update/` | The reading template, example decks, and existing decks or readings to update. **Local only:** git-ignored, never committed | people | E |
 | `how-to-build/tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `check_topics.py` (lane E); `build_notebooks.py` (lane F) | people | all |
 | `how-to-build/manifest.json` | One entry per committed output: its sources and the commit it was built from | `check_stale.py --update` | every lane |
 

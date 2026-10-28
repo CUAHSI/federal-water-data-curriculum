@@ -8,8 +8,10 @@ __pycache__/
 teaching-materials/materials/slides/*.pptx
 teaching-materials/materials/slides/*.potx
 teaching-materials/materials/slides/*.pdf
-# Each builder's template and example decks, and existing decks or readings to update
-teaching-materials/how-to-build/templates/
+# Templates folder: only the course deck template is committed; example decks, the reading template and
+# scripts stay local. Also existing decks or readings to update.
+teaching-materials/how-to-build/templates/*
+!teaching-materials/how-to-build/templates/template.pptx
 teaching-materials/how-to-build/to-update/
 # Module readings (Word and PDF) are built locally and shared through Canvas, never committed
 teaching-materials/materials/readings/*

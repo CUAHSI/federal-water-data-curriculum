@@ -30,12 +30,12 @@ teaching-materials/
     ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
     ├── reading-prompt.md    the prompts that build or update one module reading (Word)
     ├── review-checklist.md  what to check before a deck is used
-    ├── templates/           your deck and reading templates and example decks (local only; see below)
+    ├── templates/           the course deck template (committed); reading template and example decks (local only)
     └── to-update/           existing decks or readings to update rather than rebuild (local only)
 ```
 
-The four local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
-them is ever committed.
+The local-only folders and files are git-ignored by the repo's root `.gitignore`: `slides/`, `readings/`,
+`to-update/`, and everything in `templates/` except `template.pptx`, the one template that's committed.
 
 ## Topic lists
 
@@ -62,12 +62,14 @@ lesson page. Run it again whenever a lesson changes: a renamed section shows up 
 
 ## Templates: your deck and reading templates, and example decks
 
-`teaching-materials/how-to-build/templates/` holds what the generator copies its style from. Each person who builds
-decks needs their own copy (ask the course lead for theirs).
+`teaching-materials/how-to-build/templates/` holds what the generator copies its style from. **`template.pptx` is
+committed**, so anyone who builds decks has it. The example decks and the reading template stay local: copy the
+course lead's into your `templates/` folder if you build readings or want examples.
 
 1. **`template.pptx`** (or `template.potx`): the most important file. To make one from your own deck by hand:
    1. Open a recent deck in your usual style (the course lead used the 2026 Data Publishing cohort deck).
-   2. **Save As** `template.pptx` in `how-to-build/templates/`.
+   2. **Save As** `template.pptx` in `how-to-build/templates/` (this replaces the committed course template;
+      commit it only if it should become the course template).
    3. Delete slides until exactly **one example of each slide type** in `design-rules.md` §4 is left: session
       title, program schedule, lesson objectives, content (one with a figure, one text-only), statement,
       section divider, activity, live coding (copy the activity slide and retitle it), code, before → after.
