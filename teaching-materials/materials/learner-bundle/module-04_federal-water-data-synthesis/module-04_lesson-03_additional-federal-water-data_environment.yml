@@ -1,0 +1,40 @@
+# Conda environment for module-04_lesson-03_additional-federal-water-data.ipynb (and its _solutions copy),
+# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# Create:  conda env create -f module-04_lesson-03_additional-federal-water-data_environment.yml
+# Kernel:  conda run -n m04-synthesis python -m ipykernel install --user --name m04-synthesis --display-name "Python (m04-synthesis)"
+name: m04-synthesis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14
+  # USGS observations (modernized Water Data OGC APIs)
+  - dataretrieval>=1.4
+  # NASA SWOT: Earthdata search/download; hydrocron is a web API reached with requests
+  - earthaccess
+  - requests
+  # Gridded / NetCDF data
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - h5py
+  - rioxarray
+  - pyproj
+  # NOAA NWM forecasts (kerchunk references over cloud storage) and NHD/NLDI reach lookups
+  - pynhd>=0.19
+  - fsspec
+  - gcsfs
+  - s3fs
+  - zarr
+  - kerchunk
+  - dask
+  # Tables, maps and plots
+  - pandas
+  - geopandas
+  - matplotlib
+  # For running inside Jupyter
+  - ipykernel     # needed to run the notebooks in Jupyter
+  - jupyterlab
+  - ipywidgets
+  - pip
+  - pip:
+      - nwmurl   # CIROH: builds NWM file URLs
