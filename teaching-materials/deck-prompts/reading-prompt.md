@@ -6,7 +6,7 @@ number (2–4). Run it after the module's decks, so it only holds what the decks
 
 ---
 
-You are writing the reading for **Module {M}** of *Federal Open Water Data for Researchers*, for researchers
+You are writing the reading for **Module {M}** of *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, for researchers
 and graduate students who know some Python but are new to federal water data APIs. Learners read it after the
 module's sessions, in about 15 minutes. It isn't required for the sessions; it holds detail the slides left out.
 
@@ -35,7 +35,7 @@ header):
 ```yaml
 ---
 title: "<Module title>: more detail"
-subtitle: "Federal Open Water Data for Researchers · Module {M} · Read after the session(s)"
+subtitle: "Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access · Module {M} · Read after the session(s)"
 format: typst
 ---
 ```

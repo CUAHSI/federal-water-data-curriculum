@@ -14,7 +14,7 @@ length.
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 5 outlined |
-| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today, exactly these two (Module 3's main objectives with the other two products removed): "Adapt provided Python scripts to retrieve data from USGS WDFN using their recommended APIs and libraries." and "Select the most appropriate programmatic approach for downloading data at large temporal and spatial scales for different hydrologic applications." |
 | 4 | What you'll retrieve; legacy vs. modernized services | 03/03 § Retrieve USGS WDFN data (intro) | deck | 4 | `images/m03/wdfn-ohio-louisville-map.png`; why `waterdata`, not `nwis` |
 | 5 | Choosing an access route | 03/03 § Choosing an access route | deck | 4 |  |
 | 6 | Setup: API key and environment | 03/03 § USGS Water Data API key, § Create the conda environment | deck + how-to | 2 | Why a key; setup in the "How to" guide |

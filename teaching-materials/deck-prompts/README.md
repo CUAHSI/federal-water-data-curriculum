@@ -1,7 +1,8 @@
 # Deck prompts
 
-Everything a person needs to have Claude build a session deck (PowerPoint) or a module reading (PDF) from the
-lesson pages, in the instructor's own style.
+Everything a person needs to have Claude build or update a session deck (PowerPoint), or build a module reading
+(PDF), from the lesson pages, in the instructor's own style, for *Reproducible Workflows with Open Water Data:
+NASA, NOAA, USGS River Data Access*.
 
 The lessons stay the source of truth. Three kinds of output come from them, each with its own job:
 
@@ -21,10 +22,12 @@ deck-prompts/
 ├── topics/
 │   └── session-01.md …   one editable topic list per session
 ├── design-rules.md       how the decks look and move (seeded from the instructor's decks)
-├── deck-prompt.md        the prompt that builds one session deck
+├── deck-prompt.md        the prompt that builds one session deck from scratch
+├── update-prompt.md      the prompt that updates an existing deck, slide by slide
 ├── reading-prompt.md     the prompt that builds one module reading
 ├── review-checklist.md   what to check before a deck is used
-└── reference-decks/      your template and example decks (not committed; see reference-decks/README.md)
+├── reference-decks/      your template and example decks (not committed; see reference-decks/README.md)
+└── decks-to-update/      existing decks to update rather than rebuild (not committed; see its README)
 ```
 
 ## Topic lists
@@ -108,6 +111,19 @@ python teaching-materials/tools/check_stale.py --update teaching-materials/slide
 
 Commit the deck and `manifest.json` together.
 
+## Updating an existing deck
+
+When a deck already exists and you only want it brought up to date (a deck you made by hand, an earlier
+course's deck, or a committed deck whose lessons changed), update it instead of rebuilding it:
+
+1. Put the deck in `decks-to-update/`, named after the session's deck. Skip this to update the committed deck
+   in `teaching-materials/slides/`.
+2. Start the speaker notes of any slide that must not change with `KEEP`.
+3. Check the topic list (step 2 above), then run `update-prompt.md`: in Claude Code, `/build-slides N update`;
+   on the web or desktop, attach the deck plus the same files as for a build.
+4. It shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then let it go ahead.
+5. Review, save and record the result as in steps 4–6 above.
+
 ## Building a reading
 
 After the module's decks are done, run `reading-prompt.md` the same way (in Claude Code: `/build-slides
@@ -118,7 +134,8 @@ deck, with `--kind reading` and the topic lists as sources.
 ## When something changes
 
 - **A lesson changed:** `check_stale.py` lists the decks and readings built from it, and `check_topics.py`
-  says whether a section the topic list names was renamed or removed. Update the topic list, then rebuild,
-  or fix the affected slides by hand and re-record.
+  says whether a section the topic list names was renamed or removed. Update the topic list, then **update**
+  the deck (`/build-slides N update`) rather than rebuilding it, so hand edits survive; or fix the affected
+  slides by hand and re-record.
 - **You want a different style:** edit `design-rules.md` or the template. Every deck lists the design rules as
   a source, so they'll all show as stale.

@@ -1,6 +1,6 @@
 # Teaching materials
 
-Everything needed to *run* *Federal Open Water Data for Researchers*: session slides, module readings, the learner bundle for HydroShare, the module quizzes and the instructor guide. These files are
+Everything needed to *run* *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*: session slides, module readings, the learner bundle for HydroShare, the module quizzes and the instructor guide. These files are
 generated from the lesson pages (`0*/`), which stay the single source of truth. To fix content, edit the
 lesson, then rebuild. This folder isn't part of the website build (`myst.yml` excludes it).
 
@@ -99,7 +99,7 @@ works outside this folder.
 
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
-| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck and reading prompts, and a review checklist. **Source, not generated**; `reference-decks/` holds each builder's own template and example decks and isn't committed | people | No | E |
+| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck and reading prompts, and a review checklist. **Source, not generated**; `reference-decks/` (each builder's template and example decks) and `decks-to-update/` (existing decks to update rather than rebuild) aren't committed | people | No | E |
 | `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `readings/` | At most one reading per module for Modules 2–4 (`.qmd`; rendered to PDF in `readings/rendered/` by the "Render readings" workflow) | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |

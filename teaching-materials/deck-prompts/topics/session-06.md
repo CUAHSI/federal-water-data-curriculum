@@ -15,7 +15,7 @@ length.
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 6 outlined |
-| 3 | Lesson objectives | 04/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 3 | Lesson objectives | 04/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's main objectives (the list before "These break down into"), copied word for word from the overview page |
 | 4 | Module 4 overview | 04/00 § Module overview | deck | 3 | Each agency fills a niche |
 | 5 | Important concepts and terminology | 04/00 § Important concepts and terminology | deck | 3 |  |
 | 6 | Spatial coverage compared | 04/01 § Spatial coverage | deck | 4 |  |

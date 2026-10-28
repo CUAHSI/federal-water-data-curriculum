@@ -14,7 +14,7 @@ length. Live-coding rows name the notebook sections (they match the lesson headi
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 3 outlined |
-| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today, exactly these two (Module 3's main objectives with the other two products removed): "Adapt provided Python scripts to retrieve data from NASA SWOT using their recommended APIs and libraries." and "Select the most appropriate programmatic approach for downloading data at large temporal and spatial scales for different hydrologic applications." |
 | 4 | Module 3 overview | 03/00 § Module overview | deck | 2 |  |
 | 5 | The three lessons, each standing alone | 03/00 § The lessons | deck | 1 |  |
 | 6 | The example rivers | 03/00 § The example rivers | deck | 2 | Ohio at Louisville in the lessons; Willamette at Salem for "Now you try it" |

@@ -7,8 +7,15 @@ Go through this before a deck is used or committed. It takes about 20 minutes pe
 - [ ] Every claim, number, date and code line matches the lesson page. Spot-check at least five.
 - [ ] No `CONTENT NEEDED` or `FIGURE NEEDED` placeholder is left (or each one has an owner).
 - [ ] No internal course links, no dev-team or partner-review notes.
+- [ ] The course name is exactly *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data
+      Access* everywhere it appears; dates on the title and schedule slides are right.
+- [ ] The objectives slide shows only the main objectives, as the topic list gives them.
 - [ ] Agency order NASA → NOAA → USGS; "WDFN", not "NWIS" (except the legacy contrast).
 - [ ] Live-coding slides name the right notebook file and sections, and give the time to come back.
+
+## Updates (decks made with `update-prompt.md`)
+- [ ] The change log matches what you see: flick through every slide it says changed, was added or moved.
+- [ ] Slides marked `KEEP`, and slides the log says were kept, are exactly as they were.
 
 ## Look
 - [ ] Flip through at full screen: it looks like your other decks, not like a different designer's.

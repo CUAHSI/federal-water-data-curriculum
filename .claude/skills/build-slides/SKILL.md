@@ -1,6 +1,6 @@
 ---
 name: build-slides
-description: Build or rebuild a session's PowerPoint deck (in the instructor's style, from the session's topic list) or a module's reading PDF, using the prompts in teaching-materials/deck-prompts/. Use when asked to make, update or rebuild slides or a reading, or when check_stale.py lists one. Arguments - a session number (1–6) for a deck, or "reading M" (M = 2–4) for a reading.
+description: Build or update a session's PowerPoint deck (in the instructor's style, from the session's topic list) or build a module's reading PDF, using the prompts in teaching-materials/deck-prompts/. Use when asked to make, update or rebuild slides or a reading, or when check_stale.py lists one. Arguments - a session number (1–6) to build a deck, "N update" to update an existing deck, or "reading M" (M = 2–4) for a reading.
 ---
 
 # Build a session deck or a module reading
@@ -32,6 +32,20 @@ are the source of truth. If a deck needs different content, change the lesson (o
 5. **Report in the PR:** the prompt's report (step 5), the learner-copy counts, and which slides you'd most like
    a person to look at.
 
+## Updating a deck (`/build-slides N update`)
+
+Use this when a deck for the session already exists: one in `deck-prompts/decks-to-update/`, or else the
+committed deck in `teaching-materials/slides/`. Default to it whenever a committed deck exists and the user asks
+to "rebuild" after a lesson change, and say so.
+
+1. Check the inputs as for a build (`check_topics.py N`; the template is needed only if the deck lacks a slide
+   type it must add).
+2. Make learner copies of the lesson pages.
+3. Follow `deck-prompts/update-prompt.md` with `{N}` = N. Stop after its plan (step 2) unless the user said to
+   go straight through. Never change slides whose notes start with `KEEP`; never overwrite the file in
+   `decks-to-update/`.
+4. Record and report as for a build, with the prompt's change log in the PR.
+
 ## A reading (`/build-slides reading M`)
 
 1. Run `check_topics.py` for the module's sessions (Module 2: 2; Module 3: 3 4 5; Module 4: 6).
@@ -45,5 +59,4 @@ are the source of truth. If a deck needs different content, change the lesson (o
   visible placeholders and go in the report.
 - No internal course links, glossary links or repo links; no `TODO (dev team)` or `Partner review` content.
 - Agency order NASA → NOAA → USGS; WDFN naming.
-- A deck that has been edited by hand since it was generated: ask before overwriting it. Offer to rebuild only
-  the slides for the topic rows that changed.
+- Never overwrite an existing deck with a fresh build without asking; offer an update instead.

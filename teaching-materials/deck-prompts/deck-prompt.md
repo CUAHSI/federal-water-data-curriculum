@@ -5,7 +5,7 @@ what to attach and how to run it. In Claude Code, `/build-slides {N}` does the s
 
 ---
 
-You are building the slide deck for **Session {N}** of *Federal Open Water Data for Researchers*, a CUAHSI
+You are building the slide deck for **Session {N}** of *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a CUAHSI
 course for researchers and graduate students who know some Python but are new to federal water data APIs. The
 instructor presents this deck live; for pilot learners, the deck *is* the lesson, so it must stand on its own.
 It must look like the instructor built it herself in PowerPoint.
@@ -28,6 +28,10 @@ It must look like the instructor built it herself in PowerPoint.
 
 ## Content rules
 
+- The course is called **Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access**. Use exactly that name wherever the course is named
+  (title slide, schedule panel, notes).
+- The lesson objectives slide uses exactly the objectives the topic list's "Lesson objectives" row names or
+  quotes, and nothing else.
 - Use only what the lesson pages say. Don't invent claims, numbers, quotes, code, dates or links. If a topic
   row asks for something the lesson doesn't have, leave a visible placeholder on the slide
   ("CONTENT NEEDED: …") and list it in the report.

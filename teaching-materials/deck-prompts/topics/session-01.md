@@ -12,7 +12,7 @@
 |---|---|---|---|---|---|
 | 1 | Welcome and introductions | – | deck | 2 | Session title slide; instructors |
 | 2 | Program schedule | – | deck | 1 | Schedule slide, Session 1 outlined, "UP NEXT" |
-| 3 | Lesson objectives | 01/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 3 | Lesson objectives | 01/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's main objectives (the list before "These break down into"), copied word for word from the overview page |
 | 4 | Logistics: Canvas, module quizzes, office hours | – | deck | 3 | Where things live; quizzes are formative, one per module, retakes allowed. Office hours: see Canvas |
 | 5 | Module 1 overview | 01/00 § Module overview | deck | 1 | Why data practices come first in a federal-data course |
 | 6 | What open science is | 01/01 § Open Science (intro) | deck | 3 | Definition; open science as a spectrum, not a switch |

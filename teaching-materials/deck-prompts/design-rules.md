@@ -53,9 +53,10 @@ in `reference-decks/README.md` once the template exists).
    with its icon and date. Past sessions are greyed out; today's session has a green rounded outline and "UP
    NEXT" in green. Shown near the start of every session; the outline moves each time.
 3. **Lesson objectives.** Slate, "Learning objectives for today", one icon on the left, the session name in
-   bold, then the module's learning objectives **copied word for word** from its overview page (`0N/00 §
-   Learning objectives`). This is the only place in the deck the objectives appear: overview slides don't
-   repeat them. Sessions 3–5 all show the Module 3 objectives (the lessons have no objectives of their own).
+   bold, then the module's **main** learning objectives (the list before "These break down into"), copied
+   word for word from its overview page (`0N/00 § Learning objectives`). This is the only place in the deck the
+   objectives appear: overview slides don't repeat them. Sessions 3–5 each show their lesson's version of the
+   Module 3 objectives (the other two products removed), written out in the topic list.
 4. **Content.** White, title top-left (or white title on a slate header bar), at most 6 bullets or about 40
    words, one figure or screenshot where the lesson has one.
 5. **Statement.** Black or slate background, one or two sentences in white, centred. Used to open a section or
@@ -131,6 +132,7 @@ From Lindsay's decks:
 ## 9. Speaker notes
 
 - Every slide has notes: 2–5 bullets of points to make, not a script.
+- A slide whose notes start with `KEEP` is a human edit to preserve: updates never change, move or remove it.
 - Add "Expect:" with a likely question where there is one, and "If short on time:" where a slide or build can be
   skipped.
 - On live-coding and activity slides, put the clock time to come back.

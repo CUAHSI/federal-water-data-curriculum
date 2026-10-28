@@ -13,7 +13,7 @@ length.
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 2 outlined |
-| 3 | Lesson objectives | 02/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 3 | Lesson objectives | 02/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's main objectives (the list before "These break down into"), copied word for word from the overview page |
 | 4 | Module 2 overview | 02/00 § Module overview | deck | 1 | Know what a product *is* before you code against it |
 | 5 | One framework for three products | 02/00 § One framework for three products | deck | 4 | The shared-concepts table (STYLE_GUIDE §1); build: one row at a time |
 | 6 | How each page is organized | 02/00 § How each page is organized | deck | 2 | The four things to watch for |
