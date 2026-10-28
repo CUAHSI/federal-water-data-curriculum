@@ -9,7 +9,7 @@ The reader is someone competent in Python and water science who has never seen t
 session next week. Write for them. It's instructor-facing, so internal callouts and repo links are fine.
 Build after the slides, readings, learner bundle and quizzes exist; read STYLE_GUIDE.md §11 first.
 
-Output: `teaching-materials/instructor-guide/`
+Output: `teaching-materials/materials/instructor-guide/`
 
 1. **`00_start-here.md`** (one page):
     - what the course is, who it's for, and the six objectives
@@ -37,7 +37,7 @@ Output: `teaching-materials/instructor-guide/`
     - the quiz: which module quiz, the objectives it covers (from its `_key.md`), and the questions learners
       most often miss (after the pilot, from Canvas reports)
     - the module reading (Modules 2–4 only): what's in it and when to post it in Canvas; the session's topic
-      list (`teaching-materials/deck-prompts/topics/`) says what was left out of the deck and where it went
+      list (`teaching-materials/how-to-build/topics/`) says what was left out of the deck and where it went
 4. **`02_how-the-course-is-built.md`**: how content flows (lesson pages → skills → teaching materials), how to
    fix a mistake (edit the lesson, rebuild, check stale), and the review process.
 

@@ -8,9 +8,9 @@ The lessons stay the source of truth. Three kinds of output come from them, each
 
 | Output | Its job | Where |
 |---|---|---|
-| **Deck** | The important concepts and points, presented live | `teaching-materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
-| **Notebook** | Practising the code | the learner bundle (`teaching-materials/learner-bundle/`) |
-| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, a Word document exported to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
+| **Deck** | The important concepts and points, presented live | `teaching-materials/materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
+| **Notebook** | Practising the code | the learner bundle (`teaching-materials/materials/learner-bundle/`) |
+| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/materials/readings/`, a Word document exported to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
 
 What goes where is decided per topic in the **topic lists**, not by whoever runs the prompt.
 
@@ -18,19 +18,20 @@ What goes where is decided per topic in the **topic lists**, not by whoever runs
 
 ```
 teaching-materials/
-├── deck-prompts/            committed
-│   ├── guide.md             this file
-│   ├── topics/
-│   │   └── session-01.md …  one editable topic list per session
-│   ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
-│   ├── deck-prompt.md       the prompt that builds one session deck from scratch
-│   ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
-│   ├── reading-prompt.md    the prompts that build or update one module reading (Word)
-│   └── review-checklist.md  what to check before a deck is used
-├── reference-decks/         local only: your deck and reading templates and example decks (see below)
-├── to-update/               local only: existing decks or readings to update rather than rebuild (see below)
-├── slides/                  local only: the decks you build
-└── readings/                local only: the readings you build (Word and PDF)
+├── materials/               WHAT YOU USE
+│   ├── slides/              the decks you build (local only)
+│   └── readings/            the readings you build, Word and PDF (local only)
+└── how-to-build/            HOW IT'S MADE (this folder)
+    ├── guide.md             this file
+    ├── topics/
+    │   └── session-01.md …  one editable topic list per session
+    ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
+    ├── deck-prompt.md       the prompt that builds one session deck from scratch
+    ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
+    ├── reading-prompt.md    the prompts that build or update one module reading (Word)
+    ├── review-checklist.md  what to check before a deck is used
+    ├── templates/           your deck and reading templates and example decks (local only; see below)
+    └── to-update/           existing decks or readings to update rather than rebuild (local only)
 ```
 
 The four local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
@@ -53,20 +54,20 @@ Edit them freely: move a topic from `reading` to `deck` (and take minutes from a
 figure. Then run the checker from the repo root:
 
 ```bash
-python teaching-materials/tools/check_topics.py        # or: ... check_topics.py 3
+python teaching-materials/how-to-build/tools/check_topics.py        # or: ... check_topics.py 3
 ```
 
 It checks that the minutes add up, the "Where" values are valid, and every `§ heading` still exists in its
 lesson page. Run it again whenever a lesson changes: a renamed section shows up here before you build from it.
 
-## Reference decks: your template and examples
+## Templates: your deck and reading templates, and example decks
 
-`teaching-materials/reference-decks/` holds what the generator copies its style from. Each person who builds
+`teaching-materials/how-to-build/templates/` holds what the generator copies its style from. Each person who builds
 decks needs their own copy (ask the course lead for theirs).
 
 1. **`template.pptx`** (or `template.potx`): the most important file. To make one from your own deck by hand:
    1. Open a recent deck in your usual style (the course lead used the 2026 Data Publishing cohort deck).
-   2. **Save As** `template.pptx` in `reference-decks/`.
+   2. **Save As** `template.pptx` in `how-to-build/templates/`.
    3. Delete slides until exactly **one example of each slide type** in `design-rules.md` §4 is left: session
       title, program schedule, lesson objectives, content (one with a figure, one text-only), statement,
       section divider, activity, live coding (copy the activity slide and retitle it), code, before → after.
@@ -113,13 +114,13 @@ makes the learner copies, then follows `deck-prompt.md`. It stops after the slid
 
 1. Make learner copies of the session's lesson pages (they drop internal notes and links):
    ```bash
-   python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/00_introduction.md 03-federal-water-data-access-retrieval/01_access_nasa_swot.md --out-dir <scratch-dir>/learner
+   python teaching-materials/how-to-build/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/00_introduction.md 03-federal-water-data-access-retrieval/01_access_nasa_swot.md --out-dir <scratch-dir>/learner
    ```
 2. Start a new conversation and attach:
    - the learner copies;
    - the session's topic list and `design-rules.md`;
    - the figures the topic list names (from `images/`);
-   - your template and one or two example decks from `reference-decks/`.
+   - your template and one or two example decks from `how-to-build/templates/`.
 3. Paste everything below the line in `deck-prompt.md`, with `{N}` replaced by the session number.
 4. Review the slide plan it shows you, reply with changes or "go ahead", and download the `.pptx`.
 
@@ -131,7 +132,7 @@ add it to `design-rules.md` so the next deck gets it right.
 
 ### 4. Save it
 
-Save the deck in `teaching-materials/slides/` under the file name in the topic list's header. **Decks are never
+Save the deck in `teaching-materials/materials/slides/` under the file name in the topic list's header. **Decks are never
 committed** (they're large, and they carry photos and screenshots). Share the final deck through Canvas, and
 keep your own copy.
 
@@ -149,16 +150,16 @@ If you edited the topic list or design rules along the way, commit those. Never 
 When a deck already exists and you only want it brought up to date (a deck you made by hand, an earlier
 course's deck, or your own deck whose lessons changed), update it instead of rebuilding it:
 
-1. Put the deck in `teaching-materials/to-update/`, named after the session's deck (the file name in its
+1. Put the deck in `teaching-materials/how-to-build/to-update/`, named after the session's deck (the file name in its
    topic list header, e.g. `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx`), so the prompt can
-   find it. Skip this to update your deck in `teaching-materials/slides/`; that's the usual way to bring a deck
+   find it. Skip this to update your deck in `teaching-materials/materials/slides/`; that's the usual way to bring a deck
    up to date after a lesson changes.
 2. Start the speaker notes of any slide that must not change with `KEEP`.
 3. Check the topic list, then run `update-prompt.md`: in Claude Code, `/build-slides N update`; on the web or
    desktop, attach the deck plus the same files as for a build.
 4. It inventories the deck and shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then
-   let it go ahead. It saves the updated deck in `teaching-materials/slides/` and never overwrites the file in
-   `to-update/`.
+   let it go ahead. It saves the updated deck in `teaching-materials/materials/slides/` and never overwrites the file in
+   `how-to-build/to-update/`.
 5. Review and save the result as for a build.
 
 ## Building or updating a reading
@@ -168,15 +169,15 @@ when something changes. `reading-prompt.md` holds both prompts.
 
 - **Build:** after the module's decks are done, run the Build prompt (in Claude Code: `/build-slides reading M`,
   where M is the module number). It collects the `reading` rows from the module's topic lists, shows you a plan,
-  then writes `teaching-materials/readings/module-0M_reading_<module slug>.docx` in the reading template's styles
+  then writes `teaching-materials/materials/readings/module-0M_reading_<module slug>.docx` in the reading template's styles
   and saves a PDF next to it. No extra software: Word does the formatting.
 - **Update:** run the Update prompt (`/build-slides reading M update`). It works on the reading in
-  `teaching-materials/to-update/` if you put one there (a PDF-only reading is rebuilt as Word first), otherwise
-  on yours in `readings/`. It shows a section-by-section plan before changing anything. To protect a section, add
+  `teaching-materials/how-to-build/to-update/` if you put one there (a PDF-only reading is rebuilt as Word first), otherwise
+  on yours in `materials/readings/`. It shows a section-by-section plan before changing anything. To protect a section, add
   a Word comment starting `KEEP` to its heading.
 - **Edit by hand** in Word whenever you like, using the template's styles, then export the PDF again (File → Save
   As → PDF).
-- **Save:** the `.docx` and PDF stay in `teaching-materials/readings/` (git-ignored). Share the PDF through
+- **Save:** the `.docx` and PDF stay in `teaching-materials/materials/readings/` (git-ignored). Share the PDF through
   Canvas. The document's Comments property records the commit it was built from, which the Update prompt uses
   to see what changed.
 

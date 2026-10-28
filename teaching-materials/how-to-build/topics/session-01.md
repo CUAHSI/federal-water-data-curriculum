@@ -1,7 +1,7 @@
 # Session 1 · Module 1: Data best practices
 
 - **When:** Tue Nov 3, 2026, 2:00–3:30 pm ET (90 min)
-- **Deck:** `teaching-materials/slides/session-01_module-01_data-best-practices.pptx`
+- **Deck:** `teaching-materials/materials/slides/session-01_module-01_data-best-practices.pptx`
 - **Reading:** none (Module 1 is contained in the deck)
 - **Pages:** `01/00` = `01-data-best-practices/00_introduction.md`, `01/01` = `01_open_science.md`,
   `01/02` = `02_data_management.md`, `01/03` = `03_data_publishing.md`

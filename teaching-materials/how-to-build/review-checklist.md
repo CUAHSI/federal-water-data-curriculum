@@ -33,7 +33,7 @@ Go through this before a deck is used. It takes about 20 minutes per deck.
 - [ ] "IF SHORT ON TIME" marks what you can skip.
 
 ## Save it
-- [ ] Save the deck under the name in the topic list header, in `teaching-materials/slides/`. Decks are
+- [ ] Save the deck under the name in the topic list header, in `teaching-materials/materials/slides/`. Decks are
       git-ignored: never commit them. Share them through Canvas.
 - [ ] Its document properties' Comments say which commit it was built from.
 - [ ] Commit any topic-list

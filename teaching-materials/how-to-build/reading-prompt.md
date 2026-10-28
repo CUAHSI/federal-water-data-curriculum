@@ -21,11 +21,11 @@ sessions; it holds detail the slides left out.
 
 ### Inputs
 
-1. **Topic lists** for the module's sessions in `teaching-materials/deck-prompts/topics/` (Module 2: session 2;
+1. **Topic lists** for the module's sessions in `teaching-materials/how-to-build/topics/` (Module 2: session 2;
    Module 3: sessions 3–5; Module 4: session 6). Cover every row whose "Where" is `reading`, and nothing else.
 2. **Lesson pages:** the learner copies of the pages those rows name. They are the only source of content.
 3. **Figures** in `images/` that those sections use.
-4. **Reading template:** `teaching-materials/reference-decks/reading-template.docx`. Its styles set the look:
+4. **Reading template:** `teaching-materials/how-to-build/templates/reading-template.docx`. Its styles set the look:
    Title, Subtitle, "Why it matters", Heading 1, Heading 2, Normal, List Bullet, Caption, Credit, Code and the
    Link character style. It contains one sample paragraph of each.
 
@@ -46,7 +46,7 @@ sessions; it holds detail the slides left out.
 
 1. **Plan, then stop.** List the sections you'll write (one per `reading` row, grouped by lesson), the lesson
    section each comes from, any figures and code, and an estimated word count. Wait for my go-ahead.
-2. **Write** `teaching-materials/readings/module-0{M}_reading_<module slug>.docx` (the file name in the topic list
+2. **Write** `teaching-materials/materials/readings/module-0{M}_reading_<module slug>.docx` (the file name in the topic list
    header), starting from a copy of the template so its styles carry over, and delete the template's sample
    paragraphs:
    - **Title:** "<Module title>: more detail". **Subtitle:** "Reproducible Workflows with Open Water Data: NASA,
@@ -66,7 +66,7 @@ sessions; it holds detail the slides left out.
    code lines don't wrap mid-token or run off the page, headings aren't left alone at the bottom of a page.
 4. **Report** the word count, the sections and their lesson sources, and anything you couldn't place.
 
-Both files stay in `teaching-materials/readings/`, which is git-ignored. Don't commit them.
+Both files stay in `teaching-materials/materials/readings/`, which is git-ignored. Don't commit them.
 
 ---
 
@@ -79,9 +79,9 @@ River Data Access*. It already exists and the instructor likes it. Change only w
 
 ### Inputs
 
-1. **The reading to update:** `module-0{M}_reading_*.docx` in `teaching-materials/to-update/` if there is one,
-   otherwise the one in `teaching-materials/readings/`. (A reading you have only as a PDF: put it in
-   `to-update/`, and the first step is to rebuild it as a `.docx` in the template's styles with the same text and
+1. **The reading to update:** `module-0{M}_reading_*.docx` in `teaching-materials/how-to-build/to-update/` if there is one,
+   otherwise the one in `teaching-materials/materials/readings/`. (A reading you have only as a PDF: put it in
+   `how-to-build/to-update/`, and the first step is to rebuild it as a `.docx` in the template's styles with the same text and
    structure.)
 2. The same topic lists, lesson pages, figures and reading template as for a build.
 
@@ -99,8 +99,8 @@ comment starting `KEEP` is never changed, moved or removed.
    line it now follows), **move** or **remove**, and list the `reading` rows with no section (**add**). Show me
    the plan and wait for my go-ahead.
 2. **Make the changes** in place, keeping the reading's wording and styles wherever the lesson hasn't changed.
-   Update the Comments property to the new commit. Save to `teaching-materials/readings/`; never overwrite the
-   file in `to-update/`.
+   Update the Comments property to the new commit. Save to `teaching-materials/materials/readings/`; never overwrite the
+   file in `how-to-build/to-update/`.
 3. **Export and check** the PDF as for a build.
 4. **Report** a change log (one line per section: kept, updated, added, removed or moved, and why) and the new
    word count.

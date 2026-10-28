@@ -1,9 +1,9 @@
 """List teaching materials that need rebuilding because their sources changed (STYLE_GUIDE §11).
 
-Every generated output has an entry in ``teaching-materials/manifest.json``:
+Every generated output has an entry in ``teaching-materials/how-to-build/manifest.json``:
 
     {
-      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
+      "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
       "kind": "quiz",
       "sources": ["03-federal-water-data-access-retrieval"],
       "source_commit": "<full SHA the output was built from>",
@@ -15,12 +15,12 @@ Paths are relative to the repo root. A directory in ``sources`` (e.g. ``images/m
 under it.
 
 Usage:
-    python teaching-materials/tools/check_stale.py
+    python teaching-materials/how-to-build/tools/check_stale.py
         For each entry, runs ``git diff --quiet <source_commit> HEAD -- <sources>`` and prints the stale
         outputs. Exit code 1 if any are stale (or can't be checked), 0 otherwise. Uncommitted edits to
         sources aren't counted: commit the lesson change first.
 
-    python teaching-materials/tools/check_stale.py --update OUTPUT [--kind KIND] [--builder SKILL]
+    python teaching-materials/how-to-build/tools/check_stale.py --update OUTPUT [--kind KIND] [--builder SKILL]
                                                    [--source PATH ...]
         After a rebuild: sets the entry's ``source_commit`` to HEAD and ``built_at`` to now (UTC). Creates the
         entry if it's new (then ``--kind``, ``--builder`` and at least one ``--source`` are required).
@@ -38,8 +38,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-MANIFEST = REPO_ROOT / "teaching-materials" / "manifest.json"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+MANIFEST = REPO_ROOT / "teaching-materials" / "how-to-build" / "manifest.json"
 KINDS = ("slides", "reading", "notebook", "environment", "bundle-readme", "quiz", "instructor-guide")
 FIELDS = ("output", "kind", "sources", "source_commit", "built_at", "builder")
 

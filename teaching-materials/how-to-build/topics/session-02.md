@@ -1,8 +1,8 @@
 # Session 2 · Module 2: The federal water data landscape
 
 - **When:** Thu Nov 5, 2026, 2:00–4:00 pm ET (120 min, with a 5-minute break)
-- **Deck:** `teaching-materials/slides/session-02_module-02_federal-water-data-landscape.pptx`
-- **Reading:** `teaching-materials/readings/module-02_reading_federal-water-data-landscape.docx`
+- **Deck:** `teaching-materials/materials/slides/session-02_module-02_federal-water-data-landscape.pptx`
+- **Reading:** `teaching-materials/materials/readings/module-02_reading_federal-water-data-landscape.docx`
 - **Pages:** `02/00` = `02-federal-water-data-landscape/00_introduction.md`, `02/01` = `01_meet_nasa_swot.md`,
   `02/02` = `02_meet_noaa_nwm.md`, `02/03` = `03_meet_usgs_wdfn.md`
 

@@ -3,14 +3,14 @@ _build/*
 .vscode/*
 __pycache__/
 
-# Teaching materials that stay local (see teaching-materials/deck-prompts/guide.md)
+# Teaching materials that stay local (see teaching-materials/how-to-build/guide.md)
 # Session decks are built locally and shared through Canvas, never committed
-teaching-materials/slides/*.pptx
-teaching-materials/slides/*.potx
-teaching-materials/slides/*.pdf
+teaching-materials/materials/slides/*.pptx
+teaching-materials/materials/slides/*.potx
+teaching-materials/materials/slides/*.pdf
 # Each builder's template and example decks, and existing decks or readings to update
-teaching-materials/reference-decks/
-teaching-materials/to-update/
+teaching-materials/how-to-build/templates/
+teaching-materials/how-to-build/to-update/
 # Module readings (Word and PDF) are built locally and shared through Canvas, never committed
-teaching-materials/readings/*
-!teaching-materials/readings/.gitkeep
+teaching-materials/materials/readings/*
+!teaching-materials/materials/readings/.gitkeep

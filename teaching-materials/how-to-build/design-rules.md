@@ -9,7 +9,7 @@ and screenshots, and emphasis that does one job. It should never look assembled 
 
 ## 1. The template does the styling
 
-- Build every deck from the course template (`reference-decks/template.potx` or `.pptx`; see the README). Use the
+- Build every deck from the course template (`how-to-build/templates/template.potx` or `.pptx`; see the README). Use the
   template's **slide layouts and placeholders** for titles, body text, pictures and section slides.
 - Don't restyle what the template already defines (fonts, title position, bullet style, colours). If a slide
   needs a look the template lacks, list it in the build report rather than inventing a style.
@@ -45,7 +45,7 @@ Taken from the cohort decks (which share their palette with the talks):
 ## 4. Slide types
 
 Use these, and only these. Each maps to a template layout (the layout names are the template's own; list them
-in the reference decks table in `guide.md` once the template exists).
+in the templates table in `guide.md` once the template exists).
 
 1. **Session title.** Landscape photo banner, CUAHSI logo, session title and subtitle, date, presenter name,
    title and photo.

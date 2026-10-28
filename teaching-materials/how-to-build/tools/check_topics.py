@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the session topic lists in teaching-materials/deck-prompts/topics/.
+"""Check the session topic lists in teaching-materials/how-to-build/topics/.
 
 For each list it checks that:
 - the deck minutes add up to the session length given in the header ("(90 min");
@@ -8,16 +8,16 @@ For each list it checks that:
   lesson section shows up here before a deck is built from it.
 
 Usage (from the repo root):
-    python teaching-materials/tools/check_topics.py            # all sessions
-    python teaching-materials/tools/check_topics.py 3 4        # sessions 3 and 4
+    python teaching-materials/how-to-build/tools/check_topics.py            # all sessions
+    python teaching-materials/how-to-build/tools/check_topics.py 3 4        # sessions 3 and 4
 Exit code 1 if anything fails. Standard library only.
 """
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-TOPICS = ROOT / "teaching-materials" / "deck-prompts" / "topics"
+ROOT = Path(__file__).resolve().parents[3]
+TOPICS = ROOT / "teaching-materials" / "how-to-build" / "topics"
 WHERE = {"deck", "notebook", "reading", "how-to", "cut"}
 MODULES = {
     "01": "01-data-best-practices",

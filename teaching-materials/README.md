@@ -4,6 +4,31 @@ Everything needed to *run* *Reproducible Workflows with Open Water Data: NASA, N
 generated from the lesson pages (`0*/`), which stay the single source of truth. To fix content, edit the
 lesson, then rebuild. This folder isn't part of the website build (`myst.yml` excludes it).
 
+## Two folders: what you use, and how it's made
+
+```
+teaching-materials/
+├── materials/       WHAT YOU USE: the finished materials for learners and instructors
+│   ├── slides/              session decks (PowerPoint; local only, never committed)
+│   ├── readings/            module readings (Word and PDF; local only, never committed)
+│   ├── learner-bundle/      notebooks and environments for HydroShare
+│   ├── quizzes/             Canvas quizzes and answer keys
+│   └── instructor-guide/    prep for a new or substitute instructor
+└── how-to-build/    HOW IT'S MADE: instructions, prompts, templates and tools
+    ├── guide.md             start here to build or update slides and readings
+    ├── topics/              what goes on each session's deck, notebook or reading
+    ├── *-prompt.md          the prompts Claude follows
+    ├── design-rules.md, review-checklist.md
+    ├── scaffolds/           hand-edited "Now you try it" starters for the notebooks
+    ├── tools/               scripts (check_stale, check_topics, prepare_learner_copy, build_notebooks)
+    ├── manifest.json        what each committed output was built from
+    ├── templates/           deck and reading templates (local only)
+    └── to-update/           existing decks or readings to update (local only)
+```
+
+If you want to **teach**, look in `materials/`. If you want to **change or rebuild** something, start in
+`how-to-build/`. Nothing in `how-to-build/` goes to learners.
+
 The rules (names, the session map, learner-facing outputs, live coding, quizzes) are in
 [STYLE_GUIDE §11](../STYLE_GUIDE.md#11-teaching-materials). This README records the names the Phase 8 lanes
 build to, so they agree before they start.
@@ -15,10 +40,10 @@ Most outputs are written by a Claude Code agent following a **skill**: a set of 
 "Rebuild" means asking an agent to run that skill again. A person can do the same work by hand by following
 the skill's steps. Only some steps are plain scripts you run yourself:
 
-- `tools/prepare_learner_copy.py` and `tools/check_stale.py` (standard library only, any Python 3.9 or later; no
+- `how-to-build/tools/prepare_learner_copy.py` and `how-to-build/tools/check_stale.py` (standard library only, any Python 3.9 or later; no
   conda environment needed);
-- `tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
-- `tools/check_topics.py`, which checks the session topic lists in `deck-prompts/topics/`;
+- `how-to-build/tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
+- `how-to-build/tools/check_topics.py`, which checks the session topic lists in `how-to-build/topics/`;
 - quizzes: `text2qti <file>.txt` makes the QTI zip.
 
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
@@ -31,8 +56,8 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 
 | Skill | Needs | Used for |
 |---|---|---|
-| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export slides and readings to PDF for checking | writing and checking decks and readings |
-| `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
+| `build-slides` | Your template and example decks in `how-to-build/templates/` (see `how-to-build/guide.md`); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export slides and readings to PDF for checking | writing and checking decks and readings |
+| `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `how-to-build/tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
 
@@ -96,26 +121,34 @@ terminal, and start Claude Code from there. Never write the values into a file i
 Lanes and task IDs are from ROADMAP.md Phase 8. Lane G (Acknowledgements, `CITATION.cff`, the root README)
 works outside this folder.
 
+**`materials/`: what you use**
+
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
-| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck, update and reading prompts, a review checklist, and `guide.md` (how to use them). **Source, not generated** | people | No | E |
-| `reference-decks/`, `to-update/` | Each builder's template and example decks, and existing decks or readings to update rather than rebuild. **Local only:** git-ignored, never committed (see `deck-prompts/guide.md`) | people | No | E |
-| `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
-| `readings/` | At most one reading per module for Modules 2–4 (a Word document, exported to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
-| `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
-| `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
-| `quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
-| `quizzes/*_key.md` | Answer key and objective coverage per quiz | `build-quizzes` skill | **No**, instructors only | H |
-| `instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
-| `tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `check_topics.py` (lane E); `build_notebooks.py` (lane F) | | No | |
-| `manifest.json` | One entry per generated output: its sources and the commit it was built from | `check_stale.py --update` | No | every lane |
+| `materials/slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
+| `materials/readings/` | At most one reading per module for Modules 2–4 (a Word document, exported to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
+| `materials/learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `how-to-build/tools/build_notebooks.py` | Yes, via HydroShare | F |
+| `materials/quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
+| `materials/quizzes/*_key.md` | Answer key and objective coverage per quiz | `build-quizzes` skill | **No**, instructors only | H |
+| `materials/instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
+
+**`how-to-build/`: how it's made** (nothing here goes to learners)
+
+| Folder or file | What's in it | Who edits it | Lane |
+|---|---|---|---|
+| `how-to-build/guide.md`, `*-prompt.md`, `design-rules.md`, `review-checklist.md` | How to build and update decks and readings, the prompts Claude follows, the look, and the review checklist | people | E |
+| `how-to-build/topics/` | One topic list per session: what goes on the deck, in a notebook, in a reading or nowhere | people | E |
+| `how-to-build/scaffolds/` | Hand-edited "Now you try it" starters (`<lesson file stem>.yml`) that `build_notebooks.py` turns into the student notebooks' starter cells | people (lane F drafts them) | F |
+| `how-to-build/templates/`, `how-to-build/to-update/` | Each builder's deck and reading templates and example decks, and existing decks or readings to update. **Local only:** git-ignored, never committed | people | E |
+| `how-to-build/tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `check_topics.py` (lane E); `build_notebooks.py` (lane F) | people | all |
+| `how-to-build/manifest.json` | One entry per committed output: its sources and the commit it was built from | `check_stale.py --update` | every lane |
 
 Decks are built from learner copies, so their speaker notes follow the learner-facing rules too (no internal
 links, no open callouts), and any deck format is safe to share.
 
 ## Tools
 
-**`tools/prepare_learner_copy.py`.** Every learner-facing builder starts from this copy of a page. It removes
+**`how-to-build/tools/prepare_learner_copy.py`.** Every learner-facing builder starts from this copy of a page. It removes
 every `TODO (dev team)` and `Partner review (…)` callout, turns internal course links (other pages, `{term}`,
 `{ref}` and `{doc}` roles, the Glossary and References pages, the repo) into plain text, keeps external links
 and images, and reports the counts. Put the counts in your PR. If the report ends with
@@ -125,22 +158,22 @@ before anything built from it goes to learners.
 Run from the repo root. Write learner copies to a scratch directory outside this repo (`<scratch-dir>` below):
 
 ```bash
-python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -o <scratch-dir>/01_access_nasa_swot.md
-python teaching-materials/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/*.md --out-dir <scratch-dir>/learner
+python teaching-materials/how-to-build/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -o <scratch-dir>/01_access_nasa_swot.md
+python teaching-materials/how-to-build/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/*.md --out-dir <scratch-dir>/learner
 ```
 
 From Python:
 
 ```python
 import sys
-sys.path.insert(0, "teaching-materials/tools")
+sys.path.insert(0, "teaching-materials/how-to-build/tools")
 from prepare_learner_copy import prepare
 
 page = "03-federal-water-data-access-retrieval/01_access_nasa_swot.md"
 text, counts = prepare(open(page, encoding="utf-8").read())
 ```
 
-**`tools/check_stale.py`.** Lists outputs whose sources changed since they were built (exit code 1 if any).
+**`how-to-build/tools/check_stale.py`.** Lists outputs whose sources changed since they were built (exit code 1 if any).
 A `STALE` line names the output; its manifest entry's `builder` says which skill rebuilds it.
 
 To rebuild an output, on your feature branch:
@@ -149,11 +182,11 @@ To rebuild an output, on your feature branch:
 2. Run the builder (the skill, or the script).
 3. Record the rebuild:
    ```bash
-   python teaching-materials/tools/check_stale.py --update teaching-materials/quizzes/module-01_quiz_data-best-practices.txt \
+   python teaching-materials/how-to-build/tools/check_stale.py --update teaching-materials/materials/quizzes/module-01_quiz_data-best-practices.txt \
        --kind quiz --builder build-quizzes --source 01-data-best-practices
    ```
 4. Commit the output and `manifest.json` together.
-5. Run `python teaching-materials/tools/check_stale.py`: the output should no longer be listed.
+5. Run `python teaching-materials/how-to-build/tools/check_stale.py`: the output should no longer be listed.
 
 `--kind` is one of `slides`, `reading`, `notebook`, `environment`, `bundle-readme`, `quiz`,
 `instructor-guide` (answer keys use `quiz`). `--kind`, `--builder` and `--source` are needed only for a new entry; `--source` (repeat
@@ -168,7 +201,7 @@ Each manifest entry looks like this:
 
 ```json
 {
-  "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
+  "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
   "kind": "quiz",
   "sources": ["03-federal-water-data-access-retrieval"],
   "source_commit": "<full SHA>",
@@ -205,7 +238,7 @@ shortened to `synthesizing-federal-data-products`. So `module-03_lesson-01_retri
 
 ### Slides and readings (lane E)
 
-| Session | Deck (`slides/`) |
+| Session | Deck (`materials/slides/`) |
 |---|---|
 | 1 | `session-01_module-01_data-best-practices.pptx` |
 | 2 | `session-02_module-02_federal-water-data-landscape.pptx` |
@@ -216,14 +249,14 @@ shortened to `synthesizing-federal-data-products`. So `module-03_lesson-01_retri
 
 Readings are per module, for Modules 2–4 only, named `module-NN_reading_<module slug>.docx`:
 
-| Module | Reading (`readings/`) | From the `reading` rows of |
+| Module | Reading (`materials/readings/`) | From the `reading` rows of |
 |---|---|---|
 | 2 | `module-02_reading_federal-water-data-landscape.docx` | session 2 |
 | 3 | `module-03_reading_federal-water-data-access-retrieval.docx` | sessions 3–5 |
 | 4 | `module-04_reading_federal-water-data-synthesis.docx` | session 6 |
 
 Skip a reading when its topic lists have no `reading` rows. Its PDF keeps the same base name, next to it in
-`readings/`. Both are local only (see `deck-prompts/guide.md`).
+`materials/readings/`. Both are local only (see `how-to-build/guide.md`).
 
 ### Learner bundle (lane F)
 
@@ -231,7 +264,7 @@ Notebooks only for lessons with code. Each lesson gets a student notebook, a `_s
 `_environment.yml` copied from `environments/` (the conda environment *name* inside stays short, e.g. `m03-swot`).
 
 ```
-learner-bundle/
+materials/learner-bundle/
 ├── README.md
 ├── module-03_federal-water-data-access-retrieval/
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data.ipynb
@@ -242,9 +275,10 @@ learner-bundle/
 ├── module-04_federal-water-data-synthesis/
 │   ├── module-04_lesson-02_synthesizing-federal-data-products[...]  (m04-synthesis)
 │   └── module-04_lesson-03_additional-federal-water-data[...]                                     (m04-synthesis)
-└── scaffolds/                        hand-edited source, read by build_notebooks.py
-    └── <lesson file stem>.yml        e.g. module-03_lesson-01_retrieve-nasa-swot-data.yml
 ```
+
+The hand-edited "Now you try it" starters are build instructions, not outputs, so they live in
+`how-to-build/scaffolds/<lesson file stem>.yml` (e.g. `module-03_lesson-01_retrieve-nasa-swot-data.yml`).
 
 Module 4 lesson 1 (*Comparative overview of Federal data products*) has no code, so it has no notebook.
 Module 4 lesson 3 has three short code blocks; lane F decides whether they make a useful notebook and says so
@@ -261,7 +295,7 @@ in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are show
 
 ### Instructor guide (P8.5)
 
-`instructor-guide/00_start-here.md`, `01_prepare-to-teach.md`, `02_how-the-course-is-built.md`, and one
+`materials/instructor-guide/00_start-here.md`, `01_prepare-to-teach.md`, `02_how-the-course-is-built.md`, and one
 `session-NN_<deck slug>.md` per session using the deck names above without `.pptx`, e.g.
 `session-03_module-03_lesson-01_retrieve-nasa-swot-data.md`.
 

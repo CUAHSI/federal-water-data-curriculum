@@ -1,8 +1,8 @@
 # Session 6 · Module 4: Synthesizing federal water data
 
 - **When:** Thu Nov 19, 2026, 2:00–4:00 pm ET (120 min, with a 5-minute break)
-- **Deck:** `teaching-materials/slides/session-06_module-04_federal-water-data-synthesis.pptx`
-- **Reading:** `teaching-materials/readings/module-04_reading_federal-water-data-synthesis.docx`
+- **Deck:** `teaching-materials/materials/slides/session-06_module-04_federal-water-data-synthesis.pptx`
+- **Reading:** `teaching-materials/materials/readings/module-04_reading_federal-water-data-synthesis.docx`
 - **Notebooks:** `module-04_lesson-02_synthesizing-federal-data-products.ipynb` and, if lane F makes it,
   `module-04_lesson-03_additional-federal-water-data.ipynb`
 - **Pages:** `04/00` = `04-federal-water-data-synthesis/00_introduction.md`, `04/01` = `01_comparative_overview.md`,

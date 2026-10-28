@@ -12,18 +12,18 @@ It must look like the instructor built it herself in PowerPoint.
 
 ## Inputs
 
-1. **Topic list:** `teaching-materials/deck-prompts/topics/session-0{N}.md`. It lists every topic the deck
+1. **Topic list:** `teaching-materials/how-to-build/topics/session-0{N}.md`. It lists every topic the deck
    covers, the lesson section it comes from, the minutes it gets, and what the slides should show. It is the
    plan: cover every row whose "Where" includes `deck`, in that order, within its minutes. Don't add topics,
    and don't put `reading`, `notebook`-only, `how-to`-only or `cut` rows on slides.
 2. **Lesson pages:** the learner copies of the pages the topic list names (made with
-   `teaching-materials/tools/prepare_learner_copy.py`). They are the only source of content.
+   `teaching-materials/how-to-build/tools/prepare_learner_copy.py`). They are the only source of content.
 3. **Figures:** the files in `images/` that the topic list and the pages name.
-4. **Design rules:** `teaching-materials/deck-prompts/design-rules.md`. Follow them exactly; where they say
+4. **Design rules:** `teaching-materials/how-to-build/design-rules.md`. Follow them exactly; where they say
    **DECIDE**, use the default.
-5. **Template:** `teaching-materials/reference-decks/template.pptx` (or `.potx`). It contains one example
+5. **Template:** `teaching-materials/how-to-build/templates/template.pptx` (or `.potx`). It contains one example
    slide for each slide type in the design rules, plus the slide masters and layouts.
-6. **Example decks** (optional): the other files in `teaching-materials/reference-decks/`. Use them to
+6. **Example decks** (optional): the other files in `teaching-materials/how-to-build/templates/`. Use them to
    see how the instructor paces, builds up and highlights ideas. Never copy their content.
 
 ## Content rules
@@ -83,7 +83,7 @@ Work from a copy of the template so the masters, layouts, theme fonts and colour
   activity answer slides the ACTIVITY PROMPT repeated word for word.
 - Delete the template's example slides when you're done.
 
-Save the deck as the file name in the topic list's header, in `teaching-materials/slides/` (git-ignored: decks
+Save the deck as the file name in the topic list's header, in `teaching-materials/materials/slides/` (git-ignored: decks
 are never committed). In the deck's document properties, set **Comments** to `Built from <commit> with
 topics/session-0{N}.md`, using the repo commit the lessons were read from (`git rev-parse --short HEAD`) if you
 know it. If you're writing the file with code, use `python-pptx`, and copy slides by deep-copying the example
