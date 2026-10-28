@@ -14,7 +14,7 @@ changing, and leave everything else exactly as it is.
 
 ## Inputs
 
-1. **The deck to update:** the `.pptx` for this session in `teaching-materials/deck-prompts/decks-to-update/`.
+1. **The deck to update:** the `.pptx` for this session in `teaching-materials/decks-to-update/`.
    If there's none there, your local deck in `teaching-materials/slides/` (the file name in the topic list
    header; decks are git-ignored, never committed).
 2. **Topic list:** `teaching-materials/deck-prompts/topics/session-0{N}.md`: what the deck should cover, in what
@@ -22,7 +22,7 @@ changing, and leave everything else exactly as it is.
 3. **Lesson pages:** the learner copies of the pages the topic list names. They are the only source of content.
 4. **Figures:** the files in `images/` that the topic list and the pages name.
 5. **Design rules:** `teaching-materials/deck-prompts/design-rules.md`, for slides you add or change.
-6. **Template:** `teaching-materials/deck-prompts/reference-decks/template.pptx`, only for a new slide whose type
+6. **Template:** `teaching-materials/reference-decks/template.pptx`, only for a new slide whose type
    the deck doesn't already have.
 
 ## Rules

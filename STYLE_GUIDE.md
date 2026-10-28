@@ -233,7 +233,7 @@ the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`. Mo
 | 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.pptx` |
 
 (Dec 1 peer review and Dec 3 demos have no decks.) Decks are PowerPoint files built from the session's topic list
-(`deck-prompts/topics/session-NN.md`) in the instructor's style; see `teaching-materials/deck-prompts/README.md`.
+(`deck-prompts/topics/session-NN.md`) in the instructor's style; see `teaching-materials/deck-prompts/guide.md`.
 
 **The slides are the lessons for learners.** Pilot learners meet with an instructor and can't open the website
 or this repo. Each session's **topic list** decides where every lesson section goes:

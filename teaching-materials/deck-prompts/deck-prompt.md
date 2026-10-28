@@ -21,9 +21,9 @@ It must look like the instructor built it herself in PowerPoint.
 3. **Figures:** the files in `images/` that the topic list and the pages name.
 4. **Design rules:** `teaching-materials/deck-prompts/design-rules.md`. Follow them exactly; where they say
    **DECIDE**, use the default.
-5. **Template:** `teaching-materials/deck-prompts/reference-decks/template.pptx` (or `.potx`). It contains one example
+5. **Template:** `teaching-materials/reference-decks/template.pptx` (or `.potx`). It contains one example
    slide for each slide type in the design rules, plus the slide masters and layouts.
-6. **Example decks** (optional): the other files in `teaching-materials/deck-prompts/reference-decks/`. Use them to
+6. **Example decks** (optional): the other files in `teaching-materials/reference-decks/`. Use them to
    see how the instructor paces, builds up and highlights ideas. Never copy their content.
 
 ## Content rules

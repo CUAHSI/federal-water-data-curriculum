@@ -5,7 +5,7 @@ description: Build or update a session's PowerPoint deck (in the instructor's st
 
 # Build a session deck or a module reading
 
-The prompts, topic lists and design rules live in `teaching-materials/deck-prompts/`; read its README first.
+The prompts, topic lists and design rules live in `teaching-materials/deck-prompts/`; read its `guide.md` first.
 This skill runs the same prompts a person would paste into Claude, with the setup done for them. The lessons
 are the source of truth. If a deck needs different content, change the lesson (or flag it), not the slide.
 
@@ -14,8 +14,8 @@ are the source of truth. If a deck needs different content, change the lesson (o
 1. **Check the inputs.**
     - `python teaching-materials/tools/check_topics.py N` passes. If it doesn't, stop and report: a topic list
       that names a missing section needs a person to decide.
-    - `teaching-materials/deck-prompts/reference-decks/` has a `template.pptx` (or `.potx`). If it doesn't, stop and
-      say so: the deck can't match the instructor's style without it (see `reference-decks/README.md`).
+    - `teaching-materials/reference-decks/` has a `template.pptx` (or `.potx`). If it doesn't, stop and
+      say so: the deck can't match the instructor's style without it (see "Reference decks" in `deck-prompts/guide.md`).
 2. **Make learner copies** of the lesson pages the topic list names, with
    `teaching-materials/tools/prepare_learner_copy.py`, into a scratch directory outside the repo. Note the
    counts for the PR.
@@ -35,7 +35,7 @@ are the source of truth. If a deck needs different content, change the lesson (o
 
 ## Updating a deck (`/build-slides N update`)
 
-Use this when a deck for the session already exists: one in `deck-prompts/decks-to-update/`, or else the
+Use this when a deck for the session already exists: one in `teaching-materials/decks-to-update/`, or else the
 local deck in `teaching-materials/slides/`. Default to it whenever a deck exists and the user asks
 to "rebuild" after a lesson change, and say so.
 

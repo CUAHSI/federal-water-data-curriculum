@@ -1,5 +1,0 @@
-# Session decks are built locally and shared through Canvas; never committed
-# (see teaching-materials/deck-prompts/README.md, "Save it")
-*.pptx
-*.potx
-*.pdf

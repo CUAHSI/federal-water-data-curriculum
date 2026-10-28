@@ -6,3 +6,16 @@ __pycache__/
 # Quarto project cache (teaching-materials renders)
 /.quarto/
 **/*.quarto_ipynb
+
+# Teaching materials that stay local (see teaching-materials/deck-prompts/guide.md)
+# Session decks are built locally and shared through Canvas, never committed
+teaching-materials/slides/*.pptx
+teaching-materials/slides/*.potx
+teaching-materials/slides/*.pdf
+# Each builder's template and example decks, and existing decks to update
+teaching-materials/reference-decks/
+teaching-materials/decks-to-update/
+# Readings: Quarto intermediates and local renders (the committed PDFs are in readings/rendered/)
+teaching-materials/readings/.quarto/
+teaching-materials/readings/*.typ
+teaching-materials/readings/*.pdf

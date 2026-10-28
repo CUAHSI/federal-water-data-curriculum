@@ -45,7 +45,7 @@ Taken from the cohort decks (which share their palette with the talks):
 ## 4. Slide types
 
 Use these, and only these. Each maps to a template layout (the layout names are the template's own; list them
-in `reference-decks/README.md` once the template exists).
+in the reference decks table in `guide.md` once the template exists).
 
 1. **Session title.** Landscape photo banner, CUAHSI logo, session title and subtitle, date, presenter name,
    title and photo.

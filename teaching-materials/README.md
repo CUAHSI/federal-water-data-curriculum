@@ -32,7 +32,7 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 
 | Skill | Needs | Used for |
 |---|---|---|
-| `build-slides` | Your template and example decks in `deck-prompts/reference-decks/` (see its README); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings. The Render readings action installs its own Quarto |
+| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings. The Render readings action installs its own Quarto |
 | `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
@@ -99,7 +99,8 @@ works outside this folder.
 
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
-| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck and reading prompts, and a review checklist. **Source, not generated**; `reference-decks/` (each builder's template and example decks) and `decks-to-update/` (existing decks to update rather than rebuild) aren't committed | people | No | E |
+| `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck, update and reading prompts, a review checklist, and `guide.md` (how to use them). **Source, not generated** | people | No | E |
+| `reference-decks/`, `decks-to-update/` | Each builder's template and example decks, and existing decks to update rather than rebuild. **Local only:** git-ignored, never committed (see `deck-prompts/guide.md`) | people | No | E |
 | `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `readings/` | At most one reading per module for Modules 2–4 (`.qmd`; rendered to PDF in `readings/rendered/` by the "Render readings" workflow) | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |

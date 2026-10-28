@@ -1,4 +1,0 @@
-.quarto/
-*.typ
-# Local renders land next to the .qmd; the committed PDFs are in rendered/ (from the Render readings workflow)
-/*.pdf

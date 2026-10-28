@@ -1,4 +1,4 @@
-# Deck prompts
+# Deck prompts: guide
 
 Everything a person needs to have Claude build or update a session deck (PowerPoint), or build a module reading
 (PDF), from the lesson pages, in the instructor's own style, for *Reproducible Workflows with Open Water Data:
@@ -14,21 +14,26 @@ The lessons stay the source of truth. Three kinds of output come from them, each
 
 What goes where is decided per topic in the **topic lists**, not by whoever runs the prompt.
 
-## What's here
+## What's where
 
 ```
-deck-prompts/
-├── README.md             this file
-├── topics/
-│   └── session-01.md …   one editable topic list per session
-├── design-rules.md       how the decks look and move (seeded from the instructor's decks)
-├── deck-prompt.md        the prompt that builds one session deck from scratch
-├── update-prompt.md      the prompt that updates an existing deck, slide by slide
-├── reading-prompt.md     the prompt that builds one module reading
-├── review-checklist.md   what to check before a deck is used
-├── reference-decks/      your template and example decks (not committed; see reference-decks/README.md)
-└── decks-to-update/      existing decks to update rather than rebuild (not committed; see its README)
+teaching-materials/
+├── deck-prompts/            committed
+│   ├── guide.md             this file
+│   ├── topics/
+│   │   └── session-01.md …  one editable topic list per session
+│   ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
+│   ├── deck-prompt.md       the prompt that builds one session deck from scratch
+│   ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
+│   ├── reading-prompt.md    the prompt that builds one module reading
+│   └── review-checklist.md  what to check before a deck is used
+├── reference-decks/         local only: your template and example decks (see below)
+├── decks-to-update/         local only: existing decks to update rather than rebuild (see below)
+└── slides/                  local only: the decks you build
 ```
+
+The three local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
+them is ever committed.
 
 ## Topic lists
 
@@ -53,19 +58,46 @@ python teaching-materials/tools/check_topics.py        # or: ... check_topics.py
 It checks that the minutes add up, the "Where" values are valid, and every `§ heading` still exists in its
 lesson page. Run it again whenever a lesson changes: a renamed section shows up here before you build from it.
 
+## Reference decks: your template and examples
+
+`teaching-materials/reference-decks/` holds what the generator copies its style from. Each person who builds
+decks needs their own copy (ask the course lead for theirs).
+
+1. **`template.pptx`** (or `template.potx`): the most important file. To make one from your own deck by hand:
+   1. Open a recent deck in your usual style (the course lead used the 2026 Data Publishing cohort deck).
+   2. **Save As** `template.pptx` in `reference-decks/`.
+   3. Delete slides until exactly **one example of each slide type** in `design-rules.md` §4 is left: session
+      title, program schedule, lesson objectives, content (one with a figure, one text-only), statement,
+      section divider, activity, live coding (copy the activity slide and retitle it), code, before → after.
+   4. On each example slide, type the slide type in the speaker notes (for example `TYPE: activity`), so the
+      generator knows which is which.
+   5. Remove anything that shouldn't be reused: other presenters' photos, old dates, talk-specific logos.
+      Leave the CUAHSI branding, the schedule slide's icons and your own photo for the title slide.
+2. **Two or three example decks** (`.pptx` or `.pdf`) that show your pacing and how you build ideas up across
+   slides. Teaching decks are better than conference talks.
+
+**Why a template made from real slides:** the generator copies your example slides and replaces their content,
+so every position, font, colour and emphasis comes from something you made. That keeps the decks looking like
+yours: it doesn't build slides up from shapes, which is what makes generated decks look generated.
+
+The course lead's copy (October 2026):
+
+| File | What it is |
+|---|---|
+| `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 12 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
+| `make_template.py` | The script that made the first version of the template (needs `python-pptx`); only useful to start over |
+| `260518_lplatt&kwong_DataPubCohort.pptx` | 2026 Data Publishing cohort sessions: the session structure, activities and builds |
+| `251112_Slides_LPlatt_Wk2_ConfigContent_READMEs.pdf` | 2025 pilot cohort, week 2: a full teaching session |
+| `250313_lplatt_NMC_reproducibility_slides.pptx` | Conference talk: statement slides, highlight outlines, code |
+| `260624_lplatt_TBEP_PracticalOpenScience.pdf` | Most recent talk (2026): statement slides, spotlight and grow-a-figure builds |
+
 ## Building a deck
 
-### 1. One time: set up `reference-decks/`
-
-Put the template and two or three example decks in `teaching-materials/deck-prompts/reference-decks/`, as described
-in [`reference-decks/README.md`](reference-decks/README.md). This folder isn't committed, so each person who builds decks
-needs their own copy (ask the course lead for theirs).
-
-### 2. Check the topic list
+### 1. Check the topic list
 
 Read the session's topic list, make your edits, and run `check_topics.py`.
 
-### 3. Run the prompt
+### 2. Run the prompt
 
 **In Claude Code** (in this repo): run `/build-slides N` (N = the session number). The `build-slides` skill
 makes the learner copies, then follows `deck-prompt.md`. It stops after the slide plan so you can adjust it.
@@ -84,24 +116,24 @@ makes the learner copies, then follows `deck-prompt.md`. It stops after the slid
 3. Paste everything below the line in `deck-prompt.md`, with `{N}` replaced by the session number.
 4. Review the slide plan it shows you, reply with changes or "go ahead", and download the `.pptx`.
 
-### 4. Review
+### 3. Review
 
 Go through [`review-checklist.md`](review-checklist.md). Small fixes are quickest in PowerPoint. If you fix
 lesson *content* on a slide, fix the lesson page too, or the next build undoes it. If a fix is about style,
 add it to `design-rules.md` so the next deck gets it right.
 
-### 5. Save it
+### 4. Save it
 
-Save the deck in `teaching-materials/slides/` under the file name in the topic list's header. That folder is
-git-ignored: **decks are never committed** (they're large, and they carry photos and screenshots). Share the
-final deck through Canvas, and keep your own copy.
+Save the deck in `teaching-materials/slides/` under the file name in the topic list's header. **Decks are never
+committed** (they're large, and they carry photos and screenshots). Share the final deck through Canvas, and
+keep your own copy.
 
 The deck records what it was built from: its document properties' **Comments** say `Built from <commit> with
 topics/session-NN.md` (File → Info → Properties in PowerPoint). Decks aren't in `manifest.json`, because
 `check_stale.py` can only track files that are in the repo. The update prompt uses that commit instead to see
 what changed in the lessons since the deck was built.
 
-### 6. Commit the topic list
+### 5. Commit the topic list
 
 If you edited the topic list or design rules along the way, commit those. Never the deck.
 
@@ -110,20 +142,24 @@ If you edited the topic list or design rules along the way, commit those. Never 
 When a deck already exists and you only want it brought up to date (a deck you made by hand, an earlier
 course's deck, or your own deck whose lessons changed), update it instead of rebuilding it:
 
-1. Put the deck in `decks-to-update/`, named after the session's deck. Skip this to update your deck in
-   `teaching-materials/slides/`.
+1. Put the deck in `teaching-materials/decks-to-update/`, named after the session's deck (the file name in its
+   topic list header, e.g. `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx`), so the prompt can
+   find it. Skip this to update your deck in `teaching-materials/slides/`; that's the usual way to bring a deck
+   up to date after a lesson changes.
 2. Start the speaker notes of any slide that must not change with `KEEP`.
-3. Check the topic list (step 2 above), then run `update-prompt.md`: in Claude Code, `/build-slides N update`;
-   on the web or desktop, attach the deck plus the same files as for a build.
-4. It shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then let it go ahead.
-5. Review and save the result as in steps 4–6 above.
+3. Check the topic list, then run `update-prompt.md`: in Claude Code, `/build-slides N update`; on the web or
+   desktop, attach the deck plus the same files as for a build.
+4. It inventories the deck and shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then
+   let it go ahead. It saves the updated deck in `teaching-materials/slides/` and never overwrites the file in
+   `decks-to-update/`.
+5. Review and save the result as for a build.
 
 ## Building a reading
 
 After the module's decks are done, run `reading-prompt.md` the same way (in Claude Code: `/build-slides
 reading M`, where M is the module number). It collects the `reading` rows from the module's topic lists. Render
-with `quarto render teaching-materials/readings/<file>.qmd`, or with Actions → Render readings. Record it like a
-deck, with `--kind reading` and the topic lists as sources.
+with `quarto render teaching-materials/readings/<file>.qmd`, or with Actions → Render readings. Record it with
+`check_stale.py --update`, with `--kind reading` and the topic lists as sources.
 
 ## When something changes
 
