@@ -24,8 +24,8 @@ These break down into:
 
 ## Important concepts and terminology
 
-- **Synthesis.** Using several independent sources together, so that each one's strengths cover another's gaps, and so their agreement (or disagreement) tells you how confident to be.
-- **Remote sensing vs. model vs. observation.** SWOT observes water from space when it passes over; the NWM simulates and forecasts conditions everywhere on its network; USGS reports measured (and rated) conditions at points. They carry different kinds of error, so they are complementary rather than interchangeable.
+- **Synthesis.** Using several sources together, so that each one's strengths cover another's gaps, and so their agreement (or disagreement) tells you how confident to be.
+- **Satellite observation vs. model vs. in-situ observation.** SWOT observes water from space when it passes over; the NWM simulates and forecasts conditions everywhere on its network; USGS reports measured (and rated) conditions at points. They carry different kinds of error, so they are complementary rather than interchangeable.
 - **Crosswalking locations.** Each agency has its own location identifier. Connecting them (SWORD reach ↔ COMID ↔ gage) is often the first, and most error-prone, step of any synthesis.
 - **Common units and references.** SWOT {term}`water surface elevation <Water surface elevation>` is in meters relative to a geoid ([Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md)); NWM streamflow is in m³/s; USGS discharge is in ft³/s and {term}`gage height <Gage height>` is relative to a local gage datum. Convert units, and compare _changes_ when vertical references differ.
 
@@ -36,7 +36,7 @@ These break down into:
 
 - **Forecast lead time.** A forecast is labeled by when it was issued (its {term}`forecast reference time <Forecast reference time>`) and how far ahead it looks. Comparing forecasts issued at different times before an event shows how the predicted peak evolved.
 - **Data provider recommendations.** Each agency publishes guidance on appropriate use (for example, quality flags, official forecasts vs. model guidance, and provisional vs. approved data). Following it keeps analyses defensible.
-- **Reproducible synthesis.** Combining three products multiplies what you need to record: each product's version (SWOT product version, NWM model version, USGS approval status, last modified date and date accessed), your query (identifiers, dates, product names) and your access dates. Module 1 covers why ([reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques), [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)); the case study shows one way to do it.
+- **Reproducible synthesis.** Combining three products multiplies what you need to record: each product's version (SWOT data product and SWORD version, NWM model version, USGS approval status, last modified date and date accessed), your query (identifiers, dates, product names) and your access dates. Module 1 covers why ([reproducibility techniques](../01-data-best-practices/02_data_management.md#reproducibility-techniques), [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)); the case study shows one way to do it.
 
 :::{admonition} Partner review (NASA): Important concepts and terminology
 :class: important
