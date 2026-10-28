@@ -24,7 +24,7 @@ deck-prompts/
 ├── deck-prompt.md        the prompt that builds one session deck
 ├── reading-prompt.md     the prompt that builds one module reading
 ├── review-checklist.md   what to check before a deck is used
-└── reference/            your template and example decks (not committed; see reference/README.md)
+└── reference-decks/      your template and example decks (not committed; see reference-decks/README.md)
 ```
 
 ## Topic lists
@@ -52,10 +52,10 @@ lesson page. Run it again whenever a lesson changes: a renamed section shows up 
 
 ## Building a deck
 
-### 1. One time: set up `reference/`
+### 1. One time: set up `reference-decks/`
 
-Put the template and two or three example decks in `teaching-materials/deck-prompts/reference/`, as described
-in [`reference/README.md`](reference/README.md). This folder isn't committed, so each person who builds decks
+Put the template and two or three example decks in `teaching-materials/deck-prompts/reference-decks/`, as described
+in [`reference-decks/README.md`](reference-decks/README.md). This folder isn't committed, so each person who builds decks
 needs their own copy (ask the course lead for theirs).
 
 ### 2. Check the topic list
@@ -77,7 +77,7 @@ makes the learner copies, then follows `deck-prompt.md`. It stops after the slid
    - the learner copies;
    - the session's topic list and `design-rules.md`;
    - the figures the topic list names (from `images/`);
-   - your template and one or two example decks from `reference/`.
+   - your template and one or two example decks from `reference-decks/`.
 3. Paste everything below the line in `deck-prompt.md`, with `{N}` replaced by the session number.
 4. Review the slide plan it shows you, reply with changes or "go ahead", and download the `.pptx`.
 

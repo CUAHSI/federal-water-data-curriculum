@@ -14,13 +14,13 @@ are the source of truth. If a deck needs different content, change the lesson (o
 1. **Check the inputs.**
     - `python teaching-materials/tools/check_topics.py N` passes. If it doesn't, stop and report: a topic list
       that names a missing section needs a person to decide.
-    - `teaching-materials/deck-prompts/reference/` has a `template.pptx` (or `.potx`). If it doesn't, stop and
-      say so: the deck can't match the instructor's style without it (see `reference/README.md`).
+    - `teaching-materials/deck-prompts/reference-decks/` has a `template.pptx` (or `.potx`). If it doesn't, stop and
+      say so: the deck can't match the instructor's style without it (see `reference-decks/README.md`).
 2. **Make learner copies** of the lesson pages the topic list names, with
    `teaching-materials/tools/prepare_learner_copy.py`, into a scratch directory outside the repo. Note the
    counts for the PR.
 3. **Follow `deck-prompts/deck-prompt.md`** with `{N}` = N, reading the files from the repo (topic list,
-   learner copies, `images/`, design rules, `reference/`).
+   learner copies, `images/`, design rules, `reference-decks/`).
     - After step 2 of the prompt (the slide plan), stop and show the plan unless the user said to go straight
       through.
     - Write the deck with `python-pptx`, copying the template's example slides (see the prompt). Install it in

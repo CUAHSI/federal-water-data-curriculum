@@ -10,11 +10,11 @@ and screenshots, and emphasis that does one job. It should never look assembled 
 
 ## 1. The template does the styling
 
-- Build every deck from the course template (`reference/template.potx` or `.pptx`; see the README). Use the
+- Build every deck from the course template (`reference-decks/template.potx` or `.pptx`; see the README). Use the
   template's **slide layouts and placeholders** for titles, body text, pictures and section slides.
 - Don't restyle what the template already defines (fonts, title position, bullet style, colours). If a slide
   needs a look the template lacks, list it in the build report rather than inventing a style.
-- Slide size: 16:9 widescreen (13.33 × 7.5 in).
+- Slide size: the template's (16:9; the current template, from a Google Slides deck, is 10 × 5.63 in).
 
 ## 2. Colours
 
@@ -35,9 +35,11 @@ Taken from the cohort decks (which share their palette with the talks):
 
 ## 3. Type
 
-- Titles and body come from the template. Lindsay's PowerPoint talks use **Aptos** (titles in Aptos Display or
-  Aptos ExtraBold); the Google Slides cohort decks use Arial and Lato. **DECIDE:** Aptos or Arial. Default: Aptos.
-- Code: **Aptos Mono** (or Courier New), shown on a black background, terminal style, with white or light text.
+- Titles and body come from the template. The current template (from the cohort deck) uses **Arial** with
+  **Lato** on the title and schedule slides; Lindsay's PowerPoint talks use Aptos. **DECIDE:** keep Arial/Lato or
+  switch the template to Aptos. Default: whatever the template uses.
+- Code: **Courier New** (or Aptos Mono), shown on a black background, terminal style, with white text, as on the
+  template's code slide.
 - Sizes: titles 32–40 pt; body 20–24 pt; never below 16 pt for text the audience must read. Small grey text
   (11–12 pt) is only for image credits and source lines at the bottom of a slide.
 - Sentence case for titles ("What makes your data FAIR?"), not Title Case.
@@ -47,7 +49,7 @@ Taken from the cohort decks (which share their palette with the talks):
 ## 4. Slide types
 
 Use these, and only these. Each maps to a template layout (the layout names are the template's own; list them
-in `reference/README.md` once the template exists).
+in `reference-decks/README.md` once the template exists).
 
 1. **Session title.** Landscape photo banner, CUAHSI logo, session title and subtitle, date, presenter name,
    title and photo.
