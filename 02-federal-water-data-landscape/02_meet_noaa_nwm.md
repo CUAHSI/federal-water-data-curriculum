@@ -49,7 +49,7 @@ Changes from v3.0, which was operational until about 18 August 2026:
 - Improved downscaling of temperature forcing data, using a dynamic lapse-rate approach based on NWP model data
 - Representation of the flow diversion between the Mississippi and Atchafalaya Rivers at the Old River Control Structure, using observation-based flow persistence
 - Assimilation of USGS streamflow observations available at forecast time into the first hours of the short-, medium- and long-range forecasts
-- Updated CONUS hydrofabric with location refinements for 311 USGS stream gauges
+- Updated CONUS hydrofabric with location refinements for 311 USGS stream gages
 - Shorter Medium-Range coastal forecasts for the Atlantic-Gulf and Pacific domains (5 days, down from 10)
 - Puerto Rico/USVI: National Blend of Models (NBM) precipitation replaces WRF-ARW as supplemental forcing in Short-Range configurations, and new 00Z and 12Z Short-Range cycles
 As announced in [NWS Service Change Notice 26-64](https://www.weather.gov/media/notification/pdf_2026/scn26-64_Updated_National_Water_Model_V3.1_aaa.pdf).
