@@ -9,7 +9,7 @@ published with the course repo.
    1. Open a recent deck in your usual style (the course lead used the 2026 Data Publishing cohort deck).
    2. **Save As** `template.pptx` in this folder.
    3. Delete slides until exactly **one example of each slide type** in `../design-rules.md` §4 is left: session
-      title, program schedule, lingering questions, goals for today, content (one with a figure, one text-only),
+      title, program schedule, goals for today, content (one with a figure, one text-only),
       statement, section divider, activity, live coding (copy the activity slide and retitle it), code,
       before → after, final questions.
    4. On each example slide, type the slide type in the speaker notes (for example `TYPE: activity`), so the

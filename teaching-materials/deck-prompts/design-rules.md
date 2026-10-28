@@ -2,8 +2,7 @@
 
 These rules describe how the course decks look and move. They were seeded from Lindsay's own decks (the 2025–26
 Data Publishing cohort sessions and her 2024–26 conference talks; see "Where these rules came from" at the end).
-Every rule is editable. Lines marked **DECIDE** still need a choice; until someone makes it, the generator uses
-the default given.
+Every rule is editable.
 
 The aim is a deck that looks like a person built it in PowerPoint: simple slides, one idea each, real figures
 and screenshots, and emphasis that does one job. It should never look assembled from decorative parts.
@@ -31,13 +30,10 @@ Taken from the cohort decks (which share their palette with the talks):
 | "Do" / fixed | dark green `#274E13` | the "after" in before → after, good examples |
 | Pointer | orange `#E97132` | arrows and outline circles that point into a screenshot or figure |
 
-**DECIDE:** keep this palette, or switch to another (for example the CUAHSI brand palette). Default: keep it.
-
 ## 3. Type
 
-- Titles and body come from the template. The current template (from the cohort deck) uses **Arial** with
-  **Lato** on the title and schedule slides; Lindsay's PowerPoint talks use Aptos. **DECIDE:** keep Arial/Lato or
-  switch the template to Aptos. Default: whatever the template uses.
+- Titles and body come from the template. 
+- Font: Use **Arial** with **Lato** on the title and schedule slides. When in doubt, default to whatever the template uses.
 - Code: **Courier New** (or Aptos Mono), shown on a black background, terminal style, with white text, as on the
   template's code slide.
 - Sizes: titles 32–40 pt; body 20–24 pt; never below 16 pt for text the audience must read. Small grey text
@@ -56,25 +52,23 @@ in `reference-decks/README.md` once the template exists).
 2. **Program schedule.** Slate panel on the left ("Pilot Program Schedule" + month). On the right, every session
    with its icon and date. Past sessions are greyed out; today's session has a green rounded outline and "UP
    NEXT" in green. Shown near the start of every session; the outline moves each time.
-3. **Lingering questions.** Slate, centred: "Any questions or lingering issues from the previous session?"
-   (sessions 2–6), with the previous session's name and goals underneath.
-4. **Goals for today.** Slate, "GOALS FOR TODAY" (underlined), one icon on the left, the session name in bold
+3. **Goals for today.** Slate, "GOALS FOR TODAY" (underlined), one icon on the left, the session name in bold
    and 3–5 short goals.
-5. **Content.** White, title top-left (or white title on a slate header bar), at most 6 bullets or about 40
+4. **Content.** White, title top-left (or white title on a slate header bar), at most 6 bullets or about 40
    words, one figure or screenshot where the lesson has one.
-6. **Statement.** Black or slate background, one or two sentences in white, centred. Used to open a section or
+5. **Statement.** Black or slate background, one or two sentences in white, centred. Used to open a section or
    make one point land.
-7. **Section divider.** Solid slate (or green/blue for a change of pace) with a large bold white title. A small
+6. **Section divider.** Solid slate (or green/blue for a change of pace) with a large bold white title. A small
    recurring graphic (like the reproducibility pyramid) may come back on each divider of a series.
-8. **Activity.** Slate, "Activity #N" large and bold, then the task with its time ("Take ~7 minutes to …"),
+7. **Activity.** Slate, "Activity #N" large and bold, then the task with its time ("Take ~7 minutes to …"),
    numbered or bulleted steps, and a screenshot if learners need to find something.
-9. **Live coding.** Slate, like an activity: "Live coding: <what>", the notebook file name, the sections to run,
+8. **Live coding.** Slate, like an activity: "Live coding: <what>", the notebook file name, the sections to run,
    2–3 things to point out, and "Back to slides at <clock time>".
-10. **Code.** One code block of at most 12 lines, terminal style (section 3). Arrows or brackets in accent
+9. **Code.** One code block of at most 12 lines, terminal style (section 3). Arrows or brackets in accent
     colours can connect parts of the code to what they produce.
-11. **Before → after.** The problem on the left in dark red, an arrow, the fix on the right in dark green.
+10. **Before → after.** The problem on the left in dark red, an arrow, the fix on the right in dark green.
     Works for file names, column layouts and code.
-12. **Final questions.** Slate, centred: "Any final questions for today?"
+11. **Final questions.** Slate, centred: "Any final questions for today?"
 
 ## 5. Emphasis: one device at a time
 
@@ -89,8 +83,7 @@ Use one of these per slide, and only to point at something the speaker is talkin
 
 ## 6. "Animation" is a sequence of slides
 
-- **No PowerPoint animations and no slide transitions.** **DECIDE:** no transition at all, or a plain fade.
-  Default: none.
+- **No PowerPoint animations and no slide transitions.**
 - To build up an idea, duplicate the slide and change one thing on each copy, keeping the title and everything
   else in exactly the same place. Patterns from Lindsay's decks:
   - **Reveal:** add one bullet, one code example or one panel per slide (the "Key takeaways" sequence in the
@@ -155,7 +148,7 @@ Looked at in October 2026 (local copies, not in the repo):
 
 - Cohort teaching decks: `260518_lplatt&kwong_DataPubCohort.pptx` (79 slides) and the November 2025 pilot PDFs
   (`251110_…FileUpload`, `251112_…READMEs`, `251120_…FinishingStrong`). Source of the session structure, slide
-  types 1–4, 8 and 12, the slate/green palette and the build sequences.
+  types 1–3, 7 and 11, the slate/green palette and the build sequences.
 - Talks: `260624_lplatt_TBEP_PracticalOpenScience.pdf`, `250313_lplatt_NMC_reproducibility_slides.pptx`,
   `250329_…ASLO…`, `241212_…AGU_opensci.pptx`, `240624_…WaterSciCon24…`, `250605_…UCOWR_DataBestPractices.pdf`,
   `250930_…WhatIsTargets.pptx` and others. Source of the statement slides, swoosh underline, outline highlights,

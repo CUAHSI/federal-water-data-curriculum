@@ -14,27 +14,26 @@ length.
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 | |
 | 2 | Program schedule | – | deck | 1 | Session 5 outlined |
-| 3 | Lingering questions from Session 4 | – | deck | 2 | |
-| 4 | Goals for today | – | deck | 1 | |
-| 5 | What you'll retrieve; legacy vs. modernized services | 03/03 § Retrieve USGS WDFN data (intro) | deck | 4 | `images/m03/wdfn-ohio-louisville-map.png`; why `waterdata`, not `nwis` |
-| 6 | Choosing an access route | 03/03 § Choosing an access route | deck | 4 | |
-| 7 | Setup: API key and environment | 03/03 § USGS Water Data API key, § Create the conda environment | deck + how-to | 2 | Why a key; setup in the "How to" guide |
-| 8 | Codes: parameters and statistics | 03/03 § Codes: parameters and statistics | deck + notebook | 4 | 00060, 00065, 00003 |
-| 9 | Finding monitoring locations | 03/03 § Finding monitoring locations | deck + notebook | 7 | Short code; what comes back |
-| 10 | Live coding 1: codes and locations | 03/03 § Codes…, § Finding monitoring locations | deck + notebook | 12 | Live-coding slide |
-| 11 | Continuous data | 03/03 § Continuous data | deck + notebook | 4 | Three-year limit per call |
-| 12 | Daily data | 03/03 § Daily data | deck + notebook | 3 | |
-| 13 | Field measurements | 03/03 § Field  measurements | deck + notebook | 3 | |
-| 14 | Plot the data | 03/03 § Plot the data | deck + notebook | 3 | `images/m03/wdfn-ohio-louisville-discharge.png` |
-| 15 | Live coding 2: downloads | 03/03 § Programmatic data downloads | deck + notebook | 12 | Live-coding slide |
-| 16 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 6 | Approval status and qualifiers; columns and units |
-| 17 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | deck | 2 | Before → after: the same request both ways |
-| 18 | Temporal and spatial scaling; parallelization | 03/03 § Temporal scaling, § Spatial scaling, § Parallelization | deck | 6 | |
-| 19 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; answers in the solutions notebook |
-| 20 | Module 3 wrap-up: three routes compared | 03/00 | deck | 2 | One slide comparing how each product is retrieved |
-| 21 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
-| 22 | Final questions | – | deck | 5 | |
-| 23 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | notebook | – | Optional "Going further" section |
-| 24 | Counting qualifiers on long records | 03/03 § Understanding what you downloaded | notebook | – | Optional "Going further" section |
-| 25 | The metadata object, reference tables, paging | 03/03 § Spatial scaling, § Parallelization | reading | – | |
-| 26 | Further reading | 03/03 § Further reading | reading | – | |
+| 3 | Goals for today | – | deck | 1 | |
+| 4 | What you'll retrieve; legacy vs. modernized services | 03/03 § Retrieve USGS WDFN data (intro) | deck | 4 | `images/m03/wdfn-ohio-louisville-map.png`; why `waterdata`, not `nwis` |
+| 5 | Choosing an access route | 03/03 § Choosing an access route | deck | 4 | |
+| 6 | Setup: API key and environment | 03/03 § USGS Water Data API key, § Create the conda environment | deck + how-to | 2 | Why a key; setup in the "How to" guide |
+| 7 | Codes: parameters and statistics | 03/03 § Codes: parameters and statistics | deck + notebook | 4 | 00060, 00065, 00003 |
+| 8 | Finding monitoring locations | 03/03 § Finding monitoring locations | deck + notebook | 8 | Short code; what comes back |
+| 9 | Live coding 1: codes and locations | 03/03 § Codes…, § Finding monitoring locations | deck + notebook | 12 | Live-coding slide |
+| 10 | Continuous data | 03/03 § Continuous data | deck + notebook | 4 | Three-year limit per call |
+| 11 | Daily data | 03/03 § Daily data | deck + notebook | 3 | |
+| 12 | Field measurements | 03/03 § Field  measurements | deck + notebook | 3 | |
+| 13 | Plot the data | 03/03 § Plot the data | deck + notebook | 3 | `images/m03/wdfn-ohio-louisville-discharge.png` |
+| 14 | Live coding 2: downloads | 03/03 § Programmatic data downloads | deck + notebook | 12 | Live-coding slide |
+| 15 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 7 | Approval status and qualifiers; columns and units |
+| 16 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | deck | 2 | Before → after: the same request both ways |
+| 17 | Temporal and spatial scaling; parallelization | 03/03 § Temporal scaling, § Spatial scaling, § Parallelization | deck | 6 | |
+| 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; answers in the solutions notebook |
+| 19 | Module 3 wrap-up: three routes compared | 03/00 | deck | 2 | One slide comparing how each product is retrieved |
+| 20 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
+| 21 | Final questions | – | deck | 5 | |
+| 22 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | notebook | – | Optional "Going further" section |
+| 23 | Counting qualifiers on long records | 03/03 § Understanding what you downloaded | notebook | – | Optional "Going further" section |
+| 24 | The metadata object, reference tables, paging | 03/03 § Spatial scaling, § Parallelization | reading | – | |
+| 25 | Further reading | 03/03 § Further reading | reading | – | |
