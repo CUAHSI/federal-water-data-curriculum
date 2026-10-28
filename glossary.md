@@ -200,8 +200,7 @@ Granule
   stretch of one satellite pass: a whole continent for RiverSP, one scene for the Raster product.
 
 hydrocron
-: A PO.DAAC web API that returns time series of SWOT river reach and node data (and lake data) as CSV or GeoJSON,
-  without downloading whole granules.
+: PO.DAAC web API that returns time series of SWOT river reach and node data (as well as lake and discharge data) as CSV or GeoJSON, without downloading whole granules.
 
 KaRIn
 : The Ka-band Radar Interferometer, SWOT's main instrument. It measures the height of water surfaces across two
@@ -219,7 +218,7 @@ Pixel cloud (PIXC)
   ({term}`RiverSP`) and {term}`Raster <SWOT Raster product>` products are built from it.
 
 PO.DAAC
-: NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data.
+: NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data. https://www.earthdata.nasa.gov/centers/po-daac
 
 Product counter
 : The two-digit number after the {term}`CRID`, near the end of a SWOT granule name (`01`, `02`, …). A higher counter is a newer copy of the same
