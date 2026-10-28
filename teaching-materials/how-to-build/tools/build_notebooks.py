@@ -88,8 +88,9 @@ DROP_PARAGRAPHS = (
 CREDENTIALS = ("earthdata", "usgs")
 SETUP_SECTION = "Tools and environment setup"
 GOING_FURTHER = "Going further"
-GOING_FURTHER_NOTE = ("*Optional.* These examples go beyond the session. Nothing earlier in the notebook depends on "
-                      "them, but they reuse variables and functions from the cells above, so run those first.")
+GOING_FURTHER_NOTE = ("*Optional.* This goes beyond the session. It doesn't use any earlier results, only the "
+                      "packages imported in the notebook's first code cells. In the student notebook, \"Run All\" stops at the unfinished task cell above, so run "
+                      "the cells below one at a time (Shift+Enter).")
 SETUP_NOTE = ("This notebook runs in the `{env}` conda environment, made from `{stem}_environment.yml` in this folder "
               "(the bundle README says how). Credentials are set up in the Credentials section above.")
 
@@ -100,6 +101,7 @@ class GoingFurther:
     heading: str              # level-3 heading in the notebook
     # move the lesson's items from the paragraph starting with this text up to the next heading
     start: str = ""
+    before: tuple = ()        # (kind, text) items to put before the moved code, e.g. a function it needs
     # or add these (kind, text) items, kind "para" or "code", for code the lesson only gives inline
     items: tuple = ()
 
@@ -186,11 +188,30 @@ LESSONS = [
             # the published-references example moves to "Going further" (topic list, session 4 row 20)
             "so they don't cover the April 2025 flood.":
                 "so they don't cover the April 2025 flood. \"Going further\" at the end of this notebook has an example.",
-            "It uses `open_refs` from the previous example, so run that block first":
-                "It uses `open_refs` from the \"Kerchunk references\" section, so run that section first",
+            "This example combines them the same way and reads them over HTTPS.":
+                "This example combines them the same way as `build_refs` in the \"Kerchunk references\" section and "
+                "reads them over HTTPS.",
+            "It uses `open_refs` from the previous example, so run that block first (you don't need to build any "
+            "references yourself).":
+                "The next cell defines `open_refs` again, the same function as in that section, so this example "
+                "runs on its own.",
+            # the sentence budget would otherwise drop the definition of kerchunk references
+            "over the internet. Kerchunk fixes that": "over the internet.\n\nKerchunk fixes that",
         },
-        going_further=(GoingFurther("Example: use NOAA's published references for a recent run",
-                                    start="**Example: use NOAA's published references for a recent run**"),),
+        going_further=(GoingFurther(
+            "Example: use NOAA's published references for a recent run",
+            start="**Example: use NOAA's published references for a recent run**",
+            before=(("code", 'import xarray as xr\n\n'
+                             'def open_refs(refs):\n'
+                             '    """Open kerchunk references lazily: nothing is downloaded until values are needed."""\n'
+                             '    return xr.open_dataset("reference://", engine="zarr", chunks={}, consolidated=False, zarr_format=2,\n'
+                             '                           storage_options={"fo": refs, "remote_protocol": "https",\n'
+                             '                                            "remote_options": {"asynchronous": True}})'),),
+            items=(("para", "**What you should see:** 18 reference files; `time` 18 and `feature_id` 2,776,734; and "
+                            "the first three hourly streamflow values (m³/s) at Louisville for yesterday's 12Z run (UTC), "
+                            "which change from day to day. Recent runs can be a newer model version than the April 2025 "
+                            "archive: check `ds_recent.attrs[\"NWM_version_number\"]` and cite the version you used."),),
+        ),),
     ),
     Lesson(
         stem="module-03_lesson-03_retrieve-usgs-wdfn-data",
@@ -201,14 +222,27 @@ LESSONS = [
         drop_paragraphs=("The environment file lets most packages float",),
         drop_sections=("USGS Water Data API key",),
         drop_headings=("Create the conda environment",),
-        replacements={"Repeat the main steps for accessing NWM data": "Repeat the main steps for accessing USGS WDFN data"},
+        replacements={
+            "Repeat the main steps for accessing NWM data": "Repeat the main steps for accessing USGS WDFN data",
+            # the count itself is in "Going further" (below)
+            ' (count them with `daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()`)':
+                ' ("Going further" at the end of this notebook counts them)',
+        },
         # topic list, session 5 row 23; the lesson gives the count only as inline code in "Temporal scaling"
         going_further=(GoingFurther("Counting qualifiers on long records", items=(
-            ("para", "Long records carry more qualifiers. In the \"Temporal scaling\" example, about 1,100 days of "
-                     "the whole daily record (`daily_record`) are marked `[ESTIMATED]`, some together with `[ICE]` or "
-                     "`[EQUIP]` (equipment problems). Run that example first, then count them:"),
-            ("code", 'print(daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum(), "days marked [ESTIMATED]")\n'
+            ("para", "This downloads the whole daily record for the Ohio River at Louisville again, as in the "
+                     "\"Temporal scaling\" example (about 6 seconds), and counts its qualifiers:"),
+            ("code", '# the whole daily record, as in "Temporal scaling" (the site is set here, since the task changed `site`)\n'
+                     'daily_record, md = waterdata.get_daily(\n'
+                     '    monitoring_location_id="USGS-03294500",\n'
+                     '    parameter_code="00060",\n'
+                     '    statistic_id="00003",\n'
+                     ')\n'
+                     'print(daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum(), "days marked [ESTIMATED]")\n'
                      'daily_record["qualifier"].astype(str).value_counts()'),
+            ("para", "**What you should see:** about 1,100 days marked `[ESTIMATED]`, then one row per combination of "
+                     "qualifiers, most often `['ESTIMATED']` alone. Each day's qualifiers are a list, shown here as "
+                     "text, and days with no qualifier are left out of the counts."),
         )),),
     ),
     Lesson(
@@ -595,7 +629,8 @@ def going_further(lesson: Lesson, items: list[Item]) -> list[Item]:
             del items[begin:end]
             if moved[0].text.strip() == topic.start:
                 moved = moved[1:]  # the bold label is now the heading
-            section += moved
+            lead = 1 if moved and moved[0].kind == "para" else 0  # keep the introduction first
+            section += moved[:lead] + [Item(kind, text) for kind, text in topic.before] + moved[lead:]
         section += [Item(kind, text) for kind, text in topic.items]
     further = next((n for n, i in enumerate(items) if i.kind == "heading" and i.text == "Further reading"), len(items))
     return items[:further] + section + items[further:]

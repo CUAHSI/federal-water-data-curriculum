@@ -111,7 +111,7 @@ student notebook, then compare your answer with the `_solutions` notebook, which
 task text says what you should get.
 
 The NWM and USGS notebooks end with an optional **Going further** section, after the task: an extra example the
-session doesn't cover. It reuses variables from the earlier cells but not from the task. In the student notebook,
+session doesn't cover. It doesn't use any earlier results, only the packages imported in the first code cells. In the student notebook,
 the unfinished task cell stops a "Run All", so run the Going further cells one by one.
 
 The Module 4 lessons have no "Now you try it" task, so their student and solutions notebooks are the same. The Module
