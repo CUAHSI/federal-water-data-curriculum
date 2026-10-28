@@ -218,7 +218,7 @@ then rebuild. Everything lives in `teaching-materials/` and isn't part of the we
 hyphens inside a part and underscores between parts:
 `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
 the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`. Module readings:
-`module-03_reading_federal-water-data-access-retrieval.qmd`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
+`module-03_reading_federal-water-data-access-retrieval.docx`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
 *names* inside the files stay short (`m03-swot`), because people type them.
 
 **Session map**
@@ -240,7 +240,7 @@ or this repo. Each session's **topic list** decides where every lesson section g
 - **deck:** the important concepts and points, presented live;
 - **notebook:** practising the code (Modules 3 and 4);
 - **reading:** extra detail and nuance that's useful but not needed in the session. Modules 2, 3 and 4 have at
-  most one reading each (`readings/module-NN_reading_<module slug>.qmd`, rendered to PDF, built locally and never
+  most one reading each (`readings/module-NN_reading_<module slug>.docx`, exported to PDF, built locally and never
   committed); Module 1 has none;
 - **how-to:** setup steps covered by the HydroShare "How to" guide;
 - **cut:** on the website only.

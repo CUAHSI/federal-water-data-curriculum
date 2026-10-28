@@ -52,10 +52,13 @@ to "rebuild" after a lesson change, and say so.
 1. Run `check_topics.py` for the module's sessions (Module 2: 2; Module 3: 3 4 5; Module 4: 6).
 2. Make learner copies of the pages the `reading` rows name.
 3. Follow the **Build** or **Update** prompt in `deck-prompts/reading-prompt.md` with `{M}` = M. Stop after its
-   plan unless the user said to go straight through. Render with `quarto render <file>` from the repo root and
-   check the PDF.
+   plan unless the user said to go straight through.
+    - Write the `.docx` with `python-docx`, opening `teaching-materials/reference-decks/reading-template.docx` as
+      the starting document and using only its styles. Install it in a scratch environment if needed.
+    - Export the PDF with Word (`SaveAs` with format 17 through COM on Windows) or LibreOffice
+      (`soffice --headless --convert-to pdf`), and look at every page.
 4. **Save, don't commit**, as for a deck: `teaching-materials/readings/` is git-ignored, and readings aren't in
-   `manifest.json`. The `.qmd`'s header comment records the commit it was built from.
+   `manifest.json`. The document's Comments property records the commit it was built from.
 
 ## Rules
 - Only content from the lesson pages: no invented claims, numbers, quotes, code or figures. Gaps become

@@ -2,7 +2,7 @@
 
 - **When:** Tue Nov 10, 2026, 2:00–3:30 pm ET (90 min)
 - **Deck:** `teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx`
-- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.qmd` (shared by
+- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
 - **Notebook:** `module-03_lesson-01_retrieve-nasa-swot-data.ipynb` (learner bundle)
 - **Pages:** `03/00` = `03-federal-water-data-access-retrieval/00_introduction.md`, `03/01` = `01_access_nasa_swot.md`

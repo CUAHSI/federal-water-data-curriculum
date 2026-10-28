@@ -2,7 +2,7 @@
 
 - **When:** Tue Nov 17, 2026, 2:00–3:30 pm ET (90 min)
 - **Deck:** `teaching-materials/slides/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx`
-- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.qmd` (shared by
+- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
 - **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` (learner bundle)
 - **Pages:** `03/03` = `03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md`

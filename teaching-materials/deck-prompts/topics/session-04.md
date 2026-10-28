@@ -2,7 +2,7 @@
 
 - **When:** Thu Nov 12, 2026, 2:00–3:30 pm ET (90 min)
 - **Deck:** `teaching-materials/slides/session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx`
-- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.qmd` (shared by
+- **Reading:** `teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
 - **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` (learner bundle)
 - **Pages:** `03/02` = `03-federal-water-data-access-retrieval/02_access_noaa_nwm.md`

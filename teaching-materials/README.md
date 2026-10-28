@@ -19,7 +19,6 @@ the skill's steps. Only some steps are plain scripts you run yourself:
   conda environment needed);
 - `tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
 - `tools/check_topics.py`, which checks the session topic lists in `deck-prompts/topics/`;
-- rendering readings: `quarto render` locally (readings are built locally and never committed);
 - quizzes: `text2qti <file>.txt` makes the QTI zip.
 
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
@@ -32,7 +31,7 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 
 | Skill | Needs | Used for |
 |---|---|---|
-| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings locally |
+| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export slides and readings to PDF for checking | writing and checking decks and readings |
 | `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
@@ -102,7 +101,7 @@ works outside this folder.
 | `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck, update and reading prompts, a review checklist, and `guide.md` (how to use them). **Source, not generated** | people | No | E |
 | `reference-decks/`, `to-update/` | Each builder's template and example decks, and existing decks or readings to update rather than rebuild. **Local only:** git-ignored, never committed (see `deck-prompts/guide.md`) | people | No | E |
 | `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
-| `readings/` | At most one reading per module for Modules 2–4 (`.qmd` rendered to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
+| `readings/` | At most one reading per module for Modules 2–4 (a Word document, exported to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
 | `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
 | `quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
@@ -215,13 +214,13 @@ shortened to `synthesizing-federal-data-products`. So `module-03_lesson-01_retri
 | 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` |
 | 6 | `session-06_module-04_federal-water-data-synthesis.pptx` |
 
-Readings are per module, for Modules 2–4 only, named `module-NN_reading_<module slug>.qmd`:
+Readings are per module, for Modules 2–4 only, named `module-NN_reading_<module slug>.docx`:
 
 | Module | Reading (`readings/`) | From the `reading` rows of |
 |---|---|---|
-| 2 | `module-02_reading_federal-water-data-landscape.qmd` | session 2 |
-| 3 | `module-03_reading_federal-water-data-access-retrieval.qmd` | sessions 3–5 |
-| 4 | `module-04_reading_federal-water-data-synthesis.qmd` | session 6 |
+| 2 | `module-02_reading_federal-water-data-landscape.docx` | session 2 |
+| 3 | `module-03_reading_federal-water-data-access-retrieval.docx` | sessions 3–5 |
+| 4 | `module-04_reading_federal-water-data-synthesis.docx` | session 6 |
 
 Skip a reading when its topic lists have no `reading` rows. Its PDF keeps the same base name, next to it in
 `readings/`. Both are local only (see `deck-prompts/guide.md`).

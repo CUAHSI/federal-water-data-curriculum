@@ -3,10 +3,6 @@ _build/*
 .vscode/*
 __pycache__/
 
-# Quarto project cache (teaching-materials renders)
-/.quarto/
-**/*.quarto_ipynb
-
 # Teaching materials that stay local (see teaching-materials/deck-prompts/guide.md)
 # Session decks are built locally and shared through Canvas, never committed
 teaching-materials/slides/*.pptx
@@ -15,6 +11,6 @@ teaching-materials/slides/*.pdf
 # Each builder's template and example decks, and existing decks or readings to update
 teaching-materials/reference-decks/
 teaching-materials/to-update/
-# Module readings (.qmd and PDF) are built locally and shared through Canvas, never committed
+# Module readings (Word and PDF) are built locally and shared through Canvas, never committed
 teaching-materials/readings/*
 !teaching-materials/readings/.gitkeep

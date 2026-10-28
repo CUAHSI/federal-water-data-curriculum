@@ -10,7 +10,7 @@ The lessons stay the source of truth. Three kinds of output come from them, each
 |---|---|---|
 | **Deck** | The important concepts and points, presented live | `teaching-materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
 | **Notebook** | Practising the code | the learner bundle (`teaching-materials/learner-bundle/`) |
-| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, a `.qmd` rendered to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
+| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, a Word document exported to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
 
 What goes where is decided per topic in the **topic lists**, not by whoever runs the prompt.
 
@@ -25,12 +25,12 @@ teaching-materials/
 │   ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
 │   ├── deck-prompt.md       the prompt that builds one session deck from scratch
 │   ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
-│   ├── reading-prompt.md    the prompts that build or update one module reading
+│   ├── reading-prompt.md    the prompts that build or update one module reading (Word)
 │   └── review-checklist.md  what to check before a deck is used
-├── reference-decks/         local only: your template and example decks (see below)
+├── reference-decks/         local only: your deck and reading templates and example decks (see below)
 ├── to-update/               local only: existing decks or readings to update rather than rebuild (see below)
 ├── slides/                  local only: the decks you build
-└── readings/                local only: the readings you build (.qmd and PDF)
+└── readings/                local only: the readings you build (Word and PDF)
 ```
 
 The four local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
@@ -76,6 +76,10 @@ decks needs their own copy (ask the course lead for theirs).
       Leave the CUAHSI branding, the schedule slide's icons and your own photo for the title slide.
 2. **Two or three example decks** (`.pptx` or `.pdf`) that show your pacing and how you build ideas up across
    slides. Teaching decks are better than conference talks.
+3. **`reading-template.docx`:** the Word styles readings are written in (Title, Subtitle, "Why it matters",
+   Heading 1–2, Normal, List Bullet, Caption, Credit, Code, and the Link character style), with one sample
+   paragraph of each. Change the look by modifying the styles in Word (Home → Styles → Modify), not by
+   formatting the samples. `make_reading_template.py` made the first version.
 
 **Why a template made from real slides:** the generator copies your example slides and replaces their content,
 so every position, font, colour and emphasis comes from something you made. That keeps the decks looking like
@@ -87,6 +91,8 @@ The course lead's copy (October 2026):
 |---|---|
 | `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 12 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
 | `make_template.py` | The script that made the first version of the template (needs `python-pptx`); only useful to start over |
+| `reading-template.docx` | The reading styles: Arial, slate headings, shaded Code style, course name and page number in the footer |
+| `make_reading_template.py` | The script that made the first reading template (needs `python-docx`); only useful to start over |
 | `260518_lplatt&kwong_DataPubCohort.pptx` | 2026 Data Publishing cohort sessions: the session structure, activities and builds |
 | `251112_Slides_LPlatt_Wk2_ConfigContent_READMEs.pdf` | 2025 pilot cohort, week 2: a full teaching session |
 | `250313_lplatt_NMC_reproducibility_slides.pptx` | Conference talk: statement slides, highlight outlines, code |
@@ -162,15 +168,17 @@ when something changes. `reading-prompt.md` holds both prompts.
 
 - **Build:** after the module's decks are done, run the Build prompt (in Claude Code: `/build-slides reading M`,
   where M is the module number). It collects the `reading` rows from the module's topic lists, shows you a plan,
-  writes `teaching-materials/readings/module-0M_reading_<module slug>.qmd`, and renders the PDF with
-  `quarto render` (shared page settings come from the repo's `_quarto.yml`).
+  then writes `teaching-materials/readings/module-0M_reading_<module slug>.docx` in the reading template's styles
+  and saves a PDF next to it. No extra software: Word does the formatting.
 - **Update:** run the Update prompt (`/build-slides reading M update`). It works on the reading in
-  `teaching-materials/to-update/` if you put one there (a PDF or Word reading is turned into a `.qmd` first),
-  otherwise on yours in `readings/`. It shows a section-by-section plan before changing anything; start a section
-  with `<!-- KEEP -->` to protect it.
-- **Save:** both the `.qmd` and the PDF stay in `teaching-materials/readings/` (git-ignored). Share the PDF
-  through Canvas. The `.qmd`'s header comment records the commit it was built from, which the Update prompt
-  uses to see what changed.
+  `teaching-materials/to-update/` if you put one there (a PDF-only reading is rebuilt as Word first), otherwise
+  on yours in `readings/`. It shows a section-by-section plan before changing anything. To protect a section, add
+  a Word comment starting `KEEP` to its heading.
+- **Edit by hand** in Word whenever you like, using the template's styles, then export the PDF again (File → Save
+  As → PDF).
+- **Save:** the `.docx` and PDF stay in `teaching-materials/readings/` (git-ignored). Share the PDF through
+  Canvas. The document's Comments property records the commit it was built from, which the Update prompt uses
+  to see what changed.
 
 ## When something changes
 
