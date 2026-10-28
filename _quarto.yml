@@ -1,29 +1,20 @@
-# Quarto project for the teaching materials (slide decks and readings).
-# The website is built by MyST from myst.yml; this file only affects `quarto render`.
+# Quarto project for the module readings (teaching-materials/readings/).
+# The website is built by MyST from myst.yml, and the session decks are PowerPoint files
+# (teaching-materials/deck-prompts/); this file only affects `quarto render`.
 project:
   type: default
-  # Only the teaching materials are Quarto documents. Without this list, a bare
+  # Only the readings are Quarto documents. Without this list, a bare
   # `quarto render` at the repo root would try to render the lesson .md pages
   # and the learner-bundle notebooks too.
   render:
-    - teaching-materials/slides/*.qmd
     - teaching-materials/readings/*.qmd
 
-# Slide and reading code is shown, never run.
+# Reading code is shown, never run.
 execute:
   enabled: false
 
-# Shared settings. Each file still lists its own formats in its header
-# (decks: revealjs + pptx; readings: typst) and gets these settings for them.
+# Shared settings. Each reading lists `format: typst` in its header and gets these settings.
 format:
-  revealjs:
-    embed-resources: true
-    slide-number: true
-    code-line-numbers: false
-    include-in-header:
-      text: |
-        <style>.reveal pre { font-size: 0.5em; }</style>
-  pptx: default
   typst:
     margin:
       x: 2cm
