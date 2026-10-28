@@ -217,34 +217,43 @@ then rebuild. Everything lives in `teaching-materials/` and isn't part of the we
 **Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
 hyphens inside a part and underscores between parts:
 `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
-the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`, `_pre-reading.qmd`,
-`_post-reading.qmd`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
+the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`. Module readings:
+`module-03_reading_federal-water-data-access-retrieval.docx`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
 *names* inside the files stay short (`m03-swot`), because people type them.
 
 **Session map**
 
-| Session | Date (ET) | Length | Covers | Slide deck (`slides/`) |
+| Session | Date (ET) | Length | Covers | Slide deck (`materials/slides/`) |
 |---|---|---|---|---|
-| 1 | Tue Nov 3, 2:00 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `session-01_module-01_data-best-practices.qmd` |
-| 2 | Thu Nov 5, 2:00 | 120 min | Module 2 overview + lessons 1–3 | `session-02_module-02_federal-water-data-landscape.qmd` |
-| 3 | Tue Nov 10, 2:00 | 90 min | Module 3 overview + lesson 1 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd` |
-| 4 | Thu Nov 12, 2:00 | 90 min | Module 3 lesson 2 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.qmd` |
-| 5 | Tue Nov 17, 2:00 | 90 min | Module 3 lesson 3 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.qmd` |
-| 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.qmd` |
+| 1 | Tue Nov 3, 2:00 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `session-01_module-01_data-best-practices.pptx` |
+| 2 | Thu Nov 5, 2:00 | 120 min | Module 2 overview + lessons 1–3 | `session-02_module-02_federal-water-data-landscape.pptx` |
+| 3 | Tue Nov 10, 2:00 | 90 min | Module 3 overview + lesson 1 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx` |
+| 4 | Thu Nov 12, 2:00 | 90 min | Module 3 lesson 2 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx` |
+| 5 | Tue Nov 17, 2:00 | 90 min | Module 3 lesson 3 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` |
+| 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.pptx` |
 
-(Dec 1 peer review and Dec 3 demos have no decks.) Readings in `readings/` share the deck's name plus
-`_pre-reading` or `_post-reading`.
+(Dec 1 peer review and Dec 3 demos have no decks.) Decks are PowerPoint files built from the session's topic list
+(`how-to-build/topics/session-NN.md`) in the instructor's style; see `teaching-materials/how-to-build/guide.md`.
 
 **The slides are the lessons for learners.** Pilot learners meet with an instructor and can't open the website
-or this repo. Lesson content that doesn't fit the session time goes in that session's pre- or post-session
-reading, never into a PDF of the whole lesson.
+or this repo. Each session's **topic list** decides where every lesson section goes:
+- **deck:** the important concepts and points, presented live;
+- **notebook:** practising the code (Modules 3 and 4);
+- **reading:** extra detail and nuance that's useful but not needed in the session. Modules 2, 3 and 4 have at
+  most one reading each (`materials/readings/module-NN_reading_<module slug>.docx`, exported to PDF, built locally and never
+  committed); Module 1 has none;
+- **how-to:** setup steps covered by the HydroShare "How to" guide;
+- **cut:** on the website only.
+
+Never turn a whole lesson into a PDF. `how-to-build/tools/check_topics.py` checks that a topic list's minutes add up and that
+the lesson sections it names still exist.
 
 **Learner-facing outputs** (slides, readings, notebooks, the bundle README, quizzes) stand on their own:
 - **External links are fine.** Internal course links (other pages, glossary terms, References, the repo)
   become plain text, or point to the deck or reading that covers the topic.
 - **No `TODO (dev team)` or `Partner review` callouts.**
 
-`tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
+`how-to-build/tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
 
 **Notebook sections are named after lesson headings**, so a slide can say "notebook section 'Programmatic data
 downloads'" and mean the same thing in both places.
@@ -258,5 +267,7 @@ to run, what to point out, and when to come back.
 **Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
 
-**Every output is in `manifest.json`** with its sources and the commit it was built from.
-`python teaching-materials/tools/check_stale.py` lists what needs rebuilding.
+**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks
+and module readings are the exception: they're built locally, never committed (`materials/slides/` and `materials/readings/` are
+git-ignored), and record their build commit in the file itself.
+`python teaching-materials/how-to-build/tools/check_stale.py` lists what needs rebuilding.

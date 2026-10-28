@@ -14,9 +14,9 @@ notebooks, quizzes) starts from this copy. It:
 Code blocks and inline code are left alone.
 
 Usage:
-    python teaching-materials/tools/prepare_learner_copy.py PAGE.md            # copy to stdout
-    python teaching-materials/tools/prepare_learner_copy.py PAGE.md -o OUT.md
-    python teaching-materials/tools/prepare_learner_copy.py PAGE.md... --out-dir DIR
+    python teaching-materials/how-to-build/tools/prepare_learner_copy.py PAGE.md            # copy to stdout
+    python teaching-materials/how-to-build/tools/prepare_learner_copy.py PAGE.md -o OUT.md
+    python teaching-materials/how-to-build/tools/prepare_learner_copy.py PAGE.md... --out-dir DIR
 
 With ``--out-dir``, each copy keeps its path relative to the repo root (``DIR/03-.../01_access_nasa_swot.md``),
 so pages with the same file name don't collide. Counts go to stderr; ``--json`` prints them as JSON instead.
@@ -37,7 +37,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 # Opening line of an internal callout: a ::: or ``` fence, the admonition directive and one of the two
 # flag titles from STYLE_GUIDE §7.

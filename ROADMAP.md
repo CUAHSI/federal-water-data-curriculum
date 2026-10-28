@@ -294,27 +294,29 @@ PRs into `dev`. Lane branches don't edit `ROADMAP.md`; each PR lists its task ID
 
 ### Lindsay, by hand (before P8.0; agents can't edit these paths)
 - [X] Add to `allow` in `.claude/settings.json`: `"Bash(quarto render:*)"`, `"Bash(quarto check:*)"`,
-      `"Bash(quarto --version:*)"`, `"Bash(papermill:*)"`, `"Bash(text2qti:*)"`.
+      `"Bash(quarto --version:*)"`, `"Bash(papermill:*)"`, `"Bash(text2qti:*)"`. (The three `quarto` entries
+      can now be removed.)
 - [X] Add `.github/workflows/render-slides.yml` (from this kit). It renders the decks and readings on request,
-      never per PR.
+      never per PR. Later replaced by `render-readings.yml`, then removed: decks and readings are built
+      locally (#93).
 - [X] Add the four `.claude/skills/build-*` folders (from this kit).
-- [X] Repo **Settings → Actions → General**: tick **Allow GitHub Actions to create and approve pull requests**. This setting lets the Render slides workflow open draft PRs; it can’t approve or merge its own PRs, because GitHub never lets a PR's author approve it and the workflow only creates a draft. The remaining risk is that a future workflow could approve or merge someone else's PR, but any workflow change has to come through a reviewed PR (agents can't automatically edit .github/workflows/), so approving and merging stay with people.
+- [X] Repo **Settings → Actions → General**: tick **Allow GitHub Actions to create and approve pull requests**. This setting lets the Render slides workflow open draft PRs; it can’t approve or merge its own PRs, because GitHub never lets a PR's author approve it and the workflow only creates a draft. The remaining risk is that a future workflow could approve or merge someone else's PR, but any workflow change has to come through a reviewed PR (agents can't automatically edit .github/workflows/), so approving and merging stay with people. Since #93 removed the render workflows, nothing uses this setting any more; you can untick it.
 - [X] Install Quarto locally (https://quarto.org/docs/get-started/). Its bundled Typst makes the reading
-      PDFs, so no LaTeX is needed.
+      PDFs, so no LaTeX is needed. No longer needed: readings are Word documents (#93).
 
 ### P8.0 — Setup · branch `chore/p8-setup` · about 45 min
-- [ ] P8.0.1 Create `teaching-materials/` with `slides/`, `readings/`, `learner-bundle/`, `quizzes/`,
-      `instructor-guide/`, `tools/` and a `README.md`. Exclude `teaching-materials/` from the MyST site build
+- [ ] P8.0.1 Create `teaching-materials/` with `materials/` (`slides/`, `readings/`, `learner-bundle/`,
+      `quizzes/`, `instructor-guide/`), `how-to-build/` (`tools/`, `manifest.json`) and a `README.md`. Exclude `teaching-materials/` from the MyST site build
       in `myst.yml`.
 - [ ] P8.0.2 Add **STYLE_GUIDE §11 Teaching materials** (text below) and add `teaching-materials/` to the
       CLAUDE.md repo map.
-- [ ] P8.0.3 `teaching-materials/manifest.json` plus `teaching-materials/tools/check_stale.py`:
+- [ ] P8.0.3 `teaching-materials/how-to-build/manifest.json` plus `teaching-materials/how-to-build/tools/check_stale.py`:
     - The manifest has one entry per output: `output`, `kind`, `sources` (lesson paths, images and environment
       files it was built from), `source_commit`, `built_at` and `builder` (skill name).
     - `check_stale.py` uses only the standard library. For each entry it runs
       `git diff --quiet <source_commit> HEAD -- <sources>` and prints the stale outputs, with an exit code of 1
       if any are stale. It also takes `--update <output>` to rewrite an entry after a rebuild.
-- [ ] P8.0.4 `teaching-materials/tools/prepare_learner_copy.py`: copies a page for learner-facing use. It:
+- [ ] P8.0.4 `teaching-materials/how-to-build/tools/prepare_learner_copy.py`: copies a page for learner-facing use. It:
     - removes every `TODO (dev team)` and `Partner review (…)` admonition
     - turns internal course links (relative links to other pages, `{term}`, `{ref}`, `{doc}` roles, links to
       the References or Glossary pages) into plain text, keeping external `http(s)` links
@@ -324,18 +326,20 @@ PRs into `dev`. Lane branches don't edit `ROADMAP.md`; each PR lists its task ID
 - [ ] P8.0.5 Write down the **session map** and the **file names** (§11) in `teaching-materials/README.md`, so
       the lanes agree on names before they start.
 
-### Lane E — Slides and readings · branch `content/p8-slides` · owns `teaching-materials/slides/*`, `teaching-materials/readings/*`
-Use the `build-slides` skill. If it's slow, split it across two terminals: sessions 1–3, then sessions 4–6.
-- [ ] P8.E1 Sessions 1–6 per the session map: Quarto reveal.js decks with speaker notes and a timing table.
-- [ ] P8.E2 For each session, the pre- and/or post-session reading (Quarto → PDF) holding the lesson content
-      the session time can't cover. Skip a reading when nothing needs to go in it.
-- [ ] P8.E3 Render each deck to HTML, PPTX and PDF and each reading to PDF locally. Check the timing and slide
-      counts, and fix any overflowing slides.
-- [ ] P8.E4 Manifest entries; review with `content-reviewer`; draft PR with the timing summary per session.
+### Lane E — Slides and readings · branch `content/p8-slides` · owns `teaching-materials/how-to-build/` (guide, prompts, design rules, checklist, topics, `check_topics.py`)
+Decks (PowerPoint) and readings (Word) are built locally from the topic lists and never committed; see
+`teaching-materials/how-to-build/guide.md`. Use the `build-slides` skill.
+- [X] P8.E1 Prompt kit: topic lists for sessions 1–6, design rules seeded from Lindsay's decks, deck, update and
+      reading prompts, review checklist, `check_topics.py`, local deck and reading templates (#93).
+- [X] P8.E2 Pilot: Session 1 deck (`/build-slides 1`), reviewed and notes reformatted.
+- [ ] P8.E3 Decks for sessions 2–6 (`/build-slides N`), one at a time, each reviewed with the checklist.
+- [ ] P8.E4 Module readings for Modules 2–4 (`/build-slides reading M`), only where the topic lists have
+      `reading` rows.
+- [ ] P8.E5 Share the decks and reading PDFs through Canvas.
 
-### Lane F — Learner bundle · branch `content/p8-learner-bundle` · owns `teaching-materials/learner-bundle/*`, `teaching-materials/tools/build_notebooks.py`
+### Lane F — Learner bundle · branch `content/p8-learner-bundle` · owns `teaching-materials/materials/learner-bundle/*`, `teaching-materials/how-to-build/tools/build_notebooks.py`
 Use the `build-notebooks` skill.
-- [ ] P8.F1 `build_notebooks.py` plus scaffold files; a student notebook and a solutions notebook for each
+- [ ] P8.F1 `build_notebooks.py` plus scaffold files (in `teaching-materials/how-to-build/scaffolds/`); a student notebook and a solutions notebook for each
       Module 3 and 4 lesson that has code; environment files.
 - [ ] P8.F2 Run every solutions notebook top to bottom in its environment. Run every student notebook up to
       the first "Now you try it" cell.
@@ -352,19 +356,20 @@ Use the `build-notebooks` skill.
 - [ ] P8.G4 Update the root `README.md` to orient a newcomer:
     - what this repo is
     - **the website** (`0*/` pages, glossary, references; built from `dev` to GitHub Pages)
-    - **teaching materials** (`teaching-materials/`; not on the website: slides and readings, the learner
-      bundle, quizzes, the instructor guide)
+    - **teaching materials** (`teaching-materials/`; not on the website): `materials/` holds what learners and
+      instructors use (slides, readings, the learner bundle, quizzes, the instructor guide); `how-to-build/`
+      holds the instructions, prompts and tools that make them
     - **how to rebuild:**
-        - regenerate the content with the `build-*` skills
-        - render the slides and readings with the "Render slides" action (Actions → Render slides → Run
-          workflow) or locally with `quarto render`
+        - build or update decks and readings with `/build-slides` (see `teaching-materials/how-to-build/guide.md`);
+          they're built locally and shared through Canvas, never committed
+        - regenerate notebooks and quizzes with the `build-notebooks` and `build-quizzes` skills
         - rebuild a quiz's QTI file with `text2qti <file>.txt`
-        - find stale outputs with `python teaching-materials/tools/check_stale.py`
+        - find stale outputs with `python teaching-materials/how-to-build/tools/check_stale.py`
     - how to contribute (fork → branch → PR into `dev`)
     - licence and how to cite
 - [ ] P8.G5 Review; draft PR.
 
-### Lane H — Module quizzes · branch `content/p8-quizzes` · owns `teaching-materials/quizzes/*`
+### Lane H — Module quizzes · branch `content/p8-quizzes` · owns `teaching-materials/materials/quizzes/*`
 Use the `build-quizzes` skill. Follows issue #32 (formative, retakes allowed, the correct answer always shown
 with an explanation, QTI for Canvas).
 - [ ] P8.H1 One quiz per module (Modules 1–4): about 10–15 minutes, multiple choice (mostly single answer,
@@ -378,7 +383,7 @@ with an explanation, QTI for Canvas).
 Use the `build-instructor-guide` skill. Draft PR.
 
 ### Parked
-- [ ] Publishing the learner bundle (plus the rendered slides and readings) to a HydroShare collection.
+- [ ] Publishing the learner bundle (plus the slides and reading PDFs, which are built locally) to a HydroShare collection.
       Lindsay will do this with the HydroShare staff after F merges.
 - [ ] Canvas: replace the "Lesson pages" module items with the session's slides and reading PDFs.
 - [ ] Canvas: set the minimum quiz score for module checkpoints (issue #32) as a module requirement.
@@ -387,59 +392,8 @@ Use the `build-instructor-guide` skill. Draft PR.
 
 ### STYLE_GUIDE §11 text (P8.0.2)
 
-```markdown
-## 11. Teaching materials
-
-Teaching materials are generated from the lesson pages; they never replace them. Fix content in the lesson,
-then rebuild. Everything lives in `teaching-materials/` and isn't part of the website.
-
-**Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
-hyphens inside a part and underscores between parts:
-`module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
-the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`, `_pre-reading.qmd`,
-`_post-reading.qmd`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
-*names* inside the files stay short (`m03-swot`), because people type them.
-
-**Session map**
-
-| Session | Date (ET) | Length | Covers | Slide deck (`slides/`) |
-|---|---|---|---|---|
-| 1 | Tue Nov 3, 2:00 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `session-01_module-01_data-best-practices.qmd` |
-| 2 | Thu Nov 5, 2:00 | 120 min | Module 2 overview + lessons 1–3 | `session-02_module-02_federal-water-data-landscape.qmd` |
-| 3 | Tue Nov 10, 2:00 | 90 min | Module 3 overview + lesson 1 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.qmd` |
-| 4 | Thu Nov 12, 2:00 | 90 min | Module 3 lesson 2 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.qmd` |
-| 5 | Tue Nov 17, 2:00 | 90 min | Module 3 lesson 3 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.qmd` |
-| 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.qmd` |
-
-(Dec 1 peer review and Dec 3 demos have no decks.) Readings in `readings/` share the deck's name plus
-`_pre-reading` or `_post-reading`.
-
-**The slides are the lessons for learners.** Pilot learners meet with an instructor and can't open the website
-or this repo. Lesson content that doesn't fit the session time goes in that session's pre- or post-session
-reading, never into a PDF of the whole lesson.
-
-**Learner-facing outputs** (slides, readings, notebooks, the bundle README, quizzes) stand on their own:
-- **External links are fine.** Internal course links (other pages, glossary terms, References, the repo)
-  become plain text, or point to the deck or reading that covers the topic.
-- **No `TODO (dev team)` or `Partner review` callouts.**
-
-`tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
-
-**Notebook sections are named after lesson headings**, so a slide can say "notebook section 'Programmatic data
-downloads'" and mean the same thing in both places.
-
-**Live coding.** Slides carry the explanation and short code (≤ 12 lines per slide, shown, not run). Switch to
-the notebook only after a block of related concepts has been explained on slides. Then spend at least 10
-minutes there: run the code, change something, read the output. Use no more than 2 switches in a 90-minute
-session and 3 in a 120-minute one. Each switch is a "Live coding" slide that names the notebook, the sections
-to run, what to point out, and when to come back.
-
-**Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
-answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
-
-**Every output is in `manifest.json`** with its sources and the commit it was built from.
-`python teaching-materials/tools/check_stale.py` lists what needs rebuilding.
-```
+Added; the current text is in `STYLE_GUIDE.md` §11 (updated in #93 for PowerPoint decks, Word readings and the
+`materials/` + `how-to-build/` layout).
 
 ### `acknowledgements.md` text (P8.G2)
 

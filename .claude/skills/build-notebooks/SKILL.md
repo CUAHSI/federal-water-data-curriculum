@@ -5,7 +5,7 @@ description: Build or rebuild the learner bundle (student and solutions notebook
 
 # Build the learner bundle
 
-You produce `teaching-materials/learner-bundle/`, the hands-on material pilot learners get on HydroShare.
+You produce `teaching-materials/materials/learner-bundle/`, the hands-on material pilot learners get on HydroShare.
 They can't see the website or the repo, so everything here stands on its own. Read STYLE_GUIDE.md first,
 especially §11.
 
@@ -14,22 +14,24 @@ Install papermill and ipykernel into the lesson's conda environment, not into en
 ## Layout and names (STYLE_GUIDE §11)
 
 ```
-teaching-materials/learner-bundle/
+teaching-materials/materials/learner-bundle/
 ├── README.md
 ├── module-03_federal-water-data-access-retrieval/
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data.ipynb
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data_solutions.ipynb
 │   ├── module-03_lesson-01_retrieve-nasa-swot-data_environment.yml
 │   └── … lessons 02 and 03
-├── module-04_federal-water-data-synthesis/   same pattern; notebooks only for lessons with code
-└── scaffolds/                                hand-curated "Now you try it" starters (see below)
+└── module-04_federal-water-data-synthesis/   same pattern; notebooks only for lessons with code
 ```
+
+Hand-curated "Now you try it" starters (see below) are build instructions, so they live outside the bundle, in
+`teaching-materials/how-to-build/scaffolds/`.
 
 Slugs come from each lesson's title.
 
 ## The builder is a script, so rebuilds are repeatable
 
-Write and maintain `teaching-materials/tools/build_notebooks.py` (needs `nbformat` and `pyyaml`). Don't
+Write and maintain `teaching-materials/how-to-build/tools/build_notebooks.py` (needs `nbformat` and `pyyaml`). Don't
 hand-write notebooks. For each lesson with code, it:
 1. Reads the learner copy of the page (`prepare_learner_copy.py`: no internal callouts, no internal course
    links, external links kept).
@@ -44,9 +46,12 @@ hand-write notebooks. For each lesson with code, it:
       them), prose is condensed to the explanation needed to run and read the code (2–4 sentences per
       block), and every code block becomes a code cell.
     - **Figures:** where the lesson shows a figure, the cell that makes it stays.
+    - **"Going further":** rows in the session's topic list (`teaching-materials/how-to-build/topics/`)
+      whose "Where" is `notebook` only go in an optional "Going further" section at the end, after "Now you
+      try it", with the lesson's own headings and code.
 3. **"Now you try it":** the task text becomes a Markdown cell. The solution:
     - **Solutions notebook:** the full solution.
-    - **Student notebook:** a scaffold from `scaffolds/<lesson>.yml` (cell → partially completed code with
+    - **Student notebook:** a scaffold from `teaching-materials/how-to-build/scaffolds/<lesson>.yml` (cell → partially completed code with
       `...` blanks and `# TODO:` hints). If no scaffold exists yet, write one: keep the lines learners
       shouldn't have to retype (imports, plotting boilerplate) and blank the values and calls that practise
       the lesson's skill. Scaffolds are hand-curated files the script reuses, so rebuilds keep them; if a
