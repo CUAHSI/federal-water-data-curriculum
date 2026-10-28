@@ -52,8 +52,10 @@ in `reference-decks/README.md` once the template exists).
 2. **Program schedule.** Slate panel on the left ("Pilot Program Schedule" + month). On the right, every session
    with its icon and date. Past sessions are greyed out; today's session has a green rounded outline and "UP
    NEXT" in green. Shown near the start of every session; the outline moves each time.
-3. **Goals for today.** Slate, "GOALS FOR TODAY" (underlined), one icon on the left, the session name in bold
-   and 3–5 short goals.
+3. **Lesson objectives.** Slate, "Learning objectives for today", one icon on the left, the session name in
+   bold, then the module's learning objectives **copied word for word** from its overview page (`0N/00 §
+   Learning objectives`). This is the only place in the deck the objectives appear: overview slides don't
+   repeat them. Sessions 3–5 all show the Module 3 objectives (the lessons have no objectives of their own).
 4. **Content.** White, title top-left (or white title on a slate header bar), at most 6 bullets or about 40
    words, one figure or screenshot where the lesson has one.
 5. **Statement.** Black or slate background, one or two sentences in white, centred. Used to open a section or
@@ -68,7 +70,12 @@ in `reference-decks/README.md` once the template exists).
     colours can connect parts of the code to what they produce.
 10. **Before → after.** The problem on the left in dark red, an arrow, the fix on the right in dark green.
     Works for file names, column layouts and code.
-11. **Final questions.** Slate, centred: "Any final questions for today?"
+11. **Further reading and questions.** A content slide (type 4) titled "Further reading" with the lessons'
+    external links. The speaker opens the floor for questions while it's up; there is no separate questions
+    slide.
+
+**How a session ends:** recap, what's due, further reading and questions, then (only when there is one) the
+"before the next session" slide as the very last slide, so it's what learners leave with.
 
 ## 5. Emphasis: one device at a time
 
@@ -134,7 +141,7 @@ These are the habits that make a deck look machine-made. Don't:
 
 - build a visual by layering shapes (cards behind text, circles behind icons, overlapping translucent panels);
 - use rows of icon-plus-caption "cards", or icons as decoration (an icon is fine only where a template layout
-  has one, like the schedule and goals slides);
+  has one, like the schedule and objectives slides);
 - add gradients, drop shadows, glows, 3-D effects or rounded "pill" labels that only decorate;
 - put emoji anywhere;
 - add "key stat" call-outs with giant numbers, unless the number is the point of the lesson section;
@@ -148,7 +155,7 @@ Looked at in October 2026 (local copies, not in the repo):
 
 - Cohort teaching decks: `260518_lplatt&kwong_DataPubCohort.pptx` (79 slides) and the November 2025 pilot PDFs
   (`251110_…FileUpload`, `251112_…READMEs`, `251120_…FinishingStrong`). Source of the session structure, slide
-  types 1–3, 7 and 11, the slate/green palette and the build sequences.
+  types 1–3 and 7, the slate/green palette and the build sequences.
 - Talks: `260624_lplatt_TBEP_PracticalOpenScience.pdf`, `250313_lplatt_NMC_reproducibility_slides.pptx`,
   `250329_…ASLO…`, `241212_…AGU_opensci.pptx`, `240624_…WaterSciCon24…`, `250605_…UCOWR_DataBestPractices.pdf`,
   `250930_…WhatIsTargets.pptx` and others. Source of the statement slides, swoosh underline, outline highlights,

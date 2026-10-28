@@ -12,11 +12,11 @@ length. Live-coding rows name the notebook sections (they match the lesson headi
 
 | # | Topic | Source | Where | Min | What the slides should show or do |
 |---|---|---|---|---|---|
-| 1 | Session title | – | deck | 1 | |
+| 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 3 outlined |
-| 3 | Goals for today | 03/00 § Learning objectives | deck | 1 | |
-| 4 | Module 3 overview and objectives | 03/00 § Module overview, § Learning objectives | deck | 2 | |
-| 5 | The three lessons, each standing alone | 03/00 § The lessons | deck | 1 | |
+| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
+| 4 | Module 3 overview | 03/00 § Module overview | deck | 2 |  |
+| 5 | The three lessons, each standing alone | 03/00 § The lessons | deck | 1 |  |
 | 6 | The example rivers | 03/00 § The example rivers | deck | 2 | Ohio at Louisville in the lessons; Willamette at Salem for "Now you try it" |
 | 7 | One framework, retrieval view | 03/00 § One framework for three products | deck | 3 | The shared-concepts table again, now with the retrieval column |
 | 8 | Important concepts and terminology | 03/00 § Important concepts and terminology | deck | 5 | API, granule, cloud-native formats, lazy loading; one term per slide or a build |
@@ -26,19 +26,18 @@ length. Live-coding rows name the notebook sections (they match the lesson headi
 | 12 | The point-and-click equivalent | 03/01 § The point-and-click equivalent | deck | 1 | Earthdata Search screenshot |
 | 13 | Find datasets | 03/01 § Find datasets | deck + notebook | 2 | Short code (≤ 12 lines) and what comes back |
 | 14 | A river with no SWOT reaches | 03/01 § A river with no SWOT reaches: the Mississippi headwaters | deck + notebook | 2 | Why an empty result is an answer |
-| 15 | Find Raster granules over the Ohio | 03/01 § Find Raster granules over the Ohio at Louisville | deck + notebook | 3 | |
-| 16 | Find RiverSP granules over the Ohio | 03/01 § Find RiverSP granules over the Ohio at Louisville | deck + notebook | 2 | |
+| 15 | Find Raster granules over the Ohio | 03/01 § Find Raster granules over the Ohio at Louisville | deck + notebook | 3 |  |
+| 16 | Find RiverSP granules over the Ohio | 03/01 § Find RiverSP granules over the Ohio at Louisville | deck + notebook | 2 |  |
 | 17 | Live coding 1: discovery | 03/01 § Programmatic data discovery | deck + notebook | 12 | Live-coding slide: notebook sections "Find datasets" to "Find RiverSP granules over the Ohio at Louisville" |
-| 18 | RiverSP reaches with `earthaccess` | 03/01 § RiverSP reaches with `earthaccess` | deck + notebook | 3 | |
+| 18 | RiverSP reaches with `earthaccess` | 03/01 § RiverSP reaches with `earthaccess` | deck + notebook | 3 |  |
 | 19 | Raster water area with `earthaccess` | 03/01 § Raster water area with `earthaccess` | deck + notebook | 4 | `images/m03/swot-raster-water-frac.png` |
 | 20 | RiverSP time series with `hydrocron` | 03/01 § RiverSP time series with `hydrocron` | deck + notebook | 4 | `images/m03/swot-hydrocron-wse-flood.png` |
 | 21 | Live coding 2: downloads | 03/01 § Programmatic data downloads | deck + notebook | 12 | Live-coding slide: the three download sections |
 | 22 | Understanding what you downloaded | 03/01 § Understanding what you downloaded | deck | 6 | Columns, units and quality flags; the degraded 13 April scene as a spotlight build |
 | 23 | Best practices: temporal scaling | 03/01 § Temporal scaling | deck | 2 | `images/m03/swot-hydrocron-wse-full-record.png`: the full record in one request |
-| 24 | Best practices: spatial scaling and parallelization | 03/01 § Spatial scaling, § Parallelization | deck | 2 | |
+| 24 | Best practices: spatial scaling and parallelization | 03/01 § Spatial scaling, § Parallelization | deck | 2 |  |
 | 25 | Now you try it: the Willamette | 03/01 § Now you try it | deck + notebook | 4 | Task slide naming the notebook cell; answers are in the solutions notebook |
 | 26 | Recap and what's next | – | deck | 2 | Three bullets; Session 4 |
-| 27 | Final questions | – | deck | 5 | |
+| 27 | Further reading and questions | 03/01 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
 | 28 | Bitwise decoding of the quality flags | 03/01 § Understanding what you downloaded | reading | – | The detail behind the 13 April scene |
-| 29 | Release-note caveats behind the flags | 03/01 § Understanding what you downloaded | reading | – | |
-| 30 | Further reading | 03/01 § Further reading | reading | – | |
+| 29 | Release-note caveats behind the flags | 03/01 § Understanding what you downloaded | reading | – |  |

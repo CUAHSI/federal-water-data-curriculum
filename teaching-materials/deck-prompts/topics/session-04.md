@@ -12,9 +12,9 @@ length.
 
 | # | Topic | Source | Where | Min | What the slides should show or do |
 |---|---|---|---|---|---|
-| 1 | Session title | – | deck | 1 | |
+| 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 4 outlined |
-| 3 | Goals for today | – | deck | 1 | |
+| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today: the module's objectives copied word for word from the overview page (the top-level ones, then "These break down into"). Over 6 items: top-level first, then the breakdown as a build |
 | 4 | What you'll retrieve | 03/02 § Retrieve NOAA NWM data (intro) | deck | 3 | `images/m03/nwm-ohio-louisville-map.png` |
 | 5 | Choosing an access route | 03/02 § Choosing an access route | deck | 4 | API for today's forecasts; `hydrotools` or kerchunk for the archive |
 | 6 | Tools and environment | 03/02 § Tools and environment setup | deck + how-to | 2 | What each tool is for; setup in the "How to" guide |
@@ -26,13 +26,12 @@ length.
 | 12 | Live coding 2: the archive | 03/02 § `hydrotools`…, § Kerchunk references… | deck + notebook | 12 | Live-coding slide |
 | 13 | Understanding what you downloaded | 03/02 § Understanding what you downloaded | deck | 7 | `images/m03/nwm-ohio-louisville-forecasts.png`; units, times, no quality flag |
 | 14 | Why NWM downloads cost what they cost | 03/02 § Why NWM downloads cost what they cost | deck | 4 | One summary table (data transferred and time per route) |
-| 15 | Temporal and spatial scaling | 03/02 § Temporal scaling, § Spatial scaling | deck | 4 | |
-| 16 | Parallelization | 03/02 § Parallelization | deck | 1 | |
+| 15 | Temporal and spatial scaling | 03/02 § Temporal scaling, § Spatial scaling | deck | 4 |  |
+| 16 | Parallelization | 03/02 § Parallelization | deck | 1 |  |
 | 17 | Now you try it: the Willamette | 03/02 § Now you try it | deck + notebook | 4 | Task slide; answers in the solutions notebook |
-| 18 | Recap and what's next | – | deck | 2 | |
-| 19 | Final questions | – | deck | 5 | |
+| 18 | Recap and what's next | – | deck | 2 |  |
+| 19 | Further reading and questions | 03/02 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
 | 20 | NOAA's published kerchunk references | 03/02 § Kerchunk references… | notebook | – | Optional "Going further" section |
-| 21 | The full cost and timing tables | 03/02 § Why NWM downloads cost what they cost | reading | – | |
+| 21 | The full cost and timing tables | 03/02 § Why NWM downloads cost what they cost | reading | – |  |
 | 22 | `hydrotools` troubleshooting and settings | 03/02 § `hydrotools`… | reading | – | Event loop, half-downloaded files, units, parallel downloads |
-| 23 | The NWM retrospective | 03/02 § Temporal scaling | reading | – | |
-| 24 | Further reading | 03/02 § Further reading | reading | – | |
+| 23 | The NWM retrospective | 03/02 § Temporal scaling | reading | – |  |
