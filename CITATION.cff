@@ -24,7 +24,7 @@ contact:
     family-names: Platt
     affiliation: CUAHSI
 version: pilot-2026-11
-license: GPL-3.0
+license: GPL-3.0-only
 repository-code: "https://github.com/CUAHSI/federal-water-data-curriculum"
 url: "https://cuahsi.github.io/federal-water-data-curriculum/"
 keywords:
@@ -56,6 +56,6 @@ preferred-citation:
   publisher:
     name: CUAHSI
   version: pilot-2026-11
-  license: GPL-3.0
+  license: GPL-3.0-only
   repository-code: "https://github.com/CUAHSI/federal-water-data-curriculum"
   url: "https://cuahsi.github.io/federal-water-data-curriculum/"
