@@ -12,8 +12,8 @@
         "environments",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:31Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:23Z",
       "builder": "build-notebooks"
     },
     {
@@ -26,8 +26,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-03.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:31Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:23Z",
       "builder": "build-notebooks"
     },
     {
@@ -37,8 +37,8 @@
         "environments/m03-swot.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:32Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:24Z",
       "builder": "build-notebooks"
     },
     {
@@ -50,8 +50,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-03.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:32Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:24Z",
       "builder": "build-notebooks"
     },
     {
@@ -64,8 +64,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-04.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:32Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:24Z",
       "builder": "build-notebooks"
     },
     {
@@ -75,8 +75,8 @@
         "environments/m03-nwm.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:32Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:24Z",
       "builder": "build-notebooks"
     },
     {
@@ -88,8 +88,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-04.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:33Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -102,8 +102,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-05.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:33Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -113,8 +113,8 @@
         "environments/m03-wdfn.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:33Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -126,8 +126,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-05.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:33Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -139,8 +139,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:34Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -150,8 +150,8 @@
         "environments/m04-synthesis.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:34Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:25Z",
       "builder": "build-notebooks"
     },
     {
@@ -163,8 +163,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:34Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:26Z",
       "builder": "build-notebooks"
     },
     {
@@ -176,8 +176,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:34Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:26Z",
       "builder": "build-notebooks"
     },
     {
@@ -187,8 +187,8 @@
         "environments/m04-synthesis.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:34Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:26Z",
       "builder": "build-notebooks"
     },
     {
@@ -200,8 +200,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "9d3c4c05bf15455f48efda8e704ab1db5e47d2d3",
-      "built_at": "2026-10-28T20:27:35Z",
+      "source_commit": "1ee9cf5455488eb5746bafc8419ac81ef11c2a05",
+      "built_at": "2026-10-28T20:39:26Z",
       "builder": "build-notebooks"
     }
   ]
