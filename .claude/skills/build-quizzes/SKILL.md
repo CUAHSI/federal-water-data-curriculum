@@ -40,14 +40,14 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
    Module 4 case study.
 
 ## Files
-- Source: `teaching-materials/quizzes/module-NN_quiz_<module-slug>.txt` in `text2qti` format:
+- Source: `teaching-materials/materials/quizzes/module-NN_quiz_<module-slug>.txt` in `text2qti` format:
     - title `Module N Quiz: <module title>`
     - a description: "About 10–15 minutes. Unlimited attempts; your highest score counts. The correct answer
       and an explanation are shown after each attempt."
     - `shuffle answers: true` if the installed `text2qti` supports it (check `text2qti --help` or its docs)
     - one point per question
 - Build: `text2qti <file>.txt` → `<file>.zip` (commit both). Fix any parse errors.
-- Key: `teaching-materials/quizzes/module-NN_quiz_<module-slug>_key.md`, containing the coverage table plus,
+- Key: `teaching-materials/materials/quizzes/module-NN_quiz_<module-slug>_key.md`, containing the coverage table plus,
   per question, its objective, the correct option and the lesson section it draws on. It's for spot-checking
   and for the instructor guide.
 
