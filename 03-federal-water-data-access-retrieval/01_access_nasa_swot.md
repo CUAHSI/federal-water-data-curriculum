@@ -51,11 +51,6 @@ There are two ways to get these products with code, and they scale differently:
 setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
 Earthdata login or any downloads.
 
-:::{admonition} Partner review (NASA): Choosing an access route
-:class: important
-Confirm this "which product, which route" framing, the scaling limits in the table, and the description of what RiverSP does not capture out of bank.
-:::
-
 ## Tools and environment setup
 
 ### Make an Earthdata Login account
