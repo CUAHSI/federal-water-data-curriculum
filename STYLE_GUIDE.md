@@ -208,3 +208,66 @@ Notes for lesson authors:
 - The Willamette also peaked on 2025-12-20 (97,700 ft³/s), during the same December 2025 storms as the Module 4 Skagit flood. The February–March 2026 window avoids overlapping the case study.
 - Units differ between NOAA services: the NOAA NWM API used in the NWM lesson (`api.water.noaa.gov/nwm/v1`) returns `CMS` (m³/s), while the separate National Water Prediction Service API (`api.water.noaa.gov/nwps/v1/reaches/<COMID>/streamflow`) returned ft³/s for these reaches on 2026-10-08.
 - Candidates considered and why they were not chosen: Connecticut at Thompsonville (NLDI indexes the gage to a tributary COMID, "Rawlins Brook"); Susquehanna at Marietta (the gage reach had no `reach_q` ≤ 1 observations); Missouri at Hermann and Mississippi at St. Louis (only 12/61 and 20/60 good observations); Sacramento at Freeport (good SWOT data, but tidal and with no daily values after 2015); Columbia at The Dalles (dam-controlled, 33/59 good); Mississippi at St. Paul (50/90 good, 190 m wide; acceptable backup).
+
+## 11. Teaching materials
+
+Teaching materials are generated from the lesson pages; they never replace them. Fix content in the lesson,
+then rebuild. Everything lives in `teaching-materials/` and isn't part of the website.
+
+**Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
+hyphens inside a part and underscores between parts:
+`module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
+the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`. Module readings:
+`module-03_reading_federal-water-data-access-retrieval.docx`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
+*names* inside the files stay short (`m03-swot`), because people type them.
+
+**Session map**
+
+| Session | Date (ET) | Length | Covers | Slide deck (`materials/slides/`) |
+|---|---|---|---|---|
+| 1 | Tue Nov 3, 2:00 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `session-01_module-01_data-best-practices.pptx` |
+| 2 | Thu Nov 5, 2:00 | 120 min | Module 2 overview + lessons 1–3 | `session-02_module-02_federal-water-data-landscape.pptx` |
+| 3 | Tue Nov 10, 2:00 | 90 min | Module 3 overview + lesson 1 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx` |
+| 4 | Thu Nov 12, 2:00 | 90 min | Module 3 lesson 2 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx` |
+| 5 | Tue Nov 17, 2:00 | 90 min | Module 3 lesson 3 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` |
+| 6 | Thu Nov 19, 2:00 | 120 min | Module 4 overview + lessons 1–3 | `session-06_module-04_federal-water-data-synthesis.pptx` |
+
+(Dec 1 peer review and Dec 3 demos have no decks.) Decks are PowerPoint files built from the session's topic list
+(`how-to-build/topics/session-NN.md`) in the instructor's style; see `teaching-materials/how-to-build/guide.md`.
+
+**The slides are the lessons for learners.** Pilot learners meet with an instructor and can't open the website
+or this repo. Each session's **topic list** decides where every lesson section goes:
+- **deck:** the important concepts and points, presented live;
+- **notebook:** practising the code (Modules 3 and 4);
+- **reading:** extra detail and nuance that's useful but not needed in the session. Modules 2, 3 and 4 have at
+  most one reading each (`materials/readings/module-NN_reading_<module slug>.docx`, exported to PDF, built locally and never
+  committed); Module 1 has none;
+- **how-to:** setup steps covered by the HydroShare "How to" guide;
+- **cut:** on the website only.
+
+Never turn a whole lesson into a PDF. `how-to-build/tools/check_topics.py` checks that a topic list's minutes add up and that
+the lesson sections it names still exist.
+
+**Learner-facing outputs** (slides, readings, notebooks, the bundle README, quizzes) stand on their own:
+- **External links are fine.** Internal course links (other pages, glossary terms, References, the repo)
+  become plain text, or point to the deck or reading that covers the topic.
+- **No `TODO (dev team)` or `Partner review` callouts.**
+
+`how-to-build/tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
+
+**Notebook sections are named after lesson headings**, so a slide can say "notebook section 'Programmatic data
+downloads'" and mean the same thing in both places.
+
+**Live coding.** Slides carry the explanation and short code (≤ 12 lines per slide, shown, not run). Switch to
+the notebook only after a block of related concepts has been explained on slides. Then spend at least 10
+minutes there: run the code, change something, read the output. Use no more than 2 switches in a 90-minute
+session and 3 in a 120-minute one. Each switch is a "Live coding" slide that names the notebook, the sections
+to run, what to point out, and when to come back.
+
+**Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
+answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
+
+**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks
+and module readings are the exception: they're built locally, never committed (`materials/slides/` and `materials/readings/` are
+git-ignored), and record their build commit in the file itself.
+`python teaching-materials/how-to-build/tools/check_stale.py` lists what needs rebuilding.

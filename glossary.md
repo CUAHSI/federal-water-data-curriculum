@@ -95,6 +95,9 @@ Long-format table
 : A table with one row per value, where columns such as location, time or ensemble member say which value it is
   (instead of one column per location or member). Easy to filter and group; pivot it to "wide" form for some plots.
 
+Query
+: A request to retrieve specific data from a database
+
 Streamflow
 : See {term}`Discharge`.
 
@@ -113,6 +116,57 @@ Virtual Zarr
 Zarr
 : A file format for large arrays that stores data as many small {term}`chunks <Chunk>`, so code can read just the
   parts it needs from cloud storage. See also {term}`Virtual Zarr`.
+```
+
+## Open science and data management
+
+Terms from Module 1. Each one links back to the lesson that explains it.
+
+```{glossary}
+CARE principles
+: Principles for Indigenous data governance: Collective benefit, Authority to control, Responsibility and Ethics.
+  They complement the FAIR principles by asking who the data are about and who benefits. See
+  [Open Science](01-data-best-practices/01_open_science.md).
+
+Data management plan
+: A short document, written before a project starts, describing what data it will create or use and how they will be
+  stored, documented, shared and preserved. Also called a DMP, or a DMSP (data management and sharing plan). See
+  [Data Management](01-data-best-practices/02_data_management.md).
+
+Embargo
+: A set period during which a dataset's or paper's files are withheld from the public, although its record (and
+  often its DOI) can already be found. See [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
+FAIR principles
+: Guidelines for making data Findable, Accessible, Interoperable and Reusable by people and machines. FAIR is not the
+  same as open: restricted data can be FAIR if the rules for access are clear. See
+  [Open Science](01-data-best-practices/01_open_science.md).
+
+Metadata
+: Data about data: what the values are, their units and definitions, where and when they were collected, how they
+  were produced and who to contact. See [Data Management](01-data-best-practices/02_data_management.md).
+
+Persistent identifier
+: A permanent, unique label for a dataset, paper, person or organization that keeps working even if web pages move.
+  Examples: a {term}`DOI` for a dataset and an ORCID iD for a researcher. See [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
+Provenance
+: The record of where data came from and what was done to them: sources and their versions, retrieval dates,
+  processing steps and the code that ran them. See also {term}`Version / provenance` and
+  [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
+README
+: A plain-text or Markdown file that introduces a project or dataset: what each file is, how the files relate, how
+  to run or read them, and how to cite them. Often called the front page of a project. See [Data Publishing](01-data-best-practices/03_data_publishing.md).
+
+Replicability
+: Getting consistent results across studies that ask the same question, each with its own data. Definitions vary by
+  field; see [Data Management](01-data-best-practices/02_data_management.md).
+
+Reproducibility
+: Getting the same results from the same data and methods. This course also uses a broader working definition:
+  methods can be easily rebuilt with the same data to recreate results, or with new data to update an analysis. See
+  [Data Management](01-data-best-practices/02_data_management.md).
 ```
 
 ## NASA SWOT
@@ -300,12 +354,15 @@ Daily values
 : USGS values summarized per day, most often the daily mean (statistic code, `statistic_id`, `00003`).
 
 dataretrieval
-: A USGS Python package for retrieving USGS water data. Its modernized `waterdata` module uses the
+: A [USGS Python package](https://github.com/DOI-USGS/dataretrieval-python) for retrieving USGS water data. Its modernized `waterdata` module uses the
   USGS Water Data APIs; the legacy `nwis` module uses the older services.
 
 Field measurement
 : A direct measurement of discharge (or gage height) made by USGS staff at a monitoring location,
   used to build and check the rating curve.
+
+Function call
+: When you make a function call for tabular data using `dataretrieval`, you are sending a {term}`query<Query>` to the USGS water data API
 
 Gage datum
 : The local reference level that {term}`gage height <Gage height>` is measured from at a monitoring location. It is
@@ -322,6 +379,9 @@ Monitoring location ID
 NWIS
 : The National Water Information System, the USGS database behind WDFN. Its older website and web services
   (NWISWeb, WaterServices) are being retired.
+
+Page/Request
+: Each {term}`query<Query>` to the water data API is made up of one or more requests, where a single request is a page of data. Pages have a maximum capacity of 50,000 rows of data. If your query matches over 50,000 rows of data, then it will require multiple pages or requests to return all results for your query.
 
 Parameter code
 : A five-digit USGS code for a variable, for example `00060` for discharge and `00065` for gage height.
