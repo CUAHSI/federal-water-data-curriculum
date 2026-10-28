@@ -133,9 +133,10 @@ fig.savefig("01_meet_nasa_swot-ohio-reach-wse.png", dpi=150)
 - **Contact:** For questions about SWOT data content or quality, contact PO.DAAC at podaac@podaac.jpl.nasa.gov, or post in the [Earthdata Forum](https://forum.earthdata.nasa.gov/).
 
 :::{dropdown} Other SWOT access tools
-- The `podaac-data-downloader`/`podaac-data-subscriber` command-line tools download or subscribe to whole collections.
+- The `podaac-data-downloader`/`podaac-data-subscriber` command-line tools download or subscribe to whole collections. Learn more with the [NASA PO.DAAC Cookbook SWOT tutorial](https://podaac.github.io/tutorials/quarto_text/SWOT.html#via-command-line---po.daac-subscriberdownloader-examples).
 - HiTIDE is a GUI tool for browsing and subsetting the ocean/KaRIn products.
 - SWODLR is an on-demand PO.DAAC tool for custom-resolution raster output beyond the standard 100 m/250 m products.
+- [SWOT RiverSP EGIS feature services](https://gis.earthdata.nasa.gov/portal/home/group.html?id=50037df01ae5464e9dcc66b722c30e59#overview)
 :::
 
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
@@ -146,18 +147,16 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 
 ## Further reading
 
-- [NASA Earthdata](https://www.earthdata.nasa.gov/)
-- [SWOT Documentation and Resources (NASA Earthdata)](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources)
-- [NASA SWOT mission page](https://science.nasa.gov/mission/swot/)
-- [PO.DAAC SWOT Cookbook (tutorials, data access via `earthaccess` quality flag demo, Hydrocron walkthrough)](https://podaac.github.io/tutorials/quarto_text/SWOT.html)
-- [`hydrocron` documentation (PO.DAAC)](https://podaac.github.io/hydrocron/)
-- [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/)
-- [SWOT Level 2 River Single-Pass Vector Data Product, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) (dataset landing page)
-     - You will find the **Product Description Document** under the "Documents and Resources" tab.
-- [SWOT River Database (SWORD)](https://zenodo.org/records/10013982)
-- [NASA Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance), including how to cite data
+- [SWOT Mission Page - NASA](https://science.nasa.gov/mission/swot/)
+- [SWOT Mission Page - NASA Earthdata](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot)
+     - [Documents and Resources](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) (Resources tab)
+- [SWOT Level 2 River Single-Pass Vector Data Product, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) (The **Product Description Document** is under the "Documents and Resources" tab)
 - [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3)
-
-Tools developed by USGS and CUAHSI working with the SWOT team and stakeholders:
-- [USGS’s app allows users to explore & access data over the US](https://apps.usgs.gov/wisp?lat=54.402713&lon=-117.204218&zoom=3&basemap=%22Light%22&useDevStyles=false&activeLayers=%5B%7B%22id%22%3A%22sword%22%2C%22value%22%3A%22width%22%7D%5D)
-- [CUAHSI’s SWOTViz allows users to explore & access data over the globe](https://swotviz.cuahsi.io/#/map?center=%7B%22lat%22:0,%22lng%22:0%7D&zoom=3&activeOverlays=%5B%22Lakes%22,%22Reaches%22%5D)
+- [NASA PO.DAAC Cookbook > SWOT Chapter](https://podaac.github.io/tutorials/quarto_text/SWOT.html) (e.g. guides and tutorials on data access, including via earthaccess python library, Hydrocron API, EGIS services, command line tools)
+- [`hydrocron` documentation (NASA PO.DAAC)](https://podaac.github.io/hydrocron/)
+- [`earthaccess` documentation](https://earthaccess.readthedocs.io/en/latest/)
+- [SWOT River Database (SWORD) on Zenodo](https://zenodo.org/records/10013982) and [SWORD Explorer](https://www.swordexplorer.com/)
+- [NASA Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance), including how to cite data
+- Tools developed by USGS and CUAHSI working with the SWOT team and stakeholders:
+     - [USGS’s WaterMAP app allows users to explore & access data over the US](https://apps.usgs.gov/watermap/#/?lat=48.87204&lon=-125.953207&z=2.5&data=swotRiverReaches)
+     - [CUAHSI’s SWOTViz allows users to explore & access data over the globe](https://swotviz.cuahsi.io/#/map?center=%7B%22lat%22:0,%22lng%22:0%7D&zoom=3&activeOverlays=%5B%22Lakes%22,%22Reaches%22%5D)
