@@ -34,8 +34,9 @@ Output: `teaching-materials/materials/instructor-guide/`
     - likely questions with short answers, grounded in the lessons
     - known issues: open `TODO (dev team)` and `Partner review` callouts on these pages, open GitHub issues
       labelled for these lessons (`gh issue list`), and reviewer findings
-    - the quiz: which module quiz, the objectives it covers (from its `_key.md`), and the questions learners
-      most often miss (after the pilot, from Canvas reports)
+    - the quiz: which module quiz, the objectives it covers (from its `_key.md`), and the objectives or topics
+      learners most often miss (after the pilot, from Canvas reports). Quizzes are local only: never quote or
+      paraphrase a question or answer in the guide, and don't list quiz files or keys as manifest `sources`
     - the module reading (Modules 2–4 only): what's in it and when to post it in Canvas; the session's topic
       list (`teaching-materials/how-to-build/topics/`) says what was left out of the deck and where it went
 4. **`02_how-the-course-is-built.md`**: how content flows (lesson pages → skills → teaching materials), how to
