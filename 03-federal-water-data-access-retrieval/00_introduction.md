@@ -92,8 +92,3 @@ Confirm the module framing about access patterns and provider recommendations, a
 :class: important
 Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
 :::
-
-:::{admonition} Partner review (USGS): Important concepts and terminology
-:class: important
-Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
-:::
