@@ -1,6 +1,6 @@
 ---
 name: build-slides
-description: Build or update a session's PowerPoint deck (in the instructor's style, from the session's topic list) or build a module's reading PDF, using the prompts in teaching-materials/deck-prompts/. Use when asked to make, update or rebuild slides or a reading, or when check_stale.py lists one. Arguments - a session number (1–6) to build a deck, "N update" to update an existing deck, or "reading M" (M = 2–4) for a reading.
+description: Build or update a session's PowerPoint deck (in the instructor's style, from the session's topic list) or a module's reading PDF, using the prompts in teaching-materials/deck-prompts/. Use when asked to make, update or rebuild slides or a reading. Arguments - a session number (1–6) to build a deck, "N update" to update one, "reading M" (M = 2–4) to build a reading, or "reading M update" to update one.
 ---
 
 # Build a session deck or a module reading
@@ -35,7 +35,7 @@ are the source of truth. If a deck needs different content, change the lesson (o
 
 ## Updating a deck (`/build-slides N update`)
 
-Use this when a deck for the session already exists: one in `teaching-materials/decks-to-update/`, or else the
+Use this when a deck for the session already exists: one in `teaching-materials/to-update/`, or else the
 local deck in `teaching-materials/slides/`. Default to it whenever a deck exists and the user asks
 to "rebuild" after a lesson change, and say so.
 
@@ -44,16 +44,18 @@ to "rebuild" after a lesson change, and say so.
 2. Make learner copies of the lesson pages.
 3. Follow `deck-prompts/update-prompt.md` with `{N}` = N. Stop after its plan (step 2) unless the user said to
    go straight through. Never change slides whose notes start with `KEEP`; never overwrite the file in
-   `decks-to-update/`.
+   `to-update/`.
 4. Save and report as for a build (never commit the deck), with the prompt's change log.
 
-## A reading (`/build-slides reading M`)
+## A reading (`/build-slides reading M`, `/build-slides reading M update`)
 
 1. Run `check_topics.py` for the module's sessions (Module 2: 2; Module 3: 3 4 5; Module 4: 6).
 2. Make learner copies of the pages the `reading` rows name.
-3. Follow `deck-prompts/reading-prompt.md` with `{M}` = M. Render with `quarto render <file>` and check the
-   PDF.
-4. Record it with `--kind reading` and the module's topic lists and lesson pages as sources.
+3. Follow the **Build** or **Update** prompt in `deck-prompts/reading-prompt.md` with `{M}` = M. Stop after its
+   plan unless the user said to go straight through. Render with `quarto render <file>` from the repo root and
+   check the PDF.
+4. **Save, don't commit**, as for a deck: `teaching-materials/readings/` is git-ignored, and readings aren't in
+   `manifest.json`. The `.qmd`'s header comment records the commit it was built from.
 
 ## Rules
 - Only content from the lesson pages: no invented claims, numbers, quotes, code or figures. Gaps become

@@ -12,10 +12,9 @@ __pycache__/
 teaching-materials/slides/*.pptx
 teaching-materials/slides/*.potx
 teaching-materials/slides/*.pdf
-# Each builder's template and example decks, and existing decks to update
+# Each builder's template and example decks, and existing decks or readings to update
 teaching-materials/reference-decks/
-teaching-materials/decks-to-update/
-# Readings: Quarto intermediates and local renders (the committed PDFs are in readings/rendered/)
-teaching-materials/readings/.quarto/
-teaching-materials/readings/*.typ
-teaching-materials/readings/*.pdf
+teaching-materials/to-update/
+# Module readings (.qmd and PDF) are built locally and shared through Canvas, never committed
+teaching-materials/readings/*
+!teaching-materials/readings/.gitkeep

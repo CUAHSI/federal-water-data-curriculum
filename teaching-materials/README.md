@@ -19,7 +19,7 @@ the skill's steps. Only some steps are plain scripts you run yourself:
   conda environment needed);
 - `tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
 - `tools/check_topics.py`, which checks the session topic lists in `deck-prompts/topics/`;
-- rendering readings: `quarto render` locally, or Actions → Render readings → Run workflow;
+- rendering readings: `quarto render` locally (readings are built locally and never committed);
 - quizzes: `text2qti <file>.txt` makes the QTI zip.
 
 Small hand fixes to an output (a typo on a slide) are fine, but make the same fix in the lesson page too, or
@@ -32,7 +32,7 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 
 | Skill | Needs | Used for |
 |---|---|---|
-| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings. The Render readings action installs its own Quarto |
+| `build-slides` | Your template and example decks in `reference-decks/` (see `deck-prompts/guide.md`); `python-pptx` in any scratch Python; PowerPoint or LibreOffice to render slides for checking; [Quarto](https://quarto.org/docs/get-started/) 1.4 or later for readings (it bundles Typst, so no LaTeX) | writing and checking decks; rendering readings locally |
 | `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
@@ -100,9 +100,9 @@ works outside this folder.
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
 | `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck, update and reading prompts, a review checklist, and `guide.md` (how to use them). **Source, not generated** | people | No | E |
-| `reference-decks/`, `decks-to-update/` | Each builder's template and example decks, and existing decks to update rather than rebuild. **Local only:** git-ignored, never committed (see `deck-prompts/guide.md`) | people | No | E |
+| `reference-decks/`, `to-update/` | Each builder's template and example decks, and existing decks or readings to update rather than rebuild. **Local only:** git-ignored, never committed (see `deck-prompts/guide.md`) | people | No | E |
 | `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
-| `readings/` | At most one reading per module for Modules 2–4 (`.qmd`; rendered to PDF in `readings/rendered/` by the "Render readings" workflow) | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
+| `readings/` | At most one reading per module for Modules 2–4 (`.qmd` rendered to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
 | `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
 | `quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas | `build-quizzes` skill | Yes, via Canvas | H |
@@ -161,8 +161,7 @@ To rebuild an output, on your feature branch:
 it for each path) replaces the recorded sources. Paths are repo-relative. A directory in `sources` (e.g.
 `01-data-best-practices` or `images/m03`) covers every file under it.
 
-Reading PDFs in `readings/rendered/` have no manifest entries: they follow their `.qmd`, so re-render a reading
-whenever its `.qmd` is rebuilt. Recorded commits must stay reachable, so merge PRs with merge commits, not
+Recorded commits must stay reachable, so merge PRs with merge commits, not
 squash merges; otherwise `check_stale.py` reports the entry's commit as "not in this clone" and it needs
 recording again.
 
@@ -170,9 +169,9 @@ Each manifest entry looks like this:
 
 ```json
 {
-  "output": "teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.qmd",
-  "kind": "reading",
-  "sources": ["teaching-materials/deck-prompts/topics/session-03.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03"],
+  "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
+  "kind": "quiz",
+  "sources": ["03-federal-water-data-access-retrieval"],
   "source_commit": "<full SHA>",
   "built_at": "2026-10-26T15:02:11Z",
   "builder": "build-slides"
@@ -224,8 +223,8 @@ Readings are per module, for Modules 2–4 only, named `module-NN_reading_<modul
 | 3 | `module-03_reading_federal-water-data-access-retrieval.qmd` | sessions 3–5 |
 | 4 | `module-04_reading_federal-water-data-synthesis.qmd` | session 6 |
 
-Skip a reading when its topic lists have no `reading` rows. Its PDF keeps the same base name, in
-`readings/rendered/`.
+Skip a reading when its topic lists have no `reading` rows. Its PDF keeps the same base name, next to it in
+`readings/`. Both are local only (see `deck-prompts/guide.md`).
 
 ### Learner bundle (lane F)
 

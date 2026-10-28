@@ -14,7 +14,7 @@ changing, and leave everything else exactly as it is.
 
 ## Inputs
 
-1. **The deck to update:** the `.pptx` for this session in `teaching-materials/decks-to-update/`.
+1. **The deck to update:** the `.pptx` for this session in `teaching-materials/to-update/`.
    If there's none there, your local deck in `teaching-materials/slides/` (the file name in the topic list
    header; decks are git-ignored, never committed).
 2. **Topic list:** `teaching-materials/deck-prompts/topics/session-0{N}.md`: what the deck should cover, in what
@@ -72,7 +72,7 @@ Work on a copy of the deck:
   any kept slide whose notes don't follow §9.
 - Save under the file name in the topic list header, in `teaching-materials/slides/` (git-ignored). Set the
   document properties' **Comments** to `Built from <commit> with topics/session-0{N}.md` as for a build. Never
-  overwrite the file in `decks-to-update/`.
+  overwrite the file in `to-update/`.
 
 ### 4. Check
 

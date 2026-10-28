@@ -240,7 +240,8 @@ or this repo. Each session's **topic list** decides where every lesson section g
 - **deck:** the important concepts and points, presented live;
 - **notebook:** practising the code (Modules 3 and 4);
 - **reading:** extra detail and nuance that's useful but not needed in the session. Modules 2, 3 and 4 have at
-  most one reading each (`readings/module-NN_reading_<module slug>.qmd`, rendered to PDF); Module 1 has none;
+  most one reading each (`readings/module-NN_reading_<module slug>.qmd`, rendered to PDF, built locally and never
+  committed); Module 1 has none;
 - **how-to:** setup steps covered by the HydroShare "How to" guide;
 - **cut:** on the website only.
 
@@ -267,6 +268,6 @@ to run, what to point out, and when to come back.
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
 
 **Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks
-are the exception: they're built locally, never committed (`slides/` is git-ignored), and record their build
-commit in their own document properties.
+and module readings are the exception: they're built locally, never committed (`slides/` and `readings/` are
+git-ignored), and record their build commit in the file itself.
 `python teaching-materials/tools/check_stale.py` lists what needs rebuilding.

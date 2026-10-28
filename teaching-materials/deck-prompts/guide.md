@@ -1,7 +1,7 @@
 # Deck prompts: guide
 
-Everything a person needs to have Claude build or update a session deck (PowerPoint), or build a module reading
-(PDF), from the lesson pages, in the instructor's own style, for *Reproducible Workflows with Open Water Data:
+Everything a person needs to have Claude build or update a session deck (PowerPoint) or a module reading (PDF)
+from the lesson pages, in the instructor's own style, for *Reproducible Workflows with Open Water Data:
 NASA, NOAA, USGS River Data Access*.
 
 The lessons stay the source of truth. Three kinds of output come from them, each with its own job:
@@ -10,7 +10,7 @@ The lessons stay the source of truth. Three kinds of output come from them, each
 |---|---|---|
 | **Deck** | The important concepts and points, presented live | `teaching-materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
 | **Notebook** | Practising the code | the learner bundle (`teaching-materials/learner-bundle/`) |
-| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, rendered to PDF |
+| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, a `.qmd` rendered to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
 
 What goes where is decided per topic in the **topic lists**, not by whoever runs the prompt.
 
@@ -25,14 +25,15 @@ teaching-materials/
 │   ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
 │   ├── deck-prompt.md       the prompt that builds one session deck from scratch
 │   ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
-│   ├── reading-prompt.md    the prompt that builds one module reading
+│   ├── reading-prompt.md    the prompts that build or update one module reading
 │   └── review-checklist.md  what to check before a deck is used
 ├── reference-decks/         local only: your template and example decks (see below)
-├── decks-to-update/         local only: existing decks to update rather than rebuild (see below)
-└── slides/                  local only: the decks you build
+├── to-update/               local only: existing decks or readings to update rather than rebuild (see below)
+├── slides/                  local only: the decks you build
+└── readings/                local only: the readings you build (.qmd and PDF)
 ```
 
-The three local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
+The four local-only folders are git-ignored by the repo's root `.gitignore`. Create them yourself; nothing in
 them is ever committed.
 
 ## Topic lists
@@ -142,7 +143,7 @@ If you edited the topic list or design rules along the way, commit those. Never 
 When a deck already exists and you only want it brought up to date (a deck you made by hand, an earlier
 course's deck, or your own deck whose lessons changed), update it instead of rebuilding it:
 
-1. Put the deck in `teaching-materials/decks-to-update/`, named after the session's deck (the file name in its
+1. Put the deck in `teaching-materials/to-update/`, named after the session's deck (the file name in its
    topic list header, e.g. `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx`), so the prompt can
    find it. Skip this to update your deck in `teaching-materials/slides/`; that's the usual way to bring a deck
    up to date after a lesson changes.
@@ -151,20 +152,30 @@ course's deck, or your own deck whose lessons changed), update it instead of reb
    desktop, attach the deck plus the same files as for a build.
 4. It inventories the deck and shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then
    let it go ahead. It saves the updated deck in `teaching-materials/slides/` and never overwrites the file in
-   `decks-to-update/`.
+   `to-update/`.
 5. Review and save the result as for a build.
 
-## Building a reading
+## Building or updating a reading
 
-After the module's decks are done, run `reading-prompt.md` the same way (in Claude Code: `/build-slides
-reading M`, where M is the module number). It collects the `reading` rows from the module's topic lists. Render
-with `quarto render teaching-materials/readings/<file>.qmd`, or with Actions → Render readings. Record it with
-`check_stale.py --update`, with `--kind reading` and the topic lists as sources.
+Readings work like decks: built locally from the topic lists, never committed, and updated rather than rebuilt
+when something changes. `reading-prompt.md` holds both prompts.
+
+- **Build:** after the module's decks are done, run the Build prompt (in Claude Code: `/build-slides reading M`,
+  where M is the module number). It collects the `reading` rows from the module's topic lists, shows you a plan,
+  writes `teaching-materials/readings/module-0M_reading_<module slug>.qmd`, and renders the PDF with
+  `quarto render` (shared page settings come from the repo's `_quarto.yml`).
+- **Update:** run the Update prompt (`/build-slides reading M update`). It works on the reading in
+  `teaching-materials/to-update/` if you put one there (a PDF or Word reading is turned into a `.qmd` first),
+  otherwise on yours in `readings/`. It shows a section-by-section plan before changing anything; start a section
+  with `<!-- KEEP -->` to protect it.
+- **Save:** both the `.qmd` and the PDF stay in `teaching-materials/readings/` (git-ignored). Share the PDF
+  through Canvas. The `.qmd`'s header comment records the commit it was built from, which the Update prompt
+  uses to see what changed.
 
 ## When something changes
 
-- **A lesson changed:** `check_topics.py` says whether a section the topic list names was renamed or removed,
-  and `check_stale.py` lists readings built from it. Update the topic list, then **update** the deck
-  (`/build-slides N update`) rather than rebuilding it, so hand edits survive. The update compares the lessons
-  with the commit the deck was built from.
+- **A lesson changed:** `check_topics.py` says whether a section the topic list names was renamed or removed.
+  Update the topic list, then **update** the deck and reading (`/build-slides N update`, `/build-slides reading M
+  update`) rather than rebuilding them, so hand edits survive. Each update compares the lessons with the commit
+  the deck or reading was built from.
 - **You want a different style:** edit `design-rules.md` or the template, then update each deck.
