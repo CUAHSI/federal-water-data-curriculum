@@ -35,9 +35,9 @@ There are two ways to get these products with code, and they scale differently:
 
 | Use case | Recommended route | Key needed? | Scaling limits |
 |---|---|---|---|
-| Explore by clicking: which granules exist for a place and time | [Earthdata Search](https://search.earthdata.nasa.gov/) | Free Earthdata Login to download | Manual; not reproducible on its own |
-| Time series for one or a few reaches or nodes, any length of record | {term}`hydrocron` web API (RiverSP only) | No (optional for heavy use) | One request per reach or node; responses are capped at 6 MB; send requests one at a time |
-| Every reach in an area, or water extent (Raster), for a short time window | {term}`earthaccess` (search, then download or stream whole files) | No key; free Earthdata Login | Cost grows with the number of files: each RiverSP {term}`granule <Granule>` covers a continent-wide pass, each Raster granule a ~150 km scene |
+| Explore by clicking: which granules exist for a place and time | [Earthdata Search](https://search.earthdata.nasa.gov/) | Free Earthdata Login to download | Manual; not reproducible on its own. However, the URL will remember your filters, allowing you to reproduce your {term}`query<Query>`. |
+| Time series for one or a few reaches or nodes, any length of record | {term}`hydrocron` web API for RiverSP only this lesson (also queries LakeSP and {term}`L4 SoS<SWORD of Science (SoS)>`). | No (optional for heavy use) | One request per reach or node; responses are capped at 6 MB; send requests one at a time |
+| Every reach in an area, or water extent (Raster), for a short time window | {term}`earthaccess` to both search and download/stream whole files (`hydrocron` can download/stream files, but cannot search an area for reach IDs). | No key; free Earthdata Login | Cost (e.g. storage and computation power) grows with the number of files: each RiverSP {term}`granule <Granule>` covers a continent-wide pass, each Raster granule a ~150 km scene |
 | Large areas or long periods of Raster or RiverSP files | `earthaccess.open()` running in AWS `us-west-2`, next to the archive | No key; free Earthdata Login | Streams instead of downloading; set up a cloud environment first |
 
 - **`earthaccess`** is NASA's Python library for logging in to NASA Earthdata, searching for data, and downloading or
