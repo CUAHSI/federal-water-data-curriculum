@@ -266,5 +266,7 @@ to run, what to point out, and when to come back.
 **Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
 
-**Every output is in `manifest.json`** with its sources and the commit it was built from.
+**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks
+are the exception: they're built locally, never committed (`slides/` is git-ignored), and record their build
+commit in their own document properties.
 `python teaching-materials/tools/check_stale.py` lists what needs rebuilding.

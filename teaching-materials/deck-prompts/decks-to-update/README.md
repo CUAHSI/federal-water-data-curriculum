@@ -12,5 +12,5 @@ slide-by-slide plan (keep, update, move, remove, add), and after your go-ahead s
 
 To protect a slide from any change, start its speaker notes with `KEEP`.
 
-If this folder has no deck for the session, the update prompt works on the committed deck in
-`teaching-materials/slides/` instead. That's the usual way to bring a deck up to date after a lesson changes.
+If this folder has no deck for the session, the update prompt works on your local deck in
+`teaching-materials/slides/` instead (decks are git-ignored). That's the usual way to bring a deck up to date after a lesson changes.

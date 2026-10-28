@@ -78,11 +78,16 @@ Work from a copy of the template so the masters, layouts, theme fonts and colour
   and alt text.
 - Make builds by duplicating the finished slide and changing one thing on each copy, never with PowerPoint
   animations or transitions.
-- Write speaker notes for every slide (design rules §9).
+- Write speaker notes for every slide in the design rules §9 format: SAY (the main points, spoken to the
+  learners) at the top, COURSE CONTENT (module, lesson, section heading and file) at the bottom, and on
+  activity answer slides the ACTIVITY PROMPT repeated word for word.
 - Delete the template's example slides when you're done.
 
-Save the deck as the file name in the topic list's header. If you're writing the file with code, use
-`python-pptx`, and copy slides by deep-copying the example slide's XML along with its picture relationships.
+Save the deck as the file name in the topic list's header, in `teaching-materials/slides/` (git-ignored: decks
+are never committed). In the deck's document properties, set **Comments** to `Built from <commit> with
+topics/session-0{N}.md`, using the repo commit the lessons were read from (`git rev-parse --short HEAD`) if you
+know it. If you're writing the file with code, use `python-pptx`, and copy slides by deep-copying the example
+slide's XML along with its picture relationships.
 
 ### 4. Check every slide
 
@@ -92,6 +97,7 @@ Render the deck to images (PowerPoint, LibreOffice or the PPTX skill's renderer)
 - Each slide matches its template example: same positions, fonts and colours.
 - No slide breaks a "Never" rule (design rules §10).
 - Builds line up: the parts that stay the same don't move between slides.
+- Every slide's notes have SAY and COURSE CONTENT, and every answer slide repeats its activity prompt.
 
 Fix what you find, then render again.
 

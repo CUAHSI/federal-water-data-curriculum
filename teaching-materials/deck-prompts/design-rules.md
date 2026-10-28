@@ -131,11 +131,30 @@ From Lindsay's decks:
 
 ## 9. Speaker notes
 
-- Every slide has notes: 2–5 bullets of points to make, not a script.
+Notes are for an instructor who may not have written the lessons. Every slide has notes in two parts, in this
+order:
+
+```
+SAY
+- 2–5 main points, written the way you'd say them to the learners ("you", "we"), not as instructions to the
+  instructor and not as a full script
+EXPECT: a likely question, and the answer (only where there is one)
+IF SHORT ON TIME: what can be skipped (only where something can)
+CLOCK: the time to be at, on section dividers and activities
+
+COURSE CONTENT
+- Module 1, Lesson 2 "Data Management" › "Data Management Plans" (01-data-best-practices/02_data_management.md)
+- for code: the notebook and its section; for detail left off the slides: the module reading's section
+```
+
+- **SAY** comes first, so the instructor can glance at it mid-session. It holds only the points to get across.
+- **COURSE CONTENT** says where in the lesson pages (and notebook or reading) the slide's material lives, so the
+  instructor can read more before teaching or point a learner to it afterwards. Name the module, lesson, section
+  heading and file.
+- **Activity answer slides** also repeat the activity's prompt under `ACTIVITY PROMPT` (the task and every item,
+  word for word as on the activity slide), so the question and its answer are in front of the instructor
+  together.
 - A slide whose notes start with `KEEP` is a human edit to preserve: updates never change, move or remove it.
-- Add "Expect:" with a likely question where there is one, and "If short on time:" where a slide or build can be
-  skipped.
-- On live-coding and activity slides, put the clock time to come back.
 
 ## 10. Never
 

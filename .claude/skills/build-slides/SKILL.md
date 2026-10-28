@@ -27,15 +27,16 @@ are the source of truth. If a deck needs different content, change the lesson (o
       a scratch environment if needed, never in a lesson environment.
     - Render every slide to images to check it: PowerPoint (`SaveAs` PDF through COM on Windows) or LibreOffice
       (`soffice --headless --convert-to pdf`), then look at each page.
-4. **Record** the deck with `check_stale.py --update` as in the README (step 6), with the topic list, design
-   rules, lesson pages and image folders as sources.
-5. **Report in the PR:** the prompt's report (step 5), the learner-copy counts, and which slides you'd most like
-   a person to look at.
+4. **Save, don't commit.** Decks live in `teaching-materials/slides/`, which is git-ignored: never commit a deck
+   or add it to `manifest.json`. Set the deck's Comments property to `Built from <short HEAD commit> with
+   topics/session-0N.md`. Commit only topic-list or design-rule edits.
+5. **Report** (to the user, and in the PR if there is one): the prompt's report (step 5), the learner-copy
+   counts, and which slides you'd most like a person to look at.
 
 ## Updating a deck (`/build-slides N update`)
 
 Use this when a deck for the session already exists: one in `deck-prompts/decks-to-update/`, or else the
-committed deck in `teaching-materials/slides/`. Default to it whenever a committed deck exists and the user asks
+local deck in `teaching-materials/slides/`. Default to it whenever a deck exists and the user asks
 to "rebuild" after a lesson change, and say so.
 
 1. Check the inputs as for a build (`check_topics.py N`; the template is needed only if the deck lacks a slide
@@ -44,7 +45,7 @@ to "rebuild" after a lesson change, and say so.
 3. Follow `deck-prompts/update-prompt.md` with `{N}` = N. Stop after its plan (step 2) unless the user said to
    go straight through. Never change slides whose notes start with `KEEP`; never overwrite the file in
    `decks-to-update/`.
-4. Record and report as for a build, with the prompt's change log in the PR.
+4. Save and report as for a build (never commit the deck), with the prompt's change log.
 
 ## A reading (`/build-slides reading M`)
 

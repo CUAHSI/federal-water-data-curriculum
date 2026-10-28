@@ -100,7 +100,7 @@ works outside this folder.
 | Folder | What's in it | Built by | Goes to learners? | Lane |
 |---|---|---|---|---|
 | `deck-prompts/` | Topic lists (one per session: what goes on the deck, in a notebook, in a reading or nowhere), design rules, the deck and reading prompts, and a review checklist. **Source, not generated**; `reference-decks/` (each builder's template and example decks) and `decks-to-update/` (existing decks to update rather than rebuild) aren't committed | people | No | E |
-| `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
+| `slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `readings/` | At most one reading per module for Modules 2–4 (`.qmd`; rendered to PDF in `readings/rendered/` by the "Render readings" workflow) | `build-slides` skill, from `deck-prompts/` | Yes, via Canvas | E |
 | `learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `tools/build_notebooks.py` | Yes, via HydroShare | F |
 | `learner-bundle/scaffolds/` | Hand-edited "Now you try it" starters that `build_notebooks.py` reads; **source, not generated** | people (lane F drafts them) | Not as files; they become the student notebooks' starter cells | F |
@@ -169,9 +169,9 @@ Each manifest entry looks like this:
 
 ```json
 {
-  "output": "teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx",
-  "kind": "slides",
-  "sources": ["teaching-materials/deck-prompts/topics/session-03.md", "teaching-materials/deck-prompts/design-rules.md", "03-federal-water-data-access-retrieval/00_introduction.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03"],
+  "output": "teaching-materials/readings/module-03_reading_federal-water-data-access-retrieval.qmd",
+  "kind": "reading",
+  "sources": ["teaching-materials/deck-prompts/topics/session-03.md", "03-federal-water-data-access-retrieval/01_access_nasa_swot.md", "images/m03"],
   "source_commit": "<full SHA>",
   "built_at": "2026-10-26T15:02:11Z",
   "builder": "build-slides"

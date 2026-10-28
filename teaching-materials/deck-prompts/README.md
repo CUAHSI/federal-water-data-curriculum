@@ -8,7 +8,7 @@ The lessons stay the source of truth. Three kinds of output come from them, each
 
 | Output | Its job | Where |
 |---|---|---|
-| **Deck** | The important concepts and points, presented live | `teaching-materials/slides/`, one `.pptx` per session |
+| **Deck** | The important concepts and points, presented live | `teaching-materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
 | **Notebook** | Practising the code | the learner bundle (`teaching-materials/learner-bundle/`) |
 | **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/readings/`, rendered to PDF |
 
@@ -92,37 +92,31 @@ add it to `design-rules.md` so the next deck gets it right.
 
 ### 5. Save it
 
-Save the deck in `teaching-materials/slides/` under the file name in the topic list's header.
+Save the deck in `teaching-materials/slides/` under the file name in the topic list's header. That folder is
+git-ignored: **decks are never committed** (they're large, and they carry photos and screenshots). Share the
+final deck through Canvas, and keep your own copy.
 
-### 6. Record it
+The deck records what it was built from: its document properties' **Comments** say `Built from <commit> with
+topics/session-NN.md` (File → Info → Properties in PowerPoint). Decks aren't in `manifest.json`, because
+`check_stale.py` can only track files that are in the repo. The update prompt uses that commit instead to see
+what changed in the lessons since the deck was built.
 
-Record what the deck was built from, so `check_stale.py` can tell you when to rebuild (from the repo root, on
-your branch, after committing any lesson or topic-list changes):
+### 6. Commit the topic list
 
-```bash
-python teaching-materials/tools/check_stale.py --update teaching-materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx \
-    --kind slides --builder build-slides \
-    --source teaching-materials/deck-prompts/topics/session-03.md \
-    --source teaching-materials/deck-prompts/design-rules.md \
-    --source 03-federal-water-data-access-retrieval/00_introduction.md \
-    --source 03-federal-water-data-access-retrieval/01_access_nasa_swot.md \
-    --source images/m03
-```
-
-Commit the deck and `manifest.json` together.
+If you edited the topic list or design rules along the way, commit those. Never the deck.
 
 ## Updating an existing deck
 
 When a deck already exists and you only want it brought up to date (a deck you made by hand, an earlier
-course's deck, or a committed deck whose lessons changed), update it instead of rebuilding it:
+course's deck, or your own deck whose lessons changed), update it instead of rebuilding it:
 
-1. Put the deck in `decks-to-update/`, named after the session's deck. Skip this to update the committed deck
-   in `teaching-materials/slides/`.
+1. Put the deck in `decks-to-update/`, named after the session's deck. Skip this to update your deck in
+   `teaching-materials/slides/`.
 2. Start the speaker notes of any slide that must not change with `KEEP`.
 3. Check the topic list (step 2 above), then run `update-prompt.md`: in Claude Code, `/build-slides N update`;
    on the web or desktop, attach the deck plus the same files as for a build.
 4. It shows a slide-by-slide plan (keep, update, move, remove, add). Adjust it, then let it go ahead.
-5. Review, save and record the result as in steps 4–6 above.
+5. Review and save the result as in steps 4–6 above.
 
 ## Building a reading
 
@@ -133,9 +127,8 @@ deck, with `--kind reading` and the topic lists as sources.
 
 ## When something changes
 
-- **A lesson changed:** `check_stale.py` lists the decks and readings built from it, and `check_topics.py`
-  says whether a section the topic list names was renamed or removed. Update the topic list, then **update**
-  the deck (`/build-slides N update`) rather than rebuilding it, so hand edits survive; or fix the affected
-  slides by hand and re-record.
-- **You want a different style:** edit `design-rules.md` or the template. Every deck lists the design rules as
-  a source, so they'll all show as stale.
+- **A lesson changed:** `check_topics.py` says whether a section the topic list names was renamed or removed,
+  and `check_stale.py` lists readings built from it. Update the topic list, then **update** the deck
+  (`/build-slides N update`) rather than rebuilding it, so hand edits survive. The update compares the lessons
+  with the commit the deck was built from.
+- **You want a different style:** edit `design-rules.md` or the template, then update each deck.

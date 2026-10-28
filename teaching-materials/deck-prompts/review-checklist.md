@@ -1,6 +1,6 @@
 # Review checklist for a generated deck
 
-Go through this before a deck is used or committed. It takes about 20 minutes per deck.
+Go through this before a deck is used. It takes about 20 minutes per deck.
 
 ## Content
 - [ ] Every `deck` row in the topic list is on a slide, in order, and nothing else is.
@@ -28,10 +28,14 @@ Go through this before a deck is used or committed. It takes about 20 minutes pe
 
 ## Pacing
 - [ ] Rehearse, or at least click through with a timer: each block lands near its minutes in the topic list.
-- [ ] Speaker notes on every slide; "If short on time:" marks what you can skip.
+- [ ] Every slide's notes start with SAY (the points to get across, as you'd say them to learners) and end with
+      COURSE CONTENT (where the material is in the lessons); answer slides repeat their activity prompt.
+- [ ] "IF SHORT ON TIME" marks what you can skip.
 
-## Record it
-- [ ] Save the deck under the name in the topic list header, in `teaching-materials/slides/`.
-- [ ] Record it in the manifest (see README.md, step 6) and commit the deck, the manifest and any topic-list
+## Save it
+- [ ] Save the deck under the name in the topic list header, in `teaching-materials/slides/`. Decks are
+      git-ignored: never commit them. Share them through Canvas.
+- [ ] Its document properties' Comments say which commit it was built from.
+- [ ] Commit any topic-list
       edits together.
 - [ ] If you fixed content on a slide, fix the lesson page too, or the next build undoes it.

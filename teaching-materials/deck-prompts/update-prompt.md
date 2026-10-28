@@ -1,7 +1,7 @@
 # Prompt: update an existing deck
 
 Use this instead of `deck-prompt.md` when you already have a deck for the session and want it brought up to
-date, not rebuilt: a deck you made by hand, an earlier course's deck, or a committed deck whose lessons changed.
+date, not rebuilt: a deck you made by hand, an earlier course's deck, or a deck built here whose lessons changed.
 Copy everything below the line into Claude, replacing `{N}` with the session number. In Claude Code,
 `/build-slides N update` does the same thing.
 
@@ -15,8 +15,8 @@ changing, and leave everything else exactly as it is.
 ## Inputs
 
 1. **The deck to update:** the `.pptx` for this session in `teaching-materials/deck-prompts/decks-to-update/`.
-   If there's none there, the committed deck in `teaching-materials/slides/` (the file name in the topic list
-   header).
+   If there's none there, your local deck in `teaching-materials/slides/` (the file name in the topic list
+   header; decks are git-ignored, never committed).
 2. **Topic list:** `teaching-materials/deck-prompts/topics/session-0{N}.md`: what the deck should cover, in what
    order, and for how many minutes.
 3. **Lesson pages:** the learner copies of the pages the topic list names. They are the only source of content.
@@ -39,7 +39,9 @@ changing, and leave everything else exactly as it is.
 ### 1. Inventory the deck (no changes yet)
 
 List every slide: number, title, slide type (design rules §4, or "other"), which topic-list row it covers (or
-"none"), and whether it's marked `KEEP`.
+"none"), and whether it's marked `KEEP`. If the deck's document properties say `Built from <commit>`, and you can
+run git in the repo, list what changed in its lesson pages and topic list since then
+(`git diff <commit> -- <pages> <topic list>`): those are the slides most likely to need updating.
 
 ### 2. Compare and plan, then stop
 
@@ -65,9 +67,12 @@ Work on a copy of the deck:
 - **Add** a slide by copying a slide of the same type from this deck, or from the template if the deck has none,
   then replace its content.
 - **Remove** and **move** slides as planned.
-- Update the speaker notes on every slide you changed or added, and leave the others' notes alone.
-- Save under the file name in the topic list header, in `teaching-materials/slides/`. Never overwrite the file in
-  `decks-to-update/`.
+- Write the speaker notes on every slide you changed or added in the design rules §9 format (SAY, COURSE
+  CONTENT, and the ACTIVITY PROMPT on answer slides). Leave other slides' notes alone, but list in the report
+  any kept slide whose notes don't follow §9.
+- Save under the file name in the topic list header, in `teaching-materials/slides/` (git-ignored). Set the
+  document properties' **Comments** to `Built from <commit> with topics/session-0{N}.md` as for a build. Never
+  overwrite the file in `decks-to-update/`.
 
 ### 4. Check
 
