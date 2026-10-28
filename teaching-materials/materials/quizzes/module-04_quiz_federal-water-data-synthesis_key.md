@@ -38,14 +38,15 @@ Module objectives (from `04-federal-water-data-synthesis/00_introduction.md`), u
 | 8 | O3 | single, code | c) `daily`, because its dates are the gage's local days, not UTC | Case study, Starting on the ground (daily values plotted at UTC midnight) |
 | 9 | O1 | single | c) Kept `reach_q` ≤ 2, then checked the degraded passes against the gage | Case study, River water surface elevation through the event (RiverSP) |
 | 10 | O4 | single | c) Its 18-hour window ends at 18:00 UTC on 11 December, before the crest | Case study, Looking ahead: forecasts from NOAA NWM |
-| 11 | O4 | single | c) The observed peak is extrapolated from the rating, and NWM estimates a whole reach | Case study, forecasts table and the paragraph after it |
+| 11 | O4 | single | c) The observed peak comes from the rating, not a measurement; NWM estimates a reach | Case study, forecasts table and the paragraph after it |
 | 12 | O4 | single | c) The stage–discharge relationship at the site has changed over time | Case study, Starting on the ground (record stage without a record flow) |
 
 ## Notes for spot-checking
 
 - Numbers in Q3, Q9–Q12 are from the case study page as accessed 2026-10-08 (all USGS values `Approved` at access).
 - Q11 uses the 12Z forecast (160,000 ft³/s) so its "20%" matches the lesson's own wording.
-- Q12 rests on the lesson's reading that the rating has shifted, which is still open for USGS partner review on
-  the case study page. Recheck the question's feedback once USGS answers.
+- Q12 rests on the lesson's reading that a record stage without a record flow means the rating has shifted. USGS
+  partner review of that passage is closed (the callout is gone from `dev`); Q2, Q3 and Q11 follow the reviewed wording (the peak is computed
+  from stage through the rating, so it is less certain than a measurement).
 - Module 4 lesson 3 (Additional Federal water data) is not tested: it is a short tour with no learning objective of
   its own.

@@ -14,7 +14,7 @@ d)  USGS continuous discharge
 
 
 2.  You want to judge how much to trust the USGS discharge reported at a flood crest. Which evidence helps? Select all that apply.
-... The correct options are: the field measurements made near the peak flow, with their `measurement_rated`; and whether the reported peak is above the highest flow measured during the event, which means it was computed by extending the rating curve. Discharge is computed from stage, so its accuracy depends on how well the rating is supported at that flow.
+... The correct options are: the field measurements made near the peak flow, with their `measurement_rated`; and whether the reported peak is above the highest flow measured during the event, which means it was computed from stage through the upper end of the rating curve, the least certain part. Discharge is computed from stage, so its accuracy depends on how well the rating is supported at that flow.
 -   Approved does not mean directly measured: approved discharge is still computed from stage through the rating. A daily mean flattens the crest, so it tells you less about the peak, not more.
 [*] The field measurements made near the peak flow, and their `measurement_rated`
 [*] Whether the reported peak is above the highest flow measured during the event
@@ -23,7 +23,7 @@ d)  USGS continuous discharge
 
 
 3.  Which statements describe what each product could and could not show during the December 2025 Skagit River flood? Select all that apply.
-... The correct options are: the USGS peak (133,000 ft³/s) was above any flow measured during the flood, so it was computed from the rating; NWM short-range forecasts gave many hours' warning of an exceptional flood, on a network that also covers ungaged reaches; and the SWOT pass nearest the peak missed the gage's reach entirely.
+... The correct options are: the USGS peak (133,000 ft³/s) was above any flow measured during the flood, so it was computed from stage through the rating; NWM short-range forecasts gave many hours' warning of an exceptional flood, on a network that also covers ungaged reaches; and the SWOT pass nearest the peak missed the gage's reach entirely.
 -   SWOT RiverSP follows river centerlines and doesn't show out-of-bank extent, and the daily mean understated the crest (112,000 vs. 133,000 ft³/s).
 [*] The USGS-reported peak was above any flow directly measured during the event.
 [*] NWM forecasts gave many hours' warning of an exceptional flood.
@@ -104,16 +104,16 @@ d)  The 00Z run started from observations taken after the crest.
 
 
 11. The NWM short-range forecast issued at 12Z on 11 December peaked at 160,000 ft³/s, against an observed USGS crest of 133,000 ft³/s. Why **shouldn't** you simply conclude that "the model was wrong by 20%"?
-... The observed peak is itself computed from the rating curve, above the highest flow measured during the flood, so it is uncertain too. And an NWM value is a model estimate for a whole reach, not a point measurement. The forecasts' value was a consistent signal of an exceptional flood many hours ahead.
+... The observed peak is itself computed from stage through the rating curve, above the highest flow measured during the flood, so it carries more uncertainty than a field measurement. And an NWM value is a model estimate for a whole reach, not a point measurement. The forecasts' value was a consistent signal of an exceptional flood many hours ahead.
 -   The units were already converted, and the NWM is model guidance that complements official NWS forecasts; it is not right (or wrong) by definition.
 a)  The NWM value is in m³/s, so the two numbers can't be compared at all.
 b)  NWM output is the official NWS forecast, so it is correct by definition.
-*c) The observed peak is extrapolated from the rating, and NWM estimates a whole reach.
+*c) The observed peak comes from the rating, not a measurement; NWM estimates a reach.
 d)  The USGS value is a daily mean, so it is always lower than a forecast.
 
 
 12. The Skagit at Mount Vernon set a record **stage** in December 2025 (37.73 ft, above the 37.37 ft of 1990), but its peak discharge (133,000 ft³/s) was below the 1990 crest (152,000 ft³/s). What does this suggest?
-... A record stage without a record flow is a clue that the relationship between stage and flow at this site isn't fixed. Out-of-bank flow and channel scour or fill are common reasons a rating shifts, which is why ratings are least certain at extreme flows.
+... A record stage without a record flow is a clue that the relationship between stage and flow at this site isn't fixed. Out-of-bank flow and changes to the channel (scour or fill) are common reasons a rating shifts, which is why ratings are least certain at extreme flows.
 -   The case study reads this as a sign the rating has shifted, not as an error in either record.
 a)  The 2025 stage reading is an error, since stage and flow must rise together.
 b)  The 2025 discharge is provisional and will be revised up to match.

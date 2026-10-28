@@ -1,7 +1,7 @@
 {
   "outputs": [
     {
-      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices.txt",
+      "output": "teaching-materials/materials/quizzes/module-01_quiz_data-best-practices.txt",
       "kind": "quiz",
       "sources": [
         "01-data-best-practices"
@@ -11,7 +11,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices.zip",
+      "output": "teaching-materials/materials/quizzes/module-01_quiz_data-best-practices.zip",
       "kind": "quiz",
       "sources": [
         "01-data-best-practices"
@@ -21,7 +21,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-01_quiz_data-best-practices_key.md",
+      "output": "teaching-materials/materials/quizzes/module-01_quiz_data-best-practices_key.md",
       "kind": "quiz",
       "sources": [
         "01-data-best-practices"
@@ -31,7 +31,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape.txt",
+      "output": "teaching-materials/materials/quizzes/module-02_quiz_federal-water-data-landscape.txt",
       "kind": "quiz",
       "sources": [
         "02-federal-water-data-landscape"
@@ -41,7 +41,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape.zip",
+      "output": "teaching-materials/materials/quizzes/module-02_quiz_federal-water-data-landscape.zip",
       "kind": "quiz",
       "sources": [
         "02-federal-water-data-landscape"
@@ -51,7 +51,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-02_quiz_federal-water-data-landscape_key.md",
+      "output": "teaching-materials/materials/quizzes/module-02_quiz_federal-water-data-landscape_key.md",
       "kind": "quiz",
       "sources": [
         "02-federal-water-data-landscape"
@@ -61,7 +61,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
+      "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
       "kind": "quiz",
       "sources": [
         "03-federal-water-data-access-retrieval"
@@ -71,7 +71,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.zip",
+      "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.zip",
       "kind": "quiz",
       "sources": [
         "03-federal-water-data-access-retrieval"
@@ -81,7 +81,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-03_quiz_federal-water-data-access-retrieval_key.md",
+      "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval_key.md",
       "kind": "quiz",
       "sources": [
         "03-federal-water-data-access-retrieval"
@@ -91,7 +91,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis.txt",
+      "output": "teaching-materials/materials/quizzes/module-04_quiz_federal-water-data-synthesis.txt",
       "kind": "quiz",
       "sources": [
         "04-federal-water-data-synthesis"
@@ -101,7 +101,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis.zip",
+      "output": "teaching-materials/materials/quizzes/module-04_quiz_federal-water-data-synthesis.zip",
       "kind": "quiz",
       "sources": [
         "04-federal-water-data-synthesis"
@@ -111,7 +111,7 @@
       "builder": "build-quizzes"
     },
     {
-      "output": "teaching-materials/quizzes/module-04_quiz_federal-water-data-synthesis_key.md",
+      "output": "teaching-materials/materials/quizzes/module-04_quiz_federal-water-data-synthesis_key.md",
       "kind": "quiz",
       "sources": [
         "04-federal-water-data-synthesis"
