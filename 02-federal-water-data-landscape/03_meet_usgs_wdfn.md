@@ -1,6 +1,8 @@
 # Meet USGS WDFN
 
-The U.S. Geological Survey ({term}USGS) maintains the National Water Information System ({term}`NWIS`), a system for collecting water data at monitoring locations across the United States using automated sensors and manual measurement methods, transmitting and storing those observations, performing quality assurance and quality control validations on those measurements, and then making that data freely available to the public. *USGS Water Data for the Nation ({term}`WDFN`)* is how the U.S. Geological Survey's Water Resources Mission Area publishes its water data, with the ultimate goal of providing high-quality and discoverable water data for everyone. Each monitoring location has unique location information, including the location name and identifier, the agency responsible for it, and geographic information. Water data provided by these monitoring locations covers a wide breadth of variables from chemical, to physical, to biological. This data is available as continuous data, daily data, field measurements, and discrete sample data (results from water samples collected on a given day and analyzed in a lab, such as water-quality measurements).
+The U.S. Geological Survey (USGS) maintains the National Water Information System ({term}`NWIS`), a system for collecting water data at monitoring locations across the United States using automated sensors and manual measurement methods, transmitting and storing those observations, performing quality assurance and quality control validations on those measurements, and then making that data freely available to the public. *USGS Water Data for the Nation ({term}`WDFN`)* is how the U.S. Geological Survey's Water Resources Mission Area publishes its water data, with the ultimate goal of providing high-quality and discoverable water data for everyone. 
+
+Each monitoring location has unique location information, including the location name and identifier, the agency responsible for it, and geographic information. Water data provided by these monitoring locations covers a wide breadth of variables from chemical, to physical, to biological. This data is available as continuous data, daily data, field measurements, and discrete sample data (results from water samples collected on a given day and analyzed in a lab, such as water-quality measurements). For more information, visit the [data collection categories page](https://waterdata.usgs.gov/data-collection-categories).
 
 You may occasionally see the names *NWISWeb* or *WaterServices*, which were legacy websites and web services that published *NWIS* data. These are being decommissioned, and USGS is moving to the modernized equivalents: the WDFN website and the USGS Water Data APIs, which the USGS Python package {term}`dataretrieval` reaches through its `waterdata` module. This course uses these modernized equivalents. Learn more at the [WDFN home page](https://waterdata.usgs.gov/) and in [NWISWeb Decommission Campaign Summary](https://waterdata.usgs.gov/blog/nwisweb-decommission-summary/).
 
@@ -11,12 +13,12 @@ This table maps WDFN's own vocabulary onto the course's [shared concepts](00_int
 | Shared concept | WDFN equivalent | Notes |
 |---|---|---|
 | {term}`Location identifier` | `monitoring_location_id` | Geographical location where data is collected, usually a USGS {term}`streamgage <Streamgage>`. Can be plotted as points on a map. The ID combines the agency and site number, for example `USGS-03294500`. See {term}`monitoring location ID <Monitoring location ID>`. |
-| {term}`Variable` | Discharge, also referred to as streamflow by USGS | Stream discharge at a monitoring location, offered as continuous or daily values. Referred to with the {term}`parameter code <Parameter code>` `00060`. {term}`Gage height` (`00065`) is measured at the same locations. |
+| {term}`Variable` | Discharge, also referred to as streamflow by USGS | Stream discharge at a monitoring location, offered as continuous or daily values in the `value` column. Referred to with the {term}`parameter code <Parameter code>` `00060`. {term}`Gage height` (`00065`) is measured at the same locations. |
 | {term}`Variable unit` | ft³/s | Cubic feet per second (`ft^3/s` in the `unit_of_measure` column). Gage height is in feet. |
-| {term}`Time` | timestamp (continuous or daily) | {term}`Continuous values <Continuous values>` have a timestamp, usually every 15 minutes, in UTC. {term}`Daily values <Daily values>` have a date and a statistic, such as the daily mean ({term}`statistic code <Statistic code>` `00003`). The day is the monitoring location's local day, not a UTC day. |
+| {term}`Time` | timestamp (continuous or daily) in the `time` column | {term}`Continuous values <Continuous values>` have a timestamp, usually every 15 minutes, in UTC. {term}`Daily values <Daily values>` have a date and a statistic, such as the daily mean ({term}`statistic code <Statistic code>` `00003`). The day is the monitoring location's local day, not a UTC day. |
 | {term}`Data quality flag(s)` | `approval_status`, `qualifier` | `approval_status` is either `Provisional` or `Approved` (see {term}`approval status <Approval status>`). The {term}`qualifier <Qualifier>` column adds remarks about individual values, for example `['ESTIMATED']` when USGS had to estimate a value, such as during ice or equipment problems (it is empty, `None`, for most values). The possible codes are listed in the USGS Water Data APIs reference lists (see Further reading). Field measurements carry their own rating, `measurement_rated` (for example Poor, Fair or Good). |
 | {term}`Version / provenance` | service and retrieval date | The data have no version number. Instead, record which service you used (for example the daily-values collection of the USGS Water Data APIs), the date you retrieved the data, and the approval status at that time. Each row also has a `last_modified` timestamp. |
-| {term}`Data unit` | one time series per location + parameter | Every combination of monitoring location, parameter and statistic is a separate time series with its own `time_series_id`. |
+| {term}`Data unit` | Typically one time series per location, parameter, and statistic | Time series are sometimes uniquely identified by other metadata beyond location, parameter, and statistic. Every unique time series is assigned its own `time_series_id`. |
 
 ## Dataset derivation
 
@@ -37,23 +39,18 @@ Field measurements are published too, so you can see how well the rating is supp
 ## Spatial coverage
 
 - **Extent:** Mainly CONUS + Alaska, Hawaii, and Puerto Rico. There are international monitoring locations which can be explored alongside all other monitoring locations here: [Monitoring locations - USGS Water Data for the Nation](https://waterdata.usgs.gov/monitoring-location/).
-- **Type:** Point data for monitoring locations, returned as point geometries when querying monitoring location information from the API (`dataretrieval` returns them as a GeoDataFrame). Locations can also be found as coordinates (latitude and longitude) on monitoring location webpages
-- **Resolution:** There are 9,011 monitoring locations with discharge data across CONUS + Alaska, Hawaii, and Puerto Rico. The spread of these monitoring locations is uneven, but easily explored using the [National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/).
+- **Type:** Point data for monitoring locations, returned as point geometries when {term}`querying<Query>` monitoring location information from the API (`dataretrieval` returns them as a GeoDataFrame). Locations can also be found as coordinates (latitude and longitude) on monitoring location webpages
+- **Resolution:** There are ~ 9,000 monitoring locations (as of October 2026) with discharge data across CONUS + Alaska, Hawaii, and Puerto Rico. The spread of these monitoring locations is uneven, but easily explored using the [National Water Dashboard](https://dashboard.waterdata.usgs.gov/app/nwd/en/).
 - **{term}`CRS`:** Point geometries from the API are longitude and latitude on the WGS84 datum, also referred to as EPSG 4326.
 
 ## Temporal coverage
 
 - **Period of record:**
-    - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. However, instantaneous water data is only available as far back as October 1st, 1950. The availability of that historic record is dependent on the type of water data and the history of the monitoring location collecting that data. For example, the Ohio River at Louisville, KY (USGS-03294500) has continuous discharge from 2009 and daily values from 1928.
+    - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. The availability of the historical record is dependent on the type of water data and the history of the monitoring location collecting that data. For example, the Ohio River at Louisville, KY (USGS-03294500) has continuous discharge from 2009 and daily values from 1928. See [USGS's data availability statement](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/) for more information.
     - Historical continuous data may have gaps in availability due to instrument problems, environmental conditions, or other factors. Daily data can be used for a more complete record.
     - Recent data are {term}`provisional <Provisional data>`: they have not yet been reviewed and may be revised. USGS reviews and approves them later (see the [USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
 - **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is the mean of all continuous data from that day.
-- **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is usually available same-day.
-
-:::{admonition} Partner review (USGS): Coverage figures and provisional data
-:class: important
-Confirm: (1) the count of 9,011 monitoring locations with discharge data; (2) that instantaneous (continuous) data are available back to October 1, 1950; (3) that daily values are usually available the same day; (4) the provisional-data wording, and a typical lag between collection and approval (at USGS-03294500 on 2026-10-08, values from 9 April 2025 onward were still provisional); and (5) that daily values are computed over the monitoring location's local day (standard time). The provisional data statement describes provisional data as subject to revision, not limited to 120 days, and the 120-day window we found applies to certain parameters on some legacy station pages.
-:::
+- **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is typically available by 6:00 AM Eastern Standard Time the next day.
 
 ## Data content
 
@@ -113,15 +110,9 @@ fig.savefig("03_meet_usgs_wdfn-ohio-daily-approval.png", dpi=150)
 ## Usage and support
 
 - **Citation:** USGS recommends citing WDFN data with the publication year, access date, and DOI. More information can be found at [How should I cite USGS Water Data for the Nation data?](https://waterdata.usgs.gov/citation/) Because recent values are provisional, also note the approval status of the data you used; if you publish results based on provisional data, say so. Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) covers recording the source, the retrieval date and how you processed it.
-- **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have a limit of 50 requests per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
+- **License/access:** Data accessed through the USGS Water Data APIs is completely open access. Acquiring an {term}`API key` is recommended and completely free, see [Get a USGS Water Data API Key](https://api.waterdata.usgs.gov/signup/) for more information. If you do not have an API key your queries have a limit of 50 {term}`requests<Page/Request>` per IP address per hour. With an API key that limit increases to 1000 requests per IP address per hour.
 - **Change over time:** The USGS Water Data APIs will see newer versions released over time, but USGS maintains consistency in the water data offered across time. So a new API version does not by itself change the data. Values change for a different reason: provisional data are revised when they are approved, and approved data are occasionally revised too. Still, it is a good idea to check the [Water Data Blog](https://waterdata.usgs.gov/blog/) regularly for important updates.
 - **Contact:** For questions about WDFN data, you can fill out the form at [Questions and Comments](https://waterdata.usgs.gov/questions-comments/).
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- "Daily data is usually available same-day": revisit once USGS answers the partner review.
-:::
 
 ## Further reading
 

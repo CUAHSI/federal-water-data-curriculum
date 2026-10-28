@@ -8,3 +8,4 @@
 - U.S. Geological Survey. (n.d.). *Provisional data statement*. https://waterdata.usgs.gov/provisional-data-statement/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *USGS Water Data APIs* (documentation; API key signup and key guidance). https://api.waterdata.usgs.gov/; https://api.waterdata.usgs.gov/signup/; https://api.waterdata.usgs.gov/docs/ogcapi/keys/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *Water Data for the Nation*. https://waterdata.usgs.gov/ (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *NWIS WaterServices Decommissioning*. https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/ (accessed 2026-10-26)

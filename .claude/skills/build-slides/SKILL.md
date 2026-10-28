@@ -1,77 +1,68 @@
 ---
 name: build-slides
-description: Build or rebuild a session's lecture slides (Quarto reveal.js with speaker notes) and its pre/post-session reading PDFs from the course lesson pages, fitted to the session's time. Use when asked to make, update or rebuild slides or readings for a session, or when check_stale.py lists one.
+description: Build or update a session's PowerPoint deck (in the instructor's style, from the session's topic list) or a module's reading PDF, using the prompts in teaching-materials/how-to-build/. Use when asked to make, update or rebuild slides or a reading. Arguments - a session number (1–6) to build a deck, "N update" to update one, "reading M" (M = 2–4) to build a reading, or "reading M update" to update one.
 ---
 
-# Build session slides and readings
+# Build a session deck or a module reading
 
-For pilot learners, the slides *are* the lessons: they meet with an instructor and can't open the website. You
-turn the lesson pages into one deck per session. Lesson content the session can't cover goes into a short
-pre- or post-session reading. The lessons are the source of truth: if a deck needs different content, change
-the lesson (or flag it), then rebuild. Read STYLE_GUIDE.md first, especially §11.
+The prompts, topic lists and design rules live in `teaching-materials/how-to-build/`; read its `guide.md` first.
+This skill runs the same prompts a person would paste into Claude, with the setup done for them. The lessons
+are the source of truth. If a deck needs different content, change the lesson (or flag it), not the slide.
 
-## Inputs
-- The session number. The session map in STYLE_GUIDE §11 says which pages it covers and how long it is.
-- Those pages in toc order (`myst.yml`), plus the images they use (`images/…`) and `glossary.md` for
-  definitions.
-- For live-coding slides: the learner bundle's notebook names and section names (§11). If the bundle doesn't
-  exist yet, use the names the §11 rules produce.
+## A deck (`/build-slides N`)
 
-## Steps
-1. **Prepare.** Make learner copies of each page with `teaching-materials/tools/prepare_learner_copy.py`, which
-   drops internal callouts and internal course links and keeps external links. Note its counts for the PR.
-2. **Plan the time before writing anything.** Make a table: lesson section → minutes → where it goes (in the
-   session / pre-reading / post-reading).
-    - Session 1 also needs a welcome, logistics (Canvas, quizzes, schedule, office hours) and environment
-      setup (the hosted HydroShare environment and credentials).
-    - Leave about 5 minutes for questions in every session.
-    - Keep the total equal to the session length.
-    - **Pre-reading** is background learners need first (definitions, context, account setup). **Post-reading**
-      is depth, extra examples, best-practice FAQs and further reading. Keep each reading to about 15 minutes.
-      Material is moved, not cut.
-3. **Write the deck** at `teaching-materials/slides/<deck name from §11>`:
-    - YAML: `format: revealjs` (`embed-resources: true`, `slide-number: true`) **and** `pptx`;
-      `execute: enabled: false`; a title slide with the course, session, date and time (ET).
-    - Slide 2: the session agenda with minutes. If there's pre-reading, slide 3 recaps it in 3 bullets.
-    - **One idea per slide.** At most 6 bullets or about 40 words; a figure from `images/` wherever the
-      lesson has one. Code: ≤ 12 lines, shown with ```` ```python ````, never run.
-    - **Terms:** define a glossary term on the slide where it first appears (from `glossary.md`), since
-      learners have no glossary to click.
-    - **Shared framework:** in data-product sessions, show the shared-concepts table (STYLE_GUIDE §1) for that
-      product.
-    - **Live coding** (§11 limits): a slide titled "Live coding: <what>" naming the notebook file, the
-      sections to run, 2–3 things to point out, the minutes, and "back to slides at …".
-    - **Now you try it:** a slide with the task as learners will see it, and the notebook cell to use.
-    - Final slides: a recap (3 bullets), what's due (the module quiz: "see Canvas"), and the readings by file
-      name.
-    - **Speaker notes** (`::: notes`) on every slide: 2–5 bullets of points to make, not a script. Add
-      "Expect:" with a likely question where there is one, and "If short on time:" where something can be
-      skipped.
-4. **Write the readings** (only if the plan put content there) at
-   `teaching-materials/readings/<deck name>_pre-reading.qmd` and `_post-reading.qmd`:
-    - `format: typst`; a title with the course, session and "Read before/after the session"; one line on why
-      it matters.
-    - The moved lesson sections, from the learner copies, lightly edited to stand alone. Keep headings, figures
-      (with captions) and code as shown; keep external links. Add a short "Key terms" list if the section uses
-      glossary terms.
-5. **Render and check:**
-    - `quarto render <deck> --to revealjs` and `--to pptx`; `quarto render <reading>` to PDF.
-    - Fix overflowing slides.
-    - Count the slides: about 1.5–2 minutes per content slide is a sanity check against the timing table.
-6. **Record:** update `teaching-materials/manifest.json` for the deck and each reading
-   (`check_stale.py --update`), with all source pages and images as `sources`.
-7. **Report in the PR:**
-    - the timing table
-    - what went into each reading
-    - the slide count
-    - the callout and internal-link counts from step 1
-    - any lesson content that was hard to present (a candidate lesson edit, not a slide workaround)
+1. **Check the inputs.**
+    - `python teaching-materials/how-to-build/tools/check_topics.py N` passes. If it doesn't, stop and report: a topic list
+      that names a missing section needs a person to decide.
+    - `teaching-materials/how-to-build/templates/` has a `template.pptx` (or `.potx`). If it doesn't, stop and
+      say so: the deck can't match the instructor's style without it (see "Templates" in `how-to-build/guide.md`).
+2. **Make learner copies** of the lesson pages the topic list names, with
+   `teaching-materials/how-to-build/tools/prepare_learner_copy.py`, into a scratch directory outside the repo. Note the
+   counts for the PR.
+3. **Follow `how-to-build/deck-prompt.md`** with `{N}` = N, reading the files from the repo (topic list,
+   learner copies, `images/`, design rules, `how-to-build/templates/`).
+    - After step 2 of the prompt (the slide plan), stop and show the plan unless the user said to go straight
+      through.
+    - Write the deck with `python-pptx`, copying the template's example slides (see the prompt). Install it in
+      a scratch environment if needed, never in a lesson environment.
+    - Render every slide to images to check it: PowerPoint (`SaveAs` PDF through COM on Windows) or LibreOffice
+      (`soffice --headless --convert-to pdf`), then look at each page.
+4. **Save, don't commit.** Decks live in `teaching-materials/materials/slides/`, which is git-ignored: never commit a deck
+   or add it to `manifest.json`. Set the deck's Comments property to `Built from <short HEAD commit> with
+   topics/session-0N.md`. Commit only topic-list or design-rule edits.
+5. **Report** (to the user, and in the PR if there is one): the prompt's report (step 5), the learner-copy
+   counts, and which slides you'd most like a person to look at.
+
+## Updating a deck (`/build-slides N update`)
+
+Use this when a deck for the session already exists: one in `teaching-materials/how-to-build/to-update/`, or else the
+local deck in `teaching-materials/materials/slides/`. Default to it whenever a deck exists and the user asks
+to "rebuild" after a lesson change, and say so.
+
+1. Check the inputs as for a build (`check_topics.py N`; the template is needed only if the deck lacks a slide
+   type it must add).
+2. Make learner copies of the lesson pages.
+3. Follow `how-to-build/update-prompt.md` with `{N}` = N. Stop after its plan (step 2) unless the user said to
+   go straight through. Never change slides whose notes start with `KEEP`; never overwrite the file in
+   `how-to-build/to-update/`.
+4. Save and report as for a build (never commit the deck), with the prompt's change log.
+
+## A reading (`/build-slides reading M`, `/build-slides reading M update`)
+
+1. Run `check_topics.py` for the module's sessions (Module 2: 2; Module 3: 3 4 5; Module 4: 6).
+2. Make learner copies of the pages the `reading` rows name.
+3. Follow the **Build** or **Update** prompt in `how-to-build/reading-prompt.md` with `{M}` = M. Stop after its
+   plan unless the user said to go straight through.
+    - Write the `.docx` with `python-docx`, opening `teaching-materials/how-to-build/templates/reading-template.docx` as
+      the starting document and using only its styles. Install it in a scratch environment if needed.
+    - Export the PDF with Word (`SaveAs` with format 17 through COM on Windows) or LibreOffice
+      (`soffice --headless --convert-to pdf`), and look at every page.
+4. **Save, don't commit**, as for a deck: `teaching-materials/materials/readings/` is git-ignored, and readings aren't in
+   `manifest.json`. The document's Comments property records the commit it was built from.
 
 ## Rules
-- External links are fine. No links to other course pages, the glossary, the References page or the repo;
-  no `TODO (dev team)` or `Partner review` content.
-- Don't invent claims, numbers or code that aren't in the lessons. If a slide needs something the lesson
-  lacks, list it as a lesson gap in the PR report, not on the slide.
-- Agency order NASA → NOAA → USGS (STYLE_GUIDE §1); WDFN naming.
-- Rebuilds: regenerate from the lessons, but keep any slide marked `<!-- keep -->` as it is (a human edit to
-  preserve), and say so in the report.
+- Only content from the lesson pages: no invented claims, numbers, quotes, code or figures. Gaps become
+  visible placeholders and go in the report.
+- No internal course links, glossary links or repo links; no `TODO (dev team)` or `Partner review` content.
+- Agency order NASA → NOAA → USGS; WDFN naming.
+- Never overwrite an existing deck with a fresh build without asking; offer an update instead.
