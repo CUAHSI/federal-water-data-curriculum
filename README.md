@@ -54,40 +54,28 @@ folders:
 
 - **`materials/`: what learners and instructors use.**
   - `slides/`: one PowerPoint deck per session, with speaker notes
+  - `notebooks/`: one notebook per lesson with code, plus one conda environment file for all of them, for HydroShare
   - `readings/`: readings to cover details the sessions don't cover (Word, exported to PDF)
-  - `learner-bundle/`: student and solutions notebooks, environment files and a README, for HydroShare
   - `quizzes/`: one quiz per module, as `text2qti` text plus a QTI zip for Canvas, with answer keys for
     instructors
   - `instructor-guide/`: prep material for a new or substitute instructor
 
-  Decks and readings are built locally and shared through Canvas. They're git-ignored and never committed.
-- **`how-to-build/`: how the materials are made.** The guide for decks and readings (`guide.md`), the
-  per-session topic lists, the prompts, design rules and review checklist, the deck template, the notebook
-  scaffolds, and the tools (`check_stale.py`, `check_topics.py`, `prepare_learner_copy.py`,
-  `build_notebooks.py`). Nothing in it goes to learners.
+  Everything but the instructor guide is built locally and shared through Canvas or HydroShare. It's
+  git-ignored and never committed.
+- **`how-to-build/`: how the materials are made.** The guide (`guide.md`), the per-session topic lists, the
+  prompts, design rules and review checklist, the deck template and the tools. Nothing in it goes to learners.
 
 Everything in `materials/` is generated from the lesson pages. To change content, edit the lesson, then
-rebuild. [`teaching-materials/README.md`](teaching-materials/README.md) explains the session map, the file
-names, the setup each builder needs, and the tools.
+update the materials.
 
 ### How to rebuild
 
-The builders are [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`. Ask an agent to
-run one, or follow its `SKILL.md` steps by hand. [`AGENT_SETUP.md`](AGENT_SETUP.md) explains how to set up
-Claude Code for this repo.
-
-- **Build or update decks and readings** with `/build-slides` (see
-  [`teaching-materials/how-to-build/guide.md`](teaching-materials/how-to-build/guide.md), which also covers
-  building them in Claude on the web or desktop). They're built on your machine and shared through Canvas,
-  never committed.
-- **Regenerate notebooks and quizzes** with the `build-notebooks` and `build-quizzes` skills, and the
-  instructor guide with `build-instructor-guide`.
-- **Rebuild a quiz's QTI zip** with `text2qti <file>.txt` (`pip install text2qti`).
-- **Find stale outputs** (committed outputs whose lesson pages changed since they were built):
-
-  ```bash
-  python teaching-materials/how-to-build/tools/check_stale.py
-  ```
+The builders are [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`, run in this order:
+decks (`/build-slides N`), the session's notebooks (`/build-notebooks N`, written around the deck), readings
+(`/build-slides reading M`), quizzes (`/build-quizzes`) and the instructor guide (`/build-instructor-guide`).
+[`teaching-materials/how-to-build/guide.md`](teaching-materials/how-to-build/guide.md) explains the setup each
+needs, how to run the same prompts in Claude on the web or desktop, the session map and the file names.
+[`AGENT_SETUP.md`](AGENT_SETUP.md) explains how to set up Claude Code for this repo.
 
 ## Contributing
 

@@ -4,7 +4,7 @@
 - **Deck:** `teaching-materials/materials/slides/session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
-- **Notebook:** `module-03_lesson-01_retrieve-nasa-swot-data.ipynb` (learner bundle)
+- **Notebook:** `module-03_lesson-01_retrieve-nasa-swot-data.ipynb` (`materials/notebooks/`)
 - **Pages:** `03/00` = `03-federal-water-data-access-retrieval/00_introduction.md`, `03/01` = `01_access_nasa_swot.md`
 
 **Where:** `deck`, `notebook`, `reading`, `how-to`, `cut` (see session-01.md). **Min** adds up to the session
@@ -36,7 +36,7 @@ length. Live-coding rows name the notebook sections (they match the lesson headi
 | 22 | Understanding what you downloaded | 03/01 § Understanding what you downloaded | deck | 6 | Columns, units and quality flags; the degraded 13 April scene as a spotlight build |
 | 23 | Best practices: temporal scaling | 03/01 § Temporal scaling | deck | 2 | `images/m03/swot-hydrocron-wse-full-record.png`: the full record in one request |
 | 24 | Best practices: spatial scaling and parallelization | 03/01 § Spatial scaling, § Parallelization | deck | 2 |  |
-| 25 | Now you try it: the Willamette | 03/01 § Now you try it | deck + notebook | 4 | Task slide naming the notebook cell; answers are in the solutions notebook |
+| 25 | Now you try it: the Willamette | 03/01 § Now you try it | deck + notebook | 4 | Task slide naming the notebook cell; the example answer is collapsed under the task in the notebook |
 | 26 | Recap and what's next | – | deck | 2 | Three bullets; Session 4 |
 | 27 | Further reading and questions | 03/01 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
 | 28 | Bitwise decoding of the quality flags | 03/01 § Understanding what you downloaded | reading | – | The detail behind the 13 April scene |

@@ -19,3 +19,6 @@ teaching-materials/materials/readings/*
 # Quizzes and answer keys are built locally and loaded into Canvas, never committed
 teaching-materials/materials/quizzes/*
 !teaching-materials/materials/quizzes/.gitkeep
+# Notebooks and their environment files are built locally and shared through HydroShare, never committed
+teaching-materials/materials/notebooks/*
+!teaching-materials/materials/notebooks/.gitkeep
