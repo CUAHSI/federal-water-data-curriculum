@@ -12,8 +12,8 @@
         "environments",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:00Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:56Z",
       "builder": "build-notebooks"
     },
     {
@@ -21,13 +21,12 @@
       "kind": "notebook",
       "sources": [
         "03-federal-water-data-access-retrieval/01_access_nasa_swot.md",
-        "teaching-materials/how-to-build/scaffolds/module-03_lesson-01_retrieve-nasa-swot-data.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py",
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-03.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:00Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:57Z",
       "builder": "build-notebooks"
     },
     {
@@ -37,8 +36,8 @@
         "environments/m03-swot.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:01Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:57Z",
       "builder": "build-notebooks"
     },
     {
@@ -50,8 +49,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-03.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:01Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:57Z",
       "builder": "build-notebooks"
     },
     {
@@ -59,13 +58,12 @@
       "kind": "notebook",
       "sources": [
         "03-federal-water-data-access-retrieval/02_access_noaa_nwm.md",
-        "teaching-materials/how-to-build/scaffolds/module-03_lesson-02_retrieve-noaa-nwm-data.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py",
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-04.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:01Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:57Z",
       "builder": "build-notebooks"
     },
     {
@@ -75,8 +73,8 @@
         "environments/m03-nwm.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:01Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:58Z",
       "builder": "build-notebooks"
     },
     {
@@ -88,8 +86,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-04.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:02Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:58Z",
       "builder": "build-notebooks"
     },
     {
@@ -97,13 +95,12 @@
       "kind": "notebook",
       "sources": [
         "03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md",
-        "teaching-materials/how-to-build/scaffolds/module-03_lesson-03_retrieve-usgs-wdfn-data.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py",
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-05.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:02Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:58Z",
       "builder": "build-notebooks"
     },
     {
@@ -113,8 +110,8 @@
         "environments/m03-wdfn.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:02Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:58Z",
       "builder": "build-notebooks"
     },
     {
@@ -126,8 +123,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-05.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:02Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:59Z",
       "builder": "build-notebooks"
     },
     {
@@ -139,8 +136,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:02Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:59Z",
       "builder": "build-notebooks"
     },
     {
@@ -150,8 +147,8 @@
         "environments/m04-synthesis.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:03Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:59Z",
       "builder": "build-notebooks"
     },
     {
@@ -163,8 +160,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:03Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T15:59:59Z",
       "builder": "build-notebooks"
     },
     {
@@ -176,8 +173,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:03Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T16:00:00Z",
       "builder": "build-notebooks"
     },
     {
@@ -187,8 +184,8 @@
         "environments/m04-synthesis.yml",
         "teaching-materials/how-to-build/tools/build_notebooks.py"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:03Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T16:00:00Z",
       "builder": "build-notebooks"
     },
     {
@@ -200,8 +197,8 @@
         "teaching-materials/how-to-build/tools/prepare_learner_copy.py",
         "teaching-materials/how-to-build/topics/session-06.md"
       ],
-      "source_commit": "72b9e89edd358a1f7b5998da038b478c8411c908",
-      "built_at": "2026-10-29T15:44:03Z",
+      "source_commit": "d4695d67d23acb165235a7743946d88905999f93",
+      "built_at": "2026-10-29T16:00:00Z",
       "builder": "build-notebooks"
     }
   ]
