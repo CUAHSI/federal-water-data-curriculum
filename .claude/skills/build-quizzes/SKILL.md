@@ -16,26 +16,35 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
   questions only ask about what learners were taught.
 
 ## Design
-1. **Coverage plan first.** A table: objective → the lesson sections that teach it → the number of questions.
-   Every objective gets at least 2 questions. Weight objectives by how much of the module teaches them.
-2. **Length:** 10–12 questions, so it takes 10–15 minutes. A question with code counts as about 2 minutes.
-3. **Questions test concepts and judgement, not recall of trivia.**
+1. **Start from the objectives, not the lessons.** The quiz measures whether learners met the module's
+   learning objectives. For each objective, write down what a learner who has met it can do (e.g. "decide
+   whether a dataset is FAIR, open, both or neither"), then write questions that ask them to do that.
+    - Every question tests one objective directly. If answering it mainly depends on remembering a smaller
+      point, a named framework, a figure or a lesson's example (e.g. where a practice sits on a diagram), cut it
+      or rewrite it around the objective the point supports.
+    - Lesson examples can be the setting for a question, but the question asks for the judgement the objective
+      names, not for the example's details.
+2. **Coverage plan.** A table: objective → what a learner who meets it can do → the lesson sections that teach
+   it → the number of questions. Every objective gets at least 2 questions, spread roughly evenly; give an
+   objective more only when it has several distinct skills to test.
+3. **Length:** 10–12 questions, so it takes 10–15 minutes. A question with code counts as about 2 minutes.
+4. **Questions test concepts and judgement, not recall of trivia.**
     - **Use:** applying an idea to a new case, interpreting an output, choosing an approach for a scenario,
       reading a quality flag, spotting an error in a short code snippet ("Which line causes the error?").
     - **Don't use:** a value only memorisation would answer (exact IDs, version numbers, URLs); "all/none of
       the above"; trick wording; negatives unless bolded (**not**).
     - Code in questions: ≤ 10 lines, from or closely modelled on the lessons, never needing to be run. Use
       fenced code blocks.
-4. **Question types:** mostly single-answer (`a)` / `*b)`). Use "select all that apply" (`[*]` / `[ ]`) for
+5. **Question types:** mostly single-answer (`a)` / `*b)`). Use "select all that apply" (`[*]` / `[ ]`) for
    2–3 questions per quiz, where the concept really has several correct parts (e.g. which practices support
    reproducibility). Say "Select all that apply." in the question, use 4–5 options with 2–3 correct, and make
    sure each option is clearly right or wrong on its own.
    **Options:** for single-answer questions, 4 per question, one clearly correct. The three distractors are plausible misconceptions a
    learner might actually hold (from the lessons' caveats and best-practice sections). Options should be of
    similar length and in a logical order (numbers ascending, agencies NASA → NOAA → USGS).
-5. **Feedback on every question** (for select-all, the feedback names every correct option): a general `...` line that explains why the correct answer is right, in 1–2
+6. **Feedback on every question** (for select-all, the feedback names every correct option): a general `...` line that explains why the correct answer is right, in 1–2
    sentences that teach. Add a `-` line where a distractor reflects a common misconception worth naming.
-6. **Self-contained:** no links to the course website or repo; external links only if essential. No
+7. **Self-contained:** no links to the course website or repo; external links only if essential. No
    `TODO`/`Partner review` content. Module 3 questions use the course's example rivers, but never the
    Module 4 case study.
 
@@ -73,6 +82,8 @@ QTI .zip file); it arrives as a New Quiz. Then check, and set by hand where need
 
 ## Review before handing over
 Re-read each question as the target learner (STYLE_GUIDE §3):
+- Does it test an objective directly? Would a learner who met that objective, but doesn't remember this
+  particular example or detail, get it right?
 - Is it answerable from the session plus its readings alone?
 - Is exactly one option defensible (or, for select-all, is each option clearly right or wrong)?
 - Does the feedback teach?
