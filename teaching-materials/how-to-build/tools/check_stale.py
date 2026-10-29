@@ -1,14 +1,14 @@
 """List teaching materials that need rebuilding because their sources changed (STYLE_GUIDE §11).
 
-Every generated output has an entry in ``teaching-materials/how-to-build/manifest.json``:
+Every committed output has an entry in ``teaching-materials/how-to-build/manifest.json``:
 
     {
-      "output": "teaching-materials/materials/quizzes/module-03_quiz_federal-water-data-access-retrieval.txt",
-      "kind": "quiz",
+      "output": "teaching-materials/materials/learner-bundle/README.md",
+      "kind": "bundle-readme",
       "sources": ["03-federal-water-data-access-retrieval"],
       "source_commit": "<full SHA the output was built from>",
       "built_at": "2026-10-24T15:02:11Z",
-      "builder": "build-slides"
+      "builder": "build-notebooks"
     }
 
 Paths are relative to the repo root. A directory in ``sources`` (e.g. ``images/m03``) covers every file
