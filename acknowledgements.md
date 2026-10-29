@@ -92,7 +92,4 @@ reflect the views of the National Science Foundation.
 
 ## Use of AI tools
 
-Generative AI tools (Anthropic's Claude) were used to help draft lesson text, code examples, figures and
-the teaching materials from outlines, existing CUAHSI notebooks and contributors' materials. Contributors 
-and CUAHSI staff reviewed, edited and tested all content, ran every code example, and are responsible for 
-the course as published.
+This course was designed and developed by CUAHSI staff and contributors, drawing on their expertise and existing materials. Generative AI (Anthropic’s Claude) was used to help draft content from their outlines and source materials, and to ensure consistent tone. Contributors and staff reviewed, edited and tested all content, ran every code example, and are responsible for the course as published.

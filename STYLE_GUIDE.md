@@ -1,6 +1,6 @@
 # Course style guide
 
-How we write *Federal Open Water Data for Researchers*. It applies to everyone who edits the course:
+How we write *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*. It applies to everyone who edits the course:
 the curriculum team, reviewers and Claude Code. When this guide and an older page disagree, the guide wins;
 fix the page.
 

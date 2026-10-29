@@ -1,6 +1,6 @@
 # CLAUDE.md — federal-water-data-curriculum
 
-Course content for **"Federal Open Water Data for Researchers"**, a ~20-hour CUAHSI micro-credentialing
+Course content for **"Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access"**, a ~20-hour CUAHSI micro-credentialing
 course. It is a **MyST Markdown book** (`myst.yml`, `book-theme`) that will later move into CUAHSI's
 Water Content Portal. Your job: draft lesson content by following `ROADMAP.md`, adapting the data-access
 patterns in CUAHSI's notebooks and the agency resources listed there.
