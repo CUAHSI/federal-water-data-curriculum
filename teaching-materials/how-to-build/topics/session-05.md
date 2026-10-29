@@ -34,5 +34,5 @@ length.
 | 20 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
 | 21 | Further reading and questions | 03/03 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
 | 22 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | cut | – |  |
-| 23 | Counting qualifiers on long records | 03/03 § Understanding what you downloaded | notebook | – | Optional "Going further" section |
+| 23 | Counting qualifiers on long records | 03/03 § Temporal scaling | notebook | – | Optional "Going further" section |
 | 24 | The metadata object, reference tables, paging | 03/03 § Spatial scaling, § Parallelization | reading | – |  |
