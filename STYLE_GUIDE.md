@@ -270,7 +270,7 @@ Quiz questions and answer keys never go into the repo, a PR or an issue.
 
 **Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks,
 module readings and quizzes are the exception: they're built locally, never committed (`materials/slides/`,
-`materials/readings/` and `materials/quizzes/` are git-ignored), and record their build commit in the file itself
+`materials/readings/` and `quizzes/` are git-ignored), and record their build commit in the file itself
 (for a quiz, in its answer key).
 `python teaching-materials/how-to-build/tools/check_stale.py` lists which committed outputs need rebuilding. For the
 local-only files, compare their recorded commit with `git diff <commit> HEAD -- <sources>`.
