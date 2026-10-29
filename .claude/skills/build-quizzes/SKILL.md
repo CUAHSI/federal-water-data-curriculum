@@ -17,8 +17,10 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
 
 ## Design
 1. **Start from the objectives, not the lessons.** The quiz measures whether learners met the module's
-   learning objectives. For each objective, write down what a learner who has met it can do (e.g. "decide
-   whether a dataset is FAIR, open, both or neither"), then write questions that ask them to do that.
+   learning objectives. Use the main objectives ("By the end of this module, learners should be able to"); the
+   "These break down into" list shows how the lessons teach them, not separate targets. For each main
+   objective, write down what a learner who has met it can do (e.g. "decide whether a dataset is FAIR, open,
+   both or neither"), then write questions that ask them to do that.
     - Every question tests one objective directly. If answering it mainly depends on remembering a smaller
       point, a named framework, a figure or a lesson's example (e.g. where a practice sits on a diagram), cut it
       or rewrite it around the objective the point supports.
