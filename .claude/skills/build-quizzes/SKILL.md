@@ -29,7 +29,11 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
       course's example rivers and code modelled on the lessons can still be the setting.
     - Test the general idea, not a comparison of specific named tools, services or organizations, unless the
       objective names them. Ask why you'd choose a domain repository over a generalist one, not HydroShare vs.
-      EDI. In Modules 2–4 the three agencies' products are what the objectives name, so comparing them is fine.
+      EDI. In Modules 2–4 the three agencies' products are what the objectives name, so naming them is fine.
+    - Keep each question in its own module's objective. Module 2 characterizes each product on its own, so its
+      questions stay with one product at a time (a select-all question can mix products if each option is about
+      one). Questions that compare products (units, vertical references, which one gives hourly values) belong
+      in Module 4.
 2. **Coverage plan.** A table: objective → what a learner who meets it can do → the lesson sections that teach
    it → the number of questions. Every objective gets at least 2 questions, spread roughly evenly; give an
    objective more only when it has several distinct skills to test.
