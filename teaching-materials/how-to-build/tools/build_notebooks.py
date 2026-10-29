@@ -2,7 +2,7 @@
 
 For each Module 3 and 4 lesson with code, this writes to ``teaching-materials/materials/learner-bundle/``:
 
-- ``<lesson>.ipynb``            student notebook: "Now you try it" starters come from ``how-to-build/scaffolds/<lesson>.yml``
+- ``<lesson>.ipynb``            student notebook: "Now you try it" cells are starters, edited in this notebook
 - ``<lesson>_solutions.ipynb``  solutions notebook: the lesson's example answer
 - ``<lesson>_environment.yml``  a copy of the lesson's ``environments/*.yml`` (the env ``name:`` is kept)
 
@@ -29,19 +29,18 @@ attribution and license cell, a credentials cell, then the lesson in order. Head
 
 Outputs are cleared and notebook metadata is kept to the kernelspec, so rebuilds give small diffs.
 
-Usage (from the repo root; needs nbformat and pyyaml):
+Usage (from the repo root; needs nbformat):
     python teaching-materials/how-to-build/tools/build_notebooks.py               # build every lesson
     python teaching-materials/how-to-build/tools/build_notebooks.py --lesson module-03_lesson-01_retrieve-nasa-swot-data
     python teaching-materials/how-to-build/tools/build_notebooks.py --check       # report what would change, write nothing
 
-Scaffold files (``teaching-materials/how-to-build/scaffolds/<lesson>.yml``) are hand-edited source, not generated::
-
-    try_it:            # one entry per example-answer code block, in order
-      - |
-        site_name = ...   # TODO: ...
-
-A lesson with a "Now you try it" section must have a scaffold; the build stops if one is missing or has the
-wrong number of entries. A lesson without one gets a student notebook that matches its solutions notebook.
+Starters: in the student notebook, each "Now you try it" code cell is a starter, the example answer with the
+values and calls that practise the lesson's skill blanked as ``...`` and ``# TODO:`` hints. Starters are edited by
+hand, directly in the student notebook, and a rebuild keeps them (everything else in the notebook is regenerated).
+The first build of a lesson copies the example answer in, with a ``STARTER_TODO`` line; edit it into a starter and
+delete that line. The build stops if the number of "Now you try it" code cells in the student notebook no longer
+matches the lesson's example answers. A lesson without a "Now you try it" gets a student notebook that matches its
+solutions notebook.
 """
 
 from __future__ import annotations
@@ -53,7 +52,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import nbformat
-import yaml
 
 TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS))
@@ -61,7 +59,6 @@ from prepare_learner_copy import prepare  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 BUNDLE = REPO_ROOT / "teaching-materials" / "materials" / "learner-bundle"
-SCAFFOLDS = REPO_ROOT / "teaching-materials" / "how-to-build" / "scaffolds"
 
 SENTENCE_BUDGET = 4       # sentences kept per paragraph
 KEEP_WHOLE_SECTIONS = ("Now you try it", "Further reading")
@@ -560,12 +557,22 @@ def credentials_cells(lesson: Lesson) -> list[tuple[str, str]]:
 
 # --------------------------------------------------------------------------------------------- notebooks
 
-def load_scaffold(lesson: Lesson) -> list[str] | None:
-    path = SCAFFOLDS / f"{lesson.stem}.yml"
+STARTER_TODO = ("# STARTER TO WRITE: this is the full example answer. Blank the values and calls that practise the "
+                "lesson's skill\n# with ... and # TODO: hints, then delete this line (see build_notebooks.py).\n")
+
+
+def load_starters(lesson: Lesson) -> list[str] | None:
+    """The "Now you try it" code cells already in the student notebook (hand-edited starters), or None."""
+    path = BUNDLE / lesson.module_folder / f"{lesson.stem}.ipynb"
     if not path.exists():
         return None
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    return [s.rstrip("\n") for s in data.get("try_it", [])]
+    starters, inside = [], False
+    for cell in nbformat.read(path, as_version=4).cells:
+        if cell.cell_type == "markdown" and re.match(r"## ", cell.source):
+            inside = cell.source.startswith("## Now you try it")
+        elif inside and cell.cell_type == "code":
+            starters.append(cell.source)
+    return starters or None
 
 
 def make_notebook(cells: list[tuple[str, str]]) -> nbformat.NotebookNode:
@@ -662,22 +669,23 @@ def build(lesson: Lesson) -> tuple[dict[str, str], dict]:
     adapted = [re.sub(r"\s+", " ", a) for a in adapted]
 
     solution_cells = [src for kind, src in body.cells if kind == "solution"]
-    scaffold = load_scaffold(lesson)
+    starters = load_starters(lesson) if solution_cells else None
     if solution_cells:
-        if scaffold is None:
-            raise SystemExit(f"{lesson.stem}: no scaffold; write teaching-materials/how-to-build/scaffolds/{lesson.stem}.yml (see this script's docstring)")
-        if len(scaffold) != len(solution_cells):
-            raise SystemExit(f"{lesson.stem}: scaffold has {len(scaffold)} try_it entries; the lesson has "
-                             f"{len(solution_cells)} example-answer code blocks")
+        if starters is None:
+            starters = [STARTER_TODO + src for src in solution_cells]  # first build: edit these into starters
+        if len(starters) != len(solution_cells):
+            raise SystemExit(f"{lesson.stem}: the student notebook has {len(starters)} \"Now you try it\" code cells; "
+                             f"the lesson has {len(solution_cells)} example answers. Fix the student notebook's starters.")
+        counts["starters_to_write"] = sum(STARTER_TODO.splitlines()[0] in s for s in starters)
 
     outputs = {}
     for solutions in (False, True):
         cells = [("markdown", title_cell(lesson, title, intro, solutions, bool(solution_cells))),
                  ("markdown", attribution_cell(adapted))] + credentials_cells(lesson)
-        starters = iter(scaffold or [])
+        student_cells = iter(starters or [])
         for kind, src in body.cells:
             if kind == "solution":
-                cells.append(("code", src if solutions else next(starters)))
+                cells.append(("code", src if solutions else next(student_cells)))
             else:
                 cells.append((kind, src))
         name = f"{lesson.module_folder}/{lesson.stem}{'_solutions' if solutions else ''}.ipynb"
@@ -704,7 +712,9 @@ def main(argv: list[str] | None = None) -> int:
               f"{counts['partner_review_callouts_removed']} Partner review callouts; converted "
               f"{counts['internal_links_converted']} internal links"
               + ("" if counts["has_try_it"] else "; no \"Now you try it\" (student = solutions)")
-              + (f"; WARNING: {counts['flag_mentions_left']} flag mention(s) left" if counts.get("flag_mentions_left") else ""))
+              + (f"; WARNING: {counts['flag_mentions_left']} flag mention(s) left" if counts.get("flag_mentions_left") else "")
+              + (f"; WARNING: {counts['starters_to_write']} starter(s) still to write in the student notebook"
+                 if counts.get("starters_to_write") else ""))
         for rel, content in outputs.items():
             path = BUNDLE / rel
             old = path.read_text(encoding="utf-8") if path.exists() else None

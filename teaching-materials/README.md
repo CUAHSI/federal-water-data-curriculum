@@ -19,7 +19,6 @@ teaching-materials/
     ├── topics/              what goes on each session's deck, notebook or reading
     ├── *-prompt.md          the prompts Claude follows
     ├── design-rules.md, review-checklist.md
-    ├── scaffolds/           hand-edited "Now you try it" starters for the notebooks
     ├── tools/               scripts (check_stale, check_topics, prepare_learner_copy, build_notebooks)
     ├── manifest.json        what each committed output was built from
     ├── templates/           the deck template (committed); reading template, example decks (local only)
@@ -42,7 +41,7 @@ the skill's steps. Only some steps are plain scripts you run yourself:
 
 - `how-to-build/tools/prepare_learner_copy.py` and `how-to-build/tools/check_stale.py` (standard library only, any Python 3.9 or later; no
   conda environment needed);
-- `how-to-build/tools/build_notebooks.py` (lane F; needs `nbformat` and `pyyaml`);
+- `how-to-build/tools/build_notebooks.py` (lane F; needs `nbformat`);
 - `how-to-build/tools/check_topics.py`, which checks the session topic lists in `how-to-build/topics/`;
 - quizzes: `text2qti <file>.txt` makes the QTI zip.
 
@@ -57,7 +56,7 @@ commands below in Git Bash (see [AGENT_SETUP.md](../AGENT_SETUP.md)).
 | Skill | Needs | Used for |
 |---|---|---|
 | `build-slides` | Your template and example decks in `how-to-build/templates/` (see `how-to-build/guide.md`); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export slides and readings to PDF for checking | writing and checking decks and readings |
-| `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` and `pyyaml` in the Python that runs `how-to-build/tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
+| `build-notebooks` | `papermill` in **each** lesson environment; `nbformat` in the Python that runs `how-to-build/tools/build_notebooks.py` (lane F writes it) | running every notebook top to bottom to test it. The skill also allows `jupyter nbconvert --execute`; this course uses papermill |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) | turning each quiz `.txt` into a QTI zip for Canvas |
 | `build-instructor-guide` | nothing extra | |
 
@@ -138,7 +137,6 @@ works outside this folder.
 |---|---|---|---|
 | `how-to-build/guide.md`, `*-prompt.md`, `design-rules.md`, `review-checklist.md` | How to build and update decks and readings, the prompts Claude follows, the look, and the review checklist | people | E |
 | `how-to-build/topics/` | One topic list per session: what goes on the deck, in a notebook, in a reading or nowhere | people | E |
-| `how-to-build/scaffolds/` | Hand-edited "Now you try it" starters (`<lesson file stem>.yml`) that `build_notebooks.py` turns into the student notebooks' starter cells | people (lane F drafts them) | F |
 | `how-to-build/templates/template.pptx` | The course deck template: one example slide per slide type, copied by every deck build. **Committed** | people | E |
 | `how-to-build/templates/` (everything else), `how-to-build/to-update/` | The reading template, example decks, and existing decks or readings to update. **Local only:** git-ignored, never committed | people | E |
 | `how-to-build/tools/` | `check_stale.py`, `prepare_learner_copy.py` (P8.0); `check_topics.py` (lane E); `build_notebooks.py` (lane F) | people | all |
@@ -278,8 +276,8 @@ materials/learner-bundle/
 │   └── module-04_lesson-03_additional-federal-water-data[...]                                     (m04-synthesis)
 ```
 
-The hand-edited "Now you try it" starters are build instructions, not outputs, so they live in
-`how-to-build/scaffolds/<lesson file stem>.yml` (e.g. `module-03_lesson-01_retrieve-nasa-swot-data.yml`).
+The "Now you try it" starters (the student notebook's task cells, with `...` blanks and `# TODO:` hints) are
+edited by hand directly in the student notebook. Rebuilds keep them and regenerate everything else.
 
 Module 4 lesson 1 (*Comparative overview of Federal data products*) has no code, so it has no notebook.
 Module 4 lesson 3 has three short code blocks; lane F decides whether they make a useful notebook and says so

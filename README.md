@@ -62,8 +62,7 @@ folders:
 
   Decks and readings are built locally and shared through Canvas. They're git-ignored and never committed.
 - **`how-to-build/`: how the materials are made.** The guide for decks and readings (`guide.md`), the
-  per-session topic lists, the prompts, design rules and review checklist, the deck template, the notebook
-  scaffolds, and the tools (`check_stale.py`, `check_topics.py`, `prepare_learner_copy.py`,
+  per-session topic lists, the prompts, design rules and review checklist, the deck template and the tools (`check_stale.py`, `check_topics.py`, `prepare_learner_copy.py`,
   `build_notebooks.py`). Nothing in it goes to learners.
 
 Everything in `materials/` is generated from the lesson pages. To change content, edit the lesson, then

@@ -24,14 +24,11 @@ teaching-materials/materials/learner-bundle/
 └── module-04_federal-water-data-synthesis/   same pattern; notebooks only for lessons with code
 ```
 
-Hand-curated "Now you try it" starters (see below) are build instructions, so they live outside the bundle, in
-`teaching-materials/how-to-build/scaffolds/`.
-
 Slugs come from each lesson's title.
 
 ## The builder is a script, so rebuilds are repeatable
 
-Write and maintain `teaching-materials/how-to-build/tools/build_notebooks.py` (needs `nbformat` and `pyyaml`). Don't
+Write and maintain `teaching-materials/how-to-build/tools/build_notebooks.py` (needs `nbformat`). Don't
 hand-write notebooks. For each lesson with code, it:
 1. Reads the learner copy of the page (`prepare_learner_copy.py`: no internal callouts, no internal course
    links, external links kept).
@@ -51,11 +48,12 @@ hand-write notebooks. For each lesson with code, it:
       try it", with the lesson's own headings and code.
 3. **"Now you try it":** the task text becomes a Markdown cell. The solution:
     - **Solutions notebook:** the full solution.
-    - **Student notebook:** a scaffold from `teaching-materials/how-to-build/scaffolds/<lesson>.yml` (cell → partially completed code with
-      `...` blanks and `# TODO:` hints). If no scaffold exists yet, write one: keep the lines learners
-      shouldn't have to retype (imports, plotting boilerplate) and blank the values and calls that practise
-      the lesson's skill. Scaffolds are hand-curated files the script reuses, so rebuilds keep them; if a
-      solution changed, check that its scaffold still fits.
+    - **Student notebook:** a starter: the solution as partially completed code, with `...` blanks and
+      `# TODO:` hints. Starters are edited by hand directly in the student notebook, and rebuilds keep
+      them. A lesson's first build copies the full solution in with a `STARTER TO WRITE` line; turn it into a
+      starter: keep the lines learners shouldn't have to retype (imports, plotting boilerplate), blank the
+      values and calls that practise the lesson's skill, and delete that line. If a solution changed, check
+      that its starter still fits.
 4. Copies the lesson's environment from `environments/` to `<lesson>_environment.yml`. Keep the env `name:`.
 5. Writes outputs cleared and metadata minimal (kernelspec only), so diffs stay small.
 
@@ -81,4 +79,4 @@ Update `manifest.json` for every output (`check_stale.py --update`). The PR repo
 - the files built
 - test results and runtimes
 - the callout and internal-link counts per page
-- scaffolds created or changed
+- starters created or changed
