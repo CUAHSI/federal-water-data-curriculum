@@ -5,8 +5,8 @@ description: Draft or rebuild the module quizzes (one per module, multiple choic
 
 # Build module quizzes
 
-One formative quiz per module, for Canvas (issue #32): low stakes, unlimited retakes, and the correct answer
-always shown with an explanation. Grading is automatic, so every question is multiple choice: mostly single
+One formative quiz per module, for Canvas (issue #32): pass/fail at 100%, unlimited retakes until a deadline,
+and the correct answer always shown with an explanation. Grading is automatic, so every question is multiple choice: mostly single
 answer, with a few "select all that apply" questions mixed in.
 Read STYLE_GUIDE.md §11 and the module's overview page first.
 
@@ -79,16 +79,29 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
   back the `.txt`, so to update a quiz someone else built, get the three files from them first.
 
 ## In Canvas after import
-Import each `.zip` into the module's Canvas course as a QTI package (Settings → Import course content →
-QTI .zip file); it arrives as a New Quiz. Then check, and set by hand where needed:
-- **Allowed attempts:** Unlimited. The installed `text2qti` (0.8.0 at the time of writing) always writes one
-  attempt into the zip, so this always needs changing.
-- **Score to keep:** Highest.
-- **What students see after an attempt:** their responses, the correct answers and the feedback, as the quiz
-  description promises.
-- **Shuffle answers** is on, each question is worth one point, and code blocks, superscripts and the general
-  and incorrect-answer feedback display.
-- Any course-wide passing score for the module (issue #32) is set as decided for the course.
+Each quiz is pass/fail: learners must score 100%, with unlimited retakes until a set deadline.
+
+Import each `.zip` into the module's Canvas course as a QTI package (Settings → Import Course Content →
+QTI .zip file; tick "Import existing quizzes as New Quizzes" if shown). It arrives as an unpublished New Quiz.
+Then check, and set by hand where needed:
+- **Quiz settings** (Build → Settings):
+    - **Allowed attempts:** Unlimited. The installed `text2qti` (0.8.0 at the time of writing) always writes one
+      attempt into the zip, so this always needs changing.
+    - **Score to keep:** Highest.
+    - **Restrict student result view:** let students see their responses, the correct answers and the feedback,
+      as the quiz description promises.
+    - **Shuffle answers** is on, each question is worth one point, and code blocks, superscripts and the general
+      and incorrect-answer feedback display.
+- **Assignment settings** (Edit, not Build):
+    - **Display grade as:** Points, one per question.
+    - **Assign to:** set Due to the deadline and Until to the same date and time, so no attempts are possible
+      after it. With Due alone, late attempts are still allowed.
+- **Pass mark (100%):** in Modules, edit the module and add the requirement **Score at least** = the quiz's full
+  points (its question count, e.g. 11 for an 11-question quiz). Points grading plus this requirement enforces
+  100% exactly; Complete/Incomplete grading may not. If a later revision changes the question count, update
+  this number too.
+- **Test in Student View:** take the quiz once with a wrong answer and once perfectly. Check that retakes work,
+  the answers and feedback show, and the module requirement clears only at full points. Then Reset Student.
 
 ## Review before handing over
 Re-read each question as the target learner (STYLE_GUIDE §3):
