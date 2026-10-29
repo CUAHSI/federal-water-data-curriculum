@@ -342,7 +342,6 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
   > **What you should see:** about 1,100 days marked `[ESTIMATED]`, then one row per combination of qualifiers,
   > most often `['ESTIMATED']` alone. Each day's qualifiers are a list, shown here as text, and days with no
   > qualifier are left out of the counts.
-- **Row 22 (legacy `nwis`)** has no code in the lesson: leave it out and report it.
 
 ### `module-04_lesson-02_synthesizing-federal-data-products` (Session 6)
 

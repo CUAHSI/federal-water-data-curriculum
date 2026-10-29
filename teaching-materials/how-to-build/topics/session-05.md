@@ -26,13 +26,13 @@ length.
 | 12 | Field measurements | 03/03 § Field  measurements | deck + notebook | 3 |  |
 | 13 | Plot the data | 03/03 § Plot the data | deck + notebook | 3 | `images/m03/wdfn-ohio-louisville-discharge.png` |
 | 14 | Live coding 2: downloads | 03/03 § Programmatic data downloads | deck + notebook | 12 | Live-coding slide |
-| 15 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 7 | Approval status and qualifiers; columns and units |
-| 16 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | deck | 2 | Before → after: the same request both ways |
+| 15 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 9 | Approval status and qualifiers; columns and units |
+| 16 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | cut | – |  |
 | 17 | Temporal and spatial scaling; parallelization | 03/03 § Temporal scaling, § Spatial scaling, § Parallelization | deck | 6 |  |
 | 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; the example answer is collapsed under the task in the notebook |
 | 19 | Module 3 wrap-up: three routes compared | 03/00 | deck | 2 | One slide comparing how each product is retrieved |
 | 20 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
 | 21 | Further reading and questions | 03/03 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
-| 22 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | notebook | – | Optional "Going further" section |
+| 22 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | cut | – |  |
 | 23 | Counting qualifiers on long records | 03/03 § Understanding what you downloaded | notebook | – | Optional "Going further" section |
 | 24 | The metadata object, reference tables, paging | 03/03 § Spatial scaling, § Parallelization | reading | – |  |
