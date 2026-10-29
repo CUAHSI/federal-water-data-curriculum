@@ -2,16 +2,9 @@
 
 # Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access
 
-This repo holds the course materials for *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a micro-credentialing course
-(about 20 hours) from CUAHSI (the Consortium of Universities for the Advancement of Hydrologic Science, Inc.).
-Researchers and graduate students with some Python learn to build reproducible workflows that find, retrieve
-and combine federal open water data: NASA SWOT, the NOAA National Water Model (NWM) and
-USGS Water Data for the Nation (WDFN). The course will later move into
-[CUAHSI's Water Content Portal](https://water-content-portal.cuahsi.io/).
+This repo holds the course materials for *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a micro-credentialing course (about 20 hours) from CUAHSI (the Consortium of Universities for the Advancement of Hydrologic Science, Inc.). Researchers and graduate students with some Python experience learn to build reproducible workflows that find, retrieve and combine federal open water data: NASA SWOT, the NOAA National Water Model (NWM) and USGS Water Data for the Nation (WDFN). The course is designed to be modular with the goal to support additions or adjustments to the datasets included.
 
-**Want to read the course?** Start at the draft site,
-<https://cuahsi.github.io/federal-water-data-curriculum/>. The rest of this README is for people who build and
-maintain the course.
+**Want to read the course?** Start at the draft site, <https://cuahsi.github.io/federal-water-data-curriculum/>. The rest of this README is for people who build and maintain the course.
 
 The repo has two parts: **the website** (the lessons, which are the source of truth) and **the teaching
 materials** generated from it.
@@ -61,8 +54,7 @@ folders:
 
 - **`materials/`: what learners and instructors use.**
   - `slides/`: one PowerPoint deck per session, with speaker notes
-  - `readings/`: one reading per module for Modules 2–4, with the detail the sessions don't cover (Word,
-    exported to PDF)
+  - `readings/`: readings to cover details the sessions don't cover (Word, exported to PDF)
   - `learner-bundle/`: student and solutions notebooks, environment files and a README, for HydroShare
   - `quizzes/`: one quiz per module, as `text2qti` text plus a QTI zip for Canvas, with answer keys for
     instructors
