@@ -1,4 +1,4 @@
-# Roadmap — Federal Open Water Data for Researchers
+# Roadmap — Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access
 
 **Goal:** rough cut of Modules 3–4 **today (Wed 10/7)** across three parallel sessions; review, PRs and polish
 with Lindsay **Thu 10/8**; Lindsay out Fri; Sat–Mon buffer before the 10/13 sweep and partner review.
@@ -402,7 +402,7 @@ Added; the current text is in `STYLE_GUIDE.md` §11 (updated in #93 for PowerPoi
 title: Acknowledgements
 ---
 
-*Federal Open Water Data for Researchers* was developed by CUAHSI with contributions from colleagues at NOAA,
+*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI with contributions from colleagues at NOAA,
 USGS and NASA. Contributions are described with the [CRediT contributor roles](https://credit.niso.org/).
 
 ## Contributors
