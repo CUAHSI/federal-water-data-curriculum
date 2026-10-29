@@ -34,24 +34,24 @@ NWM output is entirely modeled, not measured directly. It couples a land-surface
 It has gone through several major versions since becoming operational in August 2016: v1.0, v1.2 (2018, with expanded calibration to ~1,000+ basins), v2.0, v2.1, v3.0, and v3.1. Each version can meaningfully change streamflow values at the same `feature_id`. A Texas-focused comparison of v2.1 and v3.0 across 610 USGS gages ([Journal of Hydrology: Regional Studies, 2025](https://doi.org/10.1016/j.ejrh.2025.102196)) found real gains in v3.0 overall, but during storm events specifically, both versions still struggle to capture peak flow magnitude and timing accurately. Always check the OWP version documentation or release notes before combining data across versions, and record the version you used (Module 1, [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)). The NWM version is found in the NetCDF files by accessing the "NWM_version_number" attribute (i.e. `ds.attrs['NWM_version_number']` in `xarray`).
 
 :::{dropdown} What changed in v3.0
-- First-time Total Water Level guidance for coastal CONUS, Hawaii, and Puerto Rico/USVI (via a coupled ocean model, SCHISM)
-- Domain expansion into south-central Alaska
-- The addition of the National Blend of Models as a forcing source for medium-range CONUS and Alaska forecasts
-- Use of Multi-Radar Multi-Sensor precipitation for Puerto Rico/USVI
-- Expanded ingestion of reservoir outflow forecasts (77 additional sites, bringing the total to 392)
-- Calibration/parameter improvements
+- First-time Total Water Level guidance for coastal CONUS, Hawaii, and Puerto Rico/USVI (via a coupled ocean model, SCHISM).
+- Domain expansion into south-central Alaska.
+- The addition of the National Blend of Models as a forcing source for medium-range CONUS and Alaska forecasts.
+- Use of Multi-Radar Multi-Sensor precipitation for Puerto Rico/USVI.
+- Expanded ingestion of reservoir outflow forecasts (77 additional sites, bringing the total to 392).
+- Calibration/parameter improvements.
 :::
 
 :::{dropdown} What changed in v3.1
 Changes from v3.0, which was operational until about 18 August 2026:
 
-- Use of Multi-Radar/Multi-Sensor (MRMS) and numerical weather prediction (NWP) precipitation-type information in CONUS Analysis & Assimilation, Short-Range and GFS-based Medium-Range configurations
-- Improved downscaling of temperature forcing data, using a dynamic lapse-rate approach based on NWP model data
-- Representation of the flow diversion between the Mississippi and Atchafalaya Rivers at the Old River Control Structure, using observation-based flow persistence
-- Assimilation of USGS streamflow observations available at forecast time into the first hours of the short-, medium- and long-range forecasts
-- Updated CONUS hydrofabric with location refinements for 311 USGS stream gauges
-- Shorter Medium-Range coastal forecasts for the Atlantic-Gulf and Pacific domains (5 days, down from 10)
-- Puerto Rico/USVI: National Blend of Models (NBM) precipitation replaces WRF-ARW as supplemental forcing in Short-Range configurations, and new 00Z and 12Z Short-Range cycles
+- Use of Multi-Radar/Multi-Sensor (MRMS) and numerical weather prediction (NWP) precipitation-type information in CONUS Analysis & Assimilation, Short-Range and GFS-based Medium-Range configurations.
+- Improved downscaling of temperature forcing data, using a dynamic lapse-rate approach based on NWP model data.
+- Representation of the flow diversion between the Mississippi and Atchafalaya Rivers at the Old River Control Structure, using observation-based flow persistence.
+- Assimilation of USGS streamflow observations available at forecast time into the first hours of the short-, medium- and long-range forecasts.
+- Updated CONUS hydrofabric with location refinements for 311 USGS stream gages.
+- Shorter Medium-Range coastal forecasts for the Atlantic-Gulf and Pacific domains (5 days, down from 10).
+- Puerto Rico/USVI: National Blend of Models (NBM) precipitation replaces WRF-ARW as supplemental forcing in Short-Range configurations, and new 00Z and 12Z Short-Range cycles.
 As announced in [NWS Service Change Notice 26-64](https://www.weather.gov/media/notification/pdf_2026/scn26-64_Updated_National_Water_Model_V3.1_aaa.pdf).
 :::
 
@@ -87,10 +87,11 @@ Each configuration also has its own model inputs. For example, the retrospective
 
 There are four operational Medium-Range products for CONUS:
 
-- 10-day deterministic (GFS), `medium_range_mem1`
-- 10-day deterministic (NBM), `medium_range_blend`
-- Ensemble (GFS): the first 8.5 days of `medium_range_mem1` plus `medium_range_mem2` through `medium_range_mem6`
-- 10-day deterministic (GFS, no data assimilation), `medium_range_no_da`, initialized by `analysis_assim_no_da`
+- 10-day deterministic (GFS), `medium_range_mem1`.
+- 10-day deterministic (NBM), `medium_range_blend`.
+- Ensemble (GFS): the first 8.5 days of `medium_range_mem1` plus `medium_range_mem2` through `medium_range_mem6`.
+- 10-day deterministic (GFS, no data assimilation), `medium_range_no_da`, initialized by `analysis_assim_no_da`.
+
 
 ## Data content
 
