@@ -24,8 +24,12 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
     - Every question tests one objective directly. If answering it mainly depends on remembering a smaller
       point, a named framework, a figure or a lesson's example (e.g. where a practice sits on a diagram), cut it
       or rewrite it around the objective the point supports.
-    - Lesson examples can be the setting for a question, but the question asks for the judgement the objective
-      names, not for the example's details.
+    - Test an idea with a new example, not the one the lesson used to teach it. If the lesson shows a
+      spreadsheet with storm days shaded blue, ask about a different spreadsheet with different problems. The
+      course's example rivers and code modelled on the lessons can still be the setting.
+    - Test the general idea, not a comparison of specific named tools, services or organizations, unless the
+      objective names them. Ask why you'd choose a domain repository over a generalist one, not HydroShare vs.
+      EDI. In Modules 2–4 the three agencies' products are what the objectives name, so comparing them is fine.
 2. **Coverage plan.** A table: objective → what a learner who meets it can do → the lesson sections that teach
    it → the number of questions. Every objective gets at least 2 questions, spread roughly evenly; give an
    objective more only when it has several distinct skills to test.
