@@ -21,7 +21,7 @@ Usage:
 With ``--out-dir``, each copy keeps its path relative to the repo root (``DIR/03-.../01_access_nasa_swot.md``),
 so pages with the same file name don't collide. Counts go to stderr; ``--json`` prints them as JSON instead.
 
-From Python (e.g. ``build_notebooks.py``)::
+From Python::
 
     from prepare_learner_copy import prepare
     text, counts = prepare(open(page, encoding="utf-8").read())

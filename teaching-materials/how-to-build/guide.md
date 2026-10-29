@@ -1,41 +1,127 @@
-# Deck prompts: guide
+# Teaching materials: guide
 
-Everything a person needs to have Claude build or update a session deck (PowerPoint) or a module reading (PDF)
-from the lesson pages, in the instructor's own style, for *Reproducible Workflows with Open Water Data:
-NASA, NOAA, USGS River Data Access*.
+Everything needed to build and update the materials that *run* *Reproducible Workflows with Open Water Data:
+NASA, NOAA, USGS River Data Access*: session decks, notebooks, module readings, quizzes and the instructor guide.
+They're made from the lesson pages (`0*/`), which stay the single source of truth: to fix content, edit the
+lesson, then update the material. `teaching-materials/` isn't part of the website (`myst.yml` excludes it).
 
-The lessons stay the source of truth. Three kinds of output come from them, each with its own job:
+Pilot learners can't open the website or this repo. They get the decks, readings and quizzes through Canvas and
+the notebooks through HydroShare, so each has to stand on its own.
 
-| Output | Its job | Where |
+| Output | Its job | Where (`teaching-materials/materials/`) |
 |---|---|---|
-| **Deck** | The important concepts and points, presented live | `teaching-materials/materials/slides/`, one `.pptx` per session, **built locally and never committed** (git-ignored); shared through Canvas |
-| **Notebook** | Practising the code | the learner bundle (`teaching-materials/materials/learner-bundle/`) |
-| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `teaching-materials/materials/readings/`, a Word document exported to PDF, **built locally and never committed** (git-ignored); the PDF is shared through Canvas |
+| **Deck** | The important concepts and points, presented live | `slides/`, one `.pptx` per session; shared through Canvas |
+| **Notebook** | Practising the code, during the session's live coding and after | `notebooks/`, one `.ipynb` and `_environment.yml` per lesson with code; shared through HydroShare |
+| **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `readings/`, a Word document exported to PDF; the PDF is shared through Canvas |
+| **Quiz** | A formative check per module, aligned to its objectives | `quizzes/`, `text2qti` text, QTI zip and answer key; imported into Canvas |
+| **Instructor guide** | Prep for a new or substitute instructor (not for learners) | `instructor-guide/` |
+
+Decks, notebooks, readings and quizzes are **built locally and never committed** (git-ignored). Each records the
+commit it was built from in the file itself, so an update can see what changed in the lessons since. The
+instructor guide is the one committed output, tracked in `manifest.json`.
 
 What goes where is decided per topic in the **topic lists**, not by whoever runs the prompt.
+
+**Build in this order**, because each output is written around the ones before it:
+
+1. **Decks** (`/build-slides N`): they carry the explanations and say when to switch to the notebook.
+2. **Notebooks** (`/build-notebooks N`): written around the deck's live-coding slides, without repeating what
+   the deck explains.
+3. **Readings** (`/build-slides reading M`): only what the module's decks left out.
+4. **Quizzes** (`/build-quizzes`), then the **instructor guide** (`/build-instructor-guide`).
 
 ## What's where
 
 ```
 teaching-materials/
-├── materials/               WHAT YOU USE
-│   ├── slides/              the decks you build (local only)
-│   └── readings/            the readings you build, Word and PDF (local only)
-└── how-to-build/            HOW IT'S MADE (this folder)
+├── materials/               WHAT YOU USE (local only, except the instructor guide)
+│   ├── slides/              session decks
+│   ├── notebooks/           one notebook and environment file per lesson with code
+│   ├── readings/            module readings, Word and PDF
+│   ├── quizzes/             Canvas quizzes and answer keys
+│   └── instructor-guide/    prep for a new or substitute instructor (committed)
+└── how-to-build/            HOW IT'S MADE (nothing here goes to learners)
     ├── guide.md             this file
     ├── topics/
     │   └── session-01.md …  one editable topic list per session
     ├── design-rules.md      how the decks look and move (seeded from the instructor's decks)
     ├── deck-prompt.md       the prompt that builds one session deck from scratch
     ├── update-prompt.md     the prompt that updates an existing deck, slide by slide
+    ├── notebook-prompt.md   the prompts that build or update one notebook, and the lesson notes
     ├── reading-prompt.md    the prompts that build or update one module reading (Word)
     ├── review-checklist.md  what to check before a deck is used
+    ├── tools/               check_topics, prepare_learner_copy, check_stale
+    ├── manifest.json        what each committed output was built from
     ├── templates/           the course deck template (committed); reading template and example decks (local only)
-    └── to-update/           existing decks or readings to update rather than rebuild (local only)
+    └── to-update/           existing decks, notebooks or readings to update rather than rebuild (local only)
 ```
 
-The local-only folders and files are git-ignored by the repo's root `.gitignore`: `slides/`, `readings/`,
-`to-update/`, and everything in `templates/` except `template.pptx`, the one template that's committed.
+The local-only folders and files are git-ignored by the repo's root `.gitignore`. The rules (names, the session
+map, learner-facing outputs, live coding, quizzes) are in [STYLE_GUIDE §11](../../STYLE_GUIDE.md#11-teaching-materials).
+
+Every output is built by a Claude Code skill in `.claude/skills/` (`build-slides`, `build-notebooks`,
+`build-quizzes`, `build-instructor-guide`), or by a person pasting the same prompt into Claude on the web or
+desktop. Small hand fixes to an output are fine, but make the same fix in the lesson page too, or the next update
+undoes it.
+
+## Before you build
+
+Some builders need tools that the lesson environments don't include. Set them up once per machine, in Git Bash
+(see [AGENT_SETUP.md](../../AGENT_SETUP.md)).
+
+| Skill | Needs |
+|---|---|
+| `build-slides` | Your template and example decks in `how-to-build/templates/` (see "Templates" below); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export to PDF for checking |
+| `build-notebooks` | The session's deck; `python-pptx` and `nbformat` in any scratch Python; `papermill` in **each** lesson environment; the credentials below |
+| `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) |
+| `build-instructor-guide` | nothing extra |
+
+Install the scratch tools into any Python on your PATH (conda `base` is fine):
+`pip install python-pptx python-docx nbformat text2qti`.
+
+### Lesson environments and papermill
+
+The `environments/*.yml` files are the recipes learners build their environments from, and each notebook ships
+with a copy. Your installed environments are your own copies built from those recipes. Add testing tools to your
+copies only, never to the `.yml` files.
+
+1. **Make sure your environments match the recipes.** Create any that are missing, and update any built from
+   an older `.yml`:
+   ```bash
+   conda env create -f environments/m03-swot.yml          # if m03-swot doesn't exist yet
+   conda env update -n m03-swot -f environments/m03-swot.yml --prune   # if it exists but may be out of date
+   ```
+   Do the same for `m03-nwm`, `m03-wdfn` and `m04-synthesis` (`conda env list` shows which you have). `--prune`
+   removes packages the `.yml` doesn't list, papermill included, so repeat step 2 whenever you repeat step 1.
+2. **Add papermill without changing anything else.** `--freeze-installed` stops conda from upgrading or
+   downgrading the packages already installed, so your environment keeps the learners' versions. (conda still
+   refreshes `ca-certificates` and `certifi`; that's expected and harmless.)
+   ```bash
+   for e in m03-swot m03-nwm m03-wdfn m04-synthesis; do
+     conda install -y -n "$e" -c conda-forge --freeze-installed papermill ipykernel
+   done
+   ```
+   If conda says it can't install without changing other packages, stop and ask: don't remove the flag.
+3. **Run each notebook inside its lesson's environment**, from a short working folder (SWOT file names overflow
+   Windows' 260-character path limit in deep folders):
+   ```bash
+   conda run -n m03-swot papermill -k python3 --cwd <short-dir> <notebook>.ipynb <scratch-dir>/<notebook>_out.ipynb
+   ```
+
+### Credentials
+
+Testing notebooks logs in to real services. The process running the build needs these environment variables:
+
+| Notebooks | Needs |
+|---|---|
+| Module 3 lesson 1 (SWOT), Module 4 lessons 2 and 3 | `EARTHDATA_USERNAME`, `EARTHDATA_PASSWORD` (read by `earthaccess.login()`) |
+| Module 3 lesson 3 (WDFN), Module 4 lesson 2 | `API_USGS_PAT` (read by `dataretrieval`) |
+| Module 3 lesson 2 (NWM) | nothing |
+
+Save them once as Windows user environment variables, following
+[AGENT_SETUP.md, "Windows: credentials"](../../AGENT_SETUP.md#windows-credentials), which also shows how to check
+them without printing the values. A program only sees environment variables that existed when it started: after
+saving them, open a new terminal and start Claude Code from there. Never write the values into a file in this repo.
 
 ## Topic lists
 
@@ -183,10 +269,111 @@ when something changes. `reading-prompt.md` holds both prompts.
   Canvas. The document's Comments property records the commit it was built from, which the Update prompt uses
   to see what changed.
 
+## Building or updating a notebook
+
+Notebooks come after the session's deck: the deck explains, the notebook is where learners run the code.
+`notebook-prompt.md` holds both prompts and the lesson notes (each notebook's learning goal, credentials and the
+fixes it needs until its lesson is corrected).
+
+- **Build:** in Claude Code, `/build-notebooks N` (N = 3–6). It reads the deck's live-coding slides, shows you a
+  plan, then writes one notebook per lesson with code into `teaching-materials/materials/notebooks/<module
+  folder>/`, with the lesson's environment file next to it, and tests it in that environment. On the web or
+  desktop, attach the deck, the topic list, the learner copy of the lesson and its environment file, and paste
+  the Build prompt and the lesson notes.
+- **What's in a notebook:** setup and credentials cells, the lesson sections that have code (with the lesson's
+  headings, so the live-coding slides can name them), markers where each live-coding stretch starts and ends,
+  short text that doesn't repeat the slides, the "Now you try it" task with a starter cell and the example answer
+  collapsed under it, an optional "Going further" section for `notebook`-only topic rows, and the license, how to
+  cite and acknowledgements at the end.
+- **Update:** `/build-notebooks N update`, after a lesson, topic-list or deck change. It works on the notebook in
+  `how-to-build/to-update/` if you put one there, otherwise on yours in `materials/notebooks/`. To protect a cell
+  you edited by hand, add the tag `keep` to it (in JupyterLab, the property inspector's "Cell tags").
+- **Save:** the notebook and environment file stay in `materials/notebooks/` (git-ignored). Upload both to the
+  course's HydroShare resource, keeping the module folders. The notebook's metadata (`fwdc`) records the commit
+  and deck it was built from.
+
+## Quizzes and the instructor guide
+
+- **Quizzes:** `/build-quizzes`, after the module's decks and readings; the `build-quizzes` skill covers the
+  design, `text2qti` and the Canvas settings. Quiz questions and answer keys never go into the repo, a PR or an
+  issue.
+- **Instructor guide:** `/build-instructor-guide`, last. It's committed, so record a rebuild in `manifest.json`
+  (below).
+
+## Tools
+
+All run from the repo root with any Python 3.9 or later (standard library only).
+
+**`tools/check_topics.py`** checks the topic lists (see "Topic lists" above).
+
+**`tools/prepare_learner_copy.py`.** Every learner-facing build starts from this copy of a page. It removes every
+`TODO (dev team)` and `Partner review (…)` callout, turns internal course links (other pages, `{term}`, `{ref}`
+and `{doc}` roles, the Glossary and References pages, the repo) into plain text, keeps external links and images,
+and reports the counts. If the report ends with `WARNING: ... flag mention(s) left`, a page names a flag outside a
+callout: check it by hand before anything built from it goes to learners. Write learner copies to a scratch
+directory outside this repo:
+
+```bash
+python teaching-materials/how-to-build/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/01_access_nasa_swot.md -o <scratch-dir>/01_access_nasa_swot.md
+python teaching-materials/how-to-build/tools/prepare_learner_copy.py 03-federal-water-data-access-retrieval/*.md --out-dir <scratch-dir>/learner
+```
+
+**`tools/check_stale.py`** lists committed outputs (today, the instructor guide) whose sources changed since they
+were built, from `manifest.json`. After rebuilding one, commit the lesson change first, then record it and commit
+the output with `manifest.json`:
+
+```bash
+python teaching-materials/how-to-build/tools/check_stale.py --update teaching-materials/materials/instructor-guide/00_start-here.md \
+    --kind instructor-guide --builder build-instructor-guide --source 03-federal-water-data-access-retrieval
+```
+
+`--kind`, `--builder` and `--source` are needed only for a new entry. Merge PRs with merge commits, not squash
+merges, so the recorded commits stay reachable. For the local-only outputs, compare the commit recorded in the
+file with `git diff <commit> HEAD -- <sources>`; the update prompts do this for you.
+
+## Session map
+
+All sessions are in 2026, at 2:00 pm ET. The Dec 1 peer review and Dec 3 demos have no decks. The same map is
+in STYLE_GUIDE §11; change both together.
+
+| Session | Date | Length | Covers | Lesson pages | Notebooks |
+|---|---|---|---|---|---|
+| 1 | Tue Nov 3 | 90 min | Course welcome, logistics, setup; Module 1 overview + lessons 1–3 | `01-data-best-practices/00`–`03` | none |
+| 2 | Thu Nov 5 | 120 min | Module 2 overview + lessons 1–3 | `02-federal-water-data-landscape/00`–`03` | none |
+| 3 | Tue Nov 10 | 90 min | Module 3 overview + lesson 1 | `03-federal-water-data-access-retrieval/00`, `01` | SWOT |
+| 4 | Thu Nov 12 | 90 min | Module 3 lesson 2 | `03-federal-water-data-access-retrieval/02` | NWM |
+| 5 | Tue Nov 17 | 90 min | Module 3 lesson 3 | `03-federal-water-data-access-retrieval/03` | WDFN |
+| 6 | Thu Nov 19 | 120 min | Module 4 overview + lessons 1–3 | `04-federal-water-data-synthesis/00`–`03` | lessons 2 and 3 |
+
+## File names
+
+The naming rule is in STYLE_GUIDE §11. **Module slugs** are the module folder names without their number
+(`data-best-practices`, `federal-water-data-landscape`, `federal-water-data-access-retrieval`,
+`federal-water-data-synthesis`). **Lesson slugs** come from the lesson page's title, lowercased, with spaces
+turned into hyphens and punctuation dropped: *Retrieve NASA SWOT data* → `retrieve-nasa-swot-data`. Module 4
+lesson 2's slug is shortened to `synthesizing-federal-data-products`.
+
+| Session | Deck (`slides/`) | Notebooks (`notebooks/<module folder>/`, each with `_environment.yml`) |
+|---|---|---|
+| 1 | `session-01_module-01_data-best-practices.pptx` | |
+| 2 | `session-02_module-02_federal-water-data-landscape.pptx` | |
+| 3 | `session-03_module-03_lesson-01_retrieve-nasa-swot-data.pptx` | `module-03_lesson-01_retrieve-nasa-swot-data.ipynb` |
+| 4 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx` | `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` |
+| 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` | `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` |
+| 6 | `session-06_module-04_federal-water-data-synthesis.pptx` | `module-04_lesson-02_synthesizing-federal-data-products.ipynb`, `module-04_lesson-03_additional-federal-water-data.ipynb` |
+
+The notebook module folders are `module-03_federal-water-data-access-retrieval` and
+`module-04_federal-water-data-synthesis`. Readings: `readings/module-NN_reading_<module slug>.docx` (and its
+PDF), for Modules 2–4. Quizzes: `quizzes/module-NN_quiz_<module slug>.txt`, its `.zip` and `_key.md`. Instructor
+guide: `instructor-guide/00_start-here.md`, `01_prepare-to-teach.md`, `02_how-the-course-is-built.md`, and one
+`session-NN_<deck name without .pptx>.md` per session.
+
 ## When something changes
 
 - **A lesson changed:** `check_topics.py` says whether a section the topic list names was renamed or removed.
-  Update the topic list, then **update** the deck and reading (`/build-slides N update`, `/build-slides reading M
-  update`) rather than rebuilding them, so hand edits survive. Each update compares the lessons with the commit
-  the deck or reading was built from.
+  Update the topic list, then **update**, in order, the deck, the session's notebooks and the reading
+  (`/build-slides N update`, `/build-notebooks N update`, `/build-slides reading M update`) rather than rebuilding
+  them, so hand edits survive. Each update compares the lessons with the commit the output was built from.
+- **A deck changed:** update the session's notebooks too, so their live-coding markers and pointers to slides
+  still match.
 - **You want a different style:** edit `design-rules.md` or the template, then update each deck.

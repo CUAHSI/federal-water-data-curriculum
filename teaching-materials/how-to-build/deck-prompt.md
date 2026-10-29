@@ -1,6 +1,6 @@
 # Prompt: build one session deck
 
-Copy everything below the line into Claude, replacing `{N}` with the session number (1–6). See README.md for
+Copy everything below the line into Claude, replacing `{N}` with the session number (1–6). See guide.md for
 what to attach and how to run it. In Claude Code, `/build-slides {N}` does the same thing.
 
 ---

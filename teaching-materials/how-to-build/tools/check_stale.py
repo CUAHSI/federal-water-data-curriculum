@@ -3,12 +3,12 @@
 Every committed output has an entry in ``teaching-materials/how-to-build/manifest.json``:
 
     {
-      "output": "teaching-materials/materials/learner-bundle/README.md",
-      "kind": "bundle-readme",
+      "output": "teaching-materials/materials/instructor-guide/00_start-here.md",
+      "kind": "instructor-guide",
       "sources": ["03-federal-water-data-access-retrieval"],
       "source_commit": "<full SHA the output was built from>",
       "built_at": "2026-10-24T15:02:11Z",
-      "builder": "build-notebooks"
+      "builder": "build-instructor-guide"
     }
 
 Paths are relative to the repo root. A directory in ``sources`` (e.g. ``images/m03``) covers every file
@@ -40,7 +40,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MANIFEST = REPO_ROOT / "teaching-materials" / "how-to-build" / "manifest.json"
-KINDS = ("slides", "reading", "notebook", "environment", "bundle-readme", "quiz", "instructor-guide")
+KINDS = ("slides", "reading", "notebook", "environment", "quiz", "instructor-guide")
 FIELDS = ("output", "kind", "sources", "source_commit", "built_at", "builder")
 
 

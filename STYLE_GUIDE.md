@@ -217,7 +217,7 @@ then rebuild. Everything lives in `teaching-materials/` and isn't part of the we
 **Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
 hyphens inside a part and underscores between parts:
 `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
-the lesson or module title. Suffixes: `_solutions.ipynb`, `_environment.yml`. Module readings:
+the lesson or module title. Suffix: `_environment.yml` (next to each notebook). Module readings:
 `module-03_reading_federal-water-data-access-retrieval.docx`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
 *names* inside the files stay short (`m03-swot`), because people type them.
 
@@ -248,7 +248,7 @@ or this repo. Each session's **topic list** decides where every lesson section g
 Never turn a whole lesson into a PDF. `how-to-build/tools/check_topics.py` checks that a topic list's minutes add up and that
 the lesson sections it names still exist.
 
-**Learner-facing outputs** (slides, readings, notebooks, the bundle README, quizzes) stand on their own:
+**Learner-facing outputs** (slides, readings, notebooks, quizzes) stand on their own:
 - **External links are fine.** Internal course links (other pages, glossary terms, References, the repo)
   become plain text, or point to the deck or reading that covers the topic.
 - **No `TODO (dev team)` or `Partner review` callouts.**
@@ -256,7 +256,10 @@ the lesson sections it names still exist.
 `how-to-build/tools/prepare_learner_copy.py` does both and reports the counts, so open items aren't forgotten.
 
 **Notebook sections are named after lesson headings**, so a slide can say "notebook section 'Programmatic data
-downloads'" and mean the same thing in both places.
+downloads'" and mean the same thing in both places. Notebooks are built after the session's deck and around it:
+they hold the code, what it returns and the hand-offs from the live-coding slides, not the explanations the deck
+already gives. One notebook per lesson with code: each "Now you try it" has a starter cell, with the example
+answer collapsed below it.
 
 **Live coding.** Slides carry the explanation and short code (≤ 12 lines per slide, shown, not run). Switch to
 the notebook only after a block of related concepts has been explained on slides. Then spend at least 10
@@ -268,9 +271,9 @@ to run, what to point out, and when to come back.
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.
 Quiz questions and answer keys never go into the repo, a PR or an issue.
 
-**Every committed output is in `manifest.json`** with its sources and the commit it was built from. Session decks,
-module readings and quizzes are the exception: they're built locally, never committed (`materials/slides/`,
-`materials/readings/` and `materials/quizzes/` are git-ignored), and record their build commit in the file itself
-(for a quiz, in its answer key).
+**Session decks, notebooks, module readings and quizzes are built locally and never committed**
+(`materials/slides/`, `materials/notebooks/`, `materials/readings/` and `materials/quizzes/` are git-ignored). Each
+records its build commit in the file itself (for a quiz, in its answer key). Committed outputs (the instructor
+guide) are in `manifest.json` with their sources and the commit they were built from.
 `python teaching-materials/how-to-build/tools/check_stale.py` lists which committed outputs need rebuilding. For the
 local-only files, compare their recorded commit with `git diff <commit> HEAD -- <sources>`.

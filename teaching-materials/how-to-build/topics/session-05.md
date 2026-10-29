@@ -4,7 +4,7 @@
 - **Deck:** `teaching-materials/materials/slides/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
-- **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` (learner bundle)
+- **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` (`materials/notebooks/`)
 - **Pages:** `03/03` = `03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md`
 
 **Where:** `deck`, `notebook`, `reading`, `how-to`, `cut` (see session-01.md). **Min** adds up to the session
@@ -29,7 +29,7 @@ length.
 | 15 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 7 | Approval status and qualifiers; columns and units |
 | 16 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | deck | 2 | Before → after: the same request both ways |
 | 17 | Temporal and spatial scaling; parallelization | 03/03 § Temporal scaling, § Spatial scaling, § Parallelization | deck | 6 |  |
-| 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; answers in the solutions notebook |
+| 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; the example answer is collapsed under the task in the notebook |
 | 19 | Module 3 wrap-up: three routes compared | 03/00 | deck | 2 | One slide comparing how each product is retrieved |
 | 20 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
 | 21 | Further reading and questions | 03/03 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
