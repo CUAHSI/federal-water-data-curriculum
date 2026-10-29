@@ -88,8 +88,9 @@ Geoid
   "above sea level". SWOT water surface elevations are given relative to a geoid model (EGM2008).
 
 Lead time
-: How far ahead a forecast value is: its {term}`valid time <Valid time>` minus its
-  {term}`forecast reference time <Forecast reference time>`.
+: In this course, how far ahead a forecast value is: its {term}`valid time <Valid time>` minus its
+  {term}`forecast reference time <Forecast reference time>`. The term is defined in different ways in the literature
+  and depends on context; it is also common to group forecast values into lead-time ranges (for example, Day 1 to Day 2).
 
 Long-format table
 : A table with one row per value, where columns such as location, time or ensemble member say which value it is
@@ -279,33 +280,39 @@ channel_rt
 
 COMID
 : Common Identifier: the unique numeric ID of a stream reach in the NHDPlus network. In the contiguous U.S. (CONUS),
-  NWM's `feature_id` values are the same numbers.
+  NWM's `feature_id` values generally correspond directly to NHDPlusV2 COMIDs, though some variation may exist.
 
 Configuration
 : One of the NWM's standard model runs, for example `short_range`, `medium_range`, `long_range`
-  or `analysis_assim`, each with its own length (forecast horizon or lookback) and issue schedule.
+  or `analysis_assim`, each with its own length (forecast horizon or lookback) and initialization schedule.
 
 Data assimilation
 : Adjusting a model while it runs so it stays close to observations. The NWM analysis configuration
   assimilates USGS streamflow observations, among others.
 
 Ensemble member
-: One of several runs of the same forecast with slightly different inputs. The NWM medium-range forecast has
+: One of several runs of the same forecast with slightly different inputs. The NWM medium-range ensemble has
   six members; their spread is a rough guide to forecast uncertainty.
 
 feature_id
-: NWM's name for a reach identifier. In CONUS it is the same number as the NHDPlus {term}`COMID`.
+: NWM's name for a reach identifier. In CONUS it generally corresponds directly to the NHDPlus {term}`COMID`, though some
+  variation may exist. Outside CONUS, the NWM uses arbitrary reach identifiers.
 
 Forcing
 : The weather inputs that drive a hydrologic model, such as precipitation, temperature and radiation.
 
 Forecast reference time
-: When an NWM forecast was issued (UTC). Also called the reference time. Each forecast value also has a
-  {term}`valid time <Valid time>`.
+: The time a forecast run was initialized (the model initialization time, also called "T-Zero"), in UTC. Also called the
+  reference time. It is not the same as an issue time, which more generally means when a formal, actionable forecast
+  becomes available. Each forecast value also has a {term}`valid time <Valid time>`.
 
 hydrotools
 : A Python package from NOAA's Office of Water Prediction for retrieving NWM output (including past forecasts)
   and other hydrologic data as `pandas` DataFrames.
+
+Issue time
+: When a formal, actionable forecast becomes available. Not the same as the {term}`forecast reference time <Forecast reference time>`,
+  which is when the model run was initialized.
 
 kerchunk
 : A Python library that builds reference files describing where each variable sits inside existing files
