@@ -2,31 +2,27 @@
 title: Acknowledgements
 ---
 
-*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI with contributions from colleagues at NOAA,
-USGS and NASA. Contributions are described with the [CRediT contributor roles](https://credit.niso.org/).
+*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI 
+with contributions from colleagues at NOAA, USGS and NASA. Contributions are described with the 
+[CRediT contributor roles](https://credit.niso.org/).
 
 ## Contributors
 
 | Name | Affiliation | Contributions |
 |---|---|---|
-| Lindsay Platt | CUAHSI | Conceptualization; Writing – Original Draft; Project Administration |
-| Kimberlee Wong | CUAHSI | Writing – Original Draft |
-| Kaysa Vaarre-Lamoureux | CUAHSI | Writing – Original Draft |
-| Abner Bogan | CUAHSI | Writing – Original Draft |
+| Lindsay Platt | CUAHSI | Project Administration; Conceptualization; Writing; Review |
+| Kimberlee Wong | CUAHSI | Writing; Review |
+| Kaysa Vaarre-Lamoureux | CUAHSI | Writing; Review |
+| Abner Bogan | CUAHSI | Writing |
 | Julia Masterman | CUAHSI | Conceptualization |
-| Irene Garousi-Nejad | CUAHSI | Conceptualization; Resources; Writing – Review & Editing |
+| Irene Garousi-Nejad | CUAHSI | Conceptualization; Resources; Review |
 | Tony Castronova | CUAHSI | Conceptualization; Resources |
 | Danielle Tijerina-Kreuzer | CUAHSI | Conceptualization; Resources |
-| Jason Regina | NOAA | Resources; Writing – Review & Editing |
-| Elise Hinman | USGS | Writing – Review & Editing |
-| Cee Nell | USGS | Resources; Writing – Review & Editing |
-| Michael Mahoney | USGS | Resources; Writing – Review & Editing |
-| *[NASA contributor(s)]* | NASA | *[contributions]* |
-
-:::{admonition} TODO (dev team): NASA attribution
-:class: attention
-Add the NASA contributor(s) and their contributions.
-:::
+| Jason Regina | NOAA | Resources; Review |
+| Elise Hinman | USGS | Resources; Review |
+| Cee Nell | USGS | Resources; Review |
+| Michael Mahoney | USGS | Resources; Review |
+| NASA Staff | NASA | Resources; Review |
 
 Contributions from federal agency staff are acknowledged with thanks. Acknowledgment does not imply
 endorsement of this course by NASA, NOAA or USGS.
@@ -42,8 +38,6 @@ the page that uses it and listed on the [References](references.md) page.
 
 ### NASA
 
-- NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *Hydrocron documentation*
-  (software). https://podaac.github.io/hydrocron/ (accessed 2026-10-28).
 - NASA Physical Oceanography Distributed Active Archive Center (PO.DAAC). (n.d.). *SWOT* (PO.DAAC Cookbook
   tutorials). https://podaac.github.io/tutorials/quarto_text/SWOT.html (accessed 2026-10-28).
 - SWOT Project. (2025). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset). NASA
@@ -53,11 +47,12 @@ the page that uses it and listed on the [References](references.md) page.
 - SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science
   Data Products* (April 23, 2025). PO.DAAC.
   https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf
-- Tebaldi, N., Nickles, C., & Downs, B. (n.d.). *Hydrocron API: Getting Started with SWOT Time Series*.
-  PO.DAAC Cookbook.
-  https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html
-  (accessed 2026-10-28). This tutorial gave the course the idea for its Skagit River case study and the Skagit SWORD reach IDs used
-  in Module 4.
+- Nickles, C., Taglialatela, C., McNelis, J., Gangl, M., Ou, C., Tarpinian, N., McDonald, V., Henze, D., 
+  Tebaldi, N., Greguska, F., Perez, S., Wang, J., Armstrong, E., Sanchez, J., Walschots, Z., Liu, S., & 
+  Gentemann, C. (2024). podaac/tutorials: PO.DAAC Cookbook v2024.01 (Version v2024.01.18) [Computer software]. 
+  Zenodo. https://doi.org/10.5281/zenodo.10530664. This collection of tutorials was foundational for the 
+  hydrocron data access, gave the course the idea for its Skagit River case study, and the Skagit SWORD 
+  reach IDs used in Module 4.
 
 ### NOAA
 
@@ -98,6 +93,6 @@ reflect the views of the National Science Foundation.
 ## Use of AI tools
 
 Generative AI tools (Anthropic's Claude) were used to help draft lesson text, code examples, figures and
-the teaching materials (slides, readings, notebooks, quizzes and instructor guide) from outlines, existing
-CUAHSI notebooks and contributors' materials. Contributors reviewed, edited and tested all content, ran every
-code example, and are responsible for the course as published.
+the teaching materials from outlines, existing CUAHSI notebooks and contributors' materials. Contributors 
+and CUAHSI staff reviewed, edited and tested all content, ran every code example, and are responsible for 
+the course as published.
