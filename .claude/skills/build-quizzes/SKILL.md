@@ -40,23 +40,23 @@ Read STYLE_GUIDE.md §11 and the module's overview page first.
    Module 4 case study.
 
 ## Files
-- Source: `teaching-materials/quizzes/module-NN_quiz_<module-slug>.txt` in `text2qti` format:
+- Source: `teaching-materials/materials/quizzes/module-NN_quiz_<module-slug>.txt` in `text2qti` format:
     - title `Module N Quiz: <module title>`
     - a description: "About 10–15 minutes. Unlimited attempts; your highest score counts. The correct answer
       and an explanation are shown after each attempt."
     - `shuffle answers: true` if the installed `text2qti` supports it (check `text2qti --help` or its docs)
     - one point per question
 - Build: `text2qti <file>.txt` → `<file>.zip`. Fix any parse errors.
-- Key: `teaching-materials/quizzes/module-NN_quiz_<module-slug>_key.md`, containing the coverage table plus,
+- Key: `teaching-materials/materials/quizzes/module-NN_quiz_<module-slug>_key.md`, containing the coverage table plus,
   per question, its objective, the correct option and the lesson section it draws on. It's for spot-checking
   and for the instructor guide. Its first lines record `Built from <short commit>` and the build date. Build on
   an `upstream/dev` commit (one that's already pushed), so anyone can later check whether the lessons changed
   since, e.g. `git diff abc1234 HEAD -- 03-federal-water-data-access-retrieval`.
 - The key ends with the "In Canvas after import" checklist below.
-- **Save, don't commit.** `teaching-materials/quizzes/` is git-ignored, like the slides and readings:
+- **Save, don't commit.** `teaching-materials/materials/quizzes/` is git-ignored, like the slides and readings:
   quiz questions and answer keys never go into the repo, a PR, an issue or `manifest.json`. Commit only changes
   to these instructions.
-- Keep all three files (`.txt`, `.zip`, `_key.md`) together in `teaching-materials/quizzes/`. Canvas can't give
+- Keep all three files (`.txt`, `.zip`, `_key.md`) together in `teaching-materials/materials/quizzes/`. Canvas can't give
   back the `.txt`, so to update a quiz someone else built, get the three files from them first.
 
 ## In Canvas after import

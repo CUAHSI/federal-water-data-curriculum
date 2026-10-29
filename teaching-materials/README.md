@@ -12,18 +12,18 @@ teaching-materials/
 │   ├── slides/              session decks (PowerPoint; local only, never committed)
 │   ├── readings/            module readings (Word and PDF; local only, never committed)
 │   ├── learner-bundle/      notebooks and environments for HydroShare
+│   ├── quizzes/             Canvas quizzes and answer keys (local only, never committed)
 │   └── instructor-guide/    prep for a new or substitute instructor
-├── how-to-build/    HOW IT'S MADE: instructions, prompts, templates and tools
-│   ├── guide.md             start here to build or update slides and readings
-│   ├── topics/              what goes on each session's deck, notebook or reading
-│   ├── *-prompt.md          the prompts Claude follows
-│   ├── design-rules.md, review-checklist.md
-│   ├── scaffolds/           hand-edited "Now you try it" starters for the notebooks
-│   ├── tools/               scripts (check_stale, check_topics, prepare_learner_copy, build_notebooks)
-│   ├── manifest.json        what each committed output was built from
-│   ├── templates/           the deck template (committed); reading template, example decks (local only)
-│   └── to-update/           existing decks or readings to update (local only)
-└── quizzes/         Canvas quizzes and answer keys (local only, never committed)
+└── how-to-build/    HOW IT'S MADE: instructions, prompts, templates and tools
+    ├── guide.md             start here to build or update slides and readings
+    ├── topics/              what goes on each session's deck, notebook or reading
+    ├── *-prompt.md          the prompts Claude follows
+    ├── design-rules.md, review-checklist.md
+    ├── scaffolds/           hand-edited "Now you try it" starters for the notebooks
+    ├── tools/               scripts (check_stale, check_topics, prepare_learner_copy, build_notebooks)
+    ├── manifest.json        what each committed output was built from
+    ├── templates/           the deck template (committed); reading template, example decks (local only)
+    └── to-update/           existing decks or readings to update (local only)
 ```
 
 If you want to **teach**, look in `materials/`. If you want to **change or rebuild** something, start in
@@ -128,8 +128,8 @@ works outside this folder.
 | `materials/slides/` | One PowerPoint deck (`.pptx`, with speaker notes) per session, built from its topic list. **Git-ignored: decks are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
 | `materials/readings/` | At most one reading per module for Modules 2–4 (a Word document, exported to PDF). **Git-ignored: readings are built locally and never committed**, and aren't in `manifest.json` | `build-slides` skill, from `how-to-build/` | Yes, via Canvas | E |
 | `materials/learner-bundle/` | Student and solutions notebooks, environment files and a README, for HydroShare | `build-notebooks` skill, `how-to-build/tools/build_notebooks.py` | Yes, via HydroShare | F |
-| `quizzes/` (next to `materials/`) | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas. **Git-ignored: quizzes are built locally and never committed**, and aren't in `manifest.json` | `build-quizzes` skill | Yes, via Canvas | H |
-| `quizzes/*_key.md` | Answer key and objective coverage per quiz, with the commit it was built from. **Git-ignored**, like the quizzes | `build-quizzes` skill | **No**, instructors only | H |
+| `materials/quizzes/` | One `text2qti` quiz per module (`.txt`) and its QTI zip for Canvas. **Git-ignored: quizzes are built locally and never committed**, and aren't in `manifest.json` | `build-quizzes` skill | Yes, via Canvas | H |
+| `materials/quizzes/*_key.md` | Answer key and objective coverage per quiz, with the commit it was built from. **Git-ignored**, like the quizzes | `build-quizzes` skill | **No**, instructors only | H |
 | `materials/instructor-guide/` | Prep material for a new or substitute instructor | `build-instructor-guide` skill | **No**, instructors only | P8.5 |
 
 **`how-to-build/`: how it's made** (nothing here goes to learners)
@@ -288,7 +288,7 @@ in its PR. Modules 1 and 2 have no notebooks (Module 2's short examples are show
 
 ### Quizzes (lane H)
 
-In `teaching-materials/quizzes/`, local only (git-ignored) and never committed: see the `build-quizzes` skill for
+In `teaching-materials/materials/quizzes/`, local only (git-ignored) and never committed: see the `build-quizzes` skill for
 Canvas setup.
 
 | Module | Quiz source | QTI zip | Answer key |

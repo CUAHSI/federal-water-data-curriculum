@@ -17,5 +17,5 @@ teaching-materials/how-to-build/to-update/
 teaching-materials/materials/readings/*
 !teaching-materials/materials/readings/.gitkeep
 # Quizzes and answer keys are built locally and loaded into Canvas, never committed
-teaching-materials/quizzes/*
-!teaching-materials/quizzes/.gitkeep
+teaching-materials/materials/quizzes/*
+!teaching-materials/materials/quizzes/.gitkeep
