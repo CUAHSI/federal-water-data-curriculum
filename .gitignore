@@ -16,3 +16,6 @@ teaching-materials/how-to-build/to-update/
 # Module readings (Word and PDF) are built locally and shared through Canvas, never committed
 teaching-materials/materials/readings/*
 !teaching-materials/materials/readings/.gitkeep
+# Quizzes and answer keys are built locally and loaded into Canvas, never committed
+teaching-materials/materials/quizzes/*
+!teaching-materials/materials/quizzes/.gitkeep
