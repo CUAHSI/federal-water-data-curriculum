@@ -41,8 +41,8 @@ Modules 1 and 2, and Module 4 lesson 1, have no notebooks: their short examples 
   faster, because files already downloaded aren't fetched again.
 - **Some results depend on the day you run them**, so your numbers can differ from the ones in the notebook text:
     - **NWM:** the NOAA NWM API keeps only the last few days of forecasts, so the API examples always return the
-      newest runs, and the example with NOAA's published kerchunk references reads yesterday's forecast. The April
-      2025 and February 2026 forecasts come from the archive and don't change.
+      newest runs, and the example with NOAA's published kerchunk references (in "Going further") reads yesterday's
+      forecast. The April 2025 and February 2026 forecasts come from the archive and don't change.
     - **USGS:** provisional values can still be revised, and lists of monitoring locations and the ends of records
       grow over time. Check `approval_status`.
     - **SWOT:** search results and values can change when NASA reprocesses the data (a new CRID or version), and
@@ -109,6 +109,10 @@ filled in, and the parts that practise the lesson's skill are left as `...` with
 raises an error until every `...` is filled in. Make your changes in that cell rather than in the earlier ones. Work through the
 student notebook, then compare your answer with the `_solutions` notebook, which has a complete example answer. The
 task text says what you should get.
+
+The NWM and USGS notebooks end with an optional **Going further** section, after the task: an extra example the
+session doesn't cover. It doesn't use any earlier results, only the packages imported in the first code cells. In the student notebook,
+the unfinished task cell stops a "Run All", so run the Going further cells one by one.
 
 The Module 4 lessons have no "Now you try it" task, so their student and solutions notebooks are the same. The Module
 4 lesson 2 notebook ends with a checklist for adapting the case study to another river, a good exercise of its own.

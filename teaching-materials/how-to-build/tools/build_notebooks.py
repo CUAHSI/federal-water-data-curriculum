@@ -1,8 +1,8 @@
 """Build the learner bundle's notebooks from the lesson pages (STYLE_GUIDE §11, build-notebooks skill).
 
-For each Module 3 and 4 lesson with code, this writes to ``teaching-materials/learner-bundle/``:
+For each Module 3 and 4 lesson with code, this writes to ``teaching-materials/materials/learner-bundle/``:
 
-- ``<lesson>.ipynb``            student notebook: "Now you try it" starters come from ``scaffolds/<lesson>.yml``
+- ``<lesson>.ipynb``            student notebook: "Now you try it" starters come from ``how-to-build/scaffolds/<lesson>.yml``
 - ``<lesson>_solutions.ipynb``  solutions notebook: the lesson's example answer
 - ``<lesson>_environment.yml``  a copy of the lesson's ``environments/*.yml`` (the env ``name:`` is kept)
 
@@ -23,16 +23,18 @@ attribution and licence cell, a credentials cell, then the lesson in order. Head
 - a setup line the lesson tells Jupyter users to add (``Lesson.jupyter_prefix``) is added to its code cell;
 - wording that only works on the website, or that the lesson gets wrong, is corrected (``Lesson.replacements``;
   fix the lesson too), and pointers to the Module 2 "Meet ..." pages name them as readings;
-- a note before each "Now you try it" code cell says to make the changes there, not in earlier cells.
+- a note before each "Now you try it" code cell says to make the changes there, not in earlier cells;
+- topic-list rows whose "Where" is ``notebook`` only (``how-to-build/topics/``) go in an optional "Going further"
+  section after "Now you try it" (``Lesson.going_further``).
 
 Outputs are cleared and notebook metadata is kept to the kernelspec, so rebuilds give small diffs.
 
 Usage (from the repo root; needs nbformat and pyyaml):
-    python teaching-materials/tools/build_notebooks.py               # build every lesson
-    python teaching-materials/tools/build_notebooks.py --lesson module-03_lesson-01_retrieve-nasa-swot-data
-    python teaching-materials/tools/build_notebooks.py --check       # report what would change, write nothing
+    python teaching-materials/how-to-build/tools/build_notebooks.py               # build every lesson
+    python teaching-materials/how-to-build/tools/build_notebooks.py --lesson module-03_lesson-01_retrieve-nasa-swot-data
+    python teaching-materials/how-to-build/tools/build_notebooks.py --check       # report what would change, write nothing
 
-Scaffold files (``learner-bundle/scaffolds/<lesson>.yml``) are hand-edited source, not generated::
+Scaffold files (``teaching-materials/how-to-build/scaffolds/<lesson>.yml``) are hand-edited source, not generated::
 
     try_it:            # one entry per example-answer code block, in order
       - |
@@ -57,9 +59,9 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS))
 from prepare_learner_copy import prepare  # noqa: E402
 
-REPO_ROOT = TOOLS.parents[1]
-BUNDLE = REPO_ROOT / "teaching-materials" / "learner-bundle"
-SCAFFOLDS = BUNDLE / "scaffolds"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+BUNDLE = REPO_ROOT / "teaching-materials" / "materials" / "learner-bundle"
+SCAFFOLDS = REPO_ROOT / "teaching-materials" / "how-to-build" / "scaffolds"
 
 SENTENCE_BUDGET = 4       # sentences kept per paragraph
 KEEP_WHOLE_SECTIONS = ("Now you try it", "Further reading")
@@ -85,8 +87,23 @@ DROP_PARAGRAPHS = (
 )
 CREDENTIALS = ("earthdata", "usgs")
 SETUP_SECTION = "Tools and environment setup"
+GOING_FURTHER = "Going further"
+GOING_FURTHER_NOTE = ("*Optional.* This goes beyond the session. It doesn't use any earlier results, only the "
+                      "packages imported in the notebook's first code cells. In the student notebook, \"Run All\" stops at the unfinished task cell above, so run "
+                      "the cells below one at a time (Shift+Enter).")
 SETUP_NOTE = ("This notebook runs in the `{env}` conda environment, made from `{stem}_environment.yml` in this folder "
               "(the bundle README says how). Credentials are set up in the Credentials section above.")
+
+
+@dataclass
+class GoingFurther:
+    """One topic for the "Going further" section (a topic-list row whose "Where" is ``notebook``)."""
+    heading: str              # level-3 heading in the notebook
+    # move the lesson's items from the paragraph starting with this text up to the next heading
+    start: str = ""
+    before: tuple = ()        # (kind, text) items to put before the moved code, e.g. a function it needs
+    # or add these (kind, text) items, kind "para" or "code", for code the lesson only gives inline
+    items: tuple = ()
 
 
 @dataclass
@@ -108,6 +125,7 @@ class Lesson:
     # or callouts) or that the lesson gets wrong. Whitespace in the old text matches any whitespace, and the build
     # stops if the old text isn't found, so a lesson edit can't silently undo a fix. Fix the lesson too.
     replacements: dict = field(default_factory=dict)
+    going_further: tuple = ()   # GoingFurther topics, in order
 
     @property
     def module_folder(self) -> str:
@@ -167,7 +185,33 @@ LESSONS = [
             # the task builds its own references from the Google Cloud archive (build_refs), not NOAA's published ones
             " (the API's `name` field is blank for this reach)": "",
             "and 18 published reference files for 25 February": "and 18 hourly values from your references for 25 February",
+            # the published-references example moves to "Going further" (topic list, session 4 row 20)
+            "so they don't cover the April 2025 flood.":
+                "so they don't cover the April 2025 flood. \"Going further\" at the end of this notebook has an example.",
+            "This example combines them the same way and reads them over HTTPS.":
+                "This example combines them the same way as `build_refs` in the \"Kerchunk references\" section and "
+                "reads them over HTTPS.",
+            "It uses `open_refs` from the previous example, so run that block first (you don't need to build any "
+            "references yourself).":
+                "The next cell defines `open_refs` again, the same function as in that section, so this example "
+                "runs on its own.",
+            # the sentence budget would otherwise drop the definition of kerchunk references
+            "over the internet. Kerchunk fixes that": "over the internet.\n\nKerchunk fixes that",
         },
+        going_further=(GoingFurther(
+            "Example: use NOAA's published references for a recent run",
+            start="**Example: use NOAA's published references for a recent run**",
+            before=(("code", 'import xarray as xr\n\n'
+                             'def open_refs(refs):\n'
+                             '    """Open kerchunk references lazily: nothing is downloaded until values are needed."""\n'
+                             '    return xr.open_dataset("reference://", engine="zarr", chunks={}, consolidated=False, zarr_format=2,\n'
+                             '                           storage_options={"fo": refs, "remote_protocol": "https",\n'
+                             '                                            "remote_options": {"asynchronous": True}})'),),
+            items=(("para", "**What you should see:** 18 reference files; `time` 18 and `feature_id` 2,776,734; and "
+                            "the first three hourly streamflow values (m³/s) at Louisville for yesterday's 12Z run (UTC), "
+                            "which change from day to day. Recent runs can be a newer model version than the April 2025 "
+                            "archive: check `ds_recent.attrs[\"NWM_version_number\"]` and cite the version you used."),),
+        ),),
     ),
     Lesson(
         stem="module-03_lesson-03_retrieve-usgs-wdfn-data",
@@ -178,7 +222,28 @@ LESSONS = [
         drop_paragraphs=("The environment file lets most packages float",),
         drop_sections=("USGS Water Data API key",),
         drop_headings=("Create the conda environment",),
-        replacements={"Repeat the main steps for accessing NWM data": "Repeat the main steps for accessing USGS WDFN data"},
+        replacements={
+            "Repeat the main steps for accessing NWM data": "Repeat the main steps for accessing USGS WDFN data",
+            # the count itself is in "Going further" (below)
+            ' (count them with `daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum()`)':
+                ' ("Going further" at the end of this notebook counts them)',
+        },
+        # topic list, session 5 row 23; the lesson gives the count only as inline code in "Temporal scaling"
+        going_further=(GoingFurther("Counting qualifiers on long records", items=(
+            ("para", "This downloads the whole daily record for the Ohio River at Louisville again, as in the "
+                     "\"Temporal scaling\" example (about 6 seconds), and counts its qualifiers:"),
+            ("code", '# the whole daily record, as in "Temporal scaling" (the site is set here, since the task changed `site`)\n'
+                     'daily_record, md = waterdata.get_daily(\n'
+                     '    monitoring_location_id="USGS-03294500",\n'
+                     '    parameter_code="00060",\n'
+                     '    statistic_id="00003",\n'
+                     ')\n'
+                     'print(daily_record["qualifier"].astype(str).str.contains("ESTIMATED").sum(), "days marked [ESTIMATED]")\n'
+                     'daily_record["qualifier"].astype(str).value_counts()'),
+            ("para", "**What you should see:** about 1,100 days marked `[ESTIMATED]`, then one row per combination of "
+                     "qualifiers, most often `['ESTIMATED']` alone. Each day's qualifiers are a list, shown here as "
+                     "text, and days with no qualifier are left out of the counts."),
+        )),),
     ),
     Lesson(
         stem="module-04_lesson-02_synthesizing-federal-data-products",
@@ -547,11 +612,35 @@ def environment_file(lesson: Lesson) -> str:
             + body)
 
 
+def going_further(lesson: Lesson, items: list[Item]) -> list[Item]:
+    """Move or add the lesson's "Going further" topics into a section just before "Further reading"."""
+    if not lesson.going_further:
+        return items
+    section = [Item("heading", GOING_FURTHER, level=2), Item("para", GOING_FURTHER_NOTE)]
+    for topic in lesson.going_further:
+        section.append(Item("heading", topic.heading, level=3))
+        if topic.start:
+            begin = next((n for n, i in enumerate(items) if i.kind == "para" and i.text.startswith(topic.start)), None)
+            if begin is None:
+                raise SystemExit(f"{lesson.stem}: going_further start not found in the lesson (did it change?): "
+                                 f"{topic.start!r}")
+            end = next((n for n in range(begin + 1, len(items)) if items[n].kind == "heading"), len(items))
+            moved = items[begin:end]
+            del items[begin:end]
+            if moved[0].text.strip() == topic.start:
+                moved = moved[1:]  # the bold label is now the heading
+            lead = 1 if moved and moved[0].kind == "para" else 0  # keep the introduction first
+            section += moved[:lead] + [Item(kind, text) for kind, text in topic.before] + moved[lead:]
+        section += [Item(kind, text) for kind, text in topic.items]
+    further = next((n for n, i in enumerate(items) if i.kind == "heading" and i.text == "Further reading"), len(items))
+    return items[:further] + section + items[further:]
+
+
 def build(lesson: Lesson) -> tuple[dict[str, str], dict]:
     """Return {bundle-relative path: file text} for one lesson, and the learner-copy counts."""
     raw = (REPO_ROOT / lesson.page).read_text(encoding="utf-8")
     text, counts = prepare(raw)
-    items = parse(apply_replacements(lesson, text).splitlines())
+    items = going_further(lesson, parse(apply_replacements(lesson, text).splitlines()))
 
     title = next(i.text for i in items if i.kind == "heading" and i.level == 1)
     first_section = next(n for n, i in enumerate(items) if i.kind == "heading" and i.level == 2)
@@ -576,7 +665,7 @@ def build(lesson: Lesson) -> tuple[dict[str, str], dict]:
     scaffold = load_scaffold(lesson)
     if solution_cells:
         if scaffold is None:
-            raise SystemExit(f"{lesson.stem}: no scaffold; write scaffolds/{lesson.stem}.yml (see this script's docstring)")
+            raise SystemExit(f"{lesson.stem}: no scaffold; write teaching-materials/how-to-build/scaffolds/{lesson.stem}.yml (see this script's docstring)")
         if len(scaffold) != len(solution_cells):
             raise SystemExit(f"{lesson.stem}: scaffold has {len(scaffold)} try_it entries; the lesson has "
                              f"{len(solution_cells)} example-answer code blocks")

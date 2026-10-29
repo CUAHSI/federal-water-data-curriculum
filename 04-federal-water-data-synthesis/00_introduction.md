@@ -48,11 +48,6 @@ Review the important concept descriptions.
 Review the important concept descriptions.
 :::
 
-:::{admonition} Partner review (USGS): Important concepts and terminology
-:class: important
-Review the important concept descriptions. - See edits. I think it makes more sense (and aligns with Module 2 to say that the version for USGS data is the `last_modified` date and the date accessed by the user)
-:::
-
 :::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
