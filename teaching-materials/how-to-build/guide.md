@@ -11,7 +11,7 @@ the notebooks through HydroShare, so each has to stand on its own.
 | Output | Its job | Where (`teaching-materials/materials/`) |
 |---|---|---|
 | **Deck** | The important concepts and points, presented live | `slides/`, one `.pptx` per session; shared through Canvas |
-| **Notebook** | Practising the code, during the session's live coding and after | `notebooks/`, one `.ipynb` and `_environment.yml` per lesson with code; shared through HydroShare |
+| **Notebook** | Practising the code, during the session's live coding and after | `notebooks/`, one `.ipynb` per lesson with code, and one `environment.yml` for them all; shared through HydroShare |
 | **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `readings/`, a Word document exported to PDF; the PDF is shared through Canvas |
 | **Quiz** | A formative check per module, aligned to its objectives | `quizzes/`, `text2qti` text, QTI zip and answer key; imported into Canvas |
 | **Instructor guide** | Prep for a new or substitute instructor (not for learners) | `instructor-guide/` |
@@ -36,7 +36,7 @@ What goes where is decided per topic in the **topic lists**, not by whoever runs
 teaching-materials/
 ├── materials/               WHAT YOU USE (local only, except the instructor guide)
 │   ├── slides/              session decks
-│   ├── notebooks/           one notebook and environment file per lesson with code
+│   ├── notebooks/           one notebook per lesson with code, one course environment.yml
 │   ├── readings/            module readings, Word and PDF
 │   ├── quizzes/             Canvas quizzes and answer keys
 │   └── instructor-guide/    prep for a new or substitute instructor (committed)
@@ -50,7 +50,7 @@ teaching-materials/
     ├── notebook-prompt.md   the prompts that build or update one notebook, and the lesson notes
     ├── reading-prompt.md    the prompts that build or update one module reading (Word)
     ├── review-checklist.md  what to check before a deck is used
-    ├── tools/               check_topics, prepare_learner_copy, check_stale
+    ├── tools/               check_topics, prepare_learner_copy, merge_environments, check_stale
     ├── manifest.json        what each committed output was built from
     ├── templates/           the course deck template (committed); reading template and example decks (local only)
     └── to-update/           existing decks, notebooks or readings to update rather than rebuild (local only)
@@ -72,7 +72,7 @@ Some builders need tools that the lesson environments don't include. Set them up
 | Skill | Needs |
 |---|---|
 | `build-slides` | Your template and example decks in `how-to-build/templates/` (see "Templates" below); `python-pptx` in any scratch Python; `python-docx` too, for readings; PowerPoint and Word (or LibreOffice) to export to PDF for checking |
-| `build-notebooks` | The session's deck; `python-pptx` and `nbformat` in any scratch Python; `papermill` in **each** lesson environment; the credentials below |
+| `build-notebooks` | The session's deck; `python-pptx` and `nbformat` in any scratch Python; the course environment `open-water-data` with `papermill`; the credentials below |
 | `build-quizzes` | [`text2qti`](https://pypi.org/project/text2qti/) |
 | `build-instructor-guide` | nothing extra |
 
@@ -81,9 +81,11 @@ Install the scratch tools into any Python on your PATH (conda `base` is fine):
 
 ### Lesson environments and papermill
 
-The `environments/*.yml` files are the recipes learners build their environments from, and each notebook ships
-with a copy. Your installed environments are your own copies built from those recipes. Add testing tools to your
-copies only, never to the `.yml` files.
+The `environments/*.yml` files are the lesson recipes, one per lesson so each lesson stays modular. Learners get
+them merged into one course environment, `open-water-data` (`tools/merge_environments.py` writes
+`materials/notebooks/environment.yml`). Lesson authors test in the lesson environments; notebook builds test in
+the course environment. Your installed environments are your own copies built from those recipes. Add testing
+tools to your copies only, never to the `.yml` files.
 
 1. **Make sure your environments match the recipes.** Create any that are missing, and update any built from
    an older `.yml`:
@@ -91,21 +93,29 @@ copies only, never to the `.yml` files.
    conda env create -f environments/m03-swot.yml          # if m03-swot doesn't exist yet
    conda env update -n m03-swot -f environments/m03-swot.yml --prune   # if it exists but may be out of date
    ```
-   Do the same for `m03-nwm`, `m03-wdfn` and `m04-synthesis` (`conda env list` shows which you have). `--prune`
-   removes packages the `.yml` doesn't list, papermill included, so repeat step 2 whenever you repeat step 1.
+   Do the same for `m03-nwm`, `m03-wdfn` and `m04-synthesis` (`conda env list` shows which you have). For the
+   course environment, merge first:
+   ```bash
+   python teaching-materials/how-to-build/tools/merge_environments.py
+   conda env create -f teaching-materials/materials/notebooks/environment.yml     # or: conda env update -n open-water-data -f ... --prune
+   ```
+   `--prune` removes packages the `.yml` doesn't list, papermill included, so repeat step 2 whenever you repeat
+   step 1. The course environment is large: with conda older than 23.10 (`conda --version`), add
+   `--solver=libmamba` to these commands, or the classic solver can run for over 20 minutes without finishing.
+   With libmamba it takes about 10 minutes, mostly downloads.
 2. **Add papermill without changing anything else.** `--freeze-installed` stops conda from upgrading or
    downgrading the packages already installed, so your environment keeps the learners' versions. (conda still
    refreshes `ca-certificates` and `certifi`; that's expected and harmless.)
    ```bash
-   for e in m03-swot m03-nwm m03-wdfn m04-synthesis; do
+   for e in m03-swot m03-nwm m03-wdfn m04-synthesis open-water-data; do
      conda install -y -n "$e" -c conda-forge --freeze-installed papermill ipykernel
    done
    ```
    If conda says it can't install without changing other packages, stop and ask: don't remove the flag.
-3. **Run each notebook inside its lesson's environment**, from a short working folder (SWOT file names overflow
+3. **Run each notebook inside the course environment**, from a short working folder (SWOT file names overflow
    Windows' 260-character path limit in deep folders):
    ```bash
-   conda run -n m03-swot papermill -k python3 --cwd <short-dir> <notebook>.ipynb <scratch-dir>/<notebook>_out.ipynb
+   conda run -n open-water-data papermill -k python3 --cwd <short-dir> <notebook>.ipynb <scratch-dir>/<notebook>_out.ipynb
    ```
 
 ### Credentials
@@ -277,8 +287,9 @@ fixes it needs until its lesson is corrected).
 
 - **Build:** in Claude Code, `/build-notebooks N` (N = 3–6). It reads the deck's live-coding slides, shows you a
   plan, then writes one notebook per lesson with code into `teaching-materials/materials/notebooks/<module
-  folder>/`, with the lesson's environment file next to it, and tests it in that environment. On the web or
-  desktop, attach the deck, the topic list, the learner copy of the lesson and its environment file, and paste
+  folder>/`, merges the lesson environments into the course's `environment.yml`, and tests the notebook in that
+  environment. On the web or desktop, run `merge_environments.py` yourself, then attach the deck, the topic list,
+  the learner copy of the lesson and the merged `environment.yml`, and paste
   the Build prompt and the lesson notes.
 - **What's in a notebook:** setup and credentials cells, the lesson sections that have code (with the lesson's
   headings, so the live-coding slides can name them), markers where each live-coding stretch starts and ends,
@@ -288,8 +299,12 @@ fixes it needs until its lesson is corrected).
 - **Update:** `/build-notebooks N update`, after a lesson, topic-list or deck change. It works on the notebook in
   `how-to-build/to-update/` if you put one there, otherwise on yours in `materials/notebooks/`. To protect a cell
   you edited by hand, add the tag `keep` to it (in JupyterLab, the property inspector's "Cell tags").
-- **Save:** the notebook and environment file stay in `materials/notebooks/` (git-ignored). Upload both to the
-  course's HydroShare resource, keeping the module folders. The notebook's metadata (`fwdc`) records the commit
+- **One environment for learners:** the repo keeps one environment per lesson (`environments/`), so lessons stay
+  modular, but learners get one: `tools/merge_environments.py` combines them into
+  `materials/notebooks/environment.yml` (conda environment `open-water-data`). Change a package in the lesson's
+  file, never in the merged one. The script stops if two lessons ask for conflicting versions.
+- **Save:** the notebooks and `environment.yml` stay in `materials/notebooks/` (git-ignored). Upload them to the
+  course's HydroShare resource, keeping the module folders and `environment.yml` at the top. The notebook's metadata (`fwdc`) records the commit
   and deck it was built from.
 
 ## Quizzes and the instructor guide
@@ -353,7 +368,7 @@ The naming rule is in STYLE_GUIDE §11. **Module slugs** are the module folder n
 turned into hyphens and punctuation dropped: *Retrieve NASA SWOT data* → `retrieve-nasa-swot-data`. Module 4
 lesson 2's slug is shortened to `synthesizing-federal-data-products`.
 
-| Session | Deck (`slides/`) | Notebooks (`notebooks/<module folder>/`, each with `_environment.yml`) |
+| Session | Deck (`slides/`) | Notebooks (`notebooks/<module folder>/`; `notebooks/environment.yml` serves them all) |
 |---|---|---|
 | 1 | `session-01_module-01_data-best-practices.pptx` | |
 | 2 | `session-02_module-02_federal-water-data-landscape.pptx` | |

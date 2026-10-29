@@ -1,6 +1,6 @@
 ---
 name: build-notebooks
-description: Build or update a session's notebooks (one per Module 3 and 4 lesson with code, with the "Now you try it" example answer collapsed under each starter) and their environment files, for HydroShare, from the lesson and the session's deck, using teaching-materials/how-to-build/notebook-prompt.md. Notebooks are built locally and never committed. Run after build-slides. Arguments - a session number (3–6), or "N update".
+description: Build or update a session's notebooks (one per Module 3 and 4 lesson with code, with the "Now you try it" example answer collapsed under each starter) and the one course environment file, for HydroShare, from the lesson and the session's deck, using teaching-materials/how-to-build/notebook-prompt.md. Notebooks are built locally and never committed. Run after build-slides. Arguments - a session number (3–6), or "N update".
 ---
 
 # Build a session's notebooks
@@ -19,7 +19,7 @@ done for them. The lessons are the source of truth. If a notebook needs differen
     - **The session's deck exists** in `teaching-materials/materials/slides/` (the file name in the topic
       list's header). If it doesn't, stop and say to run `/build-slides N` first: the notebook is written
       around the deck's live-coding slides and leaves out what the deck explains.
-    - The lesson's environment exists with papermill (`guide.md`, "Before you rebuild"), and the credentials
+    - The course environment `open-water-data` exists with papermill (`guide.md`, "Before you build"), and the credentials
       the lesson notes list are set.
 2. **Make a learner copy** of the lesson page with `prepare_learner_copy.py`, into a scratch directory outside
    the repo. Note the counts for the report.
@@ -27,9 +27,11 @@ done for them. The lessons are the source of truth. If a notebook needs differen
    title, text, speaker notes, and the Comments property.
 4. **Follow the Build prompt** in `notebook-prompt.md` for each of the session's notebooks.
     - After step 2 of the prompt (the plan), stop and show it unless the user said to go straight through.
-    - Test with papermill in the lesson's environment, from a short working folder (`--cwd`, e.g.
-      `%LOCALAPPDATA%\Temp\fwr\<env>`): SWOT file names overflow Windows' 260-character path limit in deep folders.
-5. **Save, don't commit.** Notebooks and their environment files live in `teaching-materials/materials/notebooks/`,
+    - Run `python teaching-materials/how-to-build/tools/merge_environments.py` to write the course
+      environment. If its packages changed, update `open-water-data` from it before testing.
+    - Test with papermill in `open-water-data`, from a short working folder (`--cwd`, e.g.
+      `%LOCALAPPDATA%\Temp\fwr\<notebook>`): SWOT file names overflow Windows' 260-character path limit in deep folders.
+5. **Save, don't commit.** Notebooks and `environment.yml` live in `teaching-materials/materials/notebooks/`,
    which is git-ignored: never commit them or add them to `manifest.json`. The notebook's `fwdc` metadata records
    the build commit and the deck. Commit only changes to the prompt, the lesson notes or this skill.
 6. **Report** (to the user, and in a PR if there is one): the prompt's report, the learner-copy counts, and the

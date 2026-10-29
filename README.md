@@ -54,7 +54,7 @@ folders:
 
 - **`materials/`: what learners and instructors use.**
   - `slides/`: one PowerPoint deck per session, with speaker notes
-  - `notebooks/`: one notebook per lesson with code, with its conda environment file, for HydroShare
+  - `notebooks/`: one notebook per lesson with code, plus one conda environment file for all of them, for HydroShare
   - `readings/`: readings to cover details the sessions don't cover (Word, exported to PDF)
   - `quizzes/`: one quiz per module, as `text2qti` text plus a QTI zip for Canvas, with answer keys for
     instructors

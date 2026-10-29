@@ -1,10 +1,14 @@
 # Prompts: build or update one notebook
 
 Each lesson with code has one notebook, the place learners run the code. They get it on HydroShare, with only the
-session's slides to go with it: no website, no repo, no README. The notebook and its `_environment.yml` are built
-locally and **never committed**, like the decks.
+session's slides to go with it: no website, no repo, no README. The notebooks are built locally and **never
+committed**, like the decks.
 
-| Session | Notebook (`materials/notebooks/<module folder>/`) | Lesson page | Environment |
+All the notebooks share one conda environment, `open-water-data`, from one `environment.yml` at the top of
+`materials/notebooks/`. The repo keeps one environment per lesson (`environments/*.yml`, the table's last column)
+so each lesson stays modular; `tools/merge_environments.py` merges them into the course environment.
+
+| Session | Notebook (`materials/notebooks/<module folder>/`) | Lesson page | Lesson environment |
 |---|---|---|---|
 | 3 | `module-03_lesson-01_retrieve-nasa-swot-data` | `03-federal-water-data-access-retrieval/01_access_nasa_swot.md` | `m03-swot` |
 | 4 | `module-03_lesson-02_retrieve-noaa-nwm-data` | `03-federal-water-data-access-retrieval/02_access_noaa_nwm.md` | `m03-nwm` |
@@ -41,7 +45,9 @@ stretches and afterwards on their own.
 2. **Topic list:** `teaching-materials/how-to-build/topics/session-0{N}.md`.
 3. **Lesson page:** the learner copy of the page (made with `teaching-materials/how-to-build/tools/prepare_learner_copy.py`).
    It is the only source of content.
-4. **Environment:** `environments/<env>.yml` (the table above).
+4. **Course environment:** `teaching-materials/materials/notebooks/environment.yml`, made by
+   `python teaching-materials/how-to-build/tools/merge_environments.py` from the lesson environments. Run it at
+   every build, so the file matches `environments/`.
 5. **Lesson notes:** the section at the end of this file. It gives the notebook's learning goal, its credentials,
    and fixes the notebook needs until the lesson is corrected.
 
@@ -83,12 +89,12 @@ stretches and afterwards on their own.
    (lesson notes), and a 2–3 sentence introduction from the lesson's opening paragraph. End with one sentence
    saying how to use it: the slides explain, this notebook is for running the code, run the cells in order.
 2. **Before you start** (`##`), short, because the HydroShare "How to" guide walks through setup:
-    - the conda environment (`<env>`), the `<stem>_environment.yml` file next to the notebook, and the two
-      commands to create it and its kernel, run in a terminal in the notebook's folder, then choosing the
-      **Python (<env>)** kernel (the two Module 4 notebooks share `m04-synthesis`: create it once):
+    - the course's conda environment, `open-water-data`, from `environment.yml` in the folder above the
+      notebook. It serves every notebook in the course, so it only needs creating once. The two commands,
+      run in a terminal in that folder, then choosing the **Python (open-water-data)** kernel:
       ```bash
-      conda env create -f <stem>_environment.yml
-      conda run -n <env> python -m ipykernel install --user --name <env> --display-name "Python (<env>)"
+      conda env create -f environment.yml
+      conda run -n open-water-data python -m ipykernel install --user --name open-water-data --display-name "Python (open-water-data)"
       ```
     - downloads (size, where they land) and run time, from the lesson notes;
     - results that depend on the day you run them, from the lesson notes.
@@ -133,12 +139,11 @@ stretches and afterwards on their own.
 
 **Files**
 - `teaching-materials/materials/notebooks/<module folder>/{NOTEBOOK}.ipynb` (git-ignored: never committed).
-  nbformat 4.4, outputs cleared, metadata only `kernelspec` (`name` and `display_name` "Python (<env>)") and
+  nbformat 4.4, outputs cleared, metadata only `kernelspec` (`name` `open-water-data`, `display_name` "Python (open-water-data)") and
   `"fwdc": {"built_from": "<short commit the lesson was read from>", "deck": "<deck file name>",
   "deck_built_from": "<the deck's Comments>"}`. Write it with `nbformat` from a scratch script.
-- `{NOTEBOOK}_environment.yml` next to it: `environments/<env>.yml` from its `name:` line on, with a header of
-  comment lines: the notebook it's for, the course name, and the two setup commands. Keep the `name:` and the
-  packages unchanged; no paths into the repo.
+- `teaching-materials/materials/notebooks/environment.yml`, from `merge_environments.py` (don't edit it by hand:
+  change the lesson environment and merge again).
 
 ### Steps
 
@@ -149,8 +154,8 @@ stretches and afterwards on their own.
    the text you'll keep (one line). Below it, list the lesson text you're leaving out because a slide covers it
    (with the slide title), and the starters you'll write (what each blanks). Show me the plan and wait for my
    go-ahead.
-3. **Write** the notebook and the environment file.
-4. **Test** in the lesson's environment, with credentials set (`teaching-materials/how-to-build/guide.md`,
+3. **Write** the notebook, and run `merge_environments.py`.
+4. **Test** in the course environment (`open-water-data`, created from the merged file), with credentials set (`teaching-materials/how-to-build/guide.md`,
    "Before you rebuild"):
     - Run the notebook with papermill. It should stop at the first starter with an error, and every cell
       before it should succeed.
@@ -188,12 +193,12 @@ to match the new answer.
 ### Steps
 
 1. **Inventory and plan, then stop.** List what changed since the notebook was built: `git diff <built_from> --
-   <lesson page> <topic list> environments/<env>.yml`, and, if the deck's Comments differ from the notebook's
+   <lesson page> <topic list> environments/`, and, if the deck's Comments differ from the notebook's
    `deck_built_from`, the slide titles and live-coding slides that changed. For each notebook section decide
    **keep**, **update** (say what changed), **move**, **remove** or **add**. Show me the plan and wait for my
    go-ahead.
 2. **Make the changes**, keeping the notebook's wording wherever the lesson and deck haven't changed. Update the
-   `fwdc` metadata and, if the environment changed, the environment file. Save to
+   `fwdc` metadata, and run `merge_environments.py`. Save to
    `teaching-materials/materials/notebooks/`; never overwrite the file in `how-to-build/to-update/`.
 3. **Test** as for a build: at least the sections you changed and the task, and the whole notebook if the
    environment changed.
@@ -255,8 +260,6 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - Leave out the lesson's steps for creating the environment and logging in, and their code cells (`auth =
   earthaccess.login()`, the `API_USGS_PAT` check): "Before you start" and the credentials cells replace them.
 - Leave out "For helpful context, refer back to the example rivers we covered in the overview." from the task.
-- Environment file: change "noted on the page" to "noted in the notebook", and "# optional: run the lesson in
-  Jupyter" to "# needed to run the notebook in Jupyter".
 - On Windows, SWOT downloads fail in deeply nested folders (file names are about 100 characters and Windows
   refuses paths over 260), with `FileNotFoundError: [WinError 3]`. SWOT notebooks say so in "Before you start":
   keep the folder path short (e.g. `C:\fwdc\`). For tests, run papermill with `--cwd` in a short folder.

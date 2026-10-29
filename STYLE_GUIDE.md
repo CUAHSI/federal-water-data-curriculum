@@ -115,6 +115,10 @@ One conda environment per lesson that has code, named `m<module>-<product>`:
 
 The file name and the `name:` inside the file always match.
 
+Learners get one environment for the whole course instead: `teaching-materials/how-to-build/tools/merge_environments.py`
+merges these files into `open-water-data`, shipped with the notebooks as `environment.yml`. So the lesson files
+must not conflict: when two lessons use the same package, any version constraints they give must agree.
+
 ## 6. Reproducibility and open science, throughout
 
 There are no separate exercises for this. Instead, Module 1's ideas show up naturally whenever we introduce
@@ -217,7 +221,7 @@ then rebuild. Everything lives in `teaching-materials/` and isn't part of the we
 **Names say what a file is without decoding.** Use whole words, keep the numbers, and use lowercase with
 hyphens inside a part and underscores between parts:
 `module-03_lesson-01_retrieve-nasa-swot-data.ipynb`, not `m03-l1-swot.ipynb`. The descriptive slug comes from
-the lesson or module title. Suffix: `_environment.yml` (next to each notebook). Module readings:
+the lesson or module title. Learners get one conda environment for every notebook (`environment.yml`, environment `open-water-data`), merged from the lesson environments. Module readings:
 `module-03_reading_federal-water-data-access-retrieval.docx`. Quizzes: `module-01_quiz_data-best-practices.txt` (plus its `.zip`). Conda environment
 *names* inside the files stay short (`m03-swot`), because people type them.
 
