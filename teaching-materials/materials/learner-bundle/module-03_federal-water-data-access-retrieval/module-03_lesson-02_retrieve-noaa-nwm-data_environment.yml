@@ -1,5 +1,5 @@
 # Conda environment for module-03_lesson-02_retrieve-noaa-nwm-data.ipynb (and its _solutions copy),
-# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# from Reproducible Workflows with Open Water Data (CUAHSI). See the bundle README.
 # Create:  conda env create -f module-03_lesson-02_retrieve-noaa-nwm-data_environment.yml
 # Kernel:  conda run -n m03-nwm python -m ipykernel install --user --name m03-nwm --display-name "Python (m03-nwm)"
 name: m03-nwm

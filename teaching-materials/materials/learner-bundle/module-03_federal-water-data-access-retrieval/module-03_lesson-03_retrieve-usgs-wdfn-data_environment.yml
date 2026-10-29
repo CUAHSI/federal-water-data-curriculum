@@ -1,5 +1,5 @@
 # Conda environment for module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb (and its _solutions copy),
-# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.
+# from Reproducible Workflows with Open Water Data (CUAHSI). See the bundle README.
 # Create:  conda env create -f module-03_lesson-03_retrieve-usgs-wdfn-data_environment.yml
 # Kernel:  conda run -n m03-wdfn python -m ipykernel install --user --name m03-wdfn --display-name "Python (m03-wdfn)"
 name: m03-wdfn

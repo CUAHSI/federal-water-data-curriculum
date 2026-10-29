@@ -8,7 +8,7 @@ For each Module 3 and 4 lesson with code, this writes to ``teaching-materials/ma
 
 Each notebook starts from the learner copy of the page (``prepare_learner_copy.prepare``: no internal callouts,
 no internal course links) and has, in order: a title cell (title, learning goal, environment, introduction), an
-attribution and licence cell, a credentials cell, then the lesson in order. Headings keep the lesson's text, every
+attribution and license cell, a credentials cell, then the lesson in order. Headings keep the lesson's text, every
 ``python`` code block becomes a code cell, and prose is condensed by these rules:
 
 - each paragraph keeps at most ``SENTENCE_BUDGET`` sentences (a sentence ending in ":" that leads into a table,
@@ -496,7 +496,7 @@ def title_cell(lesson: Lesson, title: str, intro: str, solutions: bool, has_try_
             "**Student notebook.** \"Now you try it\" cells are starters: fill in the `...` blanks, guided by the "
             "`# TODO:` comments. The solutions notebook in the same folder has an example answer.")
     return (f"# {title}\n\n"
-            f"*Federal Open Water Data for Researchers* (CUAHSI), session {lesson.session}.\n\n"
+            f"*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* (CUAHSI), session {lesson.session}.\n\n"
             f"**Learning goal:** {lesson.goal}\n\n"
             f"**Environment:** run this notebook in the `{lesson.env}` conda environment, created from "
             f"`{env_file}` in this folder (see the bundle README). Run the cells in order: later cells reuse "
@@ -505,10 +505,10 @@ def title_cell(lesson: Lesson, title: str, intro: str, solutions: bool, has_try_
 
 
 def attribution_cell(adapted: list[str]) -> str:
-    lines = ["## Attribution and licence", "",
-             "This notebook is part of *Federal Open Water Data for Researchers*, a CUAHSI course, and is released "
+    lines = ["## Attribution and license", "",
+             "This notebook is part of *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a CUAHSI course, and is released "
              "under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) (GPL-3.0). You "
-             "may use, change and share it under the same licence."]
+             "may use, change and share it under the same license."]
     if adapted:
         lines += ["", "It adapts code and ideas from these sources:", ""]
         lines += [f"- {a}" for a in adapted]
@@ -605,7 +605,7 @@ def environment_file(lesson: Lesson) -> str:
                 .replace("# optional: run the lesson in Jupyter", "# needed to run the notebooks in Jupyter"))
     file = f"{lesson.stem}_environment.yml"
     return (f"# Conda environment for {lesson.stem}.ipynb (and its _solutions copy),\n"
-            f"# from Federal Open Water Data for Researchers (CUAHSI). See the bundle README.\n"
+            f"# from Reproducible Workflows with Open Water Data (CUAHSI). See the bundle README.\n"
             f"# Create:  conda env create -f {file}\n"
             f"# Kernel:  conda run -n {lesson.env} python -m ipykernel install --user --name {lesson.env} "
             f"--display-name \"Python ({lesson.env})\"\n"

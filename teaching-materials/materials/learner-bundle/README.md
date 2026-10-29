@@ -1,6 +1,6 @@
-# Federal Open Water Data for Researchers: learner notebooks
+# Reproducible Workflows with Open Water Data: learner notebooks
 
-This resource holds the hands-on notebooks for *Federal Open Water Data for Researchers*, a CUAHSI course on finding,
+This resource holds the hands-on notebooks for *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access*, a CUAHSI course on finding,
 retrieving and combining open water data from three Federal agencies: NASA (the SWOT satellite mission), NOAA (the
 National Water Model, NWM) and USGS (Water Data for the Nation, WDFN). Each notebook follows one lesson, so a slide
 that says "notebook section *Programmatic data downloads*" means the section with that heading.
@@ -117,17 +117,17 @@ the unfinished task cell stops a "Run All", so run the Going further cells one b
 The Module 4 lessons have no "Now you try it" task, so their student and solutions notebooks are the same. The Module
 4 lesson 2 notebook ends with a checklist for adapting the case study to another river, a good exercise of its own.
 
-## Licence
+## License
 
 The notebooks are released under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html)
 (GPL-3.0). They adapt code from the CUAHSI notebooks repository
 ([github.com/CUAHSI/notebooks](https://github.com/CUAHSI/notebooks), GPL-3.0) and from agency tutorials; each
-notebook credits its sources in its "Attribution and licence" section and lists them under "Further reading".
+notebook credits its sources in its "Attribution and license" section and lists them under "Further reading".
 
 ## How to cite
 
-Platt, L., Wong, K., Vaarre-Lamoureux, K., and Bogan, A. *Federal Open Water Data for Researchers* (version
-pilot-2026-11) [learning material]. CUAHSI.
+Platt, L., Wong, K., Vaarre-Lamoureux, K., and Bogan, A. *Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* (version
+pilot-2026-11) [Learning material (online course)]. CUAHSI. GPL-3.0.
 
 When you publish results made with these notebooks, also cite the datasets you used. The Module 3 notebooks' "Understanding
 what you downloaded" sections and the Module 4 lesson 2 notebook's "Saving what you derived" section say how: the SWOT
@@ -136,10 +136,10 @@ collection DOIs, the NWM model version, configuration and access date, and the U
 
 ## Acknowledgements
 
-*Federal Open Water Data for Researchers* was developed by CUAHSI with contributions from colleagues at NOAA, USGS and
+*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI with contributions from colleagues at NOAA, USGS and
 NASA: Lindsay Platt, Kimberlee Wong, Kaysa Vaarre-Lamoureux, Abner Bogan, Julia Masterman, Irene Garousi-Nejad, Tony
-Castronova and Danielle Tijerina-Kreuzer (CUAHSI); Jason Regina (NOAA); and Elise Hinman, Cee Nell and Michael Mahoney
-(USGS). Contributions from Federal agency staff are acknowledged with thanks. Acknowledgment does not imply endorsement
+Castronova and Danielle Tijerina-Kreuzer (CUAHSI); Jason Regina (NOAA); Elise Hinman, Cee Nell and Michael Mahoney
+(USGS); and NASA staff. Contributions from federal agency staff are acknowledged with thanks. Acknowledgment does not imply endorsement
 of this course by NASA, NOAA or USGS.
 
 This material is based upon work supported by the U.S. National Science Foundation under
