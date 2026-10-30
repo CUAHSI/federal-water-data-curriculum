@@ -5,7 +5,6 @@
 - earthaccess contributors. (n.d.). *earthaccess documentation* (software). https://earthaccess.readthedocs.io/en/latest/ (accessed 2026-10-08).
 - NASA Earthdata. (n.d.). *Earthdata homepage*. https://www.earthdata.nasa.gov/ (accessed 2026-10-26).
 - NASA Earthdata. (n.d.). *Data Use Guidance*. https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance (accessed 2026-10-08).
-- NASA Earthdata. (n.d.). *Earthdata Forum*. https://forum.earthdata.nasa.gov/ (accessed 2026-10-08).
 - NASA Earthdata. (n.d.). *SWOT Documentation and Resources*. https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources (accessed 2026-10-08).
 - NASA Science. (n.d.). *SWOT (Surface Water and Ocean Topography)* mission page. https://science.nasa.gov/mission/swot/ (accessed 2026-10-08).
 - PO.DAAC. (n.d.). *Hydrocron documentation* (software). NASA Physical Oceanography Distributed Active Archive Center. https://podaac.github.io/hydrocron/ (accessed 2026-10-08).
