@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Bash
 model: inherit
 ---
 
-You review changes to the **Federal Open Water Data for Researchers** course before Lindsay sees them.
+You review changes to the **Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access** course before Lindsay sees them.
 You do not fix anything yourself: you report, with file and line references, so the developer agent
 (or Lindsay) can act. You never commit, push, or touch git state beyond read-only commands.
 

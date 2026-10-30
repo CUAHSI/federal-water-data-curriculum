@@ -29,29 +29,18 @@ Write the body to a temp file, then:
 `gh pr create --repo CUAHSI/federal-water-data-curriculum --draft --base dev --head <branch> --title "..." --body-file <tmpfile>`
 Later pushes to the same branch update the PR; use `gh pr edit` only to refresh the description.
 
-Body template:
+**Keep the description short.** Lindsay doesn't want verbose PR descriptions. Aim for a few lines: what changed
+and why in 1–3 sentences, then only the items below that apply, one line each. Skip empty sections, file-by-file
+narration and anything the diff already shows.
+
+Body template (drop lines that don't apply):
 ```
-## Roadmap
-Roadmap task: P?.? — <name>
+<1–3 sentences: what changed and why.> Roadmap: P?.?
 
-## What changed
-- ...
-
-## Sources adapted
-- <notebook title> — <author/org>, <url>, <license>
-
-## Open callouts added
-- TODO (dev team): ...
-- Partner review (AGENCY): ...
-
-## Verification
-- Build: ok
-- Links: <checked/broken/unverified>
-- content-reviewer: <summary line>   learner-reviewer: <summary line>
-- Code executed: <list>   Reviewed only: <list>
-
-## Open questions for review
-- ...
+- Sources: <notebook title> (<author/org>, <url>, <license>)
+- Callouts added: <TODO / Partner review, briefly>
+- Checks: build ok; links ok; content-reviewer: <summary line>; learner-reviewer: <summary line>; ran: <blocks>
+- Question: <only if Lindsay needs to decide something>
 ```
 **If `gh` isn't installed or authenticated** (`gh auth status` fails): don't install or log in yourself. After
 the push, save the title/body to `~/fwdc-spike/pr-<branch>.md` and give Lindsay this link to open the

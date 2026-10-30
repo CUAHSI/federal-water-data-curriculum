@@ -49,7 +49,7 @@ ROADMAP.md                             Module 4 → Module 3 plan to the 10/12 f
    The preview appears at `https://cuahsi.github.io/federal-water-data-curriculum/`.
 4. **Local tools:** conda/mamba, Node + `npm install -g mystmd`, `gh auth login`.
    For building teaching materials (`python-pptx` and `python-docx`, `text2qti`, and `papermill` + `ipykernel` in each lesson
-   environment), see "Before you rebuild" in `teaching-materials/README.md`.
+   environment), see "Before you build" in `teaching-materials/how-to-build/guide.md`.
 5. **Credentials** — see "Windows: credentials" below (they never go in the repo).
 6. **Update Claude Code** (`claude update`) so auto mode is available.
 

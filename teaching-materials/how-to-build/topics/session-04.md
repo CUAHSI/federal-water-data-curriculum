@@ -4,7 +4,7 @@
 - **Deck:** `teaching-materials/materials/slides/session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
-- **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` (learner bundle)
+- **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` (`materials/notebooks/`)
 - **Pages:** `03/02` = `03-federal-water-data-access-retrieval/02_access_noaa_nwm.md`
 
 **Where:** `deck`, `notebook`, `reading`, `how-to`, `cut` (see session-01.md). **Min** adds up to the session
@@ -28,7 +28,7 @@ length.
 | 14 | Why NWM downloads cost what they cost | 03/02 § Why NWM downloads cost what they cost | deck | 4 | One summary table (data transferred and time per route) |
 | 15 | Temporal and spatial scaling | 03/02 § Temporal scaling, § Spatial scaling | deck | 4 |  |
 | 16 | Parallelization | 03/02 § Parallelization | deck | 1 |  |
-| 17 | Now you try it: the Willamette | 03/02 § Now you try it | deck + notebook | 4 | Task slide; answers in the solutions notebook |
+| 17 | Now you try it: the Willamette | 03/02 § Now you try it | deck + notebook | 4 | Task slide; the example answer is collapsed under the task in the notebook |
 | 18 | Recap and what's next | – | deck | 2 |  |
 | 19 | Further reading and questions | 03/02 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
 | 20 | NOAA's published kerchunk references | 03/02 § Kerchunk references… | notebook | – | Optional "Going further" section |

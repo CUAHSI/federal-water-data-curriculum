@@ -1,4 +1,4 @@
-# Roadmap — Federal Open Water Data for Researchers
+# Roadmap — Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access
 
 **Goal:** rough cut of Modules 3–4 **today (Wed 10/7)** across three parallel sessions; review, PRs and polish
 with Lindsay **Thu 10/8**; Lindsay out Fri; Sat–Mon buffer before the 10/13 sweep and partner review.
@@ -114,7 +114,7 @@ text; don't rewrite sections that are already filled in.
       behalf, and the push/PR requests ready to approve. *(Ticked for Lane B per Lindsay, 2026-10-08.)*
 
 ## Later — first cut complete (Fri–Mon)
-- [ ] L1 `LICENSE` (GPL-3.0 text from gnu.org) + "Sources and credits" page listing every notebook and agency resource.
+- [x] L1 `LICENSE` (GPL-3.0 text from gnu.org) + "Sources and credits" page listing every notebook and agency resource. *(LICENSE in #95; sources are on the References page (#65) and Acknowledgements (#95).)*
 - [ ] L2 Full `content-reviewer` pass and execute every example on `dev`.
 - [ ] L3 Status summary for the 10/13 sweep.
 
@@ -305,26 +305,26 @@ PRs into `dev`. Lane branches don't edit `ROADMAP.md`; each PR lists its task ID
       PDFs, so no LaTeX is needed. No longer needed: readings are Word documents (#93).
 
 ### P8.0 — Setup · branch `chore/p8-setup` · about 45 min
-- [ ] P8.0.1 Create `teaching-materials/` with `materials/` (`slides/`, `readings/`, `learner-bundle/`,
+- [x] P8.0.1 Create `teaching-materials/` with `materials/` (`slides/`, `readings/`, `learner-bundle/`,
       `quizzes/`, `instructor-guide/`), `how-to-build/` (`tools/`, `manifest.json`) and a `README.md`. Exclude `teaching-materials/` from the MyST site build
       in `myst.yml`.
-- [ ] P8.0.2 Add **STYLE_GUIDE §11 Teaching materials** (text below) and add `teaching-materials/` to the
+- [x] P8.0.2 Add **STYLE_GUIDE §11 Teaching materials** (text below) and add `teaching-materials/` to the
       CLAUDE.md repo map.
-- [ ] P8.0.3 `teaching-materials/how-to-build/manifest.json` plus `teaching-materials/how-to-build/tools/check_stale.py`:
+- [x] P8.0.3 `teaching-materials/how-to-build/manifest.json` plus `teaching-materials/how-to-build/tools/check_stale.py`:
     - The manifest has one entry per output: `output`, `kind`, `sources` (lesson paths, images and environment
       files it was built from), `source_commit`, `built_at` and `builder` (skill name).
     - `check_stale.py` uses only the standard library. For each entry it runs
       `git diff --quiet <source_commit> HEAD -- <sources>` and prints the stale outputs, with an exit code of 1
       if any are stale. It also takes `--update <output>` to rewrite an entry after a rebuild.
-- [ ] P8.0.4 `teaching-materials/how-to-build/tools/prepare_learner_copy.py`: copies a page for learner-facing use. It:
+- [x] P8.0.4 `teaching-materials/how-to-build/tools/prepare_learner_copy.py`: copies a page for learner-facing use. It:
     - removes every `TODO (dev team)` and `Partner review (…)` admonition
     - turns internal course links (relative links to other pages, `{term}`, `{ref}`, `{doc}` roles, links to
       the References or Glossary pages) into plain text, keeping external `http(s)` links
     - reports the counts of both
 
     Every learner-facing builder uses it.
-- [ ] P8.0.5 Write down the **session map** and the **file names** (§11) in `teaching-materials/README.md`, so
-      the lanes agree on names before they start.
+- [x] P8.0.5 Write down the **session map** and the **file names** (§11) in `teaching-materials/README.md`, so
+      the lanes agree on names before they start. *(#91; the README was later folded into `how-to-build/guide.md` in #94.)*
 
 ### Lane E — Slides and readings · branch `content/p8-slides` · owns `teaching-materials/how-to-build/` (guide, prompts, design rules, checklist, topics, `check_topics.py`)
 Decks (PowerPoint) and readings (Word) are built locally from the topic lists and never committed; see
@@ -339,21 +339,21 @@ Decks (PowerPoint) and readings (Word) are built locally from the topic lists an
 
 ### Lane F — Learner bundle · branch `content/p8-learner-bundle` · owns `teaching-materials/materials/learner-bundle/*`, `teaching-materials/how-to-build/tools/build_notebooks.py`
 Use the `build-notebooks` skill.
-- [ ] P8.F1 `build_notebooks.py` plus scaffold files (in `teaching-materials/how-to-build/scaffolds/`); a student notebook and a solutions notebook for each
+- [x] P8.F1 `build_notebooks.py` plus scaffold files (in `teaching-materials/how-to-build/scaffolds/`); a student notebook and a solutions notebook for each
       Module 3 and 4 lesson that has code; environment files.
-- [ ] P8.F2 Run every solutions notebook top to bottom in its environment. Run every student notebook up to
+- [x] P8.F2 Run every solutions notebook top to bottom in its environment. Run every student notebook up to
       the first "Now you try it" cell.
-- [ ] P8.F3 Bundle `README.md`, written for HydroShare (what's here, how to open it, credentials, licence,
+- [x] P8.F3 Bundle `README.md`, written for HydroShare (what's here, how to open it, credentials, licence,
       how to cite).
-- [ ] P8.F4 Manifest entries; review; draft PR.
+- [x] P8.F4 Manifest entries; review; draft PR. *(#94 reshaped Lane F: one notebook per lesson, built locally from `notebook-prompt.md` after the deck and never committed, with the example answer collapsed under each starter; no solutions notebooks, bundle README or manifest entries.)*
 
 ### Lane G — Credits and orientation · branch `docs/p8-credits-readme` · owns `acknowledgements.md`, `CITATION.cff`, root `README.md`, the authors fields
-- [ ] P8.G1 Remove the per-page authors. They probably come from `authors:` in `myst.yml` (project
+- [x] P8.G1 Remove the per-page authors. They probably come from `authors:` in `myst.yml` (project
       frontmatter) and/or page frontmatter; remove them everywhere.
-- [ ] P8.G2 Add `acknowledgements.md` (text below) to the toc, after References.
-- [ ] P8.G3 Add `CITATION.cff` with the course as learning material: Platt as contact, the
+- [x] P8.G2 Add `acknowledgements.md` (text below) to the toc, after References.
+- [x] P8.G3 Add `CITATION.cff` with the course as learning material: Platt as contact, the
       Writing – Original Draft authors in the order below, the repo URL, GPL-3.0 and the version `pilot-2026-11`.
-- [ ] P8.G4 Update the root `README.md` to orient a newcomer:
+- [x] P8.G4 Update the root `README.md` to orient a newcomer:
     - what this repo is
     - **the website** (`0*/` pages, glossary, references; built from `dev` to GitHub Pages)
     - **teaching materials** (`teaching-materials/`; not on the website): `materials/` holds what learners and
@@ -367,17 +367,17 @@ Use the `build-notebooks` skill.
         - find stale outputs with `python teaching-materials/how-to-build/tools/check_stale.py`
     - how to contribute (fork → branch → PR into `dev`)
     - licence and how to cite
-- [ ] P8.G5 Review; draft PR.
+- [x] P8.G5 Review; draft PR. *(#95.)*
 
 ### Lane H — Module quizzes · branch `content/p8-quizzes` · owns `teaching-materials/materials/quizzes/*`
 Use the `build-quizzes` skill. Follows issue #32 (formative, retakes allowed, the correct answer always shown
 with an explanation, QTI for Canvas).
-- [ ] P8.H1 One quiz per module (Modules 1–4): about 10–15 minutes, multiple choice (mostly single answer,
+- [x] P8.H1 One quiz per module (Modules 1–4): about 10–15 minutes, multiple choice (mostly single answer,
       with 2–3 "select all that apply"), mapped to that module's
       learning objectives, with feedback on every question.
-- [ ] P8.H2 Convert each with `text2qti`; check that the QTI zips build.
-- [ ] P8.H3 An objective-coverage table and an answer-key summary per quiz in the PR (for spot-checking); manifest
-      entries; draft PR.
+- [x] P8.H2 Convert each with `text2qti`; check that the QTI zips build.
+- [x] P8.H3 An objective-coverage table and an answer-key summary per quiz in the PR (for spot-checking); manifest
+      entries; draft PR. *(#96; quizzes are built locally and never committed, so they have no manifest entries.)*
 
 ### P8.5 — Instructor guide (after E, F and H merge) · branch `content/p8-instructor-guide`
 Use the `build-instructor-guide` skill. Draft PR.
@@ -402,7 +402,7 @@ Added; the current text is in `STYLE_GUIDE.md` §11 (updated in #93 for PowerPoi
 title: Acknowledgements
 ---
 
-*Federal Open Water Data for Researchers* was developed by CUAHSI with contributions from colleagues at NOAA,
+*Reproducible Workflows with Open Water Data: NASA, NOAA, USGS River Data Access* was developed by CUAHSI with contributions from colleagues at NOAA,
 USGS and NASA. Contributions are described with the [CRediT contributor roles](https://credit.niso.org/).
 
 ## Contributors

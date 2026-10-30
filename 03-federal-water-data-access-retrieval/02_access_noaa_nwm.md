@@ -75,7 +75,6 @@ dependencies:
   - pandas
   - requests
   - matplotlib
-  - nest-asyncio  # only needed when running hydrotools inside Jupyter
   - ipykernel     # optional: run the lesson in Jupyter
   # dependencies of hydrotools.nwm_client, installed from conda-forge where possible
   - pytables
@@ -335,7 +334,7 @@ For anything older than a few days, such as the April 2025 flood, you need NOAA'
 
 **Example: the short-range forecast initialized at 00Z on 6 April 2025**
 
-Before you run this: `.get()` downloads all 18 files of the run (about 270 MB) and needs about 1.7 GB of memory, and took about 2–3 minutes on our home connection. Let it finish; interrupting it can leave a broken file behind (see "If `.get()` fails" below). **In Jupyter**, run `import nest_asyncio; nest_asyncio.apply()` once first (the first line of the block, commented out); plain Python scripts don't need it.
+Before you run this: `.get()` downloads all 18 files of the run (about 270 MB) and needs about 1.7 GB of memory, and took about 2–3 minutes on our home connection. Let it finish; interrupting it can leave a broken file behind (see "If `.get()` fails" below). The call runs in its own thread because `hydrotools` starts its own event loop; this works in Jupyter and in plain scripts.
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -373,7 +372,6 @@ The result is a long-format `pandas.DataFrame`, one row per COMID and valid time
 
 **If `.get()` fails:**
 
-* **In Jupyter or another notebook**, `hydrotools` raises `RuntimeError: asyncio.run() cannot be called from a running event loop`, because its downloader starts its own event loop and the notebook already runs one. Run `import nest_asyncio; nest_asyncio.apply()` once before calling `.get()` (`nest-asyncio` is in the course environment). Plain Python scripts don't need it.
 * **With errors about reading a NetCDF/HDF file**, an earlier run was probably interrupted (a timeout, a lost connection or a stopped cell), leaving a half-downloaded file in `hydrotools_data/`. `hydrotools` treats files already in that folder as downloaded, so it tries to open the broken one instead of fetching it again. Delete the `hydrotools_data/` folder in your working directory and run the call again.
 * The `FutureWarning` and `UserWarning` messages printed during `.get()` (from `xarray`, `dask` and Google's libraries) are harmless: if the table prints, it worked.
 
@@ -401,7 +399,7 @@ Two kinds of reference are available:
 
 The first step is a list of the run's files. CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds NWM file URLs from a date, reference time, forecast hours, configuration and archive, so you don't have to know the archive's folder and file-naming scheme. It only builds URLs; it doesn't download anything. Its arguments are numeric codes, listed on that page (and in the comments below).
 
-The code defines two small functions, `index_one` (scan one file) and `build_refs` (scan every file of one run and stitch the results together), so you can reuse them for other runs.
+The code defines three functions. Two helper functions: index_one (scan one file for its reference) and combine_refs (stitch references into one dataset). Then build_refs, which uses these helper functions when executed.
 
 ```python
 import fsspec
@@ -460,6 +458,7 @@ print(len(refs["refs"]), "reference entries")
 * `inline_threshold=500` stores tiny variables (like the single `time` value in each file) directly in the JSON, so the combine step doesn't need to download anything.
 * `block_size=2**20` makes each file's scan one 1 MB request, which covers the file's metadata. fsspec's default 5 MB block read about 5× more data for no benefit, and smaller blocks took many more requests and were slower. In our test, building references for three runs took 16 s and 57 MB.
 * Save `refs` to a JSON file (`json.dump(refs, open("refs_20250406_00z.json", "w"))`) and reuse it, rather than rebuilding.
+* `combine_refs` runs the combine step in its own thread. kerchunk starts its own event loop there, which fails inside Jupyter's already-running loop; a separate thread has none, so the same code works in a notebook and in a plain script.
 
 Check that `nwmurl` gave you files that exist: a URL for a run that isn't in the archive fails when `index_one` opens it. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first and drops missing ones.
 
@@ -510,7 +509,7 @@ Name: streamflow, dtype: float64
 
 **Example: use NOAA's published references for a recent run**
 
-For runs since January 2026 you can skip the build step. NOAA's references are one JSON file per forecast hour and point at the AWS copy of the files (`s3://noaa-nwm-pds`). This example combines them the same way and reads them over HTTPS. It uses `open_refs` from the previous example, so run that block first (you don't need to build any references yourself).
+For runs since January 2026 you can skip the build step. NOAA's references are one JSON file per forecast hour and point at the AWS copy of the files (`s3://noaa-nwm-pds`). This example combines them the same way and reads them over HTTPS. It uses `combine_refs` (defined in the build example above) and `open_refs` (defined in the read example), so run those blocks first; it doesn't use the references they build.
 
 ```python
 import json

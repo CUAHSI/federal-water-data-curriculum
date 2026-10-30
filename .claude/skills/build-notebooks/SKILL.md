@@ -1,84 +1,56 @@
 ---
 name: build-notebooks
-description: Build or rebuild the learner bundle (student and solutions notebooks, environment files and README) for the Module 3 and 4 lessons with code, for HydroShare. Use when asked to make or update notebooks or the learner bundle, or when check_stale.py lists bundle files.
+description: Build or update a session's notebooks (one per Module 3 and 4 lesson with code, with the "Now you try it" example answer collapsed under each starter) and the one course environment file, for HydroShare, from the lesson and the session's deck, using teaching-materials/how-to-build/notebook-prompt.md. Notebooks are built locally and never committed. Run after build-slides. Arguments - a session number (3–6), or "N update".
 ---
 
-# Build the learner bundle
+# Build a session's notebooks
 
-You produce `teaching-materials/materials/learner-bundle/`, the hands-on material pilot learners get on HydroShare.
-They can't see the website or the repo, so everything here stands on its own. Read STYLE_GUIDE.md first,
-especially §11.
+The prompt and the lesson notes live in `teaching-materials/how-to-build/notebook-prompt.md`; read it and
+`how-to-build/guide.md` first. This skill runs the same prompt a person would paste into Claude, with the setup
+done for them. The lessons are the source of truth. If a notebook needs different content, change the lesson
+(or flag it), not the notebook.
 
-Install papermill and ipykernel into the lesson's conda environment, not into environments/*.yml; see teaching-materials/README.md.
+## Build (`/build-notebooks N`)
 
-## Layout and names (STYLE_GUIDE §11)
+1. **Check the inputs.**
+    - The session has a notebook: sessions 3, 4 and 5 have one each, session 6 has two (the table at the top
+      of the prompt). Sessions 1 and 2 have none: say so and stop.
+    - `python teaching-materials/how-to-build/tools/check_topics.py N` passes.
+    - **The session's deck exists** in `teaching-materials/materials/slides/` (the file name in the topic
+      list's header). If it doesn't, stop and say to run `/build-slides N` first: the notebook is written
+      around the deck's live-coding slides and leaves out what the deck explains.
+    - The course environment `open-water-data` exists with papermill (`guide.md`, "Before you build"), and the credentials
+      the lesson notes list are set.
+2. **Make a learner copy** of the lesson page with `prepare_learner_copy.py`, into a scratch directory outside
+   the repo. Note the counts for the report.
+3. **Read the deck** with `python-pptx` (in a scratch environment, never a lesson environment): every slide's
+   title, text, speaker notes, and the Comments property.
+4. **Follow the Build prompt** in `notebook-prompt.md` for each of the session's notebooks.
+    - After step 2 of the prompt (the plan), stop and show it unless the user said to go straight through.
+    - Run `python teaching-materials/how-to-build/tools/merge_environments.py` to write the course
+      environment. If its packages changed, update `open-water-data` from it before testing.
+    - Test with papermill in `open-water-data`, from a short working folder (`--cwd`, e.g.
+      `%LOCALAPPDATA%\Temp\fwr\<notebook>`): SWOT file names overflow Windows' 260-character path limit in deep folders.
+5. **Save, don't commit.** Notebooks and `environment.yml` live in `teaching-materials/materials/notebooks/`,
+   which is git-ignored: never commit them or add them to `manifest.json`. The notebook's `fwdc` metadata records
+   the build commit and the deck. Commit only changes to the prompt, the lesson notes or this skill.
+6. **Report** (to the user, and in a PR if there is one): the prompt's report, the learner-copy counts, and the
+   cells you'd most like a person to look at.
 
-```
-teaching-materials/materials/learner-bundle/
-├── README.md
-├── module-03_federal-water-data-access-retrieval/
-│   ├── module-03_lesson-01_retrieve-nasa-swot-data.ipynb
-│   ├── module-03_lesson-01_retrieve-nasa-swot-data_solutions.ipynb
-│   ├── module-03_lesson-01_retrieve-nasa-swot-data_environment.yml
-│   └── … lessons 02 and 03
-└── module-04_federal-water-data-synthesis/   same pattern; notebooks only for lessons with code
-```
+## Update (`/build-notebooks N update`)
 
-Hand-curated "Now you try it" starters (see below) are build instructions, so they live outside the bundle, in
-`teaching-materials/how-to-build/scaffolds/`.
+Use this when the session's notebook already exists, after a lesson, topic-list or deck change. Default to it
+whenever a notebook exists and the user asks to "rebuild", and say so.
 
-Slugs come from each lesson's title.
+1. Check the inputs as for a build.
+2. Make a learner copy and read the deck.
+3. Follow the **Update** prompt. Stop after its plan unless the user said to go straight through. Never change
+   cells tagged `keep`; never overwrite the file in `how-to-build/to-update/`.
+4. Save and report as for a build, with the prompt's change log.
 
-## The builder is a script, so rebuilds are repeatable
-
-Write and maintain `teaching-materials/how-to-build/tools/build_notebooks.py` (needs `nbformat` and `pyyaml`). Don't
-hand-write notebooks. For each lesson with code, it:
-1. Reads the learner copy of the page (`prepare_learner_copy.py`: no internal callouts, no internal course
-   links, external links kept).
-2. Makes the notebook:
-    - **Cell 1:** the title, the lesson's learning goal, the environment to use and a one-paragraph
-      introduction.
-    - **Cell 2:** attribution and licence (GPL-3.0; credit the CUAHSI notebooks the lesson adapts).
-    - **Cell 3:** a credentials cell for that product: Earthdata Login via `earthaccess.login()`, or the
-      `API_USGS_PAT` environment variable. Explain what to set in the hosted environment, and never hard-code
-      a secret.
-    - **Then the lesson in order:** headings become Markdown headings with the **same text** (slides refer to
-      them), prose is condensed to the explanation needed to run and read the code (2–4 sentences per
-      block), and every code block becomes a code cell.
-    - **Figures:** where the lesson shows a figure, the cell that makes it stays.
-    - **"Going further":** rows in the session's topic list (`teaching-materials/how-to-build/topics/`)
-      whose "Where" is `notebook` only go in an optional "Going further" section at the end, after "Now you
-      try it", with the lesson's own headings and code.
-3. **"Now you try it":** the task text becomes a Markdown cell. The solution:
-    - **Solutions notebook:** the full solution.
-    - **Student notebook:** a scaffold from `teaching-materials/how-to-build/scaffolds/<lesson>.yml` (cell → partially completed code with
-      `...` blanks and `# TODO:` hints). If no scaffold exists yet, write one: keep the lines learners
-      shouldn't have to retype (imports, plotting boilerplate) and blank the values and calls that practise
-      the lesson's skill. Scaffolds are hand-curated files the script reuses, so rebuilds keep them; if a
-      solution changed, check that its scaffold still fits.
-4. Copies the lesson's environment from `environments/` to `<lesson>_environment.yml`. Keep the env `name:`.
-5. Writes outputs cleared and metadata minimal (kernelspec only), so diffs stay small.
-
-## Test
-- Run each **solutions** notebook top to bottom in its environment (`papermill` or
-  `jupyter nbconvert --execute`), with the credentials set.
-- Run each **student** notebook up to its first "Now you try it" cell.
-- Record the runtimes, and any cell that depends on the date (e.g. NWM forecasts are kept about 3 days; SWOT
-  passes vary). Put these in the README's "Before you run" section and in the PR.
-
-## README (learner-facing, written for a HydroShare resource)
-- What the course and bundle are, and the folder map. Say that the slides and readings come from the sessions
-  (via Canvas).
-- How to open it in the hosted environment and which environment goes with each notebook.
-- Credentials: what to create (Earthdata Login, USGS API token) and how to set them.
-- How to use student vs. solutions notebooks.
-- The table: file → module/lesson → session → environment → time to run → data or account needed.
-- Licence (GPL-3.0), how to cite (from `CITATION.cff`), acknowledgements.
-- External links only; nothing to the course website or the repo.
-
-## Record and report
-Update `manifest.json` for every output (`check_stale.py --update`). The PR reports:
-- the files built
-- test results and runtimes
-- the callout and internal-link counts per page
-- scaffolds created or changed
+## Rules
+- Only content from the lesson page and the lesson notes: no invented claims, numbers, code or links.
+- No internal course links or repo links; no `TODO (dev team)` or `Partner review` content.
+- Credentials only from environment variables or prompts at run time. Never write real values into a notebook,
+  a file or the output, and clear outputs before saving.
+- When a fix in the lesson notes is no longer needed because the lesson was fixed, delete it from the notes.
