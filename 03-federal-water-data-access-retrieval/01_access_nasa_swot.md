@@ -145,7 +145,16 @@ xarray 2026.9.0
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it prompts for your Earthdata
 username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment
 variables (or use a `.netrc` file); `earthaccess.login()` finds them automatically. Never write your password into a script
-or notebook. If you're not sure how to set environment variables, let it prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
+or notebook. One way to set them is to store them in the conda environment, as the USGS WDFN lesson does for its key
+(replace the placeholders with your own values, then re-activate so they take effect):
+
+```bash
+conda activate m03-swot
+conda env config vars set EARTHDATA_USERNAME="your-username" EARTHDATA_PASSWORD="your-password"
+conda activate m03-swot
+```
+
+If you'd rather not, let `earthaccess` prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
 
 ```python
 import earthaccess
@@ -749,7 +758,7 @@ Every row is one SWOT overpass of the reach. `wse`, `wse_u` and `width` are in m
 `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as
 a timestamp for plotting. `crid` records which processing produced each value (here, all reprocessed Version D, `PGD0`).
 `hydrocron` also returns a row for each overpass that produced no valid measurement, with `time_str` = `no_data`, 
-`wse` = `-99999999` and `reach_q` = 3; the function drops those.
+`wse` = `-999999999999` and `reach_q` = 3; the function drops those.
 
 A plot shows the flood clearly:
 
@@ -925,7 +934,7 @@ Repeat the main steps for accessing SWOT hydrologic data on a second river: the 
 
 **Your task:** Find the SWORD reach for the Willamette and retrieve its water surface elevation time series with `hydrocron`. 
 
-Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example `salem_raster`), so you can still compare them with the Ohio River at Louisville.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. The steps change the values in the query block, so every cell you run afterwards uses the Willamette, not the Ohio River. To compare the two rivers, first save any Louisville results you want to keep under new names (for example, adding `_louisville`).
 
 1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
    and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.

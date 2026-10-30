@@ -15,7 +15,7 @@ This table maps NWM's own vocabulary onto the course's [shared concepts](00_intr
 | {term}`Location identifier` | `feature_id` (= {term}`COMID`) | For streamflow in the CONUS domain, each stream reach in the model has a unique {term}`feature_id`, which corresponds to a COMID in the {term}`NHDPlus` stream network (see below). Outside CONUS, the NWM uses arbitrary reach identifiers. The NOAA NWM API and `hydrotools` call it `nwm_feature_id`. |
 | {term}`Variable` | streamflow | Channel discharge at a reach. NWM also outputs many other variables (soil moisture, snowpack, evapotranspiration, reservoir levels) that aren't the focus of this course. |
 | {term}`Variable unit` | m³/s | Cubic meters per second, consistent across all NWM configurations. The NOAA NWM API labels it `CMS`. |
-| {term}`Time` | {term}`reference time <Forecast reference time>` + {term}`valid time <Valid time>` | Every forecast value has two times (UTC): the model initialization time (reference time) and the time it predicts (valid time). ~~The difference is the {term}`lead time <Lead time>`.~~ The same valid time appears in many forecasts issued at different reference times. |
+| {term}`Time` | {term}`reference time <Forecast reference time>` + {term}`valid time <Valid time>` | Every forecast value has two times (UTC): the model initialization time (reference time) and the time it predicts (valid time). The same valid time appears in many forecasts issued at different reference times. |
 | {term}`Data quality flag(s)` | none per value | NWM has no per-observation QA/QC flag the way a sensor network does. Instead, quality is a function of which model version and configuration produced the value, see below. |
 | {term}`Version / provenance` | model version and {term}`configuration <Configuration>` | For example v3.1, `medium_range`, reference time 2026-10-08 18:00 UTC. Values for the same reach and valid time differ between versions and between configurations. |
 | {term}`Data unit` | one output file per timestep | Each configuration's run writes one NetCDF file per valid time (for streamflow, a `channel_rt` file), holding every reach in the domain. |
@@ -58,7 +58,7 @@ As announced in [NWS Service Change Notice 26-64](https://www.weather.gov/media/
 ## Spatial coverage
 
 - **Extent:** In the current version (v3.1): CONUS + hydrologically-contributing areas, plus separate domains for Hawaii, Puerto Rico/USVI, and southern Alaska (Cook Inlet, Copper River Basin, Prince William Sound). The extent depends on the model version: for example, only the v3.0 retrospective simulation and v3.0+ operational NWM cover the Alaska, Hawaii and Puerto Rico/USVI domains ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/)).
-- **Type:** Point/vector network output for streamflow and reservoirs (one value per `feature_id`, over 2.7 million reaches); paired with 1 km gridded NetCDF for land-surface variables and 100–250 m gridded NetCDF for ponded water depth and soil saturation
+- **Type:** Point/vector network output for streamflow and reservoirs (one value per `feature_id`, about 2.8 million reaches); paired with 1 km gridded NetCDF for land-surface variables and 100–250 m gridded NetCDF for ponded water depth and soil saturation
 - **Resolution:** Reach-based routing follows NHDPlus (medium-resolution, 1:100,000-scale network); grids are 1 square km (land surface) and 250 square m (near-surface hydrology)
 - **{term}`CRS`:** Streamflow outputs do not include coordinate information in the format the NWM reports them: each value is tied to a `feature_id`, and you get its location by joining the `feature_id` to the NHDPlus reach with the same COMID. The underlying NHDPlus network uses the USA Contiguous Albers Equal Area projection (datum NAD83), as noted in the [USGS user guide for NHDPlus](https://pubs.usgs.gov/publication/sir20255031/full). The NWM gridded land-surface output uses its own Lambert Conformal Conic grid definition, documented in the NWM configuration files. Note that Module 3 tools take and return EPSG:4326.
 
@@ -81,8 +81,8 @@ Each configuration also has its own model inputs. For example, the retrospective
 | Retrospective | Long historical record, ungaged reaches | Feb 1979 – Jan 2023 (v3.0) | hourly | one-off run per model version |
 | Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last 3 hours (look-back) | hourly | hourly |
 | Short-Range (`short_range`) | Next-day forecasts | 18 hours | hourly | hourly |
-| Medium-Range Deterministic (`medium_range`) | Single-valued forecasts for the coming week | 10 days (member 1) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
-| Medium-Range Ensemble (`medium_range`) | Ensemble forecasts for the coming week; six ensemble members | 8.5 days (members 2–6, plus first 8.5 days of member 1) | hourly in the NOAA NWM API (the archive files' interval is still being confirmed) | four times a day |
+| Medium-Range Deterministic (`medium_range`) | Single-valued forecasts for the coming week | 10 days (member 1) | hourly, in the NOAA NWM API and in the archive files | four times a day |
+| Medium-Range Ensemble (`medium_range`) | Ensemble forecasts for the coming week; six ensemble members | 8.5 days (members 2–6, plus first 8.5 days of member 1) | hourly, in the NOAA NWM API and in the archive files | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
 
 There are four operational Medium-Range products for CONUS:

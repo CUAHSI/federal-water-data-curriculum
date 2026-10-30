@@ -45,7 +45,7 @@ USGS explains how keys work on its [API keys page](https://api.waterdata.usgs.go
 
 ### Create the conda environment
 
-You will create a {term}`conda environment <Conda environment>` called `environments/m03-nwm.yml`, which contains `dataretrieval` and the other packages this lesson uses:
+You will create a {term}`conda environment <Conda environment>` called `m03-wdfn` from `environments/m03-wdfn.yml`, which contains `dataretrieval` and the other packages this lesson uses:
 
 **Create the YAML file**
 
@@ -519,11 +519,11 @@ If I am working on improving efficiency of my code through parallelization, what
 
 ## Now you try it
 
-Repeat the main steps for accessing NWM data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
+Repeat the main steps for accessing USGS WDFN data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
 **Your task:** Retrieve discharge from a monitoring location on the Willamette using `dataretrieval`.
 
-Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. The steps change the values in the query block, so every cell you run afterwards uses the Willamette, not the Ohio River. To compare the two rivers, first save any Louisville results you want to keep under new names (for example, adding `_louisville`).
 
 1. Change `site` to `USGS-14191000`.
 2. Get the time series metadata for the monitoring location to check the expected record lengths.
@@ -531,7 +531,7 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
 4. Get the daily mean discharge for 1 February to 31 March 2026. Find the highest daily mean, and check its approval status.
 5. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
-**What you should see:** You should see discharge records going back to 1989 for continuous values, and 1909 for daily values. From 1 February to 31 March there are 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
+**What you should see:** You should see discharge records going back to 1986 for continuous values, and 1909 for daily values. From 1 February to 31 March there are 59 daily values, almost all `Provisional`; the highest daily mean is **62,200 ft³/s** on 25 February 2026. The continuous record crests at **64,000 ft³/s** (gage height 16.86 ft) at 23:45 UTC on 25 February. Because these values are provisional, your numbers may differ slightly.
 
 :::{dropdown} Example answer
 ```python
