@@ -201,8 +201,7 @@ Granule
   stretch of one satellite pass: a whole continent for RiverSP, one scene for the Raster product.
 
 hydrocron
-: A PO.DAAC web API that returns time series of SWOT river reach and node data (and lake data) as CSV or GeoJSON,
-  without downloading whole granules.
+: PO.DAAC web API that returns time series of SWOT river reach and node data (as well as lake and discharge data) as CSV or GeoJSON, without downloading whole granules.
 
 KaRIn
 : The Ka-band Radar Interferometer, SWOT's main instrument. It measures the height of water surfaces across two
@@ -220,7 +219,7 @@ Pixel cloud (PIXC)
   ({term}`RiverSP`) and {term}`Raster <SWOT Raster product>` products are built from it.
 
 PO.DAAC
-: NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data.
+: NASA's Physical Oceanography Distributed Active Archive Center, which distributes SWOT data. https://www.earthdata.nasa.gov/centers/po-daac
 
 Product counter
 : The two-digit number after the {term}`CRID`, near the end of a SWOT granule name (`01`, `02`, …). A higher counter is a newer copy of the same
@@ -228,7 +227,7 @@ Product counter
 
 Product description document (PDD)
 : The technical document for one SWOT product and version, defining every variable, unit and quality flag.
-  Check it before interpreting a flag value.
+  Check it before interpreting a flag value. 
 
 Reach
 : A river segment. In SWOT data, a reach is a segment of about 10 km defined in SWORD (`reach_id`). In the NWM, a reach
@@ -236,8 +235,7 @@ Reach
 
 RiverSP
 : SWOT's River Single-Pass Vector product: one record per {term}`reach <Reach>` (or {term}`node <Node>`) per
-  overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is
-  `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with `SWOT_L2_HR_RiverSP_reach_D` and `SWOT_L2_HR_RiverSP_node_D` for one each.
+  overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with subcollections for reaches only  (`SWOT_L2_HR_RiverSP_reach_D`) and nodes only (`SWOT_L2_HR_RiverSP_node_D`) to facilitate specific data access (though the reach/node data is the same in the main collection and the respective sub-collection).
 
 Science orbit
 : SWOT's 21-day repeat orbit, used since 2023 for routine observations. It followed a 1-day repeat
@@ -249,7 +247,7 @@ Swath
 
 SWORD
 : The SWOT River Database: a global river network, built before launch, that defines the reaches and nodes
-  SWOT river measurements are mapped to.
+  SWOT river measurements are mapped to. See SWORD visualized with the [SWORD Explorer](https://www.swordexplorer.com/)
 
 SWORD of Science (SoS)
 : A Level 4 SWOT product (in development) that holds river discharge estimates from several algorithms, run by the
