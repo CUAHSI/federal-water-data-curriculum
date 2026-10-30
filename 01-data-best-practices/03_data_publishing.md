@@ -90,7 +90,7 @@ Broadly, there are two categories of repositories: generalist and domain-specifi
 - **Generalist repositories** accept data regardless of data type, format, content, or disciplinary focus. You are probably familiar with some, such as [Zenodo](https://zenodo.org), Dataverse (Harvard Dataverse Repository), or Figshare. Many of them issue DOIs and support solid metadata, and they account for a large share of data and software citations, so a generalist choice is not a lesser one. Zenodo's GitHub integration, for example, makes it a common place to archive a release of your code. The trade-off is that they usually offer fewer field-specific metadata options and often have little or no curation of submissions.
 - **Domain-specific repositories** host data related to a specific discipline. They tend to offer metadata fields and conventions tailored to the field, may have stricter guidelines for the publication process, and put your data in front of the community most likely to use it. Examples for environmental science include the [HydroShare](https://www.hydroshare.org) and [EDI (Environmental Data Initiative)](https://edirepository.org) data portal.
 
-Some repositories are also run by universities, funders, or governments. These can be a good home for large datasets, so it is worth asking your librarian.
+Some repositories are also run by universities, funders, or governments. For example, NASA-funded projects or projects that use NASA data can propose data archival through [NASA’s Earth Science Data Information System](https://www.earthdata.nasa.gov/about/esdis). These repositories can be a good home for large datasets, so it is worth asking your librarian.
 
 **Comparison of two water-specific repositories**
 | | **HydroShare** | **EDI** |
@@ -128,7 +128,7 @@ If you would like help getting a dataset across the finish line, CUAHSI runs the
 
 The [Environmental Data Initiative (EDI)](https://edirepository.org) is a repository for environmental data, including data from long-term ecological research sites. Data are published as **data packages**, which pair the data files with metadata written in Ecological Metadata Language (EML), typically created with tools like ezEML or the EMLassemblyline R package. Each version of a package gets its own DOI and identifier. Before a package can be published, it must pass an [automated evaluation](https://edirepository.org/resources/evaluating-a-data-package) that checks the metadata and its match with the data, and EDI's curators are available for advice.
 
-Other domain repositories may suit parts of your work. The [EarthChem Library](https://www.earthchem.org), for example, curates geochemical data and works with SESAR, which registers physical samples with persistent IDs called IGSNs.
+Other domain repositories may suit parts of your work. The [EarthChem Library](https://www.earthchem.org), for example, curates geochemical data and works with SESAR, which registers physical samples with persistent IDs called IGSNs. 
 
 These are only a few of the options, and there are surely others we have missed. [AGU's list of domain repositories](https://data.agu.org/resources/useful-domain-repositories) and [re3data](https://www.re3data.org) are good places to look further.
 
@@ -191,6 +191,7 @@ In every case, cite the original source, carry its license or terms with your fi
 - [Technical Skills for Publishing and Sharing Data and Code (AGU/CUAHSI workshop slides, all versions)](https://doi.org/10.5281/zenodo.14270999)
 - [HydroShare help documentation](https://help.hydroshare.org) and [hsclient](https://github.com/hydroshare/hsclient)
 - [Environmental Data Initiative](https://edirepository.org)
+- [NASA’s Earth Science Data Information System](https://www.earthdata.nasa.gov/about/esdis) (See also [ESDIS requirements for archiving](https://www.earthdata.nasa.gov/about/esdis/adurd))
 - [EarthChem Library](https://www.earthchem.org)
 - [re3data: registry of research data repositories](https://www.re3data.org)
 - [DataONE MetaDIG FAIR checks](https://github.com/NCEAS/metadig-checks)
