@@ -145,16 +145,7 @@ xarray 2026.9.0
 To log in with `earthaccess`, run the following. If you have not stored your credentials, it prompts for your Earthdata
 username and password. To avoid typing them each time, set the `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` environment
 variables (or use a `.netrc` file); `earthaccess.login()` finds them automatically. Never write your password into a script
-or notebook. One way to set them is to store them in the conda environment, as the USGS WDFN lesson does for its key
-(replace the placeholders with your own values, then re-activate so they take effect):
-
-```bash
-conda activate m03-swot
-conda env config vars set EARTHDATA_USERNAME="your-username" EARTHDATA_PASSWORD="your-password"
-conda activate m03-swot
-```
-
-If you'd rather not, let `earthaccess` prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
+or notebook. If you're not sure how to set environment variables, let it prompt you; that's fine for this lesson. See the [`earthaccess` authentication how-to](https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/).
 
 ```python
 import earthaccess
