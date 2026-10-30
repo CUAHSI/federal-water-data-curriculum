@@ -717,7 +717,7 @@ error. Search the page's code for `2025-12`, `202512` and `_UTM10U_` after your 
 From the integration-pass learner review (2026-10-09). Not yet fixed:
 - Move the remaining event literals (baseline date, December filters, Raster tile and file dates, forecast-plot window) into the query block; the adaptation checklist lists them for now (needs a re-run).
 - Add a short, reproducible check that the gage sits on SWORD reach `78310800031` (distance from the gage to each reach), for learners adapting the case study (needs a run).
-- Explain or source "Category 5 atmospheric river"; replace the generic opening paragraph with what the learner will do; link statistic code and qualifier; comment that `zip` drops reaches beyond the four colors; use "gage" except in names and quotes.
+- Replace the generic opening paragraph with what the learner will do; link statistic code and qualifier; comment that `zip` drops reaches beyond the four colors; use "gage" except in names and quotes.
 :::
 
 ## Further reading

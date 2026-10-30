@@ -24,10 +24,11 @@ table that maps the agency's terms onto them.
 |---|---|
 | {term}`Location identifier` | *Where* is this value? |
 | {term}`Variable` | *What* was measured or modeled? |
+| {term}`Variable unit` | *In what units* is it reported? |
 | {term}`Time` | *When*, and how often? |
 | {term}`Data quality flag(s)` | How much should I trust it? |
 | {term}`Version / provenance` | Which release, from where? |
-| {term}`Data unit` | What is one "file" or record? | granule |
+| {term}`Data unit` | What is one "file" or record? |
 
 A few points deserve a closer look before you start:
 

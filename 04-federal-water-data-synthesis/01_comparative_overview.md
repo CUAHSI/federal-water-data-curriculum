@@ -13,7 +13,7 @@ The three Federal datasets used in this course are built from very different spa
   Verify: Module 2 says the river product effectively resolves rivers about 50–100 m and wider, and SWORD targets ~30 m.
   :::
 
-* **NOAA National Water Model ({term}`NWM`) streamflow** data are available for every river reach in the model's stream network, which is built on the National Hydrography Dataset ({term}`NHDPlus`): over 2.7 million reaches in the contiguous United States, plus separate domains for southern Alaska, Hawaii, Puerto Rico and the U.S. Virgin Islands ([NOAA OWP](https://water.noaa.gov/about/nwm)). Each reach has one value per time step, identified by its {term}`feature_id` (the NHDPlus {term}`COMID`). Because the NWM is a model, it has values for ungaged headwater streams as well as large rivers. That spatial completeness is its main strength, but values in ungaged, heavily regulated or poorly calibrated basins deserve extra caution (see Module 2).
+* **NOAA National Water Model ({term}`NWM`) streamflow** data are available for every river reach in the model's stream network, which is built on the National Hydrography Dataset ({term}`NHDPlus`): about 2.8 million reaches in the contiguous United States, plus separate domains for southern Alaska, Hawaii, Puerto Rico and the U.S. Virgin Islands ([NOAA OWP](https://water.noaa.gov/about/nwm)). Each reach has one value per time step, identified by its {term}`feature_id` (the NHDPlus {term}`COMID`). Because the NWM is a model, it has values for ungaged headwater streams as well as large rivers. That spatial completeness is its main strength, but values in ungaged, heavily regulated or poorly calibrated basins deserve extra caution (see Module 2).
 * **USGS Water Data for the Nation ({term}`WDFN`) streamflow** data are available at discrete points along the river network, each identified by a {term}`monitoring location ID <Monitoring location ID>`. These data represent observed measurements from sensors in the streams themselves, and are collected at a limited number of locations in the contiguous United States, Alaska, Hawaii, and US territories. Streams with streamflow data in WDFN vary greatly in size, from intermittent and ephemeral streams to the mouth of the Mississippi. Some locations are also in coastal zones, where tides can impact streamflow data.
 
 ## Temporal availability
@@ -161,7 +161,6 @@ _Course note (not agency guidance):_ NWM output can be reached several ways, and
 :class: attention
 From the integration-pass learner review (2026-10-09). Not yet fixed:
 - Link each "(Module 2)" / "(see Module 2)" to the specific Meet page.
-- Use one reach count course-wide ("over 2.7 million" here and in Module 2; "~2.8 million" in Module 3 and 04/02; 03/02 measured 2,776,734).
 - Align the medium-range wording with Module 3 ("out to 10 days, every 6 hours" vs. "8.5–10 days, four times per day"); give the science-orbit start date once confirmed; source "about 9,000 stream gages" (Module 2: 9,011).
 :::
 

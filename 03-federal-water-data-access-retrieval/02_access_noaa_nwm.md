@@ -608,7 +608,7 @@ fig.savefig("nwm-ohio-louisville-forecasts.png", dpi=150)
 NWM v3.0 streamflow forecasts for the Ohio River reach at Louisville (COMID 10164004): the medium-range forecast (member 1) initialized 3 April 2025 00Z, and three short-range forecasts initialized 6 April 00Z, 6 April 12Z and 7 April 00Z. Each line is a separate forecast run. Here they disagree a lot: every short-range run starts near 15,000–18,000 m³/s and falls quickly (the two 6 April runs by about half within 18 hours, the 7 April run by about a quarter before turning up), while the medium-range run initialized three days earlier peaks near 13,900 m³/s on 8 April. Data: NOAA NWM operational archive on Google Cloud, read with kerchunk references, accessed 2026-10-09.
 :::
 
-If your plot looks like this, your code is right: these are model forecasts, not measurements, and this is what the archive holds (we've asked NOAA why the short-range runs drop so fast; see the note below). That disagreement is part of what you downloaded: the NWM gives you each run as produced, and different runs and configurations can tell different stories about the same river. Record exactly which runs you used, and look at several before drawing conclusions from one.
+If your plot looks like this, your code is right: these are model forecasts, not measurements, and this is what the archive holds (we've asked NOAA why the short-range runs drop so fast). That disagreement is part of what you downloaded: the NWM gives you each run as produced, and different runs and configurations can tell different stories about the same river. Record exactly which runs you used, and look at several before drawing conclusions from one.
 
 :::{admonition} Partner review (NOAA): Short-range forecasts at the Ohio River at Louisville
 :class: important
@@ -751,33 +751,33 @@ Repeat the main steps for accessing NWM data on a second river: the **Willamette
 
 Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
 
-1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, by changing `POINT` to `(-123.0429, 44.9443)`.
-2. Get the latest short-range forecast for that COMID from the NOAA NWM API. Change `comid` in the API example.
+1. Find the COMID of the Willamette at Salem with `nldi.feature_byloc`, using a new `POINT_salem = (-123.0429, 44.9443)`.
+2. Get the latest short-range forecast for that COMID (`comid_salem`) from the NOAA NWM API.
 3. The Willamette ran high in late February 2026. Build kerchunk references for the short-range forecast initialized at 12Z on 25 February 2026 with `build_refs("20260225", 12)` (about 20 seconds), then read the `streamflow` for your COMID with `open_refs`, as in the kerchunk example.
 
-**What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 published reference files for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
+**What you should see:** COMID **23791093**; an API response with 18 hourly values in `CMS` (the API's `name` field is blank for this reach); and 18 reference files from `build_refs` for 25 February, with streamflow of about 1,700–1,800 m³/s, rising through the run.
 
 :::{dropdown} Example answer
 ```python
 from pynhd import NLDI
 import requests
 
-POINT = (-123.0429, 44.9443)        # Willamette River at Salem, OR
-comid = int(NLDI().feature_byloc(POINT)["comid"].iloc[0])
-print("COMID:", comid)
+POINT_salem = (-123.0429, 44.9443)        # Willamette River at Salem, OR
+comid_salem = int(NLDI().feature_byloc(POINT_salem)["comid"].iloc[0])
+print("COMID:", comid_salem)
 
-url = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{comid}/"
-resp = requests.get(url, params={"configuration": "short_range", "latest": "true"}, timeout=60)
-resp.raise_for_status()
-run = resp.json()[0]
-print(run["reference_datetime"], run["units"], len(run["forecast"][0]["timeseries"]), "values")
+url_salem = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{comid_salem}/"
+resp_salem = requests.get(url_salem, params={"configuration": "short_range", "latest": "true"}, timeout=60)
+resp_salem.raise_for_status()
+run_salem = resp_salem.json()[0]
+print(run_salem["reference_datetime"], run_salem["units"], len(run_salem["forecast"][0]["timeseries"]), "values")
 
 # Build references for the 2026-02-25 12Z short-range run from the Google Cloud archive
 # (uses build_refs and open_refs from the kerchunk examples above)
-refs_feb = build_refs("20260225", 12)
-q_feb = open_refs(refs_feb)["streamflow"].sel(feature_id=comid).load().to_series()
-print(len(q_feb), "hourly values")
-print(q_feb.iloc[[0, 8, 17]])
+refs_salem = build_refs("20260225", 12)
+q_salem = open_refs(refs_salem)["streamflow"].sel(feature_id=comid_salem).load().to_series()
+print(len(q_salem), "hourly values")
+print(q_salem.iloc[[0, 8, 17]])
 ```
 
 ```text

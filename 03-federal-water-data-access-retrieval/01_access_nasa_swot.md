@@ -742,7 +742,7 @@ Every row is one SWOT overpass of the reach. `wse`, `wse_u` and `width` are in m
 `<field>_units` column (for example `wse_units`) giving each **Variable unit**, and the function adds a `time` column parsed as
 a timestamp for plotting. `crid` records which processing produced each value (here, all reprocessed Version D, `PGD0`).
 `hydrocron` also returns a row for each overpass that produced no valid measurement, with `time_str` = `no_data`, 
-`wse` = `-99999999` and `reach_q` = 3; the function drops those.
+`wse` = `-999999999999` and `reach_q` = 3; the function drops those.
 
 A plot shows the flood clearly:
 
@@ -920,15 +920,15 @@ Repeat the main steps for accessing SWOT hydrologic data on a second river: the 
 
 Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example `salem_raster`), so you can still compare them with the Ohio River at Louisville.
 
-1. In the query block, change `site_name` to `"Willamette River at Salem, OR"`, `site_lon, site_lat` to `-123.043, 44.944`,
-   and the dates to `start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`. Re-run it.
+1. Write a new query block for Salem: `salem_name = "Willamette River at Salem, OR"`, `salem_lon, salem_lat = -123.043, 44.944`,
+   a `salem_bbox` around that point, and the dates `salem_start, salem_end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"`.
 2. Search the Raster collection for the new box and dates, then screen the results with `footprint_covers` and
    `keep_best_version_d`, as you did for Louisville. Salem is in UTM zone **10**, so the real matches are `UTM10T` scenes.
-   Collect their `(cycle, pass)` pairs in `seen_passes`.
+   Collect their `(cycle, pass)` pairs in `salem_passes`.
 3. Search the RiverSP collection (`granule_name="*Reach*"`), keep the granules from those passes, download **one** of them,
    and find the reach nearest the point. Any one of them will do: every pass you kept sees the point. `estimate_utm_crs()` picks
 the right UTM zone for Salem by itself.
-4. Set `reach_id` to that reach and call `get_reach_timeseries(reach_id, start, end)`.
+4. Set `salem_reach_id` to that reach and call `get_reach_timeseries(salem_reach_id, salem_start, salem_end)`.
 
 **What you should get:** the nearest reach is `78220000131`, about 40 m from the point, with `p_width` = 150 m. `hydrocron`
 returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (`reach_q` = 2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
@@ -938,30 +938,30 @@ as a stream gage or imagery, would tell you.
 
 :::{dropdown} Example answer
 ```python
-# Step 1: the new query
-site_name = "Willamette River at Salem, OR"
-site_lon, site_lat = -123.043, 44.944
-site_bbox = (site_lon - 0.02, site_lat - 0.02, site_lon + 0.02, site_lat + 0.02)
-start, end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"
+# Step 1: a new query for Salem (new names, so the Louisville variables are kept)
+salem_name = "Willamette River at Salem, OR"
+salem_lon, salem_lat = -123.043, 44.944
+salem_bbox = (salem_lon - 0.02, salem_lat - 0.02, salem_lon + 0.02, salem_lat + 0.02)
+salem_start, salem_end = "2026-02-01T00:00:00Z", "2026-03-31T23:59:59Z"
 
 # Step 2: Raster scenes that really cover the point
-salem_raster = earthaccess.search_data(short_name="SWOT_L2_HR_Raster_100m_D", bounding_box=site_bbox, temporal=(start, end))
-salem_raster = keep_best_version_d([g for g in salem_raster if footprint_covers(g, site_lon, site_lat)])
-seen_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in salem_raster}
+salem_raster = earthaccess.search_data(short_name="SWOT_L2_HR_Raster_100m_D", bounding_box=salem_bbox, temporal=(salem_start, salem_end))
+salem_raster = keep_best_version_d([g for g in salem_raster if footprint_covers(g, salem_lon, salem_lat)])
+salem_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in salem_raster}
 
 # Step 3: RiverSP reach granules from those passes; download one and find the nearest reach
-salem_reach_granules = earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_D", granule_name="*Reach*", bounding_box=site_bbox, temporal=(start, end))
-salem_reach_granules = keep_best_version_d([g for g in salem_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in seen_passes])
-files = earthaccess.download(salem_reach_granules[:1], local_path=data_dir)
-utm_crs = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").estimate_utm_crs()   # zone 10N here
-reaches_utm = gpd.read_file(files[0]).to_crs(utm_crs)
-site = gpd.GeoSeries([Point(site_lon, site_lat)], crs="EPSG:4326").to_crs(utm_crs).iloc[0]
-reaches_utm["dist_to_site_m"] = reaches_utm.distance(site).round()
-print(reaches_utm.nsmallest(1, "dist_to_site_m")[["reach_id", "river_name", "dist_to_site_m", "p_width"]])
+salem_reach_granules = earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_D", granule_name="*Reach*", bounding_box=salem_bbox, temporal=(salem_start, salem_end))
+salem_reach_granules = keep_best_version_d([g for g in salem_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in salem_passes])
+salem_files = earthaccess.download(salem_reach_granules[:1], local_path=data_dir)
+salem_utm = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").estimate_utm_crs()   # zone 10N here
+salem_reaches = gpd.read_file(salem_files[0]).to_crs(salem_utm)
+salem_site = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").to_crs(salem_utm).iloc[0]
+salem_reaches["dist_to_site_m"] = salem_reaches.distance(salem_site).round()
+print(salem_reaches.nsmallest(1, "dist_to_site_m")[["reach_id", "river_name", "dist_to_site_m", "p_width"]])
 
 # Step 4: the time series
-reach_id = "78220000131"   # the nearest reach printed above
-salem = get_reach_timeseries(reach_id, start, end)
+salem_reach_id = "78220000131"   # the nearest reach printed above
+salem = get_reach_timeseries(salem_reach_id, salem_start, salem_end)
 print(len(salem), "observations; reach_q counts:", salem["reach_q"].value_counts().sort_index().to_dict())
 salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 ```

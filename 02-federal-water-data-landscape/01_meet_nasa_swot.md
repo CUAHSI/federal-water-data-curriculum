@@ -54,7 +54,7 @@ Confirm that the 21-day science orbit (and its data record) began on 21 July 202
 
 - **Period of record:** Science-orbit data (the 21-day repeat orbit most hydrology applications use) begin in mid-2023 and are ongoing; the SWOT mission is currently in extended operations, so check the [SWOT mission page](https://science.nasa.gov/mission/swot/) for current status.
 - **Frequency/resolution:** Each location is revisited on a 21-day repeat cycle during the science phase; many locations are seen more often because neighboring swaths overlap. The Ohio River reach in the figure below sits under four passes and was observed 118 times between January 2025 and October 2026, a median of about 9 days apart. The earlier 1-day repeat calibration phase (Dec. 2022–July 2023) is also available but was designed for instrument validation, not routine monitoring.
-- **Update cadence:** Data are released per granule as they're processed — not a fixed daily/hourly push like a hydrologic model. How long after an overpass the data appear is not stated here yet (see the partner-review note under Dataset derivation).
+- **Update cadence:** Data are released per granule as they're processed — not a fixed daily/hourly push like a hydrologic model. How long after an overpass the data appear is not stated here yet.
 
 ## Data content
 
