@@ -60,7 +60,7 @@ The Willamette drains the valley between Oregon’s Coast Range and Cascades and
 
 ## One framework for three products
 
-Each agency has its own vocabulary: a SWOT *granule*, an NWM *COMID*, a USGS *monitoring location*. Underneath, every product answers the same questions. The course describes all three with the same seven shared concepts, and each lesson's "Understanding what you downloaded" section walks through them for its own output:
+A reminder from Module 2: each dataset has its own vocabulary, but the course describes all three with the same shared concepts, and each lesson's "Understanding what you downloaded" section walks through them for its own output. Here is a summary table reminding you about the shared concepts and unique terms:
 
 | Shared concept | Question it answers | SWOT | NWM | WDFN |
 |---|---|---|---|---|

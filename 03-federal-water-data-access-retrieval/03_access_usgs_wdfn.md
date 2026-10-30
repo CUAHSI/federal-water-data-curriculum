@@ -523,11 +523,11 @@ Repeat the main steps for accessing USGS WDFN data on a second river: the **Will
 
 **Your task:** Retrieve discharge from a monitoring location on the Willamette using `dataretrieval`.
 
-Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. The steps change the values in the query block, so every cell you run afterwards uses the Willamette, not the Ohio River. To compare the two rivers, first save any Louisville results you want to keep under new names (for example, adding `_louisville`).
+Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example, adding `_salem`), so you can still compare them with the Ohio River at Louisville.
 
-1. Change `site` to `USGS-14191000`.
+1. Set a new `site_salem` to `USGS-14191000`.
 2. Get the time series metadata for the monitoring location to check the expected record lengths.
-3. Change the dates `START, END` to `"2026-02-01", "2026-03-31"`
+3. Set new dates `START_salem, END_salem` to `"2026-02-01", "2026-03-31"`.
 4. Get the daily mean discharge for 1 February to 31 March 2026. Find the highest daily mean, and check its approval status.
 5. Get the continuous discharge and gage height for the same window and find the crest, as in the continuous-values example.
 
@@ -535,20 +535,20 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
 
 :::{dropdown} Example answer
 ```python
-site = "USGS-14191000"                  # Willamette River at Salem, OR
-START, END = "2026-02-01", "2026-03-31"
+site_salem = "USGS-14191000"                  # Willamette River at Salem, OR
+START_salem, END_salem = "2026-02-01", "2026-03-31"
 
-series, md = waterdata.get_time_series_metadata(monitoring_location_id=site)
-print(series[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
-daily_w, md = waterdata.get_daily(monitoring_location_id=site, parameter_code="00060",
-                                  statistic_id="00003", time=f"{START}/{END}")
-print(len(daily_w), daily_w["approval_status"].value_counts().to_dict())
-print(daily_w.loc[daily_w["value"].idxmax(), ["time", "value", "unit_of_measure", "approval_status"]])
+series_salem, md = waterdata.get_time_series_metadata(monitoring_location_id=site_salem)
+print(series_salem[["parameter_code", "parameter_name", "statistic_id", "computation_period_identifier", "begin", "end"]])
+daily_salem, md = waterdata.get_daily(monitoring_location_id=site_salem, parameter_code="00060",
+                                      statistic_id="00003", time=f"{START_salem}/{END_salem}")
+print(len(daily_salem), daily_salem["approval_status"].value_counts().to_dict())
+print(daily_salem.loc[daily_salem["value"].idxmax(), ["time", "value", "unit_of_measure", "approval_status"]])
 
-cont_w, md = waterdata.get_continuous(monitoring_location_id=site, parameter_code=["00060", "00065"],
-                                      time=f"{START}T00:00:00Z/{END}T23:59:59Z")
-peaks_w = cont_w.loc[cont_w.groupby("parameter_code")["value"].idxmax()]
-print(peaks_w[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])
+cont_salem, md = waterdata.get_continuous(monitoring_location_id=site_salem, parameter_code=["00060", "00065"],
+                                          time=f"{START_salem}T00:00:00Z/{END_salem}T23:59:59Z")
+peaks_salem = cont_salem.loc[cont_salem.groupby("parameter_code")["value"].idxmax()]
+print(peaks_salem[["parameter_code", "time", "value", "unit_of_measure", "approval_status"]])
 ```
 
 ```text
