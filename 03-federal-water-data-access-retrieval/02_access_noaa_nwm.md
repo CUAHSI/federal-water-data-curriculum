@@ -399,7 +399,7 @@ Two kinds of reference are available:
 
 The first step is a list of the run's files. CIROH's [`nwmurl`](https://hub.ciroh.org/docs/products/data-management/dataaccess/NWMURL%20Library) library builds NWM file URLs from a date, reference time, forecast hours, configuration and archive, so you don't have to know the archive's folder and file-naming scheme. It only builds URLs; it doesn't download anything. Its arguments are numeric codes, listed on that page (and in the comments below).
 
-The code defines three small functions, `index_one` (scan one file) and `build_refs` (scan every file of one run and stitch the results together), so you can reuse them for other runs.
+The code defines three functions. Two helper functions: index_one (scan one file for its reference) and combine_refs (stitch references into one dataset). Then build_refs, which uses these helper functions when executed.
 
 ```python
 import fsspec
