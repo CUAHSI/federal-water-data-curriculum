@@ -26,7 +26,6 @@ dependencies:
   - requests
   - matplotlib
   # For running inside Jupyter
-  - nest-asyncio  # only needed when running hydrotools inside Jupyter
   - ipykernel     # optional: run the lesson in Jupyter
   - jupyterlab
   - ipywidgets
