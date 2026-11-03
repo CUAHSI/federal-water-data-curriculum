@@ -238,7 +238,7 @@ RiverSP
   overpass, with water surface elevation, width, slope and quality flags (discharge columns are present but still in development; see {term}`SWORD of Science (SoS)`). The Version D collection is `SWOT_L2_HR_RiverSP_D` (reaches and nodes), with subcollections for reaches only  (`SWOT_L2_HR_RiverSP_reach_D`) and nodes only (`SWOT_L2_HR_RiverSP_node_D`) to facilitate specific data access (though the reach/node data is the same in the main collection and the respective sub-collection).
 
 Science orbit
-: SWOT's 21-day repeat orbit, used since 2023 for routine observations. It followed a 1-day repeat
+: SWOT's 21-day repeat orbit, used since 21 July 2023 for routine observations. It followed a 1-day repeat
   calibration ("fast-sampling") orbit used after launch.
 
 Swath

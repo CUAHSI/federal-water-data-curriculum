@@ -26,19 +26,9 @@ This course only covers open surface and hydrology related measurements from SWO
 
 SWOT launched December 16, 2022, and does not measure streamflow directly — it derives WSE, width, and slope from raw radar returns collected as the satellite passes overhead, then aggregates lower-level pixel detections (the {term}`PIXC <Pixel cloud (PIXC)>` product) up to reach- and node-scale values using the predefined SWORD network.
 
-SWOT discharge estimates, from the {term}`SWORD of Science (SoS) <SWORD of Science (SoS)>`, a separate Level 4 product in which a NASA working group runs discharge algorithms on SWOT measurements, are still in development and are not yet a recommended research product in this course; see [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) in Module 4. Users can explore the [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3) and are encouraged to check on [NASA Earthdata](https://www.earthdata.nasa.gov/) periodically for updated versions of discharge products.
+SWOT Level 4 {term}`SWORD of Science (SoS) <SWORD of Science (SoS)>` River Discharge are separate products in continuous development, in which a NASA working group runs discharge algorithms on SWOT measurements. At this time, these L4 Discharge products are not yet a recommended research product in this course; see [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) in Module 4. However, users can explore [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3) (with v4 expected late 2026) and are encouraged to check on [NASA Earthdata](https://www.earthdata.nasa.gov/) periodically for updated versions of discharge products.
 
-The SWOT mission has two phases: a 1-day repeat "fast-sampling"/calibration orbit (Dec. 2022–July 2023), and the current 21-day repeat {term}`science orbit <Science orbit>` that began in mid-2023, which is what most hydrology use cases rely on. Product versions have also evolved (e.g., Beta Pre-Validated → Version C → Version D), moving from "pre-validated" toward fully validated status over time, so check the version and validation status of any dataset you're using; see the [SWOT documentation page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) for release notes. Because a new version reprocesses old observations, the version is part of your data's provenance: record it, as Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) recommends.
-
-:::{admonition} Partner review (NASA): Science-orbit start date
-:class: important
-Confirm that the 21-day science orbit (and its data record) began on 21 July 2023, as the Module 3 SWOT lesson states, so this page can give the exact date instead of "mid-2023".
-:::
-
-:::{admonition} Partner review (NASA): Data latency and "suspect" reach observations
-:class: important
-(1) How long after an overpass are RiverSP and Raster Version D data typically released? (2) On the Ohio River reach `74267300251`, 114 of 118 observations from 2025-01 to 2026-10 are `reach_q` = 1 and none are 0. Confirm that `reach_q` ≤ 1 is a reasonable starting filter, and whether there is a common reason large rivers are flagged "suspect".
-:::
+The SWOT mission has two phases: a 1-day repeat "fast-sampling"/calibration orbit (Dec. 2022–July 2023), and the current 21-day repeat {term}`science orbit <Science orbit>` that began on 21 July 2023, which is what most hydrology use cases rely on. Product versions have also evolved (e.g., Beta Pre-Validated → Version C → Version D), moving from "pre-validated" toward fully validated status over time, so check the version and validation status of any dataset you're using; see the [SWOT documentation page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot/resources) for release notes. Because a new version reprocesses old observations, the version is part of your data's provenance: record it, as Module 1's [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) recommends.
 
 (swot-spatial-coverage)=
 ## Spatial coverage
@@ -52,9 +42,9 @@ Confirm that the 21-day science orbit (and its data record) began on 21 July 202
 
 ## Temporal coverage
 
-- **Period of record:** Science-orbit data (the 21-day repeat orbit most hydrology applications use) begin in mid-2023 and are ongoing; the SWOT mission is currently in extended operations, so check the [SWOT mission page](https://science.nasa.gov/mission/swot/) for current status.
+- **Period of record:** Science-orbit data (the 21-day repeat orbit most hydrology applications use) begin on 21 July 2023 and are ongoing; the SWOT mission is currently in extended operations, so check the [SWOT mission page](https://science.nasa.gov/mission/swot/) for current status.
 - **Frequency/resolution:** Each location is revisited on a 21-day repeat cycle during the science phase; many locations are seen more often because neighboring swaths overlap. The Ohio River reach in the figure below sits under four passes and was observed 118 times between January 2025 and October 2026, a median of about 9 days apart. The earlier 1-day repeat calibration phase (Dec. 2022–July 2023) is also available but was designed for instrument validation, not routine monitoring.
-- **Update cadence:** Data are released per granule as they're processed — not a fixed daily/hourly push like a hydrologic model. How long after an overpass the data appear is not stated here yet.
+- **Update cadence:** Data are released per granule as they're processed — not a fixed daily/hourly push like a hydrologic model. The typical data release latency is ~5 days from the measurement time.
 
 ## Data content
 
@@ -65,7 +55,7 @@ Confirm that the 21-day science orbit (and its data record) began on 21 July 202
 
 **What the data look like.** Each dot below is one SWOT observation of one reach of the Ohio River at Louisville, Kentucky: a single overpass, reduced to a single water surface elevation for the ~10 km reach. Notice three things: the observations are irregular in time (several per cycle, sometimes two within a day from neighboring passes); the river's rises, such as the April 2025 flood, show up as jumps of several meters; and no observation is flagged good (`reach_q` = 0). Almost all are `reach_q` = 1 ("suspect"), the best this reach gets.
 
-"Suspect" does not mean "wrong": it means processing found something that *might* affect the value. For this reach, keeping observations with `reach_q` ≤ 1 keeps 114 of 118 values and drops the 4 degraded ones; filtering to `reach_q` = 0 would leave nothing. The values still need a sanity check, such as comparing the February and April 2025 highs with what you know about the river. The Module 3 SWOT lesson shows how to look at the flag distribution for your own reach and choose a threshold.
+"Suspect" does not mean "wrong": it means processing found something that *might* affect the value. A node will be flagged as suspect if any single contributing pixel measurement (from PIXC) is suspect. Furthermore, a reach will be flagged as suspect if any single contributing node is suspect. For this reach, keeping observations with `reach_q` ≤ 1 keeps 114 of 118 values and drops the 4 degraded ones; filtering to `reach_q` = 0 would leave nothing. The values still need a sanity check, such as comparing the February and April 2025 highs with what you know about the river. The Module 3 SWOT lesson shows how to look at the flag distribution for your own reach and choose a threshold.
 
 The reach ID `74267300251` is the SWORD reach nearest the river's USGS gage at Louisville; Module 3 shows how to find reach IDs for any river.
 
@@ -125,7 +115,8 @@ fig.savefig("01_meet_nasa_swot-ohio-reach-wse.png", dpi=150)
 
 ## Usage and support
 
-- **Citation:** NASA/PO.DAAC recommends citing SWOT products by DOI, e.g. for the River Single-Pass Vector product: *SWOT (2025). SWOT Level 2 River Single-Pass Vector Data Product, Version D [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.* https://doi.org/10.5067/SWOT-RIVERSP-D Cite the specific product DOI and version you used, plus access date, following NASA's [Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance). Each collection's PO.DAAC landing page (reached through its DOI) gives the recommended citation. Module 1's [Data Publishing](../01-data-best-practices/03_data_publishing.md) page explains why DOIs make your work findable and reusable.
+- **Citation:** NASA/PO.DAAC recommends citing SWOT products by DOI (see the example below). Cite the specific product DOI and version you used, plus access date, following NASA's [Data Use Guidance](https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance). Each collection's PO.DAAC landing page (reached through its DOI) gives the recommended citation. Module 1's [Data Publishing](../01-data-best-practices/03_data_publishing.md) page explains why DOIs make your work findable and reusable.
+     - *SWOT (2025). SWOT Level 2 River Single-Pass Vector Data Product, Version D. NASA Physical Oceanography Distributed Active Archive Center. https://doi.org/10.5067/SWOT-RIVERSP-D. Date Accessed: 2026-10-29*
 - **License/access:** Open data, but most SWOT collections require a free NASA Earthdata Login to download. Data lives in the NASA Earthdata Cloud (hosted on AWS) and is distributed through {term}`PO.DAAC`. This course uses two access routes, and the Module 3 lesson [Retrieve NASA SWOT data](../03-federal-water-data-access-retrieval/01_access_nasa_swot.md) shows when to use each:
     - [`earthaccess`](https://earthaccess.readthedocs.io/en/latest/) ({term}`earthaccess`), a Python library for searching and downloading whole granules. This is an effective, streamlined method to authenticate and search/download any NASA Earthdata, not just SWOT, programmatically.
     - The [Hydrocron API](https://podaac.github.io/tutorials/quarto_text/SWOT.html) ({term}`hydrocron`), which repackages the per-pass river and lake shapefiles into CSV/GeoJSON time series so you don't have to stitch together potentially thousands of individual granules yourself. Check the [`hydrocron` documentation](https://podaac.github.io/hydrocron/) for which product versions and features it currently serves before building a workflow around it.
@@ -134,15 +125,7 @@ fig.savefig("01_meet_nasa_swot-ohio-reach-wse.png", dpi=150)
 
 :::{dropdown} Other SWOT access tools
 - The `podaac-data-downloader`/`podaac-data-subscriber` command-line tools download or subscribe to whole collections. Learn more with the [NASA PO.DAAC Cookbook SWOT tutorial](https://podaac.github.io/tutorials/quarto_text/SWOT.html#via-command-line---po.daac-subscriberdownloader-examples).
-- HiTIDE is a GUI tool for browsing and subsetting the ocean/KaRIn products.
-- SWODLR is an on-demand PO.DAAC tool for custom-resolution raster output beyond the standard 100 m/250 m products.
 - [SWOT RiverSP EGIS feature services](https://gis.earthdata.nasa.gov/portal/home/group.html?id=50037df01ae5464e9dcc66b722c30e59#overview)
-:::
-
-:::{admonition} TODO (dev team): Learner-review friction items (P6.5.4)
-:class: attention
-From the integration-pass learner review (2026-10-09). Not yet fixed:
-- Temporal coverage: replace "mid-2023" with the exact science-orbit start once NASA confirms it (Module 3 says 21 July 2023); update the glossary's "Science orbit" entry too.
 :::
 
 ## Further reading
