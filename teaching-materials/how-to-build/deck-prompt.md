@@ -36,7 +36,11 @@ It must look like the instructor built it herself in PowerPoint.
   row asks for something the lesson doesn't have, leave a visible placeholder on the slide
   ("CONTENT NEEDED: …") and list it in the report.
 - Code on slides is copied from the lesson, at most 12 lines per slide. Shorten only by leaving lines out
-  (and say so in the notes); never change what a line does.
+  (and say so in the notes); never change what a line does. Modules 1 and 2 have no code on slides. No module
+  shows a "How this figure was made" script.
+- Use a visual wherever a concept can be shown (design rules §7). A figure from another module, a credited agency
+  figure or a new figure from real data is fine; list each one in the report. New figures stay out of `images/`
+  and the lesson pages until the course lead agrees.
 - Define a term on the slide where it first appears, in the lesson's or glossary's words.
 - No internal course links (other pages, the glossary, the repo); external links are fine. Nothing from
   `TODO (dev team)` or `Partner review` callouts (the learner copies have already removed them).
@@ -108,4 +112,5 @@ Give me a short report:
 - the slide count, and slides and minutes per topic row, next to the topic list's minutes;
 - every `CONTENT NEEDED` or `FIGURE NEEDED` placeholder, and why;
 - lesson content that was hard to present, as a suggested lesson edit (not a slide workaround);
+- any figure or number that didn't come from the session's lesson pages, with its source;
 - any design rule you couldn't follow, and why.

@@ -75,6 +75,11 @@ in the templates table in `guide.md` once the template exists).
     external links. The speaker opens the floor for questions while it's up; there is no separate questions
     slide.
 
+12. **Activity answers.** The prompt stays in the slate panel on the left; "What you should see" is on the right,
+    with one more answer per slide.
+13. **Table.** A slate header bar, then one native PowerPoint table: slate header row, bold first column, grey
+    lines between rows only, 16 pt. Up to 8 rows and 4 columns; cut words or split the table if it doesn't fit.
+
 **How a session ends:** recap, what's due, further reading and questions, then (only when there is one) the
 "before the next session" slide as the very last slide, so it's what learners leave with.
 
@@ -103,6 +108,9 @@ Use one of these per slide, and only to point at something the speaker is talkin
   - **Move the outline:** the same table or schedule with the highlight moved to the next item.
   - **Grow a figure:** a definition first, then the same slide with the figure that extends it ("Reproducibility"
     → "Reproducibility v2.0" → with the continuum pyramid).
+- A table doesn't have to be a build. Build one (reveal rows, or move an outline) only when the content is complex
+  enough that learners need it one row at a time. A table kept for reference is shown once; the notes say so, and
+  the speaker summarizes it and moves on.
 - A build sequence counts as one idea for pacing (section 8), however many slides it takes.
 
 ## 7. Visuals
@@ -112,6 +120,9 @@ Use one of these per slide, and only to point at something the speaker is talkin
   illustrations, CC-BY).
 - Insert a figure as one picture at its own aspect ratio; never stretch or crop away axes or credits.
 - Every borrowed image gets a credit line (small grey text, bottom of the slide) and alt text.
+- When a concept can be shown, show it. Reuse figures from any module's `images/` folder or credited agency
+  figures, or make one from real data. Figures made for a deck stay out of `images/` and the lesson pages until
+  the course lead agrees, and they go in the build report.
 - Simple diagrams are fine when Lindsay's decks use the same kind: a few labelled boxes with arrows, a
   four-panel grid, a pyramid. If a slide needs a diagram the lessons don't provide and it can't be drawn that
   simply, put a placeholder on the slide ("FIGURE NEEDED: …") and list it in the build report.
@@ -126,6 +137,9 @@ From Lindsay's decks:
   and no slide over 70, except activity instructions.
 - Two-thirds or more of slides carry a picture.
 - Each block of new concepts ends in something learners do: an activity, a live-coding switch or a question.
+- Activities serve the session's learning objectives and have a bounded task: specific questions learners can
+  answer in the time given, from what's on the slide, with answers from the lessons. Avoid wide-open prompts.
+  Module 2 presents the products side by side; comparing them is Module 4's job.
 - The minutes in the topic list are the budget. A topic with 3 minutes gets about 1–2 ideas, so 1–4 slides
   counting builds.
 
@@ -168,7 +182,10 @@ These are the habits that make a deck look machine-made. Don't:
 - add "key stat" call-outs with giant numbers, unless the number is the point of the lesson section;
 - fill empty space for its own sake: white space is fine;
 - add a summary box or "Key takeaway" banner to every slide (a takeaway is its own slide, or the recap);
-- make up content, numbers, quotes or figures that aren't in the lesson pages.
+- put code on Module 1 or Module 2 slides: they're an overview, and code starts in Module 3;
+- put "How this figure was made" scripts on slides, in any module;
+- make up content, numbers, quotes or figures. Numbers and figures that aren't in the lesson pages must come from
+  real data, with a source and access date, and go in the build report.
 
 ## Where these rules came from
 

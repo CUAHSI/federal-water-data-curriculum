@@ -168,7 +168,8 @@ course lead's into your `templates/` folder if you build readings or want exampl
       commit it only if it should become the course template).
    3. Delete slides until exactly **one example of each slide type** in `design-rules.md` §4 is left: session
       title, program schedule, lesson objectives, content (one with a figure, one text-only), statement,
-      section divider, activity, live coding (copy the activity slide and retitle it), code, before → after.
+      section divider, activity, activity answers, live coding (copy the activity slide and retitle it), code,
+      before → after, table.
    4. On each example slide, type the slide type in the speaker notes (for example `TYPE: activity`), so the
       generator knows which is which.
    5. Remove anything that shouldn't be reused: other presenters' photos, old dates, talk-specific logos.
@@ -188,7 +189,7 @@ The course lead's copy (October 2026):
 
 | File | What it is |
 |---|---|
-| `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 12 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
+| `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 14 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
 | `make_template.py` | The script that made the first version of the template (needs `python-pptx`); only useful to start over |
 | `reading-template.docx` | The reading styles: Arial, slate headings, shaded Code style, course name and page number in the footer |
 | `make_reading_template.py` | The script that made the first reading template (needs `python-docx`); only useful to start over |

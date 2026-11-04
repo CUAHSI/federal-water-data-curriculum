@@ -24,7 +24,7 @@ This table maps WDFN's own vocabulary onto the course's [shared concepts](00_int
 
 **Key point: WDFN discharge values are not directly measured, but calculated from gage height. The gage height-discharge relationship is calibrated with periodic field measurements of discharge.**
 
-Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data is the mean (average) of all continuously sampled data for that day.
+Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data summarizes all continuously sampled data for that day with a statistic. That statistic is most often the mean (average, statistic code `00003`), but it can be another one, such as the maximum (`00001`), so check which statistic you have.
 
 Discharge is not directly measured every 15 minutes, but is calculated using the gage height. This is because it's easier to continuously measure the height of water than the volume of water passing by a point. Below are the three steps used to calculate continuous discharge data and ensure its accuracy. For further detail, see: [How Streamflow is Measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured) and [Why we use gage height](https://waterdata.usgs.gov/blog/gage_height/).
 
@@ -49,7 +49,7 @@ Field measurements are published too, so you can see how well the rating is supp
     - The first streamgage was established in 1889 on the Rio Grande in Embudo, New Mexico. The availability of the historical record is dependent on the type of water data and the history of the monitoring location collecting that data. For example, the Ohio River at Louisville, KY (USGS-03294500) has continuous discharge from 2009 and daily values from 1928. See [USGS's data availability statement](https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/) for more information.
     - Historical continuous data may have gaps in availability due to instrument problems, environmental conditions, or other factors. Daily data can be used for a more complete record.
     - Recent data are {term}`provisional <Provisional data>`: they have not yet been reviewed and may be revised. USGS reviews and approves them later (see the [USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)).
-- **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is the mean of all continuous data from that day.
+- **Frequency/resolution:** Most monitoring locations provide both continuous and daily discharge data. Continuous data is usually measured every 15 minutes, and daily data is a summary of all continuous data from that day, most often the mean.
 - **Update cadence:** Continuous data may be available within minutes of collection, while other times there may be a delay if the monitoring location cannot automatically transmit data. Daily data is typically available by 6:00 AM Eastern Standard Time the next day.
 
 ## Data content
