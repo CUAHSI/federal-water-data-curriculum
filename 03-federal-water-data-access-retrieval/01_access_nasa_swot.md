@@ -795,14 +795,10 @@ retrieved:
 
 Four things are worth keeping in mind:
 
-- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) notes that SWOT discharge
-  estimates are still in development. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
-  estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete
-  ([release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM),
-  section 4.1). Expect fill values in those columns, and check the current release notes before relying on them. Module 4's
-  [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) introduces the in-development SWOT discharge product.
+- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) notes that SWOT Level 2 discharge estimates are not yet ready for research use as of Nov 2026. Level 2 RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete ([release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), section 4.1). Expect fill values in those columns, and check the current release notes before relying on them. 
+     - Module 4's [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) introduces the only publicly available SWOT discharge product, [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3) (in-development, with Version 4 expected in the near term). 
 - **Quality flags are rarely 0.** For RiverSP, "nearly all reach-level quality flags … are non-zero" in Version D, because
-  node-level flags are propagated up to the reach ([Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), table 8).
+  pixel-level flags are propagated up to the node-level, and node-level flags are propagated up to the reach ([Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), table 8).
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
   `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
   write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
@@ -810,8 +806,8 @@ Four things are worth keeping in mind:
   not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
   CRID and your access date, and cite the collection DOI, for example: *SWOT. (2025). SWOT Level 2 River Single-Pass Vector
-  Data Product, Version D [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
-  https://doi.org/10.5067/SWOT-RIVERSP-D. Accessed 2026-10-08.* See the citation guidance in
+  Data Product [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
+  [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
 
 :::{admonition} Partner review (NASA): Citing SWOT data
