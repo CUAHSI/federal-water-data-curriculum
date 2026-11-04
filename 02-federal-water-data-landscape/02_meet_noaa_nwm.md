@@ -114,17 +114,14 @@ To the right of the line is what each forecast predicted from that moment. The R
 Runs from NWM v3.0 for COMID `10164004`, Ohio River at Louisville, KY. The dotted line is the forecasts' reference time (model initialization time), 2025-04-03 00:00 UTC. Notice how the horizons differ: 3 hours back for Analysis & Assimilation, then 18 hours, 8.5 days, 10 days and 30 days ahead. On the main plot the three black dots overlap, so use the zoom to see them. The gray band in the zoom marks the look-back: the run ending at the dotted line starts at 21:00 UTC and writes its first value at 22:00. Its files store that 21:00 start as `reference_time`, 3 hours before the `t00z` in their names. The axis break skips more than two years. Data: NOAA NWM operational archive on Google Cloud (`analysis_assim`, `short_range`, `medium_range_mem1` to `mem6`, `long_range_mem1` to `mem4`) and the NWM v3.0 retrospective Zarr store on AWS, accessed 2026-11-04.
 :::
 
-This is model output, not an observation, and comparing it with the gage shows why that matters. At the reference time, Analysis & Assimilation is close to [USGS 03294500](https://waterdata.usgs.gov/monitoring-location/USGS-03294500/): about 4,780 m³/s against about 4,930 m³/s (174,000 ft³/s). But over the next 18 hours the forecasts fall while the river rises. Short-Range ends near 3,240 m³/s, when the gage read about 6,000 m³/s (212,000 ft³/s; approved USGS values, accessed 2026-11-04). So this drop comes from the model, not the river. It may be a consequence of the data assimilation scheme in NWM v3.0 (direct replacement of simulated streamflow with observed streamflow during the analysis cycle without internal state adjustment), which sets the flow to the gage value without adjusting the rest of the model. Module 4 shows how to compare forecasts with observations.
+This is model output, not an observation, and it is not checked against the gage here; Module 4 shows how to compare forecasts with observations. Use this figure to compare what each configuration covers, not how well it did. The differences between the forecasts come from this one set of runs, so don't read them as a test of any configuration.
 
-The Medium-Range peaks of about 12,400–15,100 m³/s are also below the river's daily-mean crest of 712,000 ft³/s (about 20,200 m³/s) on 9 April, a value still provisional on 2026-11-04. The gap between the Long-Range and Medium-Range peaks comes from this one set of runs, so don't read any of this as a test of a configuration.
-
-:::{admonition} Partner review (NOAA): behavior around the reference time
+:::{admonition} Partner review (NOAA): look-back and ensemble members
 :class: important
-Please check three points for these NWM v3.0 runs at COMID `10164004`, with reference time 2025-04-03 00:00 UTC:
+Please check two points for these NWM v3.0 runs:
 
-1. Analysis & Assimilation is about 4,780 m³/s at the reference time, within about 3% of USGS 03294500, after the river had been rising for about three days. The forecasts then fall while the gage rises, and Short-Range ends about 46% below the gage at +18 hours. What causes this drop, and does the data assimilation explanation above fit this case?
-2. We describe each Analysis & Assimilation run as going back over the last 3 hours. The `t00z` files store `reference_time` 21:00 UTC, while the NOAA NWM API reports the cycle time. Is that description right?
-3. We say that Medium-Range members start from the same conditions, and the glossary says members have slightly different inputs. Is the difference between them in the forcing, not the initial state?
+1. We describe each Analysis & Assimilation run as going back over the last 3 hours. The `t00z` files store `reference_time` 21:00 UTC, while the NOAA NWM API reports the cycle time. Is that description right?
+2. We say that Medium-Range members start from the same conditions, and the glossary says members have slightly different inputs. Is the difference between them in the forcing, not the initial state?
 :::
 
 Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public forecast archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve short- and medium-range forecasts from it.
@@ -409,4 +406,3 @@ The result is the figure above, saved as a PNG file in your working folder. All 
 - [USGS user guide for the National Hydrography Dataset](https://pubs.usgs.gov/publication/sir20255031/full)
 - [Using the National Water Model Within NWPS](https://storymaps.arcgis.com/stories/c4964f08ffcf4d9286bd1fd545ddfbab) (NWS story map, updated September 2024)
 - [NWM operational archive on Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model)
-- [USGS 03294500, Ohio River at Louisville, KY](https://waterdata.usgs.gov/monitoring-location/USGS-03294500/)

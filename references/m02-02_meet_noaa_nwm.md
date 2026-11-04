@@ -14,4 +14,3 @@
 - NOAA National Weather Service. (n.d.). *National Water Model API* (experimental) documentation. https://api.water.noaa.gov/nwm/v1/docs (accessed 2026-10-08).
 - NOAA Office of Water Prediction. (n.d.). *About the National Water Model*. https://water.noaa.gov/about/nwm (accessed 2026-10-08).
 - Timilsina, S., & Passalacqua, P. (2025). A comparative analysis of national water model versions 2.1 and 3.0 reveals advances and challenges in streamflow predictions during storm events. *Journal of Hydrology: Regional Studies, 58*. https://doi.org/10.1016/j.ejrh.2025.102196
-- U.S. Geological Survey. (n.d.). *Monitoring location USGS-03294500, Ohio River at Louisville, KY*. USGS Water Data for the Nation. https://waterdata.usgs.gov/monitoring-location/USGS-03294500/ (accessed 2026-11-04).
