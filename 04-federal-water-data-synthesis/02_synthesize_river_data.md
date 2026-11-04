@@ -18,7 +18,7 @@ The December 2025 atmospheric river that drove the Skagit River flood, shown in 
 Consider adding a before/after photo of the Skagit valley with a reuse-cleared credit.
 :::
 
-_The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT tutorial "Hydrocron API: Getting Started with SWOT Time Series"](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) authored by Nikki Tebaldi, Cassandra Nickles, and Brandi Downs._
+_The idea for using the Skagit River flooding event came from [the PO.DAAC SWOT tutorial "Hydrocron API: Getting Started with SWOT Time Series"](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) authored by Brandi Downs, Nikki Tebaldi, and Cassandra Nickles._
 
 The sections below walk through the data you would collect for this flood, product by product. Run the code blocks in order, in one Python session (later blocks reuse variables from earlier ones), using the Module 4 environment `environments/m04-synthesis.yml` which you will create with the instructions below.
 
@@ -474,12 +474,7 @@ December has 18 valid reach-passes: 4 flagged suspect (1) and 14 flagged degrade
 - Only the 12 December pass for `…021`, which also loses its 1 December baseline, so we couldn't measure its rise.
 - Three passes for `…015` at the river mouth.
 
-That's why this lesson keeps **`reach_q` ≤ 2** and then checks the degraded values instead of trusting them: against the gage, and with `wse_u` and `reach_q_b`.
-
-:::{admonition} Partner review (NASA): River water surface elevation through the event (RiverSP)
-:class: important
-Confirm that keeping `reach_q` = 2 (degraded) passes, with the checks below, is reasonable for the ~200 m wide tidal lower Skagit, and whether NASA recommends a different threshold for flood analyses.
-:::
+That's why this lesson keeps **`reach_q` ≤ 2** and then checks the degraded values instead of trusting them: against the gage, and with `wse_u` and `reach_q_b`. This works for this flood event, but it is not a general recommendation. Degraded values should always be checked against an independent source.
 
 ```python
 swot = swot[swot["reach_q"] <= 2]
@@ -507,11 +502,6 @@ All 14 degraded passes carry `classification_qual_degraded`, and 11 also carry `
 - **The same passes look wrong against the gage** in the next step.
 
 `wse_u` and `reach_q_b` give you the reason; the gage confirms it.
-
-:::{admonition} Partner review (NASA): River water surface elevation through the event (RiverSP)
-:class: important
-Confirm this reading of `few_wse_observations` and `wse_u` for these passes.
-:::
 
 Because SWOT WSE and USGS gage height use different vertical references, we compare **changes** from a common baseline (the 1 December pass) instead of raw values. `stage_at()` looks up the gage height closest in time to each SWOT overpass:
 
@@ -557,12 +547,9 @@ plt.show()
 Change in water level since the 1 December 2025 SWOT pass: USGS gage height (line) and SWOT RiverSP reach water surface elevation (points, error bars = `wse_u`). Points close to the line agree with the gage; the 4 and 25 December outliers are the passes flagged `few_wse_observations`. Data: SWOT RiverSP Version D via PO.DAAC `hydrocron` (`reach_q` ≤ 2); USGS Water Data for the Nation gage height (`00065`, `Approved`). Accessed 2026-10-08.
 :::
 
-Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change. Those are the passes flagged `few_wse_observations` (and `partially_observed`), and the gage reach's `wse_u` (0.32 m) is about three times its usual value. Treat single degraded values with caution, and let `wse_u` and `reach_q_b` tell you which ones to doubt first. Note what the error bars in the plot are *not*: `wse_u` is the product's own error estimate, and on degraded passes the actual error can be many times larger (the 4 December point is about 12 m off with a `wse_u` of 0.66 m). Treat an unusually large `wse_u` as a warning sign, not as the size of the error. RiverSP is a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. RiverSP reports one value per fixed SWORD reach.
+Near the peak, the gage had risen 7.2 m since 1 December. SWOT saw the reach just downstream (`…021`) up 6.0 m and the reach at the river mouth (`…015`) up 3.1 m. The rise shrinks toward Skagit Bay, where the tide sets the water level. On 22 December the gage's reach (`…031`) and the next reach down (`…021`) agree with the gage within about 0.2 m (+2.5 and +2.4 m vs. +2.5 m). On 25 December they don't: both reaches read about 2 m higher than the gage's change. Those are the passes flagged `few_wse_observations` (and `partially_observed`), and the gage reach's `wse_u` (0.32 m) is about three times its usual value. Treat single degraded values with caution, and let `wse_u` and `reach_q_b` tell you which ones to doubt first. Note what the error bars in the plot are *not*: `wse_u` is the product's own error estimate, and on degraded passes the actual error can be many times larger (the 4 December point is about 12 m off with a `wse_u` of 0.66 m). Treat an unusually large `wse_u` as a warning sign, not as the size of the error. 
 
-:::{admonition} Partner review (NASA): River water surface elevation through the event (RiverSP)
-:class: important
-Confirm how RiverSP handles floodplain (out-of-bank) water pixels near a reach.
-:::
+RiverSP can be a good record of *how high* the river got, along the whole river and not just at the gage. What it can't tell us is *where the water went* once it left the channel. It is important to note that, according to the Algorithm Theoretical Basis Document (ATBD), the RiverSP product is not intended for significant flooding events, and the Raster product should be used instead. For more technical information, see the [ATBD document](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d#documents-and-resources).
 
 ### Water extent before and near the peak (Raster)
 
@@ -746,6 +733,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html), PO.DAAC: Skagit River SWORD reach IDs.
 - [Hydrocron documentation](https://podaac.github.io/hydrocron/), PO.DAAC.
 - [`earthaccess` documentation](https://earthaccess.readthedocs.io/).
+- [Algorithm Theoretical Basis Document (ATBD)](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d#documents-and-resources)
 - [NASA SWOT mission site](https://swot.jpl.nasa.gov/), NASA/JPL: mission overview, data and documents.
 - [SWOT Product Description: Level 2 KaRIn high rate river single pass vector product (L2_HR_RiverSP), JPL D-56413 Rev C, 24 Feb 2025](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/pdd/D-56413_SWOT_Product_Description_L2_HR_RiverSP_20250224a_RevC_clean_sig_final.pdf): `reach_q`, `reach_q_b`, `wse_u` and geoid definitions.
 - [`dataretrieval-python` documentation](https://doi-usgs.github.io/dataretrieval-python/) and the [USGS Water Data APIs](https://api.waterdata.usgs.gov/).
