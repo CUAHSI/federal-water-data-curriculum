@@ -33,7 +33,7 @@ No code on these slides: Module 2 is an overview, and code starts in Module 3. N
 | 18 | How NWM values are made | 02/02 § Dataset derivation | deck | 3 | Model versions matter. Leave out the Texas comparison: it isn't one of the course rivers |
 | 19 | Where the NWM runs | 02/02 § Spatial coverage | deck | 2 |  |
 | 20 | Retrospective vs. forecasts; which configuration | 02/02 § Temporal coverage | deck | 7 | The configuration table first, with no build: the notes say it is for reference, summarize it briefly and move on. Then explain the configurations with `images/m02/02_meet_noaa_nwm-ohio-configurations.png`, then "Which configuration do I want?" |
-| 21 | What NWM forecasts look like | 02/02 § Data content | deck | 5 | `images/m02/02_meet_noaa_nwm-ohio-medium-range.png`; no per-value quality flag |
+| 21 | What NWM forecasts look like | 02/02 § Data content | deck | 5 | The same configurations figure, read as if it were 3 April 2025 (spotlight on the forecasts); no per-value quality flag |
 | 22 | Using NWM data: citation and access routes | 02/02 § Usage and support | deck | 4 |  |
 | 23 | Activity 2: pick the NWM configuration | 02/02 § Temporal coverage | deck | 4 | Activity slide with four short scenarios; then the answers, one per slide |
 | 24 | Meet USGS WDFN: who makes it and why | 02/03 § Meet USGS WDFN (intro) | deck | 3 | Section divider; NWIS → WDFN in one slide |
