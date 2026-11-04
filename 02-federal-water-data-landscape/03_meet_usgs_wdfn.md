@@ -24,7 +24,7 @@ This table maps WDFN's own vocabulary onto the course's [shared concepts](00_int
 
 **Key point: WDFN discharge values are not directly measured, but calculated from gage height. The gage height-discharge relationship is calibrated with periodic field measurements of discharge.**
 
-Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data summarizes all continuously sampled data for that day with a statistic. That statistic is most often the mean (average, statistic code `00003`), but it can be another one, such as the maximum (`00001`), so check which statistic you have.
+Discharge is available as continuous or daily data, also referred to as instantaneous values (IV) and daily values (DV) by USGS. Continuous discharge is usually recorded every 15 minutes, and daily data summarizes all continuously sampled data for that day with a statistic. That statistic is most often the mean (average, statistic code `00003`), but it can be another one, such as the maximum (`00001`), so check the `statistic_id` column.
 
 Discharge is not directly measured every 15 minutes, but is calculated using the gage height. This is because it's easier to continuously measure the height of water than the volume of water passing by a point. Below are the three steps used to calculate continuous discharge data and ensure its accuracy. For further detail, see: [How Streamflow is Measured](https://www.usgs.gov/water-science-school/science/how-streamflow-measured) and [Why we use gage height](https://waterdata.usgs.gov/blog/gage_height/).
 
