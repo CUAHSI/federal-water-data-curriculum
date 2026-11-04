@@ -384,11 +384,11 @@ to know either system to use `earthaccess`, but it helps when you read tutorials
 
 Discovery told you *which* granules exist. Now get the data. The two tools behave differently:
 
-- `earthaccess` gives you **whole files**: one granule per overpass, covering a large area. `earthaccess.download()` copies
-  them to your computer. `earthaccess.open()` streams them instead, which is most efficient when your code runs in the same
-  cloud region as the data (AWS `us-west-2`). On a laptop, downloading a handful of files is simpler and just as fast.
-- `hydrocron` gives you **just the rows you ask for**: the values for one reach or node, across many overpasses, in one web
-  request.
+- `earthaccess` gives you **whole shapefiles**: one granule per overpass, covering a large area. `earthaccess.download()` copies
+  them to your computer. `earthaccess.open()` streams them directly to memory on your computer instead. `earthaccess.open()` is most efficient when your code runs in the same
+  cloud region as the data (AWS `us-west-2`). On a laptop, downloading a handful of files is simpler and just as fast.  See `earthaccess` documentation for more information, including how to [optimize `earthacess.open()`](https://earthaccess.readthedocs.io/en/latest/user/explanation/access/#optimizing-earthaccessopen)
+- `hydrocron` gives you **just the observations you ask for**: the values for one reach or node, across many overpasses, in one web
+  request. These will be returned in a time series-friendly format (CSV or geoJSON)
 
 Keep downloads exactly as they arrived in `data_dir`, and write anything you compute from them somewhere else. Then you can
 always tell raw data from derived data, and re-create the derived files from the raw ones (see
@@ -429,7 +429,7 @@ reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_s
 The point sits on reach **`74267300251`**, about 200 m from its centerline (well inside a channel about 720 m wide). Its neighbors are `74267300241` (downstream) and `74267300261` (upstream). Reach
 IDs encode position in SWORD: in `74267300251`, the leading `7` is the North America region, and the last digit (`1`) is the
 reach type, `1` meaning a river reach. For detailed information on how to read a `reach_id`, see this [PO.DAAC Cookbook page](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html#obtain-sword-reach-ids). The granule itself holds every reach SWOT observed along this pass across North America.
-RiverSP files carry about 130 columns; the product description documents (PDDs), linked in the table on the PO.DAAC [datasets information page](https://podaac.jpl.nasa.gov/SWOT?tab=datasets-information), define them all.
+RiverSP files carry about 130 columns; the product description documents (PDDs), linked in the table on the Earthdata SWOT page, under [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation), define them all.
 
 Notice `p_width`: SWORD expects this reach to be about 720 m wide, and SWOT measured 853 m on this overpass, with the river in
 flood. Each row is one reach seen on this overpass. The key columns:
@@ -442,11 +442,6 @@ flood. Each row is one reach seen on this overpass. The key columns:
 - `reach_q` is the summary **{term}`Data quality flag <Data quality flag(s)>`**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - `time_str` is the overpass **{term}`Time`** in UTC.
 - Missing values are stored as `-999999999999`, not `NaN`. Filter them out before plotting.
-
-:::{admonition} Partner review (NASA): RiverSP columns
-:class: important
-Confirm the `reach_q` value meanings and the EGM2008 vertical reference for Version D RiverSP `wse`.
-:::
 
 The location map at the top of this page was drawn from this one file:
 
@@ -478,7 +473,7 @@ plt.show()
 ### Raster water area with `earthaccess`
 
 Raster granules are NetCDF files, so you read them with `xarray`. Each file is a fixed scene, about 150 km on a side, on a
-100 m grid in UTM coordinates. Comparisons only make sense between scenes seen from the **same pass**, because each pass views
+100 m grid in UTM coordinates (for 100 m resolution, `SWOT_L2_HR_Raster_100m_D`). Comparisons only make sense between scenes seen from the **same pass**, because each pass views
 the river from a different angle and covers a different part of the scene. Download the three pass-175 scenes: before the
 flood, near the crest, and after.
 
@@ -601,8 +596,11 @@ print(len(values), "observed pixels in the scene")
 :::
 
 Every observed pixel in the scene carries `geolocation_qual_degraded`: the whole overpass was flagged because its
-geolocation (where each pixel sits on the ground) is less certain, not because of anything about the river. Whether to use
-such a scene is your call. Here, the river in the 13 April scene lines up with the river in the other two (see the maps
+geolocation (where each pixel sits on the ground) is less certain, not because of anything about the river. The heights are likely not trustworthy, but the water area might be reasonable. 
+
+Whether to use such a scene is your call. Thresholds on any flags depend on the use case, and you should try to understand the flags and tailor to their use case.
+
+Here, the river in the 13 April scene lines up with the river in the other two (see the maps
 below), so this lesson keeps it and says so.
 
 Save derived results like this table outside the raw-data folder, with a name that says what they are:
