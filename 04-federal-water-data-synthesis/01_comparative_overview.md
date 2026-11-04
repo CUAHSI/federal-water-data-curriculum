@@ -1,12 +1,12 @@
 # Comparative overview of Federal data products
 
-In this lesson, we will compare and contrast the three Federal data products using helpful data dimensions, including data accuracy, temporal availability, and spatial coverage. We will wrap up this lesson with a section describing the best applications and uses for each of the data products. Understanding the similarities and differences can help you design research to appropriately leverage or adapt to existing data products.
+In this lesson, we will compare and contrast the three Federal data products using helpful data characteristics, including spatial coverage, temporal availability, and data accuracy. We will wrap up this lesson with a section describing the best applications and uses for each of the data products. Understanding the similarities and differences can help you design research to appropriately leverage or adapt to existing data products.
 
 ## Spatial coverage
 
 The three Federal datasets used in this course are built from very different spatial models: a satellite that sees rivers wherever it passes, a model that covers every reach of a national stream network, and gages at fixed points. They are described below in the course's agency order (NASA, NOAA, USGS); the {term}`location identifier <Location identifier>` each one uses is part of that spatial model.
 
-* **NASA Surface Water and Ocean Topography ({term}`SWOT`) water surface elevation** data are derived from a remotely-sensed raster of water extent. In their more raw form, these data are not spatially limited and can exist for every pixel across the globe. In the hydrology-linked data product `L2_HR_RiverSP`, the data are mapped to ~10 km river {term}`reaches <Reach>` defined in the SWOT River Database ({term}`SWORD`) and are available for rivers globally. Module 2 describes the river product as effectively resolving rivers roughly 50–100 m wide and wider.
+* **NASA Surface Water and Ocean Topography ({term}`SWOT`) water surface elevation** data are derived from measurements taken by SWOT's {term}`KaRIn instrument<KaRIn>` that are geolocated into a {term}`pixel cloud<Pixel cloud (PIXC)>`. The pixel cloud is limited by swath geometry and latitude coverage. In the `L2_HR_RiverSP` data product, the data are mapped to ~10 km river {term}`reaches <Reach>` defined in the SWOT River Database ({term}`SWORD`) and are available for rivers globally. Module 2 describes the river product as effectively resolving rivers roughly 50–100 m wide and wider.
 
   :::{admonition} TODO (dev team): SWOT minimum river width
   :class: attention
@@ -20,12 +20,7 @@ The three Federal datasets used in this course are built from very different spa
 
 Much like their spatial coverage, the three data products also represent vastly different temporal landscapes. Below they are described in order of the most limited timeseries and shortest period of record to the most temporally robust.
 
-* **NASA SWOT water surface elevation** data are only available when the SWOT satellite passes over the location of interest. Data are collected continuously across the globe, but at any one location they are limited by the satellite's orbit, which repeats every 21 days. A location can fall under more than one swath in each 21-day cycle (higher latitudes more often), and `hydrocron` and RiverSP return **one record per overpass**, not one per cycle. In the Module 4 case study, the lowest Skagit reaches were each observed four or five times in December 2025 (SWOT RiverSP via `hydrocron`, accessed 2026-10-08). Science-orbit time series begin in 2023.
-
-  :::{admonition} TODO (dev team): Start of SWOT science-orbit records
-  :class: attention
-  Confirm the start date to give here: Module 3 says the science orbit began in July 2023; this page previously said August 2023.
-  :::
+* **NASA SWOT water surface elevation** data are only available when the SWOT satellite passes over the location of interest. Data are collected continuously across the globe, but at any one location they are limited by the satellite's orbit, which repeats every 21 days. A location can fall under more than one swath in each 21-day cycle (higher latitudes more often), and `hydrocron` and RiverSP return **one record per overpass**, not one per cycle. In the Module 4 case study, the lowest Skagit reaches were each observed four or five times in December 2025 (SWOT RiverSP via `hydrocron`, accessed 2026-10-08). Science-orbit time series begin 21 July 2023.
 
 * **NOAA NWM streamflow** data are produced continuously, as several _configurations_ that each answer a different question ([NOAA OWP](https://water.noaa.gov/about/nwm)):
   * an **analysis** of current conditions, updated through the day;
@@ -46,12 +41,7 @@ Much like their spatial coverage, the three data products also represent vastly 
 
 The three products are very different kinds of data: an observation from space (NASA SWOT), a model (NOAA NWM) and an in-stream observation (USGS). Each agency describes accuracy in its own terms, so rather than ranking them, this section summarizes what each says about its product and what that means for a researcher.
 
-**NASA SWOT water surface elevation** comes with a per-observation uncertainty (`wse_u`, in meters) and with summary and bitwise {term}`data quality flags <Data quality flag(s)>` (`reach_q`, `node_q`, `*_qual`). The mission's commonly cited goal of about 10 cm precision for water surface elevation is a mission-level target, not a guarantee for every reach and overpass (Module 2). Performance varies with river width, roughness and other local factors; the product description documents give the details (Module 2). On the lower Skagit, 14 of the 18 December 2025 reach observations are flagged degraded (`reach_q` = 2) and none good, and one overpass reads about 12 m higher than on December 1 while the gage had barely changed (SWOT RiverSP via `hydrocron`; see the case study in the next lesson). Always check `wse_u` and the quality flags, and compare with an independent source where you can.
-
-:::{admonition} Partner review (NASA): Accuracy
-:class: important
-Confirm the precision-target wording and the main factors that affect WSE accuracy.
-:::
+**NASA SWOT water surface elevation** comes with a per-observation uncertainty (`wse_u`, in meters) and with summary and bitwise {term}`data quality flags <Data quality flag(s)>` (`reach_q`, `node_q`, `*_qual`). SWOT’s [science requirement](https://swot.jpl.nasa.gov/system/documents/files/2176_2176_D-61923_SRD_Rev_B_20181113.pdf) for water surface elevation is 10 cm accuracy when averaged over at least 1 km² of water area (for rivers, over a reach on rivers wider than 100 m). These are mission-level requirements, not guarantees for every reach and overpass. Performance varies with river width, water surface roughness, position in the swath, surrounding topography, and vegetation canopy obstruction, among other factors; the product description documents give the details (Earthdata SWOT page, under [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation)). On the lower Skagit, none of the 18 SWOT reach observations from December 2025 were flagged good quality (14 were flagged degraded, `reach_q` = 2), and one overpass reported a water surface elevation about 12 m higher than on December 1 even though the USGS gage showed little change over the same period. A reminder that quality flags and comparison with an independent source are both needed (SWOT RiverSP via `hydrocron`; see the case study in the next lesson). Always check `wse_u` and the quality flags, and compare with an independent source where you can.
 
 **NOAA NWM streamflow** has no per-value quality flag. Its accuracy depends on the configuration, the weather forcing (especially forecast precipitation), how well the basin is calibrated, and the model version (Module 2). USGS and U.S. Army Corps of Engineers observations are assimilated into several of the analysis configurations; the others run without observations ([NOAA OWP](https://water.noaa.gov/about/nwm)). Forecast skill falls as lead time grows. The practical way to judge NWM accuracy for your question is to compare past forecasts with USGS observations for similar events, which is what the [Module 4 case study](02_synthesize_river_data.md) does for the Skagit.
 
@@ -83,16 +73,11 @@ The table lines the three products up using the course's seven shared concepts (
 | {term}`Data unit` | Granule (one pass over one area); `hydrocron` returns one row per reach per overpass | One output file per time step, covering every reach | One time series per monitoring location and parameter |
 | Spatial coverage | Global rivers roughly 50–100 m wide and wider | Every NHDPlus reach (2.7M+), CONUS plus AK, HI, PR/USVI | About 9,000 stream gages with discharge |
 | Temporal coverage | An overpass every few days to 21 days, since 2023 | Hourly to 6-hourly; forecasts since 2016, retrospective since 1979 | Typically 15-minute; daily records back to 1889 at the oldest sites |
-| Typical latency | Days after an overpass | About 1–2 hours after each cycle | Minutes to hours (provisional) |
-| Main strength | Sees rivers anywhere, and floodplain water (Raster) | Complete network; forecasts | Highest-quality local record |
+| Typical latency | Variable up to 45 days | About 1–2 hours after each cycle | Minutes to hours (provisional) |
+| Main strength | Global coverage, including ungaged rivers, and floodplain water (Raster) | Complete network; forecasts | Highest-quality local record |
 | Main caution | Sparse in time; quality varies by reach and pass | Model error; no per-value flag | Point locations only; ratings uncertain at extreme flows |
 
 The version / provenance row is the one most often left out of a methods section, and the one that most affects whether someone can reproduce your result: name the SWOT product version, the NWM model version and configuration, and the USGS approval status and access date for every dataset you use (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)).
-
-:::{admonition} TODO (dev team): RiverSP latency
-:class: attention
-Verify RiverSP latency.
-:::
 
 Sources: Module 2 agency pages, [NOAA OWP](https://water.noaa.gov/about/nwm), and the Module 3 lessons.
 
@@ -119,21 +104,9 @@ Each agency publishes guidance on how its data should and should not be used. Th
 
 - **Use the programmatic tools PO.DAAC documents.** PO.DAAC lists `earthaccess` for searching and downloading SWOT granules, and its `hydrocron` API for river and lake time series in CSV or GeoJSON ([PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html); [Hydrocron documentation](https://podaac.github.io/hydrocron/)).
 - **Know which product version you are using, and don't mix versions without checking.** Version D supersedes Version C (`2.0`), and some reach and node IDs differ between them ([Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf); [Hydrocron versioning](https://podaac.github.io/hydrocron/)).
-- **Use the quality flags and uncertainties for your application.** Check `reach_q` / `node_q` and the per-variable `*_qual` flags and `wse_u` rather than treating every value as equally reliable. The PO.DAAC Cookbook links a general quality-flag tutorial ([PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html)).
+- **Use the quality flags and uncertainties for your application.** Check `reach_q` / `node_q` and the per-variable `*_qual` flags and `wse_u` rather than treating every value as equally reliable. The PO.DAAC Cookbook links a general quality-flag tutorial ([PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_quality_flag_demo.html)). "Degraded" (`reach_q` = 2) observations should be used with caution and checked against the quality flags and an independent source.
 
-  :::{admonition} Partner review (NASA): NASA (SWOT)
-  :class: important
-  Is there an official recommended filter for research use, and how should users treat "degraded" (`reach_q` = 2) observations?
-  :::
-
-- **Ask for a `hydrocron` API key for heavy use.** Keys are optional, but PO.DAAC asks heavy or recurring users to request one ([Hydrocron timeseries docs](https://podaac.github.io/hydrocron/timeseries)).
-
-:::{admonition} Partner review (NASA): NASA (SWOT)
-:class: important
-- Confirm this recommendation: *Use the programmatic tools PO.DAAC documents.*
-- Confirm this recommendation: *Know which product version you are using, and don't mix versions without checking.*
-- Confirm this recommendation: *Ask for a `hydrocron` API key for heavy use.*
-:::
+- **Ask for a `hydrocron` API key for heavy use.** Keys are optional, but PO.DAAC asks heavy or recurring users to request one ([Hydrocron timeseries docs](https://podaac.github.io/hydrocron/timeseries/#api-keys)). Heavy is defined as "continued use with many requests per hour or day or continued use which may require many requests per second or concurrent requests".
 
 ### NOAA (National Water Model)
 
@@ -166,10 +139,11 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 
 ## Further reading
 
-- [PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/quarto_text/SWOT.html)
-- [Hydrocron documentation](https://podaac.github.io/hydrocron/) and [timeseries endpoint](https://podaac.github.io/hydrocron/timeseries)
+- [PO.DAAC SWOT Cookbook](https://podaac.github.io/tutorials/notebooks/datasets/SWOT_quality_flag_demo.html)
+- [Hydrocron documentation](https://podaac.github.io/hydrocron/) and [timeseries endpoint](https://podaac.github.io/hydrocron/timeseries/#api-keys)
 - [SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)
 - [NASA's SWOT River Database (SWORD)](https://github.com/SWORD-Global/SWORD)
+- [NASA's SWOT science requirement](https://swot.jpl.nasa.gov/system/documents/files/2176_2176_D-61923_SRD_Rev_B_20181113.pdf)
 - [About the National Water Model (NOAA OWP)](https://water.noaa.gov/about/nwm)
 - [NWM on the AWS Registry of Open Data](https://registry.opendata.aws/noaa-nwm-pds/)
 - [USGS provisional data statement](https://waterdata.usgs.gov/provisional-data-statement/)
