@@ -643,11 +643,6 @@ before the flood (23 March 2025), near the crest (13 April) and after (4 May). P
 product, Version D ([doi:10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RASTER-D)), CRID `PGD0`, accessed 2026-10-08.
 :::
 
-:::{admonition} Partner review (NASA): Raster water area
-:class: important
-The 13 April 2025 pass-175 scene (`..._031_175_111F_..._PGD0_01`) has `geolocation_qual_degraded` set on every observed pixel. What causes a scene-wide geolocation flag, and is it reasonable to use such a scene for water extent, as this lesson does, after checking it against neighboring scenes? Which `water_area_qual` threshold do you recommend for water-extent work, and is a fixed 10 km box a reasonable way to compare overpasses from one pass?
-:::
-
 (swot-hydrocron)=
 ### RiverSP time series with `hydrocron`
 
@@ -810,11 +805,6 @@ Four things are worth keeping in mind:
   [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
 
-:::{admonition} Partner review (NASA): Citing SWOT data
-:class: important
-Confirm the recommended dataset citation format for Version D RiverSP and Raster, and whether Version D RiverSP discharge (`dschg_*`) is now populated.
-:::
-
 ## Best practices FAQs
 
 See the sections below for answers to these questions:
@@ -864,10 +854,10 @@ via `hydrocron`, accessed 2026-10-08.
 One request returned more than three years of overpasses. Two things to notice:
 
 - **The April 2025 flood was not the only one.** The highest values in the record, about 131.5 m, are from 20 February 2025;
-  the April crest (131.2 m) is close behind. A long record puts one event in context.
+  the April crest (131.2 m) is close behind. A long record puts one event in context. 
 - **The record mixes two processing streams.** Observations up to 15 May 2025 are reprocessed (`PGD0`); later ones are
   forward-processed (`PID0`). Both are Version D, but keep the `crid` column so you can check whether a shift in your series
-  lines up with the switch.
+  lines up with the switch. For more information on the differences between these processing streams, see Release Note - Version D (Section 3 Product Version Identifier), found on the Earthdata SWOT page [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation).
 
 ### Spatial scaling
 
@@ -886,15 +876,10 @@ thousands of reach IDs is the wrong tool here: it sends thousands of requests fo
   `threads` argument).
 - **Do** run large `earthaccess` workflows in AWS `us-west-2` (for example, a cloud JupyterHub) and use `earthaccess.open()`
   to stream data instead of downloading it.
-- **Avoid** firing many `hydrocron` requests in parallel. Send them one after another, or a few at a time, and request a
-  `hydrocron` API key from PO.DAAC if you have a heavy or recurring workload.
+- **Avoid** firing tens of thousands of `hydrocron` requests in parallel. Send them one after another, or a few at a time. For a repeat or global requests, you can request an API key from PO.DAAC. This is done by submitting an issue on the `hydrocron` [GitHub](https://github.com/podaac/hydrocron/issues) and providing your estimated number of requests, number of concurrent requests, and number of requests per second. 
+     - Additionally, here is an example notebook that uses `dask` to query multiple reach identifiers: [Hydrocron API: Parallel Time Series Processing with Dask](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples.html#set-up-dask-workers-for-parallelization). 
 - **Avoid** re-downloading the same granules every time you run your code. Keep a fixed `local_path=`:
   `earthaccess.download()` skips files that are already there unless you pass `force=True`.
-
-:::{admonition} Partner review (NASA): Parallelization
-:class: important
-Confirm these recommendations, in particular the guidance on parallel `hydrocron` requests and when to request an API key.
-:::
 
 ## Now you try it
 
@@ -981,7 +966,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [`hydrocron` documentation](https://podaac.github.io/hydrocron/) and the
   [timeseries endpoint reference](https://podaac.github.io/hydrocron/timeseries).
 - [PO.DAAC Cookbook: SWOT tutorials](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including
-  [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html)
+  [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) and [Hydrocron API: Parallel Time Series Processing with Dask](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples.html#set-up-dask-workers-for-parallelization) 
   by Nikki Tebaldi, Cassandra Nickles and Brandi Downs.
 - [SWOT Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM)
   (SWOT Project, NASA JPL and CNES): CRIDs, product counters, known issues.
