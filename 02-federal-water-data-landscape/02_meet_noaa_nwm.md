@@ -114,7 +114,7 @@ To the right of the line is what each forecast predicted from that moment. The R
 Runs from NWM v3.0 for COMID `10164004`, Ohio River at Louisville, KY. The dotted line is the forecasts' reference time (model initialization time), 2025-04-03 00:00 UTC. Notice how the horizons differ: 3 hours back for Analysis & Assimilation, then 18 hours, 8.5 days, 10 days and 30 days ahead. On the main plot the three black dots overlap, so use the zoom to see them. The gray band in the zoom marks the look-back. The axis break skips more than two years. Data: NOAA NWM operational archive on Google Cloud (`analysis_assim`, `short_range`, `medium_range_mem1` to `mem6`, `long_range_mem1` to `mem4`) and the NWM v3.0 retrospective Zarr store on AWS, accessed 2026-11-04.
 :::
 
-Everything in the figure is model output, not observations, and it is not checked against the gage here; Module 4 shows how to compare forecasts with observations. Use this figure to compare what each configuration covers, not how well it did.
+Everything in the figure is model output, not observations, and it is not checked against the gage here; Module 4 shows how to compare forecasts with observations. Use this figure to compare what each configuration covers.
 
 Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public forecast archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve short- and medium-range forecasts from it.
 
