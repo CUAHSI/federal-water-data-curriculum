@@ -83,11 +83,6 @@ A reminder from Module 2: each dataset has its own vocabulary, but the course de
 - **Scaling and cloud-native access.** Very large analyses often run fastest _next to the data_: on a cloud computer in the same region as the archive, streaming only the needed parts of files instead of downloading them. The SWOT and NWM lessons point out when this is worth it. Service-based access, such as the USGS Water Data APIs, returns only the rows you ask for, so where your code runs matters much less.
 - **Reproducibility.** Every lesson pins a {term}`conda environment <Conda environment>`, keeps its query (places, IDs, dates, codes) in variables, names the data version it used, keeps raw downloads separate from derived results, and shows how to cite the data. These ideas come from Module 1: [Open Science](../01-data-best-practices/01_open_science.md), [Data Management](../01-data-best-practices/02_data_management.md) and [Data Publishing](../01-data-best-practices/03_data_publishing.md).
 
-:::{admonition} Partner review (NASA): Important concepts and terminology
-:class: important
-Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
-:::
-
 :::{admonition} Partner review (NOAA): Important concepts and terminology
 :class: important
 Confirm the module framing about access patterns and provider recommendations, and the description of each agency's preferred tools.
