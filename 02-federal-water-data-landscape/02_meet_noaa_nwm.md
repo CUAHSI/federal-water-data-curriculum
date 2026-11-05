@@ -65,7 +65,7 @@ As announced in [NWS Service Change Notice 26-64](https://www.weather.gov/media/
 ## Temporal coverage
 
 - **Period of record:** The NWM offers different types of simulation, and each covers a different period. Operational forecasts have run since August 2016. A {term}`retrospective simulation <Retrospective simulation>` is a single, continuous model run over multiple decades that lets you examine past hydrologic events. "Retrospective" here means a run over the full historical period using historical weather data as input rather than real-time observations or forecasts. It's not a collection of old forecasts: it is the model's best available reconstruction of what streamflow likely was at every `feature_id`, given current modeling knowledge and datasets, including reaches with no gage. The v3.0 retrospective on AWS covers February 1979 – January 2023 ([AWS Registry of Open Data](https://registry.opendata.aws/nwm-archive/)). This makes it the main source of long-term, reach-level historical streamflow for ungauged locations.
-- **Frequency/resolution:** Varies by configuration. Analysis & Assimilation and Short-Range are hourly, and the Retrospective dataset is hourly throughout. Medium-Range consists of two configurations: a 10-day Deterministic configuration (member 1) and a 8.5 day 6 member {term}`ensemble <Ensemble member>` (including the first 8.5 days of member 1); the NOAA NWM API returned hourly streamflow for all six members on 2026-10-08 (see the figure below). Long-Range output is 6-hourly.
+- **Frequency/resolution:** Varies by configuration. Analysis & Assimilation and Short-Range are hourly, and the Retrospective dataset is hourly throughout. Medium-Range consists of two configurations: a 10-day Deterministic configuration (member 1, a single run) and an 8.5-day {term}`ensemble <Ensemble member>` of six members. Member 1 belongs to both: the ensemble uses its first 8.5 days alongside members 2–6, which stop there. Output is hourly for all six members, in the NOAA NWM API (checked 2026-10-08) and in the archive files. Long-Range output is 6-hourly.
 - **Update cadence:** Short-Range forecasts cycle hourly over CONUS; Medium- and Long-Range forecasts are produced four times a day; forecast latency is roughly 1–2 hours after cycle time (mostly driven by the lag in incoming weather-forcing data)
 
 **Which configuration do I want?** It depends on what you mean by "history":
@@ -82,7 +82,7 @@ Each configuration also has its own model inputs. For example, the retrospective
 | Analysis & Assimilation (`analysis_assim`) | Best estimate of current conditions | the last 3 hours (look-back) | hourly | hourly |
 | Short-Range (`short_range`) | Next-day forecasts | 18 hours | hourly | hourly |
 | Medium-Range Deterministic (`medium_range`) | Single-valued forecasts for the coming week | 10 days (member 1) | hourly, in the NOAA NWM API and in the archive files | four times a day |
-| Medium-Range Ensemble (`medium_range`) | Ensemble forecasts for the coming week; six ensemble members | 8.5 days (members 2–6, plus first 8.5 days of member 1) | hourly, in the NOAA NWM API and in the archive files | four times a day |
+| Medium-Range Ensemble (`medium_range`) | Ensemble forecasts for the coming week; six ensemble members | 8.5 days (all six members; member 1 continues to 10 days as the Deterministic forecast) | hourly, in the NOAA NWM API and in the archive files | four times a day |
 | Long-Range (`long_range`) | Monthly outlooks; four ensemble members | 30 days | 6-hourly | four times a day |
 
 There are four operational Medium-Range products for CONUS:
@@ -99,64 +99,276 @@ There are four operational Medium-Range products for CONUS:
 - **Related variables available in the same output:** velocity, reservoir inflow/outflow/elevation, ponded water depth, depth to soil saturation, soil moisture, snowpack, evapotranspiration
 - **Known limitations:** No formal per-value QA/QC flag exists; quality is instead governed by model version and configuration, and by how well any given basin was calibrated. Documented issues (e.g., both v2.1 and v3.0 struggle to capture storm peak magnitude and timing in the Texas comparison above) should be treated as caveats on the whole time series, not flags on individual values. As with any model, output quality also degrades in ungaged, heavily-regulated, or poorly-calibrated basins.
 
-**What the data look like.** The figure shows one medium-range forecast for the NHDPlus reach of the Ohio River at Louisville, Kentucky (COMID `10164004`). Everything to the right of the dotted line is a prediction for a single reference time. Members 1–6 start from the same conditions and spread apart as lead time grows. The Deterministic forecast (member 1) runs a day and a half longer than the others. Medium-range forecasts are issued four times a day, so six hours later a new forecast replaces this one; a forecast is identified by both its reach and its reference time.
+**What the data look like.** The figure puts the configurations in the table above on a single timeline, with the forecasts sharing one reference time, for the NHDPlus reach of the Ohio River at Louisville, Kentucky (COMID `10164004`), during the April 2025 flood. The strip along the top shows how far each configuration reaches from the reference time (the dotted line). The hydrograph below shows the streamflow each one gave. Members 1–6 of the Medium-Range forecast spread apart as {term}`lead time <Lead time>` grows, and the Deterministic forecast (member 1) runs a day and a half longer than the others. Medium-range forecasts are issued four times a day, so six hours later a new forecast replaces this one; a forecast is identified by both its reach and its reference time.
 
-This is model output, not an observation, and it is not checked against the gage here. The quick dip and rise in the first day may reflect the river's real behavior (Louisville sits at a lock and dam) or may be a consequence of the NWM's current data assimilation scheme (direct replacement of simulated streamflow with observed streamflow during the analysis cycle without internal state adjustment); Module 4 shows how to compare forecasts with observations. This particular figure can't be lined up with the April 2025 flood shown on the SWOT and USGS pages, because the API only keeps the latest few days of forecasts. Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve them.
+**Imagine it's 3 April 2025.** This figure was built later from NOAA's forecast archive, because the API keeps only the latest few days of forecasts, but you can read it as if you were standing at the dotted line. That reference time, 00:00 UTC, was the evening of 2 April in Louisville.
+
+Analysis & Assimilation looks back instead of ahead. The run ending at the dotted line gave only the three black dots (22:00, 23:00 and 00:00 UTC), enlarged in the zoom. The gray dots are the newest value from each earlier hourly run, joined into a longer record.
+
+To the right of the line is what each forecast predicted from that moment. The Retrospective panel is a separate simulation that ended in January 2023, shown for its place in time and not as part of this forecast.
+
+:::{figure} ../images/m02/02_meet_noaa_nwm-ohio-configurations.png
+:alt: Figure with a horizon strip above a hydrograph for COMID 10164004, with a dotted line at the reference time, 3 April 2025 00:00 UTC. The strip shows Analysis and Assimilation reaching 3 hours back, Short-Range 18 hours ahead, the Medium-Range Ensemble 8.5 days, Medium-Range Deterministic 10 days and Long-Range 30 days. A separate panel on the left, after an axis break, shows the last month of the Retrospective in violet, January 2023, between about 3,500 and 6,500 cubic meters per second. In the hydrograph, gray dots rise to about 5,000 before the reference time and three black dots sit at about 4,750 at the reference time. A zoomed panel shows those three hourly values, with a band marking the look-back, and the 18 hourly Short-Range values, which fall to about 3,240. Six blue Medium-Range lines then rise to peaks between about 12,400 and 15,100 around 8 and 9 April. Members 2 to 6 stop on 11 April and member 1 continues to 13 April. Four dashed green Long-Range lines fall to about 3,000, peak near 6,000 around 9 and 10 April, and stay above about 3,400 until 3 May.
+:width: 100%
+
+Runs from NWM v3.0 for COMID `10164004`, Ohio River at Louisville, KY. The dotted line is the forecasts' reference time (model initialization time), 2025-04-03 00:00 UTC. Notice how the horizons differ: 3 hours back for Analysis & Assimilation, then 18 hours, 8.5 days, 10 days and 30 days ahead. On the main plot the three black dots overlap, so use the zoom to see them. The gray band in the zoom marks the look-back. The axis break skips more than two years. Data: NOAA NWM operational archive on Google Cloud (`analysis_assim`, `short_range`, `medium_range_mem1` to `mem6`, `long_range_mem1` to `mem4`) and the NWM v3.0 retrospective Zarr store on AWS, accessed 2026-11-04.
+:::
+
+Everything in the figure is model output, not observations, and it is not checked against the gage here; Module 4 shows how to compare forecasts with observations. Use this figure to compare what each configuration covers.
+
+Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public forecast archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve short- and medium-range forecasts from it.
 
 The COMID `10164004` was found by asking the {term}`NLDI` which NHDPlus reach the Louisville USGS gage sits on; Module 3 shows how.
 
-:::{figure} ../images/m02/02_meet_noaa_nwm-ohio-medium-range.png
-:alt: Line chart of NWM medium-range streamflow forecasts for COMID 10164004 with reference time (model initialization time) 2026-10-08 18:00 UTC. Flow dips to about 930 cubic meters per second, rises to about 1,890 on October 10, then declines to about 1,050 by October 17. Member 1 (blue) continues to October 18; members 2 to 6 (gray) end on October 17 and spread slightly, between about 1,020 and 1,150.
-:width: 100%
-
-NWM medium-range streamflow forecast for COMID `10164004`, Ohio River at Louisville, KY, with reference time (model initialization time) 2026-10-08 18:00 UTC. Data: NOAA NWM API (experimental), `configuration=medium_range`, accessed 2026-10-08. The API keeps only the most recent few days of forecasts, so this exact forecast can't be retrieved from it later.
-:::
-
 :::{dropdown} How this figure was made
-*You don't need to run this now.* It's here so you can see exactly how the figure was made and reproduce it later. This script asks NOAA's [NWM API](https://api.water.noaa.gov/nwm/v1/docs) for the latest medium-range forecast at one reach. The API needs no key. It returns JSON, which the script flattens into one row per ensemble member and valid time. It runs in the course's `m03-nwm` environment (`environments/m03-nwm.yml`); the Module 3 lesson explains this and the other NWM access routes.
+*You don't need to run this now.* It's here so you can see exactly how the figure was made and reproduce it later. It runs in the course's `m03-nwm` environment (`environments/m03-nwm.yml`), needs no account or key, and has two steps. Module 3 explains this approach for short- and medium-range forecasts; this dropdown is the course's example for `analysis_assim` and `long_range`.
+
+The first step reads Louisville's streamflow from about 2,000 archive files, because the archive holds one file for the whole country at each time. The code uses the same references approach as Module 3, so it reads only the pieces it needs rather than whole files. It then adds the last month of the Retrospective and saves everything to one CSV file. Expect this step to take about 12 minutes.
+
+In the Analysis & Assimilation file names, `tmNN` means NN hours before the hour in the file name (`t00z` here), so `tm02`, `tm01` and `tm00` are the three black dots, and `tm00` from each earlier run gives the gray dots.
 
 ```python
-import requests
+import time
+import aiohttp
+import fsspec
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+import s3fs
+import xarray as xr
+from concurrent.futures import ThreadPoolExecutor
+from kerchunk.combine import MultiZarrToZarr
+from kerchunk.hdf import SingleHdf5ToZarr
 
 # Record the query in one place
-COMID = 10164004                  # NHDPlus reach (NWM feature_id), Ohio River at Louisville, KY
-url = f"https://api.water.noaa.gov/nwm/v1/streamflow/forecast/nwm_feature_id/{COMID}/"
-resp = requests.get(url, params={"configuration": "medium_range", "latest": "true"}, timeout=60)
-resp.raise_for_status()
-run = resp.json()[0]              # one forecast run for this reach
-print(run["configuration"], run["reference_datetime"], run["units"])
+COMID = 10164004                              # NHDPlus reach (NWM feature_id), Ohio River at Louisville, KY
+REF = pd.Timestamp("2025-04-03 00:00")        # reference time of the forecast cycle (UTC)
+ARCHIVE = "https://storage.googleapis.com/national-water-model"
 
-# Flatten to one row per member and valid time
-rows = [{"member": m["member_id"], "valid_time": p["valid_datetime"], "streamflow": p["value"]}
-        for m in run["forecast"] for p in m["timeseries"]]
-fc = pd.DataFrame(rows)
-fc["valid_time"] = pd.to_datetime(fc["valid_time"])
+def nwm_url(cycle, folder, product, lead, member=""):
+    """Build the archive address of one streamflow file."""
+    return f"{ARCHIVE}/nwm.{cycle:%Y%m%d}/{folder}/nwm.t{cycle:%H}z.{product}.channel_rt{member}.{lead}.conus.nc"
 
-# Member 1 in blue, members 2-6 in gray, and a dotted line at the reference time
-fig, ax = plt.subplots(figsize=(9, 3.6))
-for member, grp in fc.groupby("member"):
-    ax.plot(grp["valid_time"], grp["streamflow"], lw=2 if member == 1 else 1,
-            color="#2a78d6" if member == 1 else "#8a8986",
-            label="member 1 (to 10 days)" if member == 1 else ("members 2–6" if member == 2 else None))
-ref = pd.to_datetime(run["reference_datetime"])
-ax.axvline(ref, color="#0b0b0b", lw=1, ls=":")
-ax.annotate("reference time\n" + ref.strftime("%Y-%m-%d %H:%M UTC"), (ref, ax.get_ylim()[1]),
-            xytext=(4, -4), textcoords="offset points", va="top", fontsize=8)
-ax.set_ylabel("Streamflow (m³/s)")
-ax.set_xlabel("Valid time (UTC)")
-ax.xaxis.set_major_locator(mdates.DayLocator(interval=2))
-ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
-ax.set_title(f"NWM medium-range forecast, COMID {COMID} (Ohio River at Louisville, KY)", loc="left", fontsize=11)
-ax.grid(alpha=0.3)
-ax.legend(frameon=False, fontsize=9, loc="upper right")
-fig.tight_layout()
-fig.savefig("02_meet_noaa_nwm-ohio-medium-range.png", dpi=150)
+def with_retries(read, tries=4):
+    """Try again after a network error, because a full set of runs needs thousands of requests."""
+    for attempt in range(tries):
+        try:
+            return read()
+        except (OSError, aiohttp.ClientError):
+            if attempt == tries - 1:
+                raise
+            time.sleep(2 * (attempt + 1))
+
+def index_one(url):
+    """Scan one file's layout. Module 3 explains the block_size and inline_threshold settings."""
+    def scan():
+        with fsspec.open(url, "rb", block_size=2**20) as f:
+            return SingleHdf5ToZarr(f, url, inline_threshold=500).translate()
+    return with_retries(scan)
+
+def read_reach(urls):
+    """Read one reach from many files without downloading the whole files."""
+    with ThreadPoolExecutor(16) as pool:
+        singles = list(pool.map(index_one, urls))
+    def combine():
+        # stack the files along time; the listed variables are the same in every file
+        return MultiZarrToZarr(singles, remote_protocol="https", concat_dims=["time"],
+                               identical_dims=["feature_id", "reference_time", "crs"]).translate()
+    with ThreadPoolExecutor(1) as pool:   # own thread, so this also works inside Jupyter
+        refs = pool.submit(combine).result()
+    # open lazily through the references: nothing downloads until .load() below
+    ds = xr.open_dataset("reference://", engine="zarr", chunks={}, consolidated=False, zarr_format=2,
+                         storage_options={"fo": refs, "remote_protocol": "https",
+                                          "remote_options": {"asynchronous": True}})
+    return with_retries(lambda: ds["streamflow"].sel(feature_id=COMID).load().to_series())
+
+def tidy(series, config, member=0):
+    """One row per value: configuration, member (0 if none), valid time, streamflow."""
+    return pd.DataFrame({"config": config, "member": member, "time": series.index, "q": series.values})
+
+tables = []
+
+# Analysis & Assimilation: the newest value (tm00) of each hourly run for 9 days, joined by valid time
+cycles = pd.date_range(REF - pd.Timedelta(days=9), REF, freq="h")
+tables.append(tidy(read_reach([nwm_url(c, "analysis_assim", "analysis_assim", "tm00") for c in cycles]), "ana_joined"))
+
+# Analysis & Assimilation: all 3 values of the one run at the reference time
+tables.append(tidy(read_reach([nwm_url(REF, "analysis_assim", "analysis_assim", f"tm{k:02d}") for k in (2, 1, 0)]), "ana_run"))
+
+# Short-Range: 18 hourly values
+tables.append(tidy(read_reach([nwm_url(REF, "short_range", "short_range", f"f{h:03d}") for h in range(1, 19)]), "short"))
+
+# Medium-Range: member 1 has 240 hourly values, members 2-6 have 204
+for m in range(1, 7):
+    urls = [nwm_url(REF, f"medium_range_mem{m}", "medium_range", f"f{h:03d}", f"_{m}")
+            for h in range(1, (240 if m == 1 else 204) + 1)]
+    tables.append(tidy(read_reach(urls), "medium", m))
+
+# Long-Range: 4 members, 120 values 6 hours apart
+for m in range(1, 5):
+    urls = [nwm_url(REF, f"long_range_mem{m}", "long_range", f"f{h:03d}", f"_{m}") for h in range(6, 721, 6)]
+    tables.append(tidy(read_reach(urls), "long", m))
+
+# Retrospective v3.0: its last month, from the public Zarr store on AWS
+fs = s3fs.S3FileSystem(anon=True)
+retro = xr.open_zarr(s3fs.S3Map("noaa-nwm-retrospective-3-0-pds/CONUS/zarr/chrtout.zarr", s3=fs), consolidated=True)
+retro_q = retro["streamflow"].sel(feature_id=COMID).sel(time=slice("2023-01-01", None)).load().to_series()
+tables.append(tidy(retro_q, "retrospective"))
+
+# Save, so the plot can be redrawn without reading the archive again
+q = pd.concat(tables, ignore_index=True)
+q.to_csv("nwm_configurations_louisville.csv", index=False)
+print(q.groupby(["config", "member"])["q"].agg(["size", "max"]).round())
 ```
 
-The `print` line shows the run's configuration, reference time and units, for example `medium_range 2026-10-08T18:00:00Z CMS`. `fc` has one row per member and valid time: `member` (1–6), `valid_time` (UTC) and `streamflow` (m³/s). On 2026-10-08 member 1 had 240 hourly values and members 2–6 had 204 each. Because the API always serves the *latest* run, your numbers will differ from the figure.
+```text
+                      size      max
+config        member               
+ana_joined    0        217   4994.0
+ana_run       0          3   4783.0
+long          1        120   5947.0
+              2        120   6192.0
+              3        120   5761.0
+              4        120   6168.0
+medium        1        240  13902.0
+              2        204  14418.0
+              3        204  12402.0
+              4        204  12791.0
+              5        204  14195.0
+              6        204  15091.0
+retrospective 0        745   6477.0
+short         0         18   4742.0
+```
+
+`q` is a table with one row per value. Its columns are `config` (which configuration), `member` (0 for configurations without members), `time` (valid time, UTC) and `q` (streamflow, m³/s). The printed summary shows the number of values and the highest flow for each. Member 1 has 240 hourly values and members 2–6 have 204 each, which is why member 1 runs longer in the figure. The `ana_joined` rows have 217 values because they cover 9 days of hourly runs, one value from each, while `ana_run` has the 3 values of a single run.
+
+The second step reads the saved table and draws the figure, so you can change the plot without reading the archive again.
+
+```python
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import pandas as pd
+from matplotlib.patches import ConnectionPatch
+
+q = pd.read_csv("nwm_configurations_louisville.csv", parse_dates=["time"])
+REF = pd.Timestamp("2025-04-03 00:00")
+hrs = lambda h: REF + pd.Timedelta(hours=h)
+pick = lambda config: q[q["config"] == config]
+ana_joined, ana_run, short, medium, long_range, retro = map(pick, ["ana_joined", "ana_run", "short", "medium", "long", "retrospective"])
+member_1 = medium[medium["member"] == 1]
+INK, MUTED, GRID, GRAY = "#0b0b0b", "#52514e", "#e4e3df", "#8a8986"
+ORANGE, BLUE, GREEN, VIOLET = "#eb6834", "#2a78d6", "#1baf7a", "#6250d6"
+txt = dict(color=INK, fontsize=8.5)
+lead = dict(arrowstyle="-", color=MUTED, lw=0.7)
+plt.rcParams.update({"font.size": 9.5, "axes.edgecolor": GRAY, "xtick.color": MUTED, "ytick.color": MUTED})
+
+# Two columns (Retrospective, then the forecast cycle) and two rows (horizon strip above, hydrograph below)
+fig, ((strip_l, strip_r), (hyd_l, hyd_r)) = plt.subplots(
+    2, 2, figsize=(10.5, 6.3), sharex="col", sharey="row",
+    gridspec_kw={"width_ratios": [1, 5.2], "height_ratios": [1.15, 3], "wspace": 0.05, "hspace": 0.04})
+fig.subplots_adjust(left=0.075, right=0.985, top=0.92, bottom=0.11)
+
+# Hydrograph: gray dots are the joined record, black dots are the one run at the reference time
+hyd_l.plot(retro["time"], retro["q"], color=VIOLET, lw=1.8)
+hyd_r.plot(ana_joined["time"], ana_joined["q"], ls="none", marker="o", ms=2.2, mew=0, color=GRAY, zorder=3)
+hyd_r.plot(ana_run["time"], ana_run["q"], ls="none", marker="o", ms=5, color=INK, zorder=6)
+for member, run in medium[medium["member"] > 1].groupby("member"):
+    hyd_r.plot(run["time"], run["q"], color=BLUE, lw=0.9, alpha=0.75)
+
+hyd_r.plot(member_1["time"], member_1["q"], color=BLUE, lw=2)
+for member, run in long_range.groupby("member"):
+    hyd_r.plot(run["time"], run["q"], color=GREEN, lw=1.1, ls=(0, (4, 1.5)))
+
+hyd_r.plot(short["time"], short["q"], color=ORANGE, lw=3, solid_capstyle="round", zorder=5)
+
+# Axes: the reference time is a dotted line through the strip and the hydrograph
+for ax in (strip_r, hyd_r):
+    ax.axvline(REF, color=INK, lw=1, ls=":")
+
+hyd_r.set_xlim(hrs(-9 * 24), hrs(30.5 * 24))
+hyd_l.set_xlim(retro["time"].min(), pd.Timestamp("2023-02-02"))
+hyd_l.set_ylim(0, 16500)
+hyd_l.set_ylabel("Streamflow (m³/s)", color=INK)
+hyd_l.yaxis.set_major_formatter(lambda v, _: f"{v:,.0f}")
+day_month = lambda v, _: f"{mdates.num2date(v).day} {mdates.num2date(v):%b}"
+hyd_r.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=mdates.TH))
+hyd_r.xaxis.set_major_formatter(day_month)
+hyd_l.set_xticks(pd.to_datetime(["2023-01-01", "2023-01-15"]))
+hyd_l.xaxis.set_major_formatter(day_month)
+hyd_l.set_xlabel("Valid time, 2023 (UTC)", color=INK)
+hyd_r.set_xlabel("Valid time, 2025 (UTC)", color=INK)
+for ax in (hyd_l, hyd_r):
+    ax.grid(axis="y", color=GRID, lw=0.8)
+    ax.set_axisbelow(True)
+    ax.spines[["top", "right"]].set_visible(False)
+
+hyd_r.spines["left"].set_visible(False)
+hyd_r.tick_params(axis="y", length=0)
+
+# Marks showing that years are skipped between the two panels
+cut = dict(marker=[(-1, -1.6), (1, 1.6)], markersize=9, linestyle="none", color=MUTED, clip_on=False, mew=1)
+hyd_l.plot([1], [0], transform=hyd_l.transAxes, **cut)
+hyd_r.plot([0], [0], transform=hyd_r.transAxes, **cut)
+
+# Labels on the lines
+left_edge = pd.Timestamp("2025-03-25 00:30")
+hyd_l.text(pd.Timestamp("2023-01-16"), 7200, "Retrospective", ha="center", **txt)
+hyd_r.annotate("Short-Range", (short["time"].iloc[-1], short["q"].iloc[-1]),
+               xytext=(pd.Timestamp("2025-04-06 12:00"), 1500), ha="center", arrowprops=lead, **txt)
+hyd_r.annotate("Medium-Range members 2–6 (thin)\nstop at 8.5 days", (hrs(204), 11150),
+               xytext=(pd.Timestamp("2025-04-14"), 14300), arrowprops=lead, **txt)
+hyd_r.annotate("Medium-Range member 1 (thick)\ncontinues to 10 days", (hrs(240), member_1["q"].iloc[-1]),
+               xytext=(pd.Timestamp("2025-04-15"), 10000), va="center", arrowprops=lead, **txt)
+hyd_r.text(pd.Timestamp("2025-04-24"), 6500, "Long-Range (dashed, 4 members)", ha="center", **txt)
+hyd_r.annotate("Black: A&A as of 3 Apr 00:00", (hrs(-3), 4800), xytext=(left_edge, 5600),
+               va="center", arrowprops=lead, **txt)
+hyd_r.text(left_edge, 850, "Gray: earlier A&A runs\njoined into a longer record", va="center", **txt)
+
+# Horizon strip: how far each configuration reaches from the reference time
+rows = [("Analysis & Assimilation · 3-hour look-back (black dots; see zoom)", -3, 0, INK, 1),
+        ("Short-Range · 18 hours", 0, 18, ORANGE, 1),
+        ("Medium-Range Ensemble · 8.5 days, 6 members (includes member 1)", 0, 204, BLUE, 0.55),
+        ("Medium-Range Deterministic · 10 days (member 1)", 0, 240, BLUE, 1),
+        ("Long-Range · 30 days, 4 members", 0, 720, GREEN, 1)]
+for row, (label, start, end, color, alpha) in enumerate(rows):
+    y = len(rows) - row
+    strip_r.barh(y, hrs(end) - hrs(start), left=hrs(start), height=0.62, color=color, alpha=alpha)
+    inside = end == 720   # the Long-Range bar fills the panel, so its label goes inside
+    strip_r.text(hrs(8) if inside else hrs(end + 10), y, label, va="center", **txt)
+
+strip_l.barh(1, pd.Timestamp("2023-02-01") - retro["time"].min(), left=retro["time"].min(), height=0.62, color=VIOLET)
+strip_l.text(retro["time"].min(), 3.2, "Retrospective\nFeb 1979 – Jan 2023\n(last month shown)", va="center", **txt)
+strip_r.text(hrs(6), 5.95, "Reference time: 3 Apr 2025 00:00 UTC", va="center", **txt)
+strip_l.set_ylim(0.4, 6.4)
+strip_r.patch.set_alpha(0)
+strip_l.set_yticks([])
+for ax in (strip_l, strip_r):
+    ax.spines[["top", "right", "left", "bottom"]].set_visible(False)
+    ax.tick_params(axis="both", length=0, labelleft=False, labelbottom=False)
+
+# Zoom: the only scale where 3 hours and 18 hours can be seen
+zoom = hyd_r.inset_axes([0.012, 0.42, 0.195, 0.50])
+zoom.axvspan(hrs(-3), hrs(0), color=INK, alpha=0.08, lw=0)
+zoom.axvline(REF, color=INK, lw=1, ls=":")
+zoom.plot(ana_run["time"], ana_run["q"], color=INK, lw=2, marker="o", ms=4.5, zorder=4)
+zoom.plot(short["time"], short["q"], color=ORANGE, lw=2, marker="o", ms=2.8, zorder=3)
+zoom.set_xlim(hrs(-4), hrs(19))
+zoom.set_ylim(2900, 5600)
+zoom.set_xticks([hrs(h) for h in (-3, 0, 6, 12, 18)], ["−3 h", "0", "+6 h", "+12 h", "+18 h"], fontsize=7.5)
+zoom.set_yticks([3000, 4000, 5000], ["3,000", "4,000", "5,000"], fontsize=7.5)
+zoom.tick_params(length=2, pad=1.5)
+zoom.set_title("Zoom (m³/s), −3 to +18 h", fontsize=8.5, color=INK, loc="left", pad=3)
+zoom.annotate("Analysis &\nAssimilation:\n3 hourly values", (hrs(-1), 4770), xytext=(hrs(2), 5170),
+              va="center", arrowprops=lead, color=INK, fontsize=7.8)
+zoom.text(hrs(-1.5), 4050, "look-back", rotation=90, ha="center", va="center", color=INK, fontsize=7.5)
+zoom.text(hrs(0.6), 3250, "Short-Range:\n18 hourly values", color=INK, fontsize=7.8, va="center")
+fig.add_artist(ConnectionPatch(xyA=(1, 0), coordsA=zoom.transAxes, xyB=(mdates.date2num(REF), ana_run["q"].iloc[-1]),
+                               coordsB=hyd_r.transData, color=MUTED, lw=0.7))
+
+fig.suptitle("NWM configurations on one timeline, Ohio River at Louisville, KY (COMID 10164004)",
+             x=0.075, ha="left", fontsize=11.5, color=INK, y=0.955)
+fig.savefig("02_meet_noaa_nwm-ohio-configurations.png", dpi=150)
+```
+
+The result is the figure above, saved as a PNG file in your working folder. All of its numbers come from the CSV file, so it will match the figure above. The Long-Range values are 6 hours apart, and every other forecast value is 1 hour apart.
 :::
 
 ## Usage and support
