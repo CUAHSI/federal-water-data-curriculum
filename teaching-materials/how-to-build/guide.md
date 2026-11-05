@@ -378,6 +378,11 @@ lesson 2's slug is shortened to `synthesizing-federal-data-products`.
 | 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` | `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` |
 | 6 | `session-06_module-04_federal-water-data-synthesis.pptx` | `module-04_lesson-02_synthesizing-federal-data-products.ipynb`, `module-04_lesson-03_additional-federal-water-data.ipynb` |
 
+The table gives the name a fresh build uses. The course lead then renames a finished deck with its session date,
+`YYMMDD_lplatt_open-water-data_module-NN_<module slug>.pptx`, and that name goes in the topic list header. Keep it
+in any update. The read-through PDF is `YYMMDD_open-water-data_module-NN_<module slug>.pdf`: export it from a copy of
+the deck with the build steps left out (keep the final or plain slide of each build). It has no speaker notes.
+
 The notebook module folders are `module-03_federal-water-data-access-retrieval` and
 `module-04_federal-water-data-synthesis`. Readings: `readings/module-NN_reading_<module slug>.docx` (and its
 PDF), for Modules 2–4. Quizzes: `quizzes/module-NN_quiz_<module slug>.txt`, its `.zip` and `_key.md`. Instructor

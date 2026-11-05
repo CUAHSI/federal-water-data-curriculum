@@ -4,7 +4,7 @@ The NOAA National Water Model (NWM) simulates and forecasts {term}`streamflow <S
 
 You will retrieve NWM forecasts for the reach of the [Ohio River at Louisville, Kentucky](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers), both today's forecast and archived forecasts run during the April 2025 flood.
 
-NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive, mirrored on Google Cloud and AWS. Two NOAA services serve slices of it:
+NWM output is stored as NetCDF files, one per forecast hour, each covering every reach in the model. The full model output has no general-purpose query service in front of it: you read the files from NOAA's archive on Google Cloud, or a shorter copy on AWS. Two NOAA services serve slices of it:
 
 * NOAA's experimental [NWM API](https://api.water.noaa.gov/nwm/v1/docs) serves individual reaches, but only the most recent few days of forecasts.
 * The [National Water Prediction Service (NWPS) API](https://api.water.noaa.gov/nwps/v1/docs/) serves NWM output only at NWPS's established forecast locations, not the full domain, so this lesson doesn't use it.
@@ -323,7 +323,7 @@ Name: member, dtype: int64
 (nwm-hydrotools)=
 ### `hydrotools`: past forecasts from the cloud archive
 
-For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive is mirrored, with no key or account needed, on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) and on [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches. A short-range {term}`channel_rt` file (the channel-routing output, which holds `streamflow`) is about 13–16 MB.
+For anything older than a few days, such as the April 2025 flood, you need NOAA's archive of the raw NWM output files. The operational archive needs no key or account. [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model) (`gs://national-water-model`) goes back to September 2018, and [AWS](https://registry.opendata.aws/noaa-nwm-pds/) (`s3://noaa-nwm-pds`) holds a shorter record (both checked 2026-11-04). Each forecast hour is a separate NetCDF file covering all ~2.8 million reaches. A short-range {term}`channel_rt` file (the channel-routing output, which holds `streamflow`) is about 13–16 MB.
 
 `hydrotools` (OWPHydroTools, from NOAA's Office of Water Prediction) finds those files, downloads them, and hands you a `pandas.DataFrame` for just the COMIDs you asked for. You never open a NetCDF file yourself.
 
