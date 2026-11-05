@@ -116,7 +116,7 @@ Runs from NWM v3.0 for COMID `10164004`, Ohio River at Louisville, KY. The dotte
 
 Everything in the figure is model output, not observations, and it is not checked against the gage here; Module 4 shows how to compare forecasts with observations. Use this figure to compare what each configuration covers.
 
-Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public forecast archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (it is also mirrored on AWS). Module 3 shows how to retrieve short- and medium-range forecasts from it.
+Past forecasts, including those issued during the April 2025 flood, are kept in NOAA's public forecast archive on [Google Cloud](https://console.cloud.google.com/marketplace/product/noaa-public/national-water-model), which is free to use without an account and which `hydrotools` reads by default (AWS holds a shorter copy). Module 3 shows how to retrieve short- and medium-range forecasts from it.
 
 The COMID `10164004` was found by asking the {term}`NLDI` which NHDPlus reach the Louisville USGS gage sits on; Module 3 shows how.
 
