@@ -218,7 +218,7 @@ Each result is a *collection*. Its **short name** is what you pass to the other 
 you read the list:
 
 - **Version.** Names ending in `_D` are **Version D**, the current release. Names ending in `_2.0` are the older Version C.
-  Use Version D ([SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), section 4.1).
+  Use Version D ([SWOT Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), section 4.1).
 - **Sub-collections.** `SWOT_L2_HR_RiverSP_D` holds both reach and node files; `_reach_D` and `_node_D` are sub-collections
   with one kind each.
 - **Raster isn't here**: it doesn't match this keyword search. Searching for `keyword="SWOT"` finds it.
@@ -281,16 +281,16 @@ print(sorted({g["umm"]["GranuleUR"].split("_")[5] for g in louisville_raster})) 
 
 That is far more than SWOT could have seen over one point in two months. The {term}`UTM zone (Universal Transverse Mercator system)<UTM zone>` 
 in each granule name gives the problem away. Louisville is in UTM zone **16**, but most results are in zones 01 and 60, on either 
-side of the 180° meridian. The metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost 
-any box. Downloading them all would waste gigabytes on scenes from the other side of the planet.
+side of the 180° meridian. For the Raster data products, the metadata footprints of those granules wrap around the whole globe, so they falsely "intersect" almost 
+any box. Downloading them all would waste gigabytes on scenes from the other side of the planet. This is a known issue, and PO.DAAC is working to resolve the issue.
 
-A more reliable check is each granule's footprint *polygon* (`GPolygons` in its metadata). The false matches have no polygon,
+In the meantime, a more reliable check is each granule's footprint *polygon* (`GPolygons` in its metadata). The false matches have no polygon,
 only a global rectangle. The first function below keeps the granules whose footprint polygon contains your point.
 
 The second function handles duplicates. A granule name ends in two codes: the **{term}`CRID`** (composite release identifier, for
-example `PGD0`) and a **{term}`product counter<Product counter>`** (`01`, `02`, …). The [Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)
+example `PGD0`) and a **{term}`product counter<Product counter>`** (`01`, `02`, …). The [Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM)
 (sections 3 and 4) explains them: `PGD0` is reprocessed Version D, `PID0` is forward-processed Version D, and codes ending in
-`C0`–`C2` are older Version C. Where both exist, use `PGD0`, and use the highest product counter. The same overpass can turn up
+`C0`–`C2` are older Version C. Where _both_ exist, use `PGD0`, and use the highest product counter. The same overpass can turn up
 under more than one CRID, so the function keeps one granule per overpass:
 
 ```python
@@ -305,7 +305,7 @@ def footprint_covers(granule, lon, lat):
             return True
     return False
 
-VERSION_D_CRIDS = ["PGD0", "PID0"]  # preferred first: reprocessed, then forward-processed
+VERSION_D_CRIDS = ["PGD0", "PID0"]  # if both exist, preferred first: reprocessed, then forward-processed
 
 def keep_best_version_d(granules):
     """Keep one Version D granule per overpass: the preferred CRID, then the highest product counter."""
@@ -343,11 +343,6 @@ Read a Raster name from left to right: resolution (`100m`), UTM zone and latitud
 (UTC), CRID and product counter. Four passes see Louisville (`160`, `175`, `466`, `481`), so the point is observed about four
 times in each 21-day cycle, in pairs half a day apart.
 
-:::{admonition} Partner review (NASA): Programmatic data discovery
-:class: important
-Is the 180° meridian false-match behavior a known CMR/`earthaccess` issue, and is checking each granule's `GPolygons` footprint (as above) the recommended workaround? Is the CRID and product-counter de-duplication above the recommended practice?
-:::
-
 ### Find RiverSP granules over the Ohio at Louisville
 
 RiverSP granule metadata only has a rough rectangle for the whole continental pass, so `footprint_covers` can't screen them.
@@ -381,11 +376,6 @@ SWOT_L2_HR_RiverSP_Reach_030_466_NA_20250402T221137_20250402T222731_PGD0_01 8.3 
 RiverSP names carry the feature type (`Reach`), cycle, pass, continent (`NA`, North America), start and end time, CRID and
 product counter.
 
-:::{admonition} Partner review (NASA): RiverSP reach sub-collection
-:class: important
-On 2026-10-08, the `SWOT_L2_HR_RiverSP_reach_D` sub-collection returned no granules near Louisville for cycles 030–031 (mid-March to late April 2025), although the parent `SWOT_L2_HR_RiverSP_D` collection and `hydrocron` both had them (CRID `PGD0`). This lesson therefore searches the parent collection with `granule_name="*Reach*"`. Is this a known gap, and which collection should learners search?
-:::
-
 Behind the scenes, `earthaccess` queries NASA's [Common Metadata Repository (CMR)](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html)
 and, when you download, reads from the PO.DAAC cloud archive in Amazon Web Services (AWS) region `us-west-2`. You don't need
 to know either system to use `earthaccess`, but it helps when you read tutorials that call them directly.
@@ -394,11 +384,11 @@ to know either system to use `earthaccess`, but it helps when you read tutorials
 
 Discovery told you *which* granules exist. Now get the data. The two tools behave differently:
 
-- `earthaccess` gives you **whole files**: one granule per overpass, covering a large area. `earthaccess.download()` copies
-  them to your computer. `earthaccess.open()` streams them instead, which is most efficient when your code runs in the same
-  cloud region as the data (AWS `us-west-2`). On a laptop, downloading a handful of files is simpler and just as fast.
-- `hydrocron` gives you **just the rows you ask for**: the values for one reach or node, across many overpasses, in one web
-  request.
+- `earthaccess` gives you **whole shapefiles**: one granule per overpass, covering a large area. `earthaccess.download()` copies
+  them to your computer. `earthaccess.open()` streams them directly to memory on your computer instead. `earthaccess.open()` is most efficient when your code runs in the same
+  cloud region as the data (AWS `us-west-2`). On a laptop, downloading a handful of files is simpler and just as fast.  See `earthaccess` documentation for more information, including how to [optimize `earthacess.open()`](https://earthaccess.readthedocs.io/en/latest/user/explanation/access/#optimizing-earthaccessopen)
+- `hydrocron` gives you **just the observations you ask for**: the values for one reach or node, across many overpasses, in one web
+  request. These will be returned in a time series-friendly format (CSV or geoJSON)
 
 Keep downloads exactly as they arrived in `data_dir`, and write anything you compute from them somewhere else. Then you can
 always tell raw data from derived data, and re-create the derived files from the raw ones (see
@@ -439,7 +429,7 @@ reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_s
 The point sits on reach **`74267300251`**, about 200 m from its centerline (well inside a channel about 720 m wide). Its neighbors are `74267300241` (downstream) and `74267300261` (upstream). Reach
 IDs encode position in SWORD: in `74267300251`, the leading `7` is the North America region, and the last digit (`1`) is the
 reach type, `1` meaning a river reach. For detailed information on how to read a `reach_id`, see this [PO.DAAC Cookbook page](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html#obtain-sword-reach-ids). The granule itself holds every reach SWOT observed along this pass across North America.
-RiverSP files carry about 130 columns; the product description documents (PDDs), linked in the table on the PO.DAAC [datasets information page](https://podaac.jpl.nasa.gov/SWOT?tab=datasets-information), define them all.
+RiverSP files carry about 130 columns; the product description documents (PDDs), linked on the Earthdata SWOT page, under [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation), define them all.
 
 Notice `p_width`: SWORD expects this reach to be about 720 m wide, and SWOT measured 853 m on this overpass, with the river in
 flood. Each row is one reach seen on this overpass. The key columns:
@@ -452,11 +442,6 @@ flood. Each row is one reach seen on this overpass. The key columns:
 - `reach_q` is the summary **{term}`Data quality flag <Data quality flag(s)>`**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - `time_str` is the overpass **{term}`Time`** in UTC.
 - Missing values are stored as `-999999999999`, not `NaN`. Filter them out before plotting.
-
-:::{admonition} Partner review (NASA): RiverSP columns
-:class: important
-Confirm the `reach_q` value meanings and the EGM2008 vertical reference for Version D RiverSP `wse`.
-:::
 
 The location map at the top of this page was drawn from this one file:
 
@@ -488,7 +473,7 @@ plt.show()
 ### Raster water area with `earthaccess`
 
 Raster granules are NetCDF files, so you read them with `xarray`. Each file is a fixed scene, about 150 km on a side, on a
-100 m grid in UTM coordinates. Comparisons only make sense between scenes seen from the **same pass**, because each pass views
+100 m grid in UTM coordinates (for 100 m resolution, `SWOT_L2_HR_Raster_100m_D`). Comparisons only make sense between scenes seen from the **same pass**, because each pass views
 the river from a different angle and covers a different part of the scene. Download the three pass-175 scenes: before the
 flood, near the crest, and after.
 
@@ -611,8 +596,11 @@ print(len(values), "observed pixels in the scene")
 :::
 
 Every observed pixel in the scene carries `geolocation_qual_degraded`: the whole overpass was flagged because its
-geolocation (where each pixel sits on the ground) is less certain, not because of anything about the river. Whether to use
-such a scene is your call. Here, the river in the 13 April scene lines up with the river in the other two (see the maps
+geolocation (where each pixel sits on the ground) is less certain, not because of anything about the river. The heights are likely not trustworthy, but the water area might be reasonable. 
+
+Whether to use such a scene is your call. Thresholds on any flags depend on the use case, and you should try to understand the flags and tailor to their use case.
+
+Here, the river in the 13 April scene lines up with the river in the other two (see the maps
 below), so this lesson keeps it and says so.
 
 Save derived results like this table outside the raw-data folder, with a name that says what they are:
@@ -653,11 +641,6 @@ SWOT water fraction (0 to 1) in a 30 km × 30 km window centred on the example p
 before the flood (23 March 2025), near the crest (13 April) and after (4 May). Pixels flagged bad are left out; the whole
 13 April scene is flagged degraded for geolocation (see the text). Data: NASA SWOT Level 2 Water Mask Raster Image 100 m
 product, Version D ([doi:10.5067/SWOT-RASTER-D](https://doi.org/10.5067/SWOT-RASTER-D)), CRID `PGD0`, accessed 2026-10-08.
-:::
-
-:::{admonition} Partner review (NASA): Raster water area
-:class: important
-The 13 April 2025 pass-175 scene (`..._031_175_111F_..._PGD0_01`) has `geolocation_qual_degraded` set on every observed pixel. What causes a scene-wide geolocation flag, and is it reasonable to use such a scene for water extent, as this lesson does, after checking it against neighboring scenes? Which `water_area_qual` threshold do you recommend for water-extent work, and is a fixed 10 km box a reasonable way to compare overpasses from one pass?
 :::
 
 (swot-hydrocron)=
@@ -807,14 +790,10 @@ retrieved:
 
 Four things are worth keeping in mind:
 
-- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) notes that SWOT discharge
-  estimates are still in development. RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge
-  estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete
-  ([release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
-  section 4.1). Expect fill values in those columns, and check the current release notes before relying on them. Module 4's
-  [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) introduces the in-development SWOT discharge product.
+- **No discharge here yet.** [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md) notes that SWOT Level 2 discharge estimates are not yet ready for research use as of Nov 2026. Level 2 RiverSP files have discharge columns (names starting `dschg_`), but the Version D release note says discharge estimates "are not provided in the PID0 and PGD0 products" and will be computed after reprocessing is complete ([release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), section 4.1). Expect fill values in those columns, and check the current release notes before relying on them. 
+     - Module 4's [Additional Federal water data](../04-federal-water-data-synthesis/03_additional_data.md) introduces the only publicly available SWOT discharge product, [SWOT Level 4 Sword of Science River Discharge Products, Version 3](https://doi.org/10.5067/SWOT-SOS-RD3) (in-development, with Version 4 expected in the near term). 
 - **Quality flags are rarely 0.** For RiverSP, "nearly all reach-level quality flags … are non-zero" in Version D, because
-  node-level flags are propagated up to the reach ([Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf), table 8).
+  pixel-level flags are propagated up to the node-level, and node-level flags are propagated up to the reach ([Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM), table 8).
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
   `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
   write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
@@ -822,14 +801,9 @@ Four things are worth keeping in mind:
   not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
   CRID and your access date, and cite the collection DOI, for example: *SWOT. (2025). SWOT Level 2 River Single-Pass Vector
-  Data Product, Version D [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
-  https://doi.org/10.5067/SWOT-RIVERSP-D. Accessed 2026-10-08.* See the citation guidance in
+  Data Product [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
+  [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
-
-:::{admonition} Partner review (NASA): Citing SWOT data
-:class: important
-Confirm the recommended dataset citation format for Version D RiverSP and Raster, and whether Version D RiverSP discharge (`dschg_*`) is now populated.
-:::
 
 ## Best practices FAQs
 
@@ -844,7 +818,7 @@ See the sections below for answers to these questions:
 *What is the recommended way to download data for one location but the full period of record?*
 
 Use `hydrocron`, one request per reach or node. Set `start_time` to the start of SWOT's {term}`science orbit<Science orbit>` (21 July 2023; usable data begin 26 July, and the
-[Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf),
+[Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM),
 table 2, notes no useful data before then) and `end_time` to today (the code below uses a fixed end date so the result can be reproduced), and ask only for the `fields` you need. Fewer
 fields keep each response under the 6 MB limit. This replaces downloading every RiverSP granule that ever covered your reach,
 each holding a whole continental pass, only to keep one row from each.
@@ -880,10 +854,10 @@ via `hydrocron`, accessed 2026-10-08.
 One request returned more than three years of overpasses. Two things to notice:
 
 - **The April 2025 flood was not the only one.** The highest values in the record, about 131.5 m, are from 20 February 2025;
-  the April crest (131.2 m) is close behind. A long record puts one event in context.
+  the April crest (131.2 m) is close behind. A long record puts one event in context. 
 - **The record mixes two processing streams.** Observations up to 15 May 2025 are reprocessed (`PGD0`); later ones are
   forward-processed (`PID0`). Both are Version D, but keep the `crid` column so you can check whether a shift in your series
-  lines up with the switch.
+  lines up with the switch. For more information on the differences between these processing streams, see Release Note - Version D (Section 3 Product Version Identifier), found on the Earthdata SWOT page [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation).
 
 ### Spatial scaling
 
@@ -902,15 +876,10 @@ thousands of reach IDs is the wrong tool here: it sends thousands of requests fo
   `threads` argument).
 - **Do** run large `earthaccess` workflows in AWS `us-west-2` (for example, a cloud JupyterHub) and use `earthaccess.open()`
   to stream data instead of downloading it.
-- **Avoid** firing many `hydrocron` requests in parallel. Send them one after another, or a few at a time, and request a
-  `hydrocron` API key from PO.DAAC if you have a heavy or recurring workload.
+- **Avoid** firing tens of thousands of `hydrocron` requests in parallel. Send them one after another, or a few at a time. For a repeat or global requests, you can request an API key from PO.DAAC. This is done by submitting an issue on the `hydrocron` [GitHub](https://github.com/podaac/hydrocron/issues) and providing your estimated number of requests, number of concurrent requests, and number of requests per second. 
+     - Additionally, here is an example notebook that uses `dask` to query multiple reach identifiers: [Hydrocron API: Parallel Time Series Processing with Dask](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples.html#set-up-dask-workers-for-parallelization). 
 - **Avoid** re-downloading the same granules every time you run your code. Keep a fixed `local_path=`:
   `earthaccess.download()` skips files that are already there unless you pass `force=True`.
-
-:::{admonition} Partner review (NASA): Parallelization
-:class: important
-Confirm these recommendations, in particular the guidance on parallel `hydrocron` requests and when to request an API key.
-:::
 
 ## Now you try it
 
@@ -997,9 +966,9 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [`hydrocron` documentation](https://podaac.github.io/hydrocron/) and the
   [timeseries endpoint reference](https://podaac.github.io/hydrocron/timeseries).
 - [PO.DAAC Cookbook: SWOT tutorials](https://podaac.github.io/tutorials/quarto_text/SWOT.html), including
-  [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html)
+  [Hydrocron API: Getting Started with SWOT Time Series](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html) and [Hydrocron API: Parallel Time Series Processing with Dask](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples.html#set-up-dask-workers-for-parallelization) 
   by Nikki Tebaldi, Cassandra Nickles and Brandi Downs.
-- [SWOT Version D release note](https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf)
+- [SWOT Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM)
   (SWOT Project, NASA JPL and CNES): CRIDs, product counters, known issues.
 - Dataset DOIs: [SWOT Level 2 River Single-Pass Vector, Version D](https://doi.org/10.5067/SWOT-RIVERSP-D) and
   [SWOT Level 2 Water Mask Raster, Version D](https://doi.org/10.5067/SWOT-RASTER-D).
