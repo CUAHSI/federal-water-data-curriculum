@@ -8,6 +8,7 @@
 - U.S. Geological Survey. (n.d.). *How should I cite USGS Water Data for the Nation data?* https://waterdata.usgs.gov/citation/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *Monitoring locations*. USGS Water Data for the Nation. https://waterdata.usgs.gov/monitoring-location/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *National Water Dashboard*. https://dashboard.waterdata.usgs.gov/app/nwd/en/ (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *NWIS WaterServices Decommissioning*. Water Data Blog. https://waterdata.usgs.gov/blog/wdfn-waterservices-degradation/ (accessed 2026-11-04).
 - U.S. Geological Survey. (n.d.). *NWISWeb Decommission Campaign Summary*. Water Data Blog. https://waterdata.usgs.gov/blog/nwisweb-decommission-summary/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *Provisional Data Statement*. https://waterdata.usgs.gov/provisional-data-statement/ (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *Questions and Comments*. USGS Water Data for the Nation. https://waterdata.usgs.gov/questions-comments/ (accessed 2026-10-08).

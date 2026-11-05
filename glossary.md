@@ -350,7 +350,7 @@ Valid time
 
 ```{glossary}
 Approval status
-: Whether a USGS value is provisional (subject to revision) or approved (reviewed and final).
+: Whether a USGS value is provisional (not yet reviewed, subject to revision) or approved (reviewed, though occasionally revised).
 
 Continuous values
 : USGS sensor values recorded at a fixed interval, typically every 15 minutes. Also called instantaneous values.

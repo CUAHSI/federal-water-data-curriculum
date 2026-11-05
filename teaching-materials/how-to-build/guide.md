@@ -168,7 +168,8 @@ course lead's into your `templates/` folder if you build readings or want exampl
       commit it only if it should become the course template).
    3. Delete slides until exactly **one example of each slide type** in `design-rules.md` §4 is left: session
       title, program schedule, lesson objectives, content (one with a figure, one text-only), statement,
-      section divider, activity, live coding (copy the activity slide and retitle it), code, before → after.
+      section divider, activity, activity answers, live coding (copy the activity slide and retitle it), code,
+      before → after, table.
    4. On each example slide, type the slide type in the speaker notes (for example `TYPE: activity`), so the
       generator knows which is which.
    5. Remove anything that shouldn't be reused: other presenters' photos, old dates, talk-specific logos.
@@ -188,7 +189,7 @@ The course lead's copy (October 2026):
 
 | File | What it is |
 |---|---|
-| `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 12 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
+| `template.pptx` | Made from `260518_lplatt&kwong_DataPubCohort.pptx` by `make_template.py`, then edited by hand. 14 example slides (one per slide type; further reading uses content-text), each tagged `TYPE: …` in its notes |
 | `make_template.py` | The script that made the first version of the template (needs `python-pptx`); only useful to start over |
 | `reading-template.docx` | The reading styles: Arial, slate headings, shaded Code style, course name and page number in the footer |
 | `make_reading_template.py` | The script that made the first reading template (needs `python-docx`); only useful to start over |
@@ -376,6 +377,11 @@ lesson 2's slug is shortened to `synthesizing-federal-data-products`.
 | 4 | `session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx` | `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` |
 | 5 | `session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx` | `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` |
 | 6 | `session-06_module-04_federal-water-data-synthesis.pptx` | `module-04_lesson-02_synthesizing-federal-data-products.ipynb`, `module-04_lesson-03_additional-federal-water-data.ipynb` |
+
+The table gives the name a fresh build uses. The course lead then renames a finished deck with its session date,
+`YYMMDD_lplatt_open-water-data_module-NN_<module slug>.pptx`, and that name goes in the topic list header. Keep it
+in any update. The read-through PDF is `YYMMDD_open-water-data_module-NN_<module slug>.pdf`: export it from a copy of
+the deck with the build steps left out (keep the final or plain slide of each build). It has no speaker notes.
 
 The notebook module folders are `module-03_federal-water-data-access-retrieval` and
 `module-04_federal-water-data-synthesis`. Readings: `readings/module-NN_reading_<module slug>.docx` (and its

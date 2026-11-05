@@ -31,6 +31,7 @@ sessions; it holds detail the slides left out.
 
 ### Rules
 
+- The Module 2 reading has no code, and no reading includes a "How this figure was made" script.
 - Use only what the lesson pages say: no new claims, numbers, quotes, code or links. Move the lesson text with
   light edits so each section stands alone; keep headings, figures (with captions and credits), code and
   external links as they are.
