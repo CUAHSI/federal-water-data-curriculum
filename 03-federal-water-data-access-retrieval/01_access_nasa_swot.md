@@ -429,7 +429,7 @@ reaches_utm.nsmallest(3, "dist_to_site_m")[["reach_id", "river_name", "dist_to_s
 The point sits on reach **`74267300251`**, about 200 m from its centerline (well inside a channel about 720 m wide). Its neighbors are `74267300241` (downstream) and `74267300261` (upstream). Reach
 IDs encode position in SWORD: in `74267300251`, the leading `7` is the North America region, and the last digit (`1`) is the
 reach type, `1` meaning a river reach. For detailed information on how to read a `reach_id`, see this [PO.DAAC Cookbook page](https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html#obtain-sword-reach-ids). The granule itself holds every reach SWOT observed along this pass across North America.
-RiverSP files carry about 130 columns; the product description documents (PDDs), linked on the Earthdata SWOT page, under [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation), define them all.
+RiverSP files carry about 130 columns; the product description documents (PDDs), see the [SWOT documentation page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation), define them all.
 
 Notice `p_width`: SWORD expects this reach to be about 720 m wide, and SWOT measured 853 m on this overpass, with the river in
 flood. Each row is one reach seen on this overpass. The key columns:
@@ -857,7 +857,7 @@ One request returned more than three years of overpasses. Two things to notice:
   the April crest (131.2 m) is close behind. A long record puts one event in context. 
 - **The record mixes two processing streams.** Observations up to 15 May 2025 are reprocessed (`PGD0`); later ones are
   forward-processed (`PID0`). Both are Version D, but keep the `crid` column so you can check whether a shift in your series
-  lines up with the switch. For more information on the differences between these processing streams, see Release Note - Version D (Section 3 Product Version Identifier), found on the Earthdata SWOT page [Overview > Documentation tab](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation).
+  lines up with the switch. For more information on the differences between these processing streams, see Release Note - Version D (Section 3 Product Version Identifier), found on the [SWOT documentation page](https://www.earthdata.nasa.gov/data/platforms/space-based-platforms/swot#documentation).
 
 ### Spatial scaling
 
