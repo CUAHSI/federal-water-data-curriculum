@@ -157,7 +157,8 @@ True
 > (the course environment uses 3.14).
 
 Last, put everything that defines your query in one place. Every later block reads these variables, so changing the river or
-the dates means editing only this block, and saving it records exactly what you asked for.
+the dates starts here, and saving it records exactly what you asked for. A few later blocks also name one overpass (such as
+pass `175`): change those to an overpass of your river.
 
 ```python
 # The lesson's query, in one place. Change these to use another river.
@@ -921,8 +922,12 @@ several meters higher, and their widths (196–253 m) are well above `p_width`. 
 The map helps you decide. On 23 February the box holds about 66 km² of water, spread across the landscape, and on 26 February
 about 11 km², with the river clear. So on that degraded overpass SWOT seems to have counted water outside the channel, which is
 why the width is so far above `p_width`. Those Raster pixels are mostly flagged suspect, so the Raster flag alone wouldn't show
-you this. A reasonable call is to leave the three degraded values out and write down why. An independent record for those dates,
-such as a stream gage or imagery, would tell you more.
+you this. These two scenes are from different passes, which you wouldn't normally compare. All three degraded values are pass 274, so no
+clean scene from that pass falls in this window. Treat the maps as a look at the pattern, not a measured change.
+
+A reasonable call is to leave the three degraded values out and write down why. An independent record for those dates,
+such as a stream gage or imagery, would tell you more. Notice that the same flag led to different decisions: this lesson keeps the degraded 13 April value at Louisville and leaves these
+out, because the evidence differed.
 
 :::{dropdown} Example answer
 ```python

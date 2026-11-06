@@ -276,6 +276,9 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Fixes:** "The
   location map at the top of this page was drawn from this one file:" → "This cell draws a location map from
   this one file:".
+- **Now you try it:** the lesson has one answer block; split it into four starters (steps 1–3, 4, 5, 6), with step 1 filled in, because
+  its values are in the task. Add a line saying to skip step 6 and use its numbers if the downloads run long, a pace, and
+  a marker at each end of the activity.
 - **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule
   name, or the Mississippi headwaters. Keep the lesson's explanations of these in full. Live coding 2 also covers
   "Understanding what you downloaded", so keep what one unit is, the -999999999999 fill value and discharge there.
