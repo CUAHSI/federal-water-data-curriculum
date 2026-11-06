@@ -109,7 +109,8 @@ The environment file pins the Python version but lets most packages float to the
 
 **Set up the project folders.** Following [project organization](../01-data-best-practices/02_data_management.md#m01-project-organization) in Module 1, keep what you create apart from what you
 download, with a numbered folder for each step. The NOAA archives hold the raw data, and `hydrotools` keeps its own download
-cache in `hydrotools_data`, so here you only need folders for tables and figures. Run this from your project folder:
+cache in `hydrotools_data`, so here you only need folders for tables and figures. Use a project folder such as `nwm_louisville/`, keep your notebook or
+script at its top level, and start Jupyter (or `cd`) there. Then run:
 
 ```python
 import os
@@ -119,6 +120,7 @@ process_dir, figures_dir = "02_process/out", "03_figures/out"
 for folder in (process_dir, figures_dir):
     os.makedirs(folder, exist_ok=True)
 run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
+print("Project folder:", os.getcwd())
 ```
 
 ## Programmatic data discovery
@@ -471,7 +473,7 @@ print(len(refs["refs"]), "reference entries")
 
 * `inline_threshold=500` stores tiny variables (like the single `time` value in each file) directly in the JSON, so the combine step doesn't need to download anything.
 * `block_size=2**20` makes each file's scan one 1 MB request, which covers the file's metadata. fsspec's default 5 MB block read about 5× more data for no benefit, and smaller blocks took many more requests and were slower. In our test, building references for three runs took 16 s and 57 MB.
-* Save `refs` to a JSON file (`json.dump(refs, open("refs_20250406_00z.json", "w"))`) and reuse it, rather than rebuilding.
+* Save `refs` to a JSON file (`json.dump(refs, open(f"{process_dir}/{run_date}_refs_20250406_00z.json", "w"))`) and reuse it, rather than rebuilding.
 * `combine_refs` runs the combine step in its own thread. kerchunk starts its own event loop there, which fails inside Jupyter's already-running loop; a separate thread has none, so the same code works in a notebook and in a plain script.
 
 Check that `nwmurl` gave you files that exist: a URL for a run that isn't in the archive fails when `index_one` opens it. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first and drops missing ones.

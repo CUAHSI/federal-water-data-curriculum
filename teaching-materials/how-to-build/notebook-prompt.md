@@ -273,7 +273,7 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
   try it" adds two Raster scenes.
 - **Depends on the day:** search results and values can change when NASA reprocesses the data (a new CRID or
   version), and recent overpasses are added as they're processed.
-- **Fixes:** "You can also use SWOTviz, a CUAHSI" → link it: `[SWOTviz](https://swotviz.cuahsi.io/)`. "The
+- **Fixes:** "The
   location map at the top of this page was drawn from this one file:" → "This cell draws a location map from
   this one file:".
 - **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule

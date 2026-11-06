@@ -182,7 +182,10 @@ swot_louisville/
   03_figures/out/   # maps and plots
 ```
 
-Run this from your project folder. It creates the folders and a date prefix, so each file you create says when it was made:
+`in` is what a step takes in, `out` is what it produces, and the README says what the project is and the order of its steps.
+Make that folder, keep your notebook or script at its top level, and start Jupyter (or `cd`) there, so the paths below land in
+the right place. Then run this block. It creates the folders and a date prefix, so a file you make today is named like
+`261106_louisville_water_area_pass175.csv`, and re-running on another day adds a new file instead of overwriting the old one:
 
 ```python
 import os
@@ -192,6 +195,7 @@ raw_dir, process_dir, figures_dir = "01_raw/in", "02_process/out", "03_figures/o
 for folder in (raw_dir, process_dir, figures_dir):
     os.makedirs(folder, exist_ok=True)
 run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
+print("Project folder:", os.getcwd())
 ```
 
 (SWOT-data-discovery)=
@@ -205,7 +209,7 @@ you the exact granule names, which you can save as a record of your inputs.
 
 You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/). Either type a collection short name such as
 `SWOT_L2_HR_Raster_100m_D` in the search box, or click on "Browse all Earth Science Data" to go straight to the mapper. Then draw a 
-rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data, or [WaterMAP](https://apps.usgs.gov/watermap/), a USGS app for exploring SWOT data over the US.
+rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTViz](https://swotviz.cuahsi.io/), a CUAHSI web viewer for SWOT river and lake data, or [WaterMAP](https://apps.usgs.gov/watermap/#/?lat=48.87204&lon=-125.953207&z=2.5&data=swotRiverReaches), a USGS app for exploring SWOT data over the US.
 These are good ways to explore, but programmatic discovery is better for research, because the search itself becomes part of your methods 
 and can be re-run.
 
@@ -822,19 +826,31 @@ Four things are worth keeping in mind:
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
   `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
   write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
-- **Read the uncertainty along with the flag.** Each RiverSP measurement has a matching uncertainty column ending in `_u`, and
-  these are one-sigma (68th-percentile) estimates. `wse_u` is the total uncertainty, random and systematic. `wse_r_u` is the
-  random-only part, which is independent from reach to reach. The systematic part, shared by reaches in a granule, is
-  `sqrt(wse_u² - wse_r_u²)`. For the 12 Louisville overpasses, `wse_u` is about 0.10 m, `wse_r_u` about 0.05 m and the
-  systematic part about 0.09 m. Raster uncertainties end in `_uncert` (`wse_uncert`, `water_area_uncert`). For the details,
-  see the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D), under Docs & Resources > User Guides > Product
-  Description Document. These are still estimates: the same release note says the reported uncertainties "have not been
-  validated and should not be relied upon for science interpretation" yet, so treat `wse_u` as a rough guide.
+- **Read the uncertainty along with the flag.** Each RiverSP measurement has a matching uncertainty column ending in `_u`. These
+  are one-sigma (68th-percentile) estimates: if the estimate is right, the true value falls within ± this number about two times in three.
+    - **Two parts.** `wse_u` is the total uncertainty. `wse_r_u` is the random part, which is independent from reach to reach. The
+      systematic part is common to the reaches in a granule; independent errors add as squares, so you can recover it with
+      `np.sqrt(df["wse_u"]**2 - df["wse_r_u"]**2)`. At Louisville, `wse_u` is about 0.10 m, `wse_r_u` about 0.05 m and the systematic
+      part about 0.09 m. To get `wse_r_u`, ask for it: `get_reach_timeseries(reach_id, start, end, fields=FIELDS + ",wse_r_u")`.
+    - **Which one to use.** Comparing an overpass with another overpass or another dataset, use `wse_u`. Comparing reaches within one
+      granule, the systematic part is shared, so `wse_r_u` is the closer guide.
+    - **A small uncertainty doesn't cancel a flag.** The two degraded Louisville overpasses have ordinary `wse_u` values of about 0.10 m,
+      yet the 22 March value sits 1.65 m below the overpass 13 hours later. Check the flag, the neighboring overpass and the width too.
+    - **They are still estimates.** The [Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM) says the reported uncertainties "have not been validated and
+      should not be relied upon for science interpretation" yet, so treat `wse_u` as a rough guide.
+    - **Where to read more.** See the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D), under Docs & Resources > User
+      Guides > Product Description Document. Raster uncertainties end in `_uncert` (`wse_uncert`, `water_area_uncert`).
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
   CRID and your access date, and cite the collection DOI, for example: *SWOT. (2025). SWOT Level 2 River Single-Pass Vector
   Data Product [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
   [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
+
+:::{admonition} Partner review (NASA): Width and uncertainty
+:class: important
+The lesson says to use `wse_u` when comparing overpasses or datasets and `wse_r_u` when comparing reaches within one granule. That is inferred from the Product Description Document's definitions. Please confirm it, and whether the same holds for `slope_u` and `slope_r_u`.
+Please also confirm two statements taken from the Product Description Document and checked against one RiverSP granule: `width` = `area_total` / `p_length`, and the systematic part = `sqrt(wse_u² - wse_r_u²)`.
+:::
 
 ## Best practices FAQs
 
@@ -1007,7 +1023,7 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
 - [Earthdata Search](https://search.earthdata.nasa.gov/) and the [CMR search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
 - [SWORD Explorer](https://www.swordexplorer.com/) for finding reach and node IDs interactively.
-- [WaterMAP](https://apps.usgs.gov/watermap/) (USGS) for exploring SWOT data over the US.
+- [WaterMAP](https://apps.usgs.gov/watermap/#/?lat=48.87204&lon=-125.953207&z=2.5&data=swotRiverReaches) (USGS) for exploring SWOT data over the US.
 - The RiverSP Product Description Document, on the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D) under Docs & Resources > User Guides.
 - Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://www.hydroshare.org/resource/1e5dff3ab72440d2a4e3942326ada5a4/)
   by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The

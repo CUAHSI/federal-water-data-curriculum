@@ -570,7 +570,7 @@ for g in skagit:
     print(g["umm"]["GranuleUR"])
 ```
 
-Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass). The files go to `data/raw/swot_raster/` and are never edited: anything we compute from them is a derived result, kept separately (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)). The granule names include the product version and processing counter, so they also document exactly which files you used.
+Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass). Keep this lesson in a numbered project folder, laid out as in Module 3. The files go to `01_raw/in/` and are never edited: anything we compute from them is a derived result, kept separately (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)). The granule names include the product version and processing counter, so they also document exactly which files you used.
 
 ```python
 files = earthaccess.download(skagit, local_path="01_raw/in")  # raw downloads: keep unchanged
@@ -666,7 +666,7 @@ pd.DataFrame(forecasts).to_csv(derived / f"{run_date}_skagit_nwm_short_range_dec
 print(sorted(p.name for p in derived.iterdir()))
 ```
 
-The folder now holds two small CSV files and a `provenance.txt` file, all with a date prefix, that names the gage, approval status, NWM model version and SWOT granules. Cite the sources when you share results: USGS asks for the publication year, access date and DOI ([citing Water Data for the Nation](https://waterdata.usgs.gov/citation/); the DOI is [10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN)), each SWOT collection has its own DOI (above, and on each collection's [PO.DAAC](https://podaac.jpl.nasa.gov/) landing page), and the NWM forecasts are cited by product, model version and access date ([NOAA NWM on AWS](https://registry.opendata.aws/noaa-nwm-pds/)).
+The folder now holds two small CSV files and a provenance file, all with a date prefix. The provenance file names the gage, approval status, NWM model version and SWOT granules. Cite the sources when you share results: USGS asks for the publication year, access date and DOI ([citing Water Data for the Nation](https://waterdata.usgs.gov/citation/); the DOI is [10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN)), each SWOT collection has its own DOI (above, and on each collection's [PO.DAAC](https://podaac.jpl.nasa.gov/) landing page), and the NWM forecasts are cited by product, model version and access date ([NOAA NWM on AWS](https://registry.opendata.aws/noaa-nwm-pds/)).
 
 ## Conclusions
 

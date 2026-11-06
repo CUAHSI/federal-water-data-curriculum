@@ -102,8 +102,9 @@ API_USGS_PAT is set: True
 The environment file lets most packages float to their latest release, so a year from now you may get newer versions than the ones we tested. When you finish an analysis, record exactly what you ran with `conda env export > environment-lock.yml` and keep that file with your results ([Data Management](../01-data-best-practices/02_data_management.md), Module 1). The examples on this page were tested with Python 3.14, `dataretrieval` 1.4.0, `pandas` 3.0.6, `geopandas` 1.2.0 and `matplotlib` 3.11.2.
 
 **Set up the project folders.** Following [project organization](../01-data-best-practices/02_data_management.md#m01-project-organization) in Module 1, give each step a numbered folder, and keep
-raw downloads (`01_raw/in`) apart from the tables (`02_process/out`) and figures (`03_figures/out`) you make from them. Run this
-from your project folder. It also makes a date prefix, so each file you create says when it was made:
+raw downloads (`01_raw/in`) apart from the tables (`02_process/out`) and figures (`03_figures/out`) you make from them. Use a
+project folder such as `wdfn_louisville/`, keep your notebook or script at its top level, and start Jupyter (or `cd`) there.
+Then run this block. It also makes a date prefix, so each file you create says when it was made:
 
 ```python
 import os
@@ -113,6 +114,7 @@ raw_dir, process_dir, figures_dir = "01_raw/in", "02_process/out", "03_figures/o
 for folder in (raw_dir, process_dir, figures_dir):
     os.makedirs(folder, exist_ok=True)
 run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
+print("Project folder:", os.getcwd())
 ```
 
 ## Programmatic data discovery
@@ -442,7 +444,12 @@ The continuous values, daily values and field measurements share their core colu
 
 **Provisional data and re-running later.** Because provisional values can change, the same request run next year may return different numbers for April 2025. Record the date you retrieved the data, and save what you downloaded.
 
-**Keep raw and derived data apart.** Save each download unchanged (for example `01_raw/in/usgs_03294500_continuous_2025-03-15_2025-05-15.csv`), and write anything you compute from it, such as the crest table or a cleaned series, to a separate folder (`02_process/out/`). Then you can always trace a number back to the download it came from ([Data Management](../01-data-best-practices/02_data_management.md), Module 1).
+**Keep raw and derived data apart.** Save each download unchanged (for example `01_raw/in/261106_usgs_03294500_continuous_2025-03-15_2025-05-15.csv`), and write anything you compute from it, such as the crest table or a cleaned series, to a separate folder (`02_process/out/`). Then you can always trace a number back to the download it came from ([Data Management](../01-data-best-practices/02_data_management.md), Module 1).
+
+```python
+cont.to_csv(f"{raw_dir}/{run_date}_usgs_03294500_continuous_2025-03-15_2025-05-15.csv", index=False)   # as downloaded
+q.to_csv(f"{process_dir}/{run_date}_usgs_03294500_discharge.csv", index=False)                         # what you made from it
+```
 
 **Cite what you used.** USGS water data have a DOI, [https://doi.org/10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN) (U.S. Geological Survey, National Water Information System). Cite it with the monitoring location IDs, parameter codes, dates and your access date, and cite `dataretrieval` too: Hodson and Hariharan, [https://doi.org/10.5066/P94I5TX3](https://doi.org/10.5066/P94I5TX3). [Data Publishing](../01-data-best-practices/03_data_publishing.md) in Module 1 covers citing data.
 
