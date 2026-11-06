@@ -269,7 +269,7 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Learning goal:** Retrieve NASA SWOT data for a location of interest, describe what comes back using the
   course's shared concepts, and choose an access pattern that scales with your question.
 - **Credentials:** Earthdata Login.
-- **Downloads and time:** about 230 MB of SWOT files, into `01_raw/in/`; about 2 minutes. The extended "Now you
+- **Downloads and time:** about 230 MB of SWOT files, into `data/`; about 2 minutes. The extended "Now you
   try it" adds two Raster scenes.
 - **Depends on the day:** search results and values can change when NASA reprocesses the data (a new CRID or
   version), and recent overpasses are added as they're processed.

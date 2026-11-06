@@ -48,7 +48,7 @@ There are two ways to get these products with code, and they scale differently:
   time series ([Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis)).
 
 **Only need a time series for one reach?** Find its reach ID in [SWORD Explorer](https://www.swordexplorer.com/), run the
-setup, query and project-folder blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
+setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
 Earthdata login or any downloads.
 
 ## Tools and environment setup
@@ -166,37 +166,11 @@ site_lon, site_lat = -85.799, 38.280          # a point on the river (decimal de
 site_bbox = (site_lon - 0.02, site_lat - 0.02, site_lon + 0.02, site_lat + 0.02)  # (west, south, east, north), ~3.5 x 4.4 km
 start, end = "2025-03-15T00:00:00Z", "2025-05-15T23:59:59Z"   # UTC; the April 2025 flood falls inside
 reach_id = "74267300251"                      # SWORD reach at the point (found below, or look it up in SWORD Explorer)
+data_dir = "data/swot/raw"                    # downloads go here and are never edited
 ```
 
 The dates are full UTC timestamps (`Z` means UTC) because both `earthaccess` and `hydrocron` accept that form. You won't
 know `reach_id` for a new river yet: the RiverSP download below shows how to find it.
-
-Then set up the project folders, following [project organization](../01-data-best-practices/02_data_management.md#m01-project-organization) in Module 1. Each step gets a numbered folder, so
-the order is clear, and the raw downloads stay apart from anything you make from them:
-
-```text
-swot_louisville/
-  README.md
-  01_raw/in/        # SWOT files exactly as downloaded, never edited
-  02_process/out/   # tables you compute
-  03_figures/out/   # maps and plots
-```
-
-`in` is what a step takes in, `out` is what it produces, and the README says what the project is and the order of its steps.
-Make that folder, keep your notebook or script at its top level, and start Jupyter (or `cd`) there, so the paths below land in
-the right place. Then run this block. It creates the folders and a date prefix, so a file you make today is named like
-`261106_louisville_water_area_pass175.csv`, and re-running on another day adds a new file instead of overwriting the old one:
-
-```python
-import os
-from datetime import date
-
-raw_dir, process_dir, figures_dir = "01_raw/in", "02_process/out", "03_figures/out"
-for folder in (raw_dir, process_dir, figures_dir):
-    os.makedirs(folder, exist_ok=True)
-run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
-print("Project folder:", os.getcwd())
-```
 
 (SWOT-data-discovery)=
 ## Programmatic data discovery
@@ -268,7 +242,7 @@ headwaters = earthaccess.search_data(
     temporal=("2026-06-01", "2026-06-30T23:59:59"),
 )
 print(len(headwaters), "reach granules found")
-files = earthaccess.download(headwaters[:1], local_path=raw_dir)
+files = earthaccess.download(headwaters[:1], local_path=data_dir)
 reaches = gpd.read_file(files[0])  # geopandas reads the zipped shapefile directly
 print(len(reaches), "reaches in the first granule;", int(reaches.intersects(box(*headwaters_box)).sum()), "inside the box")
 ```
@@ -416,7 +390,7 @@ Discovery told you *which* granules exist. Now get the data. The two tools behav
 - `hydrocron` gives you **just the observations you ask for**: the values for one reach or node, across many overpasses, in one web
   request. These will be returned in a time series-friendly format (CSV or geoJSON)
 
-Keep downloads exactly as they arrived in `raw_dir`, and write anything you compute from them to `process_dir` or `figures_dir`. Then you can
+Keep downloads exactly as they arrived in `data_dir`, and write anything you compute from them somewhere else. Then you can
 always tell raw data from derived data, and re-create the derived files from the raw ones (see
 [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) in Module 1).
 
@@ -432,7 +406,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 
 flood_granule = [g for g in louisville_reach_granules if "_031_175_" in g["umm"]["GranuleUR"]]
-files = earthaccess.download(flood_granule, local_path=raw_dir)
+files = earthaccess.download(flood_granule, local_path=data_dir)
 reaches = gpd.read_file(files[0])
 print(len(reaches), "reaches in this granule")
 
@@ -511,7 +485,7 @@ flood, near the crest, and after.
 import xarray as xr
 
 pass_175 = [g for g in louisville_raster if g["umm"]["GranuleUR"].split("_")[11] == "175"]
-raster_files = sorted(earthaccess.download(pass_175, local_path=raw_dir))  # in time order
+raster_files = sorted(earthaccess.download(pass_175, local_path=data_dir))  # in time order
 ds = xr.open_dataset(raster_files[0])
 ds[["water_area", "water_frac", "wse", "water_area_qual"]]
 ```
@@ -633,10 +607,12 @@ Whether to use such a scene is your call. Thresholds on any flags depend on the 
 Here, the river in the 13 April scene lines up with the river in the other two (see the maps
 below), so this lesson keeps it and says so.
 
-Save derived results like this table outside the raw-data folder, with a date prefix and a name that says what they are:
+Save derived results like this table outside the raw-data folder, with a name that says what they are:
 
 ```python
-water_area.to_csv(f"{process_dir}/{run_date}_louisville_water_area_pass175.csv", index=False)
+import os
+os.makedirs("data/swot/derived", exist_ok=True)
+water_area.to_csv("data/swot/derived/louisville_water_area_pass175.csv", index=False)
 ```
 
 Maps show the change more clearly than totals. This block plots `water_frac` in a 30 km window for each of the three scenes,
@@ -658,7 +634,6 @@ for ax, path in zip(axes, raster_files):
 
 axes[0].set_ylabel("km north of the point")
 fig.colorbar(image, ax=axes, label="Water fraction (pixels not flagged bad)", shrink=0.85)
-fig.savefig(f"{figures_dir}/{run_date}_louisville_water_frac_pass175.png", dpi=150)
 plt.show()
 ```
 
@@ -772,7 +747,6 @@ ax.set_title(f"SWOT reach {reach_id}, {site_name}")
 ax.legend(title="Quality flag", loc="upper right")
 ax.grid(alpha=0.3)
 fig.autofmt_xdate()
-fig.savefig(f"{figures_dir}/{run_date}_louisville_wse_flood.png", dpi=150)
 plt.show()
 ```
 
@@ -970,7 +944,7 @@ salem_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in salem_ra
 # Step 3: RiverSP reach granules from those passes; download one and find the nearest reach
 salem_reach_granules = earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_D", granule_name="*Reach*", bounding_box=salem_bbox, temporal=(salem_start, salem_end))
 salem_reach_granules = keep_best_version_d([g for g in salem_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in salem_passes])
-salem_files = earthaccess.download(salem_reach_granules[:1], local_path=raw_dir)
+salem_files = earthaccess.download(salem_reach_granules[:1], local_path=data_dir)
 salem_utm = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").estimate_utm_crs()   # zone 10N here
 salem_reaches = gpd.read_file(salem_files[0]).to_crs(salem_utm)
 salem_site = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").to_crs(salem_utm).iloc[0]
