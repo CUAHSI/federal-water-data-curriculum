@@ -467,7 +467,8 @@ flood. Each row is one reach seen on this overpass. The key columns:
 - `p_width` is SWORD's prior (expected) width for the reach, useful for judging whether a measured `width` is plausible.
 - `width` is derived from area: `area_total`, the water area assigned to the reach, divided by `p_length`, SWORD's length for
   the reach. That makes it an average width over the reach, not a bank-to-bank measurement. Raster has no width variable: it
-  reports `water_area` and `water_frac` for each grid cell.
+  reports `water_area` and `water_frac` for each grid cell. See the Product Description Document on the
+  [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D).
 - `reach_q` is the summary **{term}`Data quality flag <Data quality flag(s)>`**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - `time_str` is the overpass **{term}`Time`** in UTC.
 - Missing values are stored as `-999999999999`, not `NaN`. Filter them out before plotting.
@@ -829,9 +830,10 @@ Four things are worth keeping in mind:
 - **Read the uncertainty along with the flag.** Each RiverSP measurement has a matching uncertainty column ending in `_u`. These
   are one-sigma (68th-percentile) estimates: if the estimate is right, the true value falls within ± this number about two times in three.
     - **Two parts.** `wse_u` is the total uncertainty. `wse_r_u` is the random part, which is independent from reach to reach. The
-      systematic part is common to the reaches in a granule; independent errors add as squares, so you can recover it with
-      `np.sqrt(df["wse_u"]**2 - df["wse_r_u"]**2)`. At Louisville, `wse_u` is about 0.10 m, `wse_r_u` about 0.05 m and the systematic
-      part about 0.09 m. To get `wse_r_u`, ask for it: `get_reach_timeseries(reach_id, start, end, fields=FIELDS + ",wse_r_u")`.
+      systematic part is common to the reaches in a granule. To see `wse_r_u`, ask for it:
+      `louisville_u = get_reach_timeseries(reach_id, start, end, fields=FIELDS + ",wse_r_u")`. Independent errors add as squares, so
+      the systematic part is `(louisville_u["wse_u"]**2 - louisville_u["wse_r_u"]**2)**0.5`. At Louisville, `wse_u` is about 0.10 m,
+      `wse_r_u` about 0.05 m and the systematic part about 0.09 m.
     - **Which one to use.** Comparing an overpass with another overpass or another dataset, use `wse_u`. Comparing reaches within one
       granule, the systematic part is shared, so `wse_r_u` is the closer guide.
     - **A small uncertainty doesn't cancel a flag.** The two degraded Louisville overpasses have ordinary `wse_u` values of about 0.10 m,

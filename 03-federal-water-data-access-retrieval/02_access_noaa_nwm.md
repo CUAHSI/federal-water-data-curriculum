@@ -473,7 +473,7 @@ print(len(refs["refs"]), "reference entries")
 
 * `inline_threshold=500` stores tiny variables (like the single `time` value in each file) directly in the JSON, so the combine step doesn't need to download anything.
 * `block_size=2**20` makes each file's scan one 1 MB request, which covers the file's metadata. fsspec's default 5 MB block read about 5× more data for no benefit, and smaller blocks took many more requests and were slower. In our test, building references for three runs took 16 s and 57 MB.
-* Save `refs` to a JSON file (`json.dump(refs, open(f"{process_dir}/{run_date}_refs_20250406_00z.json", "w"))`) and reuse it, rather than rebuilding.
+* Save `refs` to a JSON file and reuse it, rather than rebuilding. The block under "Understanding what you downloaded" does this.
 * `combine_refs` runs the combine step in its own thread. kerchunk starts its own event loop there, which fails inside Jupyter's already-running loop; a separate thread has none, so the same code works in a notebook and in a plain script.
 
 Check that `nwmurl` gave you files that exist: a URL for a run that isn't in the archive fails when `index_one` opens it. `generate_urls_operational(..., enforce_valid_outputs=1)` checks each URL first and drops missing ones.
@@ -632,6 +632,14 @@ In the April 2025 short-range runs for COMID 10164004 (see the figure above), ea
 :::
 
 **Keep raw and derived data apart.** The files in the NOAA archive are your raw data, and they stay where they are. What you create, the reference JSON and the table of values you extracted, is derived. Save it in a separate folder (for example `02_process/out/`) together with the COMIDs, configuration and reference times you asked for, so anyone can rebuild it from the archive. See [Data Management](../01-data-best-practices/02_data_management.md) in Module 1.
+
+```python
+import json
+
+with open(f"{process_dir}/{run_date}_refs_20250406_00z.json", "w") as f:
+    json.dump(refs, f)
+q_med.to_csv(f"{process_dir}/{run_date}_nwm_medium_range_comid{comid}.csv")
+```
 
 **Cite what you used.** The operational NWM forecasts don't have a DOI. Cite the model and version (for example, NWM v3.0 for forecasts before about 18 August 2026, v3.1 after), the configuration and reference times, the archive you read from (with its URL), and the date you accessed it. Old forecasts don't change once produced, but the archives' retention can, so the access date matters. [Data Publishing](../01-data-best-practices/03_data_publishing.md) in Module 1 covers citing data.
 

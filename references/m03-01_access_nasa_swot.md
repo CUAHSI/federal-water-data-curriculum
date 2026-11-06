@@ -2,6 +2,7 @@
 % STYLE_GUIDE section 8 format. Included by references.md; checked by references/check_references.py.
 
 - Barrett, A., Battisto, C., Bourbeau, J., Carroll, I., Daniels, C., Fisher, M., Kaufman, D., Kennedy, J., et al. (2026). *earthaccess* (software). https://earthaccess.readthedocs.io/en/latest/ ; authentication how-to: https://earthaccess.readthedocs.io/en/latest/user/howto/authenticate/ ; API reference: https://earthaccess.readthedocs.io/en/latest/api/ . https://doi.org/10.5281/zenodo.8365009 (accessed 2026-10-08).
+- CUAHSI. (n.d.). *SWOTViz* (web application, in development). https://swotviz.cuahsi.io/ (accessed 2026-11-06).
 - Durand, M., & Yadav, B. (n.d.). *SWOT - River Longitudinal Profiles for Water Resources* (Jupyter notebook). CUAHSI notebooks, GitHub (GPL-3.0). https://github.com/CUAHSI/notebooks/tree/develop/Data%20Access%20Examples/SWOT%20-%20River%20Longitudinal%20Profiles%20for%20Water%20Resources (accessed 2026-10-08).
 - NASA Earthdata. (n.d.). *Earthdata Login*. https://urs.earthdata.nasa.gov (accessed 2026-10-08).
 - NASA Earthdata. (n.d.). *Earthdata Search*. https://search.earthdata.nasa.gov/ (accessed 2026-10-08).
@@ -13,7 +14,7 @@
 - Python Software Foundation. (2026). *CPython issue #151504* (SSL `ASN1: NOT_ENOUGH_DATA` import error). GitHub. https://github.com/python/cpython/issues/151504 (accessed 2026-10-08).
 - SWOT. (2025). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset). NASA Physical Oceanography Distributed Active Archive Center. https://doi.org/10.5067/SWOT-RIVERSP-D (accessed 2026-10-08).
 - SWOT. (2025). *SWOT Level 2 Water Mask Raster Image Data Product, Version D* (dataset). NASA Physical Oceanography Distributed Active Archive Center. https://doi.org/10.5067/SWOT-RASTER-D (accessed 2026-10-08).
-- SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science Data Products* (April 23, 2025). PO.DAAC. https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf
+- SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science Data Products* (December 19, 2025). PO.DAAC. https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM
 - SWORD Explorer. (n.d.). *SWORD Explorer: SWOT River Database viewer*. https://www.swordexplorer.com/ (accessed 2026-10-08).
 - Tebaldi, N., Nickles, C., & Downs, B. (n.d.). *Hydrocron API: Getting Started with SWOT Time Series*. PO.DAAC Cookbook. https://podaac.github.io/tutorials/notebooks/datasets/Hydrocron_SWOT_timeseries_examples_basic.html (accessed 2026-10-08).
 - U.S. Geological Survey. (n.d.). *WaterMAP* (web application). https://apps.usgs.gov/watermap/ (accessed 2026-11-06).
