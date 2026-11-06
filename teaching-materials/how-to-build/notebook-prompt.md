@@ -269,12 +269,29 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Learning goal:** Retrieve NASA SWOT data for a location of interest, describe what comes back using the
   course's shared concepts, and choose an access pattern that scales with your question.
 - **Credentials:** Earthdata Login.
-- **Downloads and time:** about 230 MB of SWOT files, into `data/`; about 2 minutes.
+- **Downloads and time:** about 230 MB of SWOT files, into `01_raw/in/`; about 2 minutes. The extended "Now you
+  try it" adds two Raster scenes.
 - **Depends on the day:** search results and values can change when NASA reprocesses the data (a new CRID or
   version), and recent overpasses are added as they're processed.
 - **Fixes:** "You can also use SWOTviz, a CUAHSI" → link it: `[SWOTviz](https://swotviz.cuahsi.io/)`. "The
   location map at the top of this page was drawn from this one file:" → "This cell draws a location map from
   this one file:".
+- **Project folders:** follow Module 1's pattern, as the deck shows. A code cell right after the credentials creates
+  `01_raw/in`, `02_process/out` and `03_figures/out` with `os.makedirs(..., exist_ok=True)`, and one sentence says what
+  goes where. Use `raw_dir = "01_raw/in"` wherever the lesson has `data_dir = "data/swot/raw"`, and `02_process/out`
+  wherever it has `data/swot/derived`. Save the notebook's figures to `03_figures/out`.
+- **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule
+  name, or the Mississippi headwaters. Keep the lesson's explanations of these in full. Live coding 2 also covers
+  "Understanding what you downloaded", so keep what one unit is, the -999999999999 fill value and discharge there.
+- **Now you try it:** after the lesson's four steps, add three, as on the deck's activity slide, each with a starter
+  and a collapsed answer:
+    1. Plot `wse` over time colored by `reach_q`, and compare `width` with `p_width` and each value with its neighbors.
+    2. Search the Raster collection for the 23 and 26 February 2026 `UTM10T` scenes and download them, then map
+       `water_frac` in a 10 km box around the point for each, adapting the lesson's Raster map block.
+    3. Decide whether to keep the three degraded values, and write down why.
+  What you should see: all three degraded values come from pass 274. On 23 February the water area in the box is about
+  66 km², spread across the landscape, against about 11 km² on 26 February, when the river is clear. Those pixels are
+  mostly flagged suspect, so the Raster flag alone doesn't show the problem.
 
 ### `module-03_lesson-02_retrieve-noaa-nwm-data` (Session 4)
 
