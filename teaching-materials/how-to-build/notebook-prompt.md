@@ -279,15 +279,6 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule
   name, or the Mississippi headwaters. Keep the lesson's explanations of these in full. Live coding 2 also covers
   "Understanding what you downloaded", so keep what one unit is, the -999999999999 fill value and discharge there.
-- **Now you try it:** after the lesson's four steps, add three, as on the deck's activity slide, each with a starter
-  and a collapsed answer:
-    1. Plot `wse` over time colored by `reach_q`, and compare `width` with `p_width` and each value with its neighbors.
-    2. Search the Raster collection for the 23 and 26 February 2026 `UTM10T` scenes and download them, then map
-       `water_frac` in a 10 km box around the point for each, adapting the lesson's Raster map block.
-    3. Decide whether to keep the three degraded values, and write down why.
-  What you should see: all three degraded values come from pass 274. On 23 February the water area in the box is about
-  66 km², spread across the landscape, against about 11 km² on 26 February, when the river is clear. Those pixels are
-  mostly flagged suspect, so the Raster flag alone doesn't show the problem.
 
 ### `module-03_lesson-02_retrieve-noaa-nwm-data` (Session 4)
 
