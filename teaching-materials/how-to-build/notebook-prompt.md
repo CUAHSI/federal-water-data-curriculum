@@ -68,8 +68,8 @@ stretches and afterwards on their own.
   sections whose rows are only `deck`, `reading`, `how-to` or `cut`. If a later cell needs code from one of them
   (an import, a variable), keep that code cell under the nearest included heading, with one sentence saying why.
 - **Don't repeat the deck.** If a slide explains an idea (what a COMID is, why kerchunk avoids downloads, what a
-  quality flag means), the notebook doesn't explain it again. Point to the slide by its title in a few words,
-  e.g. "(slides: *Finding COMIDs with the NLDI*)".
+  quality flag means), the notebook doesn't explain it again. Don't name slides or quote their titles: the only
+  reference to the deck is "**Back to the slides.**" and the live-coding markers.
 - **Do keep what the deck doesn't have.** The slides show code but don't run it. So for each code cell keep, in
   1–3 sentences, what it does, what you'd change for your own river, and the lesson's "what you should see"
   description of the output (numbers, columns, units). Keep a short definition only when no slide gives it.
@@ -89,13 +89,8 @@ stretches and afterwards on their own.
    (lesson notes), and a 2–3 sentence introduction from the lesson's opening paragraph. End with one sentence
    saying how to use it: the slides explain, this notebook is for running the code, run the cells in order.
 2. **Before you start** (`##`), short, because the HydroShare "How to" guide walks through setup:
-    - the course's conda environment, `open-water-data`, from `environment.yml` in the folder above the
-      notebook. It serves every notebook in the course, so it only needs creating once. The two commands,
-      run in a terminal in that folder, then choosing the **Python (open-water-data)** kernel:
-      ```bash
-      conda env create -f environment.yml
-      conda run -n open-water-data python -m ipykernel install --user --name open-water-data --display-name "Python (open-water-data)"
-      ```
+    - one or two sentences pointing to the setup instructions in the HydroShare README and the **Python
+      (open-water-data)** kernel. Don't repeat the setup commands;
     - downloads (size, where they land) and run time, from the lesson notes;
     - results that depend on the day you run them, from the lesson notes.
 3. **Credentials** (`##`): the standard cells in the lesson notes for this notebook's credentials.
@@ -257,8 +252,8 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 
 ### All notebooks
 
-- Leave out the lesson's steps for creating the environment and logging in, and their code cells (`auth =
-  earthaccess.login()`, the `API_USGS_PAT` check): "Before you start" and the credentials cells replace them.
+- Leave out the lesson's steps for creating the environment, recording package versions and logging in, and their
+  code cells (`auth = earthaccess.login()`, the `API_USGS_PAT` check, the printed versions): "Before you start" and the credentials cells replace them.
 - Leave out "For helpful context, refer back to the example rivers we covered in the overview." from the task.
 - On Windows, SWOT downloads fail in deeply nested folders (file names are about 100 characters and Windows
   refuses paths over 260), with `FileNotFoundError: [WinError 3]`. SWOT notebooks say so in "Before you start":
@@ -269,12 +264,19 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Learning goal:** Retrieve NASA SWOT data for a location of interest, describe what comes back using the
   course's shared concepts, and choose an access pattern that scales with your question.
 - **Credentials:** Earthdata Login.
-- **Downloads and time:** about 230 MB of SWOT files, into `data/`; about 2 minutes.
+- **Downloads and time:** about 230 MB of SWOT files, into `data/`; about 2 minutes. The extended "Now you
+  try it" adds two Raster scenes.
 - **Depends on the day:** search results and values can change when NASA reprocesses the data (a new CRID or
   version), and recent overpasses are added as they're processed.
-- **Fixes:** "You can also use SWOTviz, a CUAHSI" → link it: `[SWOTviz](https://swotviz.cuahsi.io/)`. "The
+- **Fixes:** "The
   location map at the top of this page was drawn from this one file:" → "This cell draws a location map from
   this one file:".
+- **Now you try it:** the lesson has one answer block; split it into four starters (steps 1–3, 4, 5, 6), with step 1 filled in, because
+  its values are in the task. Add a line saying to skip step 6 and use its numbers if the downloads run long, a pace, and
+  a marker at each end of the activity.
+- **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule
+  name, or the Mississippi headwaters. Keep the lesson's explanations of these in full. Live coding 2 also covers
+  "Understanding what you downloaded", so keep what one unit is, the -999999999999 fill value and discharge there.
 
 ### `module-03_lesson-02_retrieve-noaa-nwm-data` (Session 4)
 

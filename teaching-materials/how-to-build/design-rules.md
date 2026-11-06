@@ -65,8 +65,8 @@ in the templates table in `guide.md` once the template exists).
    recurring graphic (like the reproducibility pyramid) may come back on each divider of a series.
 7. **Activity.** Slate, "Activity #N" large and bold, then the task with its time ("Take ~7 minutes to …"),
    numbered or bulleted steps, and a screenshot if learners need to find something.
-8. **Live coding.** Slate, like an activity: "Live coding: <what>", the notebook file name, the sections to run,
-   2–3 things to point out, and "Back to slides at <clock time>".
+8. **Live coding.** Slate, like an activity: "Live coding: <what>", the code file name, and a list of the sections
+   it covers. What to point out and the clock times go in the speaker notes, not on the slide.
 9. **Code.** One code block of at most 12 lines, terminal style (section 3). Arrows or brackets in accent
     colours can connect parts of the code to what they produce.
 10. **Before → after.** The problem on the left in dark red, an arrow, the fix on the right in dark green.

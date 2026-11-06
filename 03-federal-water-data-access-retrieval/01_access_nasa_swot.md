@@ -37,7 +37,7 @@ There are two ways to get these products with code, and they scale differently:
 |---|---|---|---|
 | Explore by clicking: which granules exist for a place and time | [Earthdata Search](https://search.earthdata.nasa.gov/) | Free Earthdata Login to download | Manual; not reproducible on its own. However, the URL will remember your filters, allowing you to reproduce your {term}`query<Query>`. |
 | Time series for one or a few reaches or nodes, any length of record | {term}`hydrocron` web API for RiverSP only this lesson (also queries LakeSP and {term}`L4 SoS<SWORD of Science (SoS)>`). | No (optional for heavy use) | One request per reach or node; responses are capped at 6 MB; send requests one at a time |
-| Every reach in an area, or water extent (Raster), for a short time window | {term}`earthaccess` to both search and download/stream whole files (`hydrocron` can download/stream files, but cannot search an area for reach IDs). | No key; free Earthdata Login | Cost (e.g. storage and computation power) grows with the number of files: each RiverSP {term}`granule <Granule>` covers a continent-wide pass, each Raster granule a ~150 km scene |
+| Every reach in an area, or water extent (Raster), for a short time window | {term}`earthaccess` to both search and download/stream whole files (`hydrocron` returns a time series for a reach or node ID you already have. It cannot search an area for reach IDs and does not serve Raster). | No key; free Earthdata Login | Cost (e.g. storage and computation power) grows with the number of files: each RiverSP {term}`granule <Granule>` covers a continent-wide pass, each Raster granule a ~150 km scene |
 | Large areas or long periods of Raster or RiverSP files | `earthaccess.open()` running in AWS `us-west-2`, next to the archive | No key; free Earthdata Login | Streams instead of downloading; set up a cloud environment first |
 
 - **`earthaccess`** is NASA's Python library for logging in to NASA Earthdata, searching for data, and downloading or
@@ -157,7 +157,8 @@ True
 > (the course environment uses 3.14).
 
 Last, put everything that defines your query in one place. Every later block reads these variables, so changing the river or
-the dates means editing only this block, and saving it records exactly what you asked for.
+the dates starts here, and saving it records exactly what you asked for. A few later blocks also name one overpass (such as
+pass `175`): change those to an overpass of your river.
 
 ```python
 # The lesson's query, in one place. Change these to use another river.
@@ -183,7 +184,7 @@ you the exact granule names, which you can save as a record of your inputs.
 
 You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/). Either type a collection short name such as
 `SWOT_L2_HR_Raster_100m_D` in the search box, or click on "Browse all Earth Science Data" to go straight to the mapper. Then draw a 
-rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data. 
+rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTViz](https://swotviz.cuahsi.io/), a CUAHSI web viewer for SWOT river and lake data, or [WaterMAP](https://apps.usgs.gov/watermap/#/?lat=48.87204&lon=-125.953207&z=2.5&data=swotRiverReaches), a USGS app for exploring SWOT data over the US.
 These are good ways to explore, but programmatic discovery is better for research, because the search itself becomes part of your methods 
 and can be re-run.
 
@@ -439,6 +440,10 @@ flood. Each row is one reach seen on this overpass. The key columns:
   Their **{term}`Variable unit`** is meters; `wse` is height above the EGM2008 geoid (a model of mean sea level).
 - `wse_u` and `width_u` are each value's estimated uncertainty, in meters.
 - `p_width` is SWORD's prior (expected) width for the reach, useful for judging whether a measured `width` is plausible.
+- `width` is derived from area: `area_total`, the water area assigned to the reach, divided by `p_length`, SWORD's length for
+  the reach. That makes it an average width over the reach, not a bank-to-bank measurement. Raster has no width variable: it
+  reports `water_area` and `water_frac` for each grid cell. See the Product Description Document on the
+  [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D).
 - `reach_q` is the summary **{term}`Data quality flag <Data quality flag(s)>`**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - `time_str` is the overpass **{term}`Time`** in UTC.
 - Missing values are stored as `-999999999999`, not `NaN`. Filter them out before plotting.
@@ -797,13 +802,20 @@ Four things are worth keeping in mind:
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
   `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
   write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
-- **Uncertainties are estimates.** The same release note says the reported uncertainties "have not been validated and should
-  not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
+- **Uncertainties are estimates.** Each RiverSP measurement has a matching uncertainty column ending in `_u`. For what they
+  mean, see the Product Description Document on the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D), under Docs &
+  Resources > User Guides. The [Version D release note](https://earthdata.nasa.gov/s3fs-public/2026-10/SWOT_VersionD_KaRIn_Products_Release_Note_20251219.pdf?VersionId=vFHbVdxOdZMEKXifrIu54izDsdISVWvM) says the reported uncertainties "have not been validated and
+  should not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
   CRID and your access date, and cite the collection DOI, for example: *SWOT. (2025). SWOT Level 2 River Single-Pass Vector
   Data Product [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
   [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
+
+:::{admonition} Partner review (NASA): How width is derived
+:class: important
+Please confirm `width` = `area_total` / `p_length`. It comes from the Product Description Document and was checked against one RiverSP granule.
+:::
 
 ## Best practices FAQs
 
@@ -885,7 +897,7 @@ thousands of reach IDs is the wrong tool here: it sends thousands of requests fo
 
 Repeat the main steps for accessing SWOT hydrologic data on a second river: the **Willamette River at Salem, Oregon**. For helpful context, refer back to the [example rivers](../03-federal-water-data-access-retrieval/00_introduction.md#m03-example-rivers) we covered in the overview.
 
-**Your task:** Find the SWORD reach for the Willamette and retrieve its water surface elevation time series with `hydrocron`. 
+**Your task:** Find the SWORD reach for the Willamette, retrieve its water surface elevation time series with `hydrocron`, then check it against its flags and decide which values you trust.
 
 Compile relevant code from above to create a small, stand-alone code chunk that performs the steps below. Give the new results new names (for example `salem_raster`), so you can still compare them with the Ohio River at Louisville.
 
@@ -898,12 +910,24 @@ Compile relevant code from above to create a small, stand-alone code chunk that 
    and find the reach nearest the point. Any one of them will do: every pass you kept sees the point. `estimate_utm_crs()` picks
 the right UTM zone for Salem by itself.
 4. Set `salem_reach_id` to that reach and call `get_reach_timeseries(salem_reach_id, salem_start, salem_end)`.
+5. Plot `wse` over time colored by `reach_q`. Compare `width` with `p_width`, and each value with its neighbors.
+6. Download the Raster scenes from 23 and 26 February, a degraded overpass and the overpass after it, and map `water_frac` in a
+   10 km box around the point. Adapt the Raster map block above.
+7. Decide whether to keep the three degraded values, and write down why.
 
 **What you should get:** the nearest reach is `78220000131`, about 40 m from the point, with `p_width` = 150 m. `hydrocron`
 returns 9 observations from 3 February to 29 March 2026: 6 suspect (`reach_q` = 1) and 3 degraded (`reach_q` = 2). The suspect values lie between about 32.7 and 35.9 m. The three degraded ones (3 and 23 February, 16 March) are 37–38 m,
-several meters higher, and their widths (196–253 m) are well above `p_width`. Before trusting those three, ask whether the
-river really rose that much or whether SWOT counted water outside the channel; an independent record for those dates, such
-as a stream gage or imagery, would tell you.
+several meters higher, and their widths (196–253 m) are well above `p_width`. All three come from the same pass, 274.
+
+The map helps you decide. On 23 February the box holds about 66 km² of water, spread across the landscape, and on 26 February
+about 11 km², with the river clear. So on that degraded overpass SWOT seems to have counted water outside the channel, which is
+why the width is so far above `p_width`. Those Raster pixels are mostly flagged suspect, so the Raster flag alone wouldn't show
+you this. These two scenes are from different passes, which you wouldn't normally compare. All three degraded values are pass 274, so no
+clean scene from that pass falls in this window. Treat the maps as a look at the pattern, not a measured change.
+
+A reasonable call is to leave the three degraded values out and write down why. An independent record for those dates,
+such as a stream gage or imagery, would tell you more. Notice that the same flag led to different decisions: this lesson keeps the degraded 13 April value at Louisville and leaves these
+out, because the evidence differed.
 
 :::{dropdown} Example answer
 ```python
@@ -933,6 +957,40 @@ salem_reach_id = "78220000131"   # the nearest reach printed above
 salem = get_reach_timeseries(salem_reach_id, salem_start, salem_end)
 print(len(salem), "observations; reach_q counts:", salem["reach_q"].value_counts().sort_index().to_dict())
 salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
+
+# Step 5: wse colored by reach_q, and width against SWORD's p_width
+fig, (ax_wse, ax_width) = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
+for q, color, label in [(1, "#2a78d6", "suspect (reach_q = 1)"), (2, "#eb6834", "degraded (reach_q = 2)")]:
+    rows = salem[salem["reach_q"] == q]
+    ax_wse.scatter(rows["time"], rows["wse"], color=color, label=label)
+    ax_width.scatter(rows["time"], rows["width"], color=color)
+ax_width.axhline(salem["p_width"].iloc[0], color="0.4", linestyle="--", label="SWORD p_width")
+ax_wse.set_ylabel("WSE (m above the geoid)")
+ax_width.set_ylabel("Width (m)")
+ax_wse.legend()
+ax_width.legend()
+fig.autofmt_xdate()
+plt.show()
+
+# Step 6: map water_frac for a degraded overpass (23 February) and the next overpass (26 February)
+compare = [g for g in salem_raster if "20260223T" in g["umm"]["GranuleUR"] or "20260226T" in g["umm"]["GranuleUR"]]
+compare_files = sorted(earthaccess.download(compare, local_path=data_dir))   # in time order
+fig, axes = plt.subplots(1, 2, figsize=(10, 4.8), sharey=True)
+for ax, path in zip(axes, compare_files):
+    ds = xr.open_dataset(path)
+    utm = pyproj.CRS.from_wkt(ds["crs"].attrs["crs_wkt"])
+    x, y = pyproj.Transformer.from_crs("EPSG:4326", utm, always_xy=True).transform(salem_lon, salem_lat)
+    window = ds.sel(x=slice(x - 5000, x + 5000), y=slice(y - 5000, y + 5000))
+    keep = window["water_area_qual"] <= 2                                    # drop pixels flagged bad
+    area_km2 = float(window["water_area"].where(keep).sum()) / 1e6
+    print(ds.attrs["time_granule_start"][:10], round(area_km2, 1), "km² of water in the 10 km box")
+    ax.pcolormesh((window.x - x) / 1000, (window.y - y) / 1000, window["water_frac"].where(keep).clip(0, 1), cmap="Blues", vmin=0, vmax=1)
+    ax.plot(0, 0, marker="*", color="#e34948", markersize=12, markeredgecolor="white")
+    ax.set_title(ds.attrs["time_granule_start"][:10])
+    ax.set_xlabel("km east of the point")
+    ax.set_aspect("equal")
+axes[0].set_ylabel("km north of the point")
+plt.show()
 ```
 
 ```
@@ -949,6 +1007,8 @@ salem[["time_str", "wse", "wse_u", "width", "reach_q"]]
 6  2026-03-16T18:25:00Z  37.0691  0.15634  253.412519        2
 7  2026-03-19T07:44:13Z  33.8839  0.12153  159.203658        1
 8  2026-03-29T06:06:25Z  33.0157  0.10337  167.558418        1
+2026-02-23 66.5 km² of water in the 10 km box
+2026-02-26 11.4 km² of water in the 10 km box
 ```
 :::
 
@@ -976,6 +1036,8 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
 - [Earthdata Search](https://search.earthdata.nasa.gov/) and the [CMR search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
 - [SWORD Explorer](https://www.swordexplorer.com/) for finding reach and node IDs interactively.
+- [WaterMAP](https://apps.usgs.gov/watermap/#/?lat=48.87204&lon=-125.953207&z=2.5&data=swotRiverReaches) (USGS) for exploring SWOT data over the US.
+- The RiverSP Product Description Document, on the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D) under Docs & Resources > User Guides.
 - Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://www.hydroshare.org/resource/1e5dff3ab72440d2a4e3942326ada5a4/)
   by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The
   `get_reach_timeseries` function in this lesson adapts the `PullReachTimeseries` from this source.

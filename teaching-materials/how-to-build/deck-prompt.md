@@ -46,8 +46,8 @@ It must look like the instructor built it herself in PowerPoint.
   `TODO (dev team)` or `Partner review` callouts (the learner copies have already removed them).
 - Agency order is always NASA → NOAA → USGS. Write "WDFN" (Water Data for the Nation), not "NWIS", except when
   contrasting with the legacy services.
-- Live-coding slides follow STYLE_GUIDE §11: they name the notebook file and the notebook sections (which match
-  the lesson headings), 2–3 things to point out, the minutes, and when to come back.
+- Live-coding slides follow STYLE_GUIDE §11: they list the code file and the sections it covers (which match the
+  lesson headings). What to point out, the minutes and when to come back go in the speaker notes.
 
 ## Steps
 
