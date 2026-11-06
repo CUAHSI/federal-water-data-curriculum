@@ -276,10 +276,6 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Fixes:** "You can also use SWOTviz, a CUAHSI" → link it: `[SWOTviz](https://swotviz.cuahsi.io/)`. "The
   location map at the top of this page was drawn from this one file:" → "This cell draws a location map from
   this one file:".
-- **Project folders:** follow Module 1's pattern, as the deck shows. A code cell right after the credentials creates
-  `01_raw/in`, `02_process/out` and `03_figures/out` with `os.makedirs(..., exist_ok=True)`, and one sentence says what
-  goes where. Use `raw_dir = "01_raw/in"` wherever the lesson has `data_dir = "data/swot/raw"`, and `02_process/out`
-  wherever it has `data/swot/derived`. Save the notebook's figures to `03_figures/out`.
 - **Moved here from the deck:** the slides no longer explain why 44 Raster granules screen to 9, how to read a granule
   name, or the Mississippi headwaters. Keep the lesson's explanations of these in full. Live coding 2 also covers
   "Understanding what you downloaded", so keep what one unit is, the -999999999999 fill value and discharge there.

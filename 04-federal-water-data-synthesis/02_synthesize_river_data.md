@@ -573,7 +573,7 @@ for g in skagit:
 Three granules remain: 1 Dec 10:37, 4 Dec 23:59 and 12 Dec 09:00 UTC (about 70 MB each). We download them and open the before-flood and near-peak scenes with `xarray` (`earthaccess.download()` returns file paths; the timestamp in each file name identifies the pass). The files go to `data/raw/swot_raster/` and are never edited: anything we compute from them is a derived result, kept separately (Module 1, [publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data)). The granule names include the product version and processing counter, so they also document exactly which files you used.
 
 ```python
-files = earthaccess.download(skagit, local_path="data/raw/swot_raster")  # raw downloads: keep unchanged
+files = earthaccess.download(skagit, local_path="01_raw/in")  # raw downloads: keep unchanged
 before = xr.open_dataset([f for f in files if "20251201T" in str(f)][0])
 peak = xr.open_dataset([f for f in files if "20251212T" in str(f)][0])
 print(peak[["water_frac", "water_area", "water_area_qual", "wse", "wse_qual"]])
@@ -649,14 +649,15 @@ Before moving on, save the comparison you built, separately from the raw downloa
 ```python
 from pathlib import Path
 
-derived = Path("data/derived")
+derived = Path("02_process/out")   # Module 1's numbered folders: raw data stay in 01_raw/in
 derived.mkdir(parents=True, exist_ok=True)
+run_date = pd.Timestamp.now(tz="UTC").strftime("%y%m%d")   # date prefix for the files you create
 # SWOT reach changes alongside the gage's change at each overpass (meters)
-dec.drop(columns="time_str").to_csv(derived / "skagit_swot_vs_gage_dec2025.csv", index=False)
+dec.drop(columns="time_str").to_csv(derived / f"{run_date}_skagit_swot_vs_gage_dec2025.csv", index=False)
 # The NWM forecasts, one column per issue time (ft³/s, valid time in UTC)
-pd.DataFrame(forecasts).to_csv(derived / "skagit_nwm_short_range_dec2025.csv", index_label="valid_time")
+pd.DataFrame(forecasts).to_csv(derived / f"{run_date}_skagit_nwm_short_range_dec2025.csv", index_label="valid_time")
 # Provenance: what was asked for, which versions came back, and when
-(derived / "provenance.txt").write_text(
+(derived / f"{run_date}_provenance.txt").write_text(
     f"Accessed {pd.Timestamp.now(tz='UTC'):%Y-%m-%d} UTC\n"
     f"USGS {site}: continuous {usgs_window}; approval status {sorted(discharge['approval_status'].unique())}\n"
     f"NWM {nwm_version} short_range, COMID {comid}, issued {list(forecasts)}\n"
@@ -665,7 +666,7 @@ pd.DataFrame(forecasts).to_csv(derived / "skagit_nwm_short_range_dec2025.csv", i
 print(sorted(p.name for p in derived.iterdir()))
 ```
 
-The folder now holds two small CSV files and a `provenance.txt` that names the gage, approval status, NWM model version and SWOT granules. Cite the sources when you share results: USGS asks for the publication year, access date and DOI ([citing Water Data for the Nation](https://waterdata.usgs.gov/citation/); the DOI is [10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN)), each SWOT collection has its own DOI (above, and on each collection's [PO.DAAC](https://podaac.jpl.nasa.gov/) landing page), and the NWM forecasts are cited by product, model version and access date ([NOAA NWM on AWS](https://registry.opendata.aws/noaa-nwm-pds/)).
+The folder now holds two small CSV files and a `provenance.txt` file, all with a date prefix, that names the gage, approval status, NWM model version and SWOT granules. Cite the sources when you share results: USGS asks for the publication year, access date and DOI ([citing Water Data for the Nation](https://waterdata.usgs.gov/citation/); the DOI is [10.5066/F7P55KJN](https://doi.org/10.5066/F7P55KJN)), each SWOT collection has its own DOI (above, and on each collection's [PO.DAAC](https://podaac.jpl.nasa.gov/) landing page), and the NWM forecasts are cited by product, model version and access date ([NOAA NWM on AWS](https://registry.opendata.aws/noaa-nwm-pds/)).
 
 ## Conclusions
 

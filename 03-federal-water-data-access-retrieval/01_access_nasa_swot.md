@@ -48,7 +48,7 @@ There are two ways to get these products with code, and they scale differently:
   time series ([Hydrocron: a new tool for SWOT time series analysis](https://www.earthdata.nasa.gov/news/hydrocron-new-tool-swot-time-series-analysis)).
 
 **Only need a time series for one reach?** Find its reach ID in [SWORD Explorer](https://www.swordexplorer.com/), run the
-setup and query blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
+setup, query and project-folder blocks, and skip to [RiverSP time series with `hydrocron`](#swot-hydrocron). That section doesn't need an
 Earthdata login or any downloads.
 
 ## Tools and environment setup
@@ -166,11 +166,33 @@ site_lon, site_lat = -85.799, 38.280          # a point on the river (decimal de
 site_bbox = (site_lon - 0.02, site_lat - 0.02, site_lon + 0.02, site_lat + 0.02)  # (west, south, east, north), ~3.5 x 4.4 km
 start, end = "2025-03-15T00:00:00Z", "2025-05-15T23:59:59Z"   # UTC; the April 2025 flood falls inside
 reach_id = "74267300251"                      # SWORD reach at the point (found below, or look it up in SWORD Explorer)
-data_dir = "data/swot/raw"                    # downloads go here and are never edited
 ```
 
 The dates are full UTC timestamps (`Z` means UTC) because both `earthaccess` and `hydrocron` accept that form. You won't
 know `reach_id` for a new river yet: the RiverSP download below shows how to find it.
+
+Then set up the project folders, following [project organization](../01-data-best-practices/02_data_management.md#m01-project-organization) in Module 1. Each step gets a numbered folder, so
+the order is clear, and the raw downloads stay apart from anything you make from them:
+
+```text
+swot_louisville/
+  README.md
+  01_raw/in/        # SWOT files exactly as downloaded, never edited
+  02_process/out/   # tables you compute
+  03_figures/out/   # maps and plots
+```
+
+Run this from your project folder. It creates the folders and a date prefix, so each file you create says when it was made:
+
+```python
+import os
+from datetime import date
+
+raw_dir, process_dir, figures_dir = "01_raw/in", "02_process/out", "03_figures/out"
+for folder in (raw_dir, process_dir, figures_dir):
+    os.makedirs(folder, exist_ok=True)
+run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
+```
 
 (SWOT-data-discovery)=
 ## Programmatic data discovery
@@ -183,7 +205,7 @@ you the exact granule names, which you can save as a record of your inputs.
 
 You can do the same search in [Earthdata Search](https://search.earthdata.nasa.gov/). Either type a collection short name such as
 `SWOT_L2_HR_Raster_100m_D` in the search box, or click on "Browse all Earth Science Data" to go straight to the mapper. Then draw a 
-rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data. 
+rectangle around your river, set the dates, and the page will list the matching granules. You can also use [SWOTviz](../04-federal-water-data-synthesis/03_additional_data.md#m04-swotviz), a CUAHSI web viewer for SWOT river and lake data, or [WaterMAP](https://apps.usgs.gov/watermap/), a USGS app for exploring SWOT data over the US.
 These are good ways to explore, but programmatic discovery is better for research, because the search itself becomes part of your methods 
 and can be re-run.
 
@@ -242,7 +264,7 @@ headwaters = earthaccess.search_data(
     temporal=("2026-06-01", "2026-06-30T23:59:59"),
 )
 print(len(headwaters), "reach granules found")
-files = earthaccess.download(headwaters[:1], local_path=data_dir)
+files = earthaccess.download(headwaters[:1], local_path=raw_dir)
 reaches = gpd.read_file(files[0])  # geopandas reads the zipped shapefile directly
 print(len(reaches), "reaches in the first granule;", int(reaches.intersects(box(*headwaters_box)).sum()), "inside the box")
 ```
@@ -390,7 +412,7 @@ Discovery told you *which* granules exist. Now get the data. The two tools behav
 - `hydrocron` gives you **just the observations you ask for**: the values for one reach or node, across many overpasses, in one web
   request. These will be returned in a time series-friendly format (CSV or geoJSON)
 
-Keep downloads exactly as they arrived in `data_dir`, and write anything you compute from them somewhere else. Then you can
+Keep downloads exactly as they arrived in `raw_dir`, and write anything you compute from them to `process_dir` or `figures_dir`. Then you can
 always tell raw data from derived data, and re-create the derived files from the raw ones (see
 [Publishing derivative data](../01-data-best-practices/03_data_publishing.md#publishing-derivative-data) in Module 1).
 
@@ -406,7 +428,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 
 flood_granule = [g for g in louisville_reach_granules if "_031_175_" in g["umm"]["GranuleUR"]]
-files = earthaccess.download(flood_granule, local_path=data_dir)
+files = earthaccess.download(flood_granule, local_path=raw_dir)
 reaches = gpd.read_file(files[0])
 print(len(reaches), "reaches in this granule")
 
@@ -437,8 +459,11 @@ flood. Each row is one reach seen on this overpass. The key columns:
 - `reach_id` is the **{term}`Location identifier`**.
 - `wse` ({term}`water surface elevation <Water surface elevation>`) and `width` are the main **{term}`Variables <Variable>`**.
   Their **{term}`Variable unit`** is meters; `wse` is height above the EGM2008 geoid (a model of mean sea level).
-- `wse_u` and `width_u` are each value's estimated uncertainty, in meters.
+- `wse_u` and `width_u` are each value's estimated one-sigma uncertainty, in meters.
 - `p_width` is SWORD's prior (expected) width for the reach, useful for judging whether a measured `width` is plausible.
+- `width` is derived from area: `area_total`, the water area assigned to the reach, divided by `p_length`, SWORD's length for
+  the reach. That makes it an average width over the reach, not a bank-to-bank measurement. Raster has no width variable: it
+  reports `water_area` and `water_frac` for each grid cell.
 - `reach_q` is the summary **{term}`Data quality flag <Data quality flag(s)>`**: 0 = good, 1 = suspect, 2 = degraded, 3 = bad.
 - `time_str` is the overpass **{term}`Time`** in UTC.
 - Missing values are stored as `-999999999999`, not `NaN`. Filter them out before plotting.
@@ -481,7 +506,7 @@ flood, near the crest, and after.
 import xarray as xr
 
 pass_175 = [g for g in louisville_raster if g["umm"]["GranuleUR"].split("_")[11] == "175"]
-raster_files = sorted(earthaccess.download(pass_175, local_path=data_dir))  # in time order
+raster_files = sorted(earthaccess.download(pass_175, local_path=raw_dir))  # in time order
 ds = xr.open_dataset(raster_files[0])
 ds[["water_area", "water_frac", "wse", "water_area_qual"]]
 ```
@@ -603,12 +628,10 @@ Whether to use such a scene is your call. Thresholds on any flags depend on the 
 Here, the river in the 13 April scene lines up with the river in the other two (see the maps
 below), so this lesson keeps it and says so.
 
-Save derived results like this table outside the raw-data folder, with a name that says what they are:
+Save derived results like this table outside the raw-data folder, with a date prefix and a name that says what they are:
 
 ```python
-import os
-os.makedirs("data/swot/derived", exist_ok=True)
-water_area.to_csv("data/swot/derived/louisville_water_area_pass175.csv", index=False)
+water_area.to_csv(f"{process_dir}/{run_date}_louisville_water_area_pass175.csv", index=False)
 ```
 
 Maps show the change more clearly than totals. This block plots `water_frac` in a 30 km window for each of the three scenes,
@@ -630,6 +653,7 @@ for ax, path in zip(axes, raster_files):
 
 axes[0].set_ylabel("km north of the point")
 fig.colorbar(image, ax=axes, label="Water fraction (pixels not flagged bad)", shrink=0.85)
+fig.savefig(f"{figures_dir}/{run_date}_louisville_water_frac_pass175.png", dpi=150)
 plt.show()
 ```
 
@@ -743,6 +767,7 @@ ax.set_title(f"SWOT reach {reach_id}, {site_name}")
 ax.legend(title="Quality flag", loc="upper right")
 ax.grid(alpha=0.3)
 fig.autofmt_xdate()
+fig.savefig(f"{figures_dir}/{run_date}_louisville_wse_flood.png", dpi=150)
 plt.show()
 ```
 
@@ -797,8 +822,14 @@ Four things are worth keeping in mind:
   A strict `reach_q == 0` filter would usually return an empty table. A reasonable starting rule, used in this lesson: keep
   `reach_q` ≤ 1; look hard at degraded values (2) by comparing `width` with `p_width` and with the neighboring overpass; and
   write down what you kept and why. `reach_q` is the 0–3 summary; `reach_q_b` is the bitwise version that records the reasons.
-- **Uncertainties are estimates.** The same release note says the reported uncertainties "have not been validated and should
-  not be relied upon for science interpretation" yet. Treat `wse_u` as a rough guide.
+- **Read the uncertainty along with the flag.** Each RiverSP measurement has a matching uncertainty column ending in `_u`, and
+  these are one-sigma (68th-percentile) estimates. `wse_u` is the total uncertainty, random and systematic. `wse_r_u` is the
+  random-only part, which is independent from reach to reach. The systematic part, shared by reaches in a granule, is
+  `sqrt(wse_u² - wse_r_u²)`. For the 12 Louisville overpasses, `wse_u` is about 0.10 m, `wse_r_u` about 0.05 m and the
+  systematic part about 0.09 m. Raster uncertainties end in `_uncert` (`wse_uncert`, `water_area_uncert`). For the details,
+  see the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D), under Docs & Resources > User Guides > Product
+  Description Document. These are still estimates: the same release note says the reported uncertainties "have not been
+  validated and should not be relied upon for science interpretation" yet, so treat `wse_u` as a rough guide.
 - **Versions change values.** A reprocessed version can change the numbers for the same overpass. Record the collection, the
   CRID and your access date, and cite the collection DOI, for example: *SWOT. (2025). SWOT Level 2 River Single-Pass Vector
   Data Product [Dataset]. NASA Physical Oceanography Distributed Active Archive Center.
@@ -921,7 +952,7 @@ salem_passes = {tuple(g["umm"]["GranuleUR"].split("_")[10:12]) for g in salem_ra
 # Step 3: RiverSP reach granules from those passes; download one and find the nearest reach
 salem_reach_granules = earthaccess.search_data(short_name="SWOT_L2_HR_RiverSP_D", granule_name="*Reach*", bounding_box=salem_bbox, temporal=(salem_start, salem_end))
 salem_reach_granules = keep_best_version_d([g for g in salem_reach_granules if tuple(g["umm"]["GranuleUR"].split("_")[5:7]) in salem_passes])
-salem_files = earthaccess.download(salem_reach_granules[:1], local_path=data_dir)
+salem_files = earthaccess.download(salem_reach_granules[:1], local_path=raw_dir)
 salem_utm = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").estimate_utm_crs()   # zone 10N here
 salem_reaches = gpd.read_file(salem_files[0]).to_crs(salem_utm)
 salem_site = gpd.GeoSeries([Point(salem_lon, salem_lat)], crs="EPSG:4326").to_crs(salem_utm).iloc[0]
@@ -976,6 +1007,8 @@ From the integration-pass learner review (2026-10-09). Not yet fixed:
 - [earthaccess tech spotlight](https://nasa-openscapes.github.io/news/2024-03-04-earthaccess-tech-spotlight/) (NASA Openscapes).
 - [Earthdata Search](https://search.earthdata.nasa.gov/) and the [CMR search API](https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html).
 - [SWORD Explorer](https://www.swordexplorer.com/) for finding reach and node IDs interactively.
+- [WaterMAP](https://apps.usgs.gov/watermap/) (USGS) for exploring SWOT data over the US.
+- The RiverSP Product Description Document, on the [RiverSP collection page](https://doi.org/10.5067/SWOT-RIVERSP-D) under Docs & Resources > User Guides.
 - Adapted from [SWOT - River Longitudinal Profiles for Water Resources](https://www.hydroshare.org/resource/1e5dff3ab72440d2a4e3942326ada5a4/)
   by Mike Durand, with contributions from Bidhya Yadav (Ohio State University), CUAHSI notebooks (GPL-3.0). The
   `get_reach_timeseries` function in this lesson adapts the `PullReachTimeseries` from this source.

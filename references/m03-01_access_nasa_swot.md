@@ -11,6 +11,7 @@
 - PO.DAAC. (n.d.). *Hydrocron documentation* and *timeseries endpoint*. NASA Physical Oceanography Distributed Active Archive Center. https://podaac.github.io/hydrocron/ ; https://podaac.github.io/hydrocron/timeseries (accessed 2026-10-08).
 - PO.DAAC. (n.d.). *PO.DAAC Cookbook: SWOT*. https://podaac.github.io/tutorials/quarto_text/SWOT.html (accessed 2026-10-08).
 - Python Software Foundation. (2026). *CPython issue #151504* (SSL `ASN1: NOT_ENOUGH_DATA` import error). GitHub. https://github.com/python/cpython/issues/151504 (accessed 2026-10-08).
+- U.S. Geological Survey. (n.d.). *WaterMAP* (web application). https://apps.usgs.gov/watermap/ (accessed 2026-11-06).
 - SWOT. (2025). *SWOT Level 2 River Single-Pass Vector Data Product, Version D* (dataset). NASA Physical Oceanography Distributed Active Archive Center. https://doi.org/10.5067/SWOT-RIVERSP-D (accessed 2026-10-08).
 - SWOT. (2025). *SWOT Level 2 Water Mask Raster Image Data Product, Version D* (dataset). NASA Physical Oceanography Distributed Active Archive Center. https://doi.org/10.5067/SWOT-RASTER-D (accessed 2026-10-08).
 - SWOT Project (NASA Jet Propulsion Laboratory and CNES). (2025). *Release Note: SWOT Version D KaRIn Science Data Products* (April 23, 2025). PO.DAAC. https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-docs/web-misc/swot_mission_docs/SWOT_VersionD_KaRIn_Products_Release_Note_20250423b.pdf

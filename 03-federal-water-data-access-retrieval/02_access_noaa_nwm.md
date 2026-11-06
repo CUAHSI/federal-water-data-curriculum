@@ -107,6 +107,20 @@ If you work in Jupyter, choose the `Python (m03-nwm)` kernel; otherwise your not
 
 The environment file pins the Python version but lets most packages float to their latest release, so a year from now `conda env create` may give you newer versions than the ones we tested. When you finish an analysis, record exactly what you ran with `conda env export > environment-lock.yml` and keep that file with your results. [Data Management](../01-data-best-practices/02_data_management.md) (Module 1) explains why this matters for reproducibility. The examples on this page were tested with Python 3.14, `pynhd` 0.20.0, `hydrotools.nwm_client` 9.2.1, `kerchunk` 0.2.10, `xarray` 2026.9.0, `zarr` 3.4.0 and `fsspec` 2026.9.0.
 
+**Set up the project folders.** Following [project organization](../01-data-best-practices/02_data_management.md#m01-project-organization) in Module 1, keep what you create apart from what you
+download, with a numbered folder for each step. The NOAA archives hold the raw data, and `hydrotools` keeps its own download
+cache in `hydrotools_data`, so here you only need folders for tables and figures. Run this from your project folder:
+
+```python
+import os
+from datetime import date
+
+process_dir, figures_dir = "02_process/out", "03_figures/out"
+for folder in (process_dir, figures_dir):
+    os.makedirs(folder, exist_ok=True)
+run_date = date.today().strftime("%y%m%d")   # date prefix for the files you create
+```
+
 ## Programmatic data discovery
 
 Before you download anything, *discover* the reach (or reaches) you need. You don't want to page through the whole NWM domain to learn which COMID matches your location. Doing discovery first also lets you build a COMID list once and reuse it, which matters once you scale up to many reaches (see [Spatial scaling](#nwm-spatial-scaling)).
@@ -213,7 +227,7 @@ ax.set_xlabel("Longitude")
 ax.set_ylabel("Latitude")
 ax.set_title("NHDPlus reaches up to 100 km upstream of Louisville", loc="left", fontsize=12)
 fig.tight_layout()
-fig.savefig("nwm-ohio-louisville-map.png", dpi=150)
+fig.savefig(f"{figures_dir}/{run_date}_nwm-ohio-louisville-map.png", dpi=150)
 ```
 
 :::{figure} ../images/m03/nwm-ohio-louisville-map.png
@@ -598,7 +612,7 @@ ax.set_xlabel("Valid time, 2025 (UTC)")
 ax.set_title(f"NWM v3.0 forecasts, Ohio River at Louisville (COMID {comid})", loc="left", fontsize=12)
 ax.legend(frameon=False, fontsize=9)
 fig.tight_layout()
-fig.savefig("nwm-ohio-louisville-forecasts.png", dpi=150)
+fig.savefig(f"{figures_dir}/{run_date}_nwm-ohio-louisville-forecasts.png", dpi=150)
 ```
 
 :::{figure} ../images/m03/nwm-ohio-louisville-forecasts.png
@@ -615,7 +629,7 @@ If your plot looks like this, your code is right: these are model forecasts, not
 In the April 2025 short-range runs for COMID 10164004 (see the figure above), each run starts at 15,000–18,000 m³/s and drops quickly (the 6 April 00Z and 12Z runs by about half within 18 hours, the 7 April 00Z run by about a quarter), while the medium-range run initialized 3 April stays lower until 8 April. Is this expected behavior at this reach (for example, from data assimilation in the initial conditions, or the McAlpine Locks and Dam), and how should learners interpret it?
 :::
 
-**Keep raw and derived data apart.** The files in the NOAA archive are your raw data, and they stay where they are. What you create, the reference JSON and the table of values you extracted, is derived. Save it in a separate folder (for example `data/derived/`) together with the COMIDs, configuration and reference times you asked for, so anyone can rebuild it from the archive. See [Data Management](../01-data-best-practices/02_data_management.md) in Module 1.
+**Keep raw and derived data apart.** The files in the NOAA archive are your raw data, and they stay where they are. What you create, the reference JSON and the table of values you extracted, is derived. Save it in a separate folder (for example `02_process/out/`) together with the COMIDs, configuration and reference times you asked for, so anyone can rebuild it from the archive. See [Data Management](../01-data-best-practices/02_data_management.md) in Module 1.
 
 **Cite what you used.** The operational NWM forecasts don't have a DOI. Cite the model and version (for example, NWM v3.0 for forecasts before about 18 August 2026, v3.1 after), the configuration and reference times, the archive you read from (with its URL), and the date you accessed it. Old forecasts don't change once produced, but the archives' retention can, so the access date matters. [Data Publishing](../01-data-best-practices/03_data_publishing.md) in Module 1 covers citing data.
 
