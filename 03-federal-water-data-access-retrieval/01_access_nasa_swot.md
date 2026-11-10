@@ -812,9 +812,13 @@ Four things are worth keeping in mind:
   [https://doi.org/10.5067/SWOT-RIVERSP-D](https://www.earthdata.nasa.gov/data/catalog/pocloud-swot-l2-hr-riversp-d-d). Accessed 2026-10-08.* See the citation guidance in
   [Meet NASA SWOT](../02-federal-water-data-landscape/01_meet_nasa_swot.md#usage-and-support).
 
-:::{admonition} Partner review (NASA): How width is derived
+:::{admonition} Partner review (NASA): Width and uncertainty
 :class: important
-Please confirm `width` = `area_total` / `p_length`. It comes from the Product Description Document and was checked against one RiverSP granule.
+Please confirm two statements:
+
+- `width` = `area_total` / `p_length`. It comes from the Product Description Document and was checked against one RiverSP granule.
+- The reported uncertainties "have not been validated and should not be relied upon for science interpretation", quoted from the
+  Version D release note. Is this still current, and is it the message you want learners to take away?
 :::
 
 ## Best practices FAQs
