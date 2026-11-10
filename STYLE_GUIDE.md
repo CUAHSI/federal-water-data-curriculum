@@ -268,8 +268,8 @@ answer collapsed below it.
 **Live coding.** Slides carry the explanation and short code (≤ 12 lines per slide, shown, not run). Switch to
 the notebook only after a block of related concepts has been explained on slides. Then spend at least 10
 minutes there: run the code, change something, read the output. Use no more than 2 switches in a 90-minute
-session and 3 in a 120-minute one. Each switch is a "Live coding" slide that names the notebook, the sections
-to run, what to point out, and when to come back.
+session and 3 in a 120-minute one. Each switch is a "Live coding" slide that lists the code file and the sections
+it covers; what to point out and when to come back go in its speaker notes.
 
 **Quizzes** (issue #32) are formative: one per module, about 10–15 minutes, multiple choice (mostly single
 answer, with a few "select all that apply"), aligned to the module's learning objectives. Retakes are unlimited, and every question explains the correct answer.

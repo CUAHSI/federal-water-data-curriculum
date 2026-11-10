@@ -11,7 +11,7 @@ Go through this before a deck is used. It takes about 20 minutes per deck.
       Access* everywhere it appears; dates on the title and schedule slides are right.
 - [ ] The objectives slide shows only the main objectives, as the topic list gives them.
 - [ ] Agency order NASA → NOAA → USGS; "WDFN", not "NWIS" (except the legacy contrast).
-- [ ] Live-coding slides name the right notebook file and sections, and give the time to come back.
+- [ ] Live-coding slides list the right code file and sections, and their notes give what to point out and the time to come back.
 
 ## Updates (decks made with `update-prompt.md`)
 - [ ] The change log matches what you see: flick through every slide it says changed, was added or moved.
