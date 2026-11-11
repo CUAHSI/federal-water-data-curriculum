@@ -1,6 +1,7 @@
 # Session 5 · Module 3, lesson 3: Retrieve USGS WDFN data
 
-- **When:** Tue Nov 17, 2026, 2:00–3:30 pm ET (90 min)
+- **When:** Tue Nov 17, 2026, 2:00–3:30 pm ET (90 min); no office hours after this session
+- **Presenters:** Lindsay Platt and Kimberlee Wong
 - **Deck:** `teaching-materials/materials/slides/261117_lplatt_open-water-data_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
@@ -41,7 +42,7 @@ due.
 | 17 | Approval status: check before you publish | 03/03 § Continuous data, § Understanding what you downloaded | deck | 2 | One slide: WDFN does have per-value quality information (`approval_status`, `qualifier`, and `measurement_rated` for field measurements); provisional values can change; what to record and cite (monitoring location IDs, codes, dates, access date, the DOI). No slide for `images/m03/wdfn-ohio-louisville-discharge.png`: learners make it in live coding 2, and the notes recall it. The notes give a real revision: the provisional Salem crest was 64,000 ft³/s at 23:45 UTC on 2026-10-08 and 63,900 at 22:55 UTC on 2026-11-11 |
 | 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 12 | Learners follow along in the notebook's "Now you try it" section (no time limit on the slide). The lesson's steps; the example answer is collapsed in the notebook |
 | 19 | Module 3 wrap-up: three products, three routes | 03/00 § The lessons, § Important concepts and terminology | deck | 2 | One table comparing the three lessons: what discovery finds, the routes, files or a service, what cost grows with, the quality information |
-| 20 | Recap and what's due | – | deck | 2 | Today's recap (what each function is for), then the Module 3 quiz (see Canvas) and the Module 3 reading; Session 6, Nov 19, Module 4 |
+| 20 | Recap and what's due | – | deck | 2 | Today's recap (what each function is for), then what's due: the Module 3 quiz opens at the end of this session and closes Dec 3; a 100% on all 4 module quizzes by the final day of the course (Dec 3) earns the certificate; the Module 3 reading; Session 6, Nov 19, Module 4 |
 | 21 | Further reading and questions | 03/03 § Further reading | deck | 3 | The lesson's external links (this cohort can't see the lesson pages), then open the floor for questions here (there is no separate questions slide) |
 | 22 | The exact code for each step | 03/03 § Codes: parameters and statistics, § Finding monitoring locations, § Continuous data, § Daily data, § Field  measurements, § Plot the data | notebook | – | Explained during live coding, not on slides |
 | 23 | Counting qualifiers on long records | 03/03 § Temporal scaling | notebook | – | Optional "Going further" section |
