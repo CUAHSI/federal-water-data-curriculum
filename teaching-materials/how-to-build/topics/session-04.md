@@ -1,7 +1,7 @@
 # Session 4 · Module 3, lesson 2: Retrieve NOAA NWM data
 
 - **When:** Thu Nov 12, 2026, 2:00–3:30 pm ET (90 min), then office hours after 3:30 pm ET
-- **Deck:** `teaching-materials/materials/slides/session-04_module-03_lesson-02_retrieve-noaa-nwm-data.pptx`
+- **Deck:** `teaching-materials/materials/slides/261112_lplatt_open-water-data_module-03_lesson-02_retrieve-noaa-nwm-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
 - **Notebook:** `module-03_lesson-02_retrieve-noaa-nwm-data.ipynb` (`materials/notebooks/`)

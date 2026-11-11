@@ -283,33 +283,55 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Learning goal:** as lesson 1, with "NOAA NWM data".
 - **Credentials:** none.
 - **Downloads and time:** about 270 MB of NWM files (into `hydrotools_data/`) and about 1 GB more streamed from
-  the cloud; about 3–4 minutes. The `hydrotools` cell needs about 2 GB of memory: say it's optional (nothing
-  later uses its result) and can be skipped in a smaller environment.
+  the cloud; about 3–4 minutes. The `hydrotools` cell needs about 1.7 GB of memory (the lesson's measurement,
+  as on the deck): say it's optional (nothing later uses its result) and can be skipped in a smaller environment.
+- **Define your query:** the deck's first live-coding slide starts with "Set up and define your query". Move
+  `POINT` and the comment above it out of the lesson's first NLDI block into their own cell under
+  `## Define your query` (after Credentials), with the lesson's sentence on keeping the place in one variable.
+- **Live coding 1 headings:** under `### Finding COMIDs with the NLDI`, use the deck's section names as `####`
+  headings for the lesson's examples: "The COMID for a point", "The COMID of a reach with a monitoring site on
+  it", "Every reach upstream, up to 100 km", "Map: where these reaches are". Leave out the raw NLDI URL: the deck
+  dropped that slide, so the notebook has one way to find a COMID in code.
+- **Terminology (OWP usage, decks and notebooks only):** a forecast is a value for the future, a simulation is
+  output driven by observed weather (Analysis & Assimilation, the retrospective), and "estimate" is kept for
+  statistics. Where the lesson says "what is the model predicting now?", write "the latest forecasts"; never call
+  Analysis & Assimilation a "best estimate".
 - **Depends on the day:** the NOAA NWM API keeps only the last few days of forecasts, so it always returns the
   newest runs, and NOAA's published references (Going further) read yesterday's run. The April 2025 and
   February 2026 forecasts come from the archive and don't change.
-- **`hydrotools` in Jupyter:** importing `hydrotools.nwm_client` starts its own event loop, which fails inside
-  the notebook's loop, and the lesson's fix (`nest_asyncio`) fails too with Python 3.14 and current `aiohttp`
-  (tested 2026-10-26). Start the `hydrotools` cell with these lines, and replace the lesson's `nest_asyncio`
-  advice (in that section and in its troubleshooting list) with "the first lines of the cell handle Jupyter's
-  event loop; if you still see the error, restart the kernel and run the notebook again from the top":
+- **`hydrotools` in Jupyter:** the lesson runs `.get()` in its own thread, but that isn't enough in a fresh
+  folder. The first import of `hydrotools.nwm_client.NWMFileClient` in a folder downloads a crosswalk file
+  (`RouteLink.h5`) with `asyncio.run()`, which raises `RuntimeError: asyncio.run() cannot be called from a running
+  event loop` in Jupyter. Once the file is cached, later imports work, which can hide the problem (tested
+  2026-11-11 in `open-water-data`). Start the `hydrotools` cell with these lines, and add to its troubleshooting
+  list: "the first lines of the cell handle Jupyter's event loop; if you still see the error, restart the kernel
+  and run the notebook again from the top":
   ```python
-  # Optional cell: it needs about 2 GB of memory, and nothing later uses its result.
-  # In Jupyter, importing hydrotools.nwm_client starts its own event loop, which fails inside the
-  # notebook's running loop, so import it once in a separate thread first (plain scripts don't need this).
+  # Optional cell: it needs about 1.7 GB of memory, and nothing later uses its result.
+  # hydrotools runs its own event loop, which clashes with Jupyter's, so two steps need their own thread.
+  # 1. The import: the first time you import it in a folder, it downloads a crosswalk file (RouteLink.h5).
+  # 2. The .get() call (below). In a plain script you could drop this first block.
   import importlib
   from concurrent.futures import ThreadPoolExecutor
   with ThreadPoolExecutor(1) as pool:
       pool.submit(importlib.import_module, "hydrotools.nwm_client.NWMFileClient").result()
   ```
+- **Choosing an access route:** include the lesson's section and table (all rows), after "Before you start", as
+  reference rather than live coding. Drop the pointers to "Temporal scaling" and "Why NWM downloads cost what they
+  cost" (not in the notebook).
+- **Slow cell:** the forecasts plot in "Understanding what you downloaded" builds and reads 240 medium-range files.
+  It took 2–5 minutes in tests, but twice stalled for over 30 minutes on one chunk with no timeout (2026-11-11).
+  Give the measured time in its lead-in.
 - **Kerchunk:** keep the sentences that say what kerchunk references are, even if they're on a slide too: the
   code doesn't make sense without them.
 - **Task "what you should see":** the task builds its own references from the archive, so "18 published
   reference files for 25 February" → "18 hourly values from your references for 25 February". Drop "(the API's
-  `name` field is blank for this reach)". The plot check: "If your plot shows the 3 April medium-range run peaking
+  `name` field is blank for this reach)". Split the lesson's one example answer into the deck's three steps (find
+  the COMID, today's forecast, a past forecast), each with its own starter, collapsed answer and "What you should
+  get". The plot check: "If your plot shows the 3 April medium-range run peaking
   near 13,900 m³/s on 8 April, and each short-range run starting near 15,000–18,000 m³/s and falling quickly, your
   code is right"; drop "(we've asked NOAA why the short-range runs drop so fast; see the note below)".
-- **Going further (row 20):** the lesson's "Example: use NOAA's published references for a recent run" moves
+- **Going further (row 22):** the lesson's "Example: use NOAA's published references for a recent run" moves
   here, from that paragraph to the next heading. Where the lesson says it uses `open_refs` from the previous
   example, it gets its own cell that defines it again (with `import xarray as xr`), the same function as in
   "Kerchunk references". In the "Kerchunk references" section, the pointer to this example becomes "Going
