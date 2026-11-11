@@ -1,38 +1,49 @@
 # Session 5 · Module 3, lesson 3: Retrieve USGS WDFN data
 
 - **When:** Tue Nov 17, 2026, 2:00–3:30 pm ET (90 min)
-- **Deck:** `teaching-materials/materials/slides/session-05_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx`
+- **Deck:** `teaching-materials/materials/slides/261117_lplatt_open-water-data_module-03_lesson-03_retrieve-usgs-wdfn-data.pptx`
 - **Reading:** `teaching-materials/materials/readings/module-03_reading_federal-water-data-access-retrieval.docx` (shared by
   sessions 3–5)
 - **Notebook:** `module-03_lesson-03_retrieve-usgs-wdfn-data.ipynb` (`materials/notebooks/`)
-- **Pages:** `03/03` = `03-federal-water-data-access-retrieval/03_access_usgs_wdfn.md`
+- **Pages:** `03/00` = `03-federal-water-data-access-retrieval/00_introduction.md`, `03/03` = `03_access_usgs_wdfn.md`;
+  the opening slides are from `02/03` = `02-federal-water-data-landscape/03_meet_usgs_wdfn.md`
 
 **Where:** `deck`, `notebook`, `reading`, `how-to`, `cut` (see session-01.md). **Min** adds up to the session
-length.
+length. Live-coding rows name the notebook sections (they match the lesson headings).
+
+The deck follows the shape of Sessions 3 and 4, so learners meet the same steps in the same order: discovery, a
+live-coding stretch, how the routes differ and scale, a second live-coding stretch, what came back, then "Now you try
+it". Sessions 3 and 4 introduced the module, APIs and agency libraries, so the opening is short: it starts from
+Module 2's rating-curve slides instead. Code stays on slides only where it conveys a concept; the exact code is
+explained and practised in the notebook during live coding. Interactive time (live coding and "Now you try it",
+55 minutes) is longer than slide time (35 minutes), and most of it is guided: 43 minutes of live coding, 12 of "Now
+you try it". This is the last Module 3 session, so it ends with a comparison of the three products' routes and what's
+due.
 
 | # | Topic | Source | Where | Min | What the slides should show or do |
 |---|---|---|---|---|---|
 | 1 | Session title | – | deck | 1 |  |
 | 2 | Program schedule | – | deck | 1 | Session 5 outlined |
-| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today, exactly these two (Module 3's main objectives with the other two products removed): "Adapt provided Python scripts to retrieve data from USGS WDFN using their recommended APIs and libraries." and "Select the most appropriate programmatic approach for downloading data at large temporal and spatial scales for different hydrologic applications." |
-| 4 | What you'll retrieve; legacy vs. modernized services | 03/03 § Retrieve USGS WDFN data (intro) | deck | 4 | `images/m03/wdfn-ohio-louisville-map.png`; why `waterdata`, not `nwis` |
-| 5 | Choosing an access route | 03/03 § Choosing an access route | deck | 4 |  |
-| 6 | Setup: API key and environment | 03/03 § USGS Water Data API key, § Create the conda environment | deck + how-to | 2 | Why a key; setup in the "How to" guide |
-| 7 | Codes: parameters and statistics | 03/03 § Codes: parameters and statistics | deck + notebook | 4 | 00060, 00065, 00003 |
-| 8 | Finding monitoring locations | 03/03 § Finding monitoring locations | deck + notebook | 8 | Short code; what comes back |
-| 9 | Live coding 1: codes and locations | 03/03 § Codes…, § Finding monitoring locations | deck + notebook | 12 | Live-coding slide |
-| 10 | Continuous data | 03/03 § Continuous data | deck + notebook | 4 | Three-year limit per call |
-| 11 | Daily data | 03/03 § Daily data | deck + notebook | 3 |  |
-| 12 | Field measurements | 03/03 § Field  measurements | deck + notebook | 3 |  |
-| 13 | Plot the data | 03/03 § Plot the data | deck + notebook | 3 | `images/m03/wdfn-ohio-louisville-discharge.png` |
-| 14 | Live coding 2: downloads | 03/03 § Programmatic data downloads | deck + notebook | 12 | Live-coding slide |
-| 15 | Understanding what you downloaded | 03/03 § Understanding what you downloaded | deck | 9 | Approval status and qualifiers; columns and units |
-| 16 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | cut | – |  |
-| 17 | Temporal and spatial scaling; parallelization | 03/03 § Temporal scaling, § Spatial scaling, § Parallelization | deck | 6 |  |
-| 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 4 | Task slide; the example answer is collapsed under the task in the notebook |
-| 19 | Module 3 wrap-up: three routes compared | 03/00 | deck | 2 | One slide comparing how each product is retrieved |
-| 20 | Recap and what's due | – | deck | 2 | Module 3 quiz (see Canvas); the Module 3 reading |
-| 21 | Further reading and questions | 03/03 § Further reading | deck | 5 | The lessons' external links, then open the floor for questions here (there is no separate questions slide) |
-| 22 | The legacy `nwis` comparison in full | 03/03 § Retrieve USGS WDFN data (intro) | cut | – |  |
+| 3 | Lesson objectives | 03/00 § Learning objectives | deck | 1 | Learning objectives for today, exactly these two (Module 3's main objectives with the other two products removed, and "code" in place of the page's "scripts"): "Adapt provided Python code to retrieve data from USGS WDFN using their recommended APIs and libraries." and "Select the most appropriate programmatic approach for downloading data at large temporal and spatial scales for different hydrologic applications." |
+| 4 | Where we left off: how WDFN values are made | 02/03 § Dataset derivation | deck | 3 | Module 2's "Gage height → rating curve → discharge" (its last build step) and "Field measurements trace the rating curve", copied from the Session 2 deck. The notes connect them to today's three kinds of values: the sensor record (discharge computed from gage height), daily summaries of it, and field measurements |
+| 5 | From the product to the data | 03/03 § Retrieve USGS WDFN data (intro) | deck | 1 | One slide: the same two steps as Sessions 3 and 4 (discovery finds the monitoring location ID and codes, download gets the values); the Water Data APIs are a query service that returns just the rows you ask for; `dataretrieval`'s `waterdata` module. The notes say why not the legacy `nwis` module (Water Services decommissioned 22 February 2027) |
+| 6 | The example rivers | 03/00 § The example rivers; 03/03 § Retrieve USGS WDFN data (intro), § Now you try it | deck | 2 | Session 3's map slide, with each river's monitoring location ID in place of its SWORD reach ID (`USGS-03294500`, `USGS-14191000`) |
+| 7 | Discovery: find monitoring locations | 03/03 § Finding monitoring locations | deck | 3 | The point-and-click equivalent (WDFN website and Explore: screenshot of the Louisville monitoring location page), then concept code: `get_monitoring_locations` for Jefferson County with its first rows, noting the "STUDENT" and "TEST" entries (look before you download) |
+| 8 | Codes in every request | 03/03 § Codes: parameters and statistics, § Finding monitoring locations | deck | 1 | The arguments the code uses: `monitoring_location_id` (agency prefix plus site number), `parameter_code` (`00060`, `00065`), `statistic_id` (`00003`, `00011`), `time`. Module 2 defined the terms; this is the vocabulary the code uses |
+| 9 | Ready to code | 03/03 § USGS Water Data API key | deck + how-to | 1 | The notebook, the `open-water-data` kernel, the API key in `API_USGS_PAT` (check it's set without printing it); everything runs without a key, with a lower hourly limit |
+| 10 | Live coding 1: find monitoring locations | 03/03 § Programmatic data discovery, § Codes: parameters and statistics, § Finding monitoring locations | deck + notebook | 15 | Live-coding slide lists only the sections: set up and define your query, codes, the stream monitoring locations in a county, which have daily mean discharge, the map, what the Louisville gage records. The notes carry what to point out, including that each row of the combined metadata is a time series, not a location |
+| 11 | Three kinds of values | 03/03 § Continuous data, § Daily data, § Field  measurements | deck | 1 | Continuous (`00011`, every 5–15 minutes, UTC timestamps, up to three years per query), daily (`00003`, the local calendar date, any length) and field measurements (a date plus `time_of_day`, about monthly), each with its function |
+| 12 | One service, a function per question | 03/03 § Choosing an access route | deck | 2 | One table: `get_monitoring_locations` and the metadata functions, `get_continuous`, `get_daily`, `get_field_measurements`, by what each gives you, how far back it goes and its limit per query. All return a `(DataFrame, metadata)` pair. The notes compare with Sessions 3 and 4: no files here, only a service |
+| 13 | Why WDFN requests cost what they cost | 03/03 § Choosing an access route, § Spatial scaling, § Parallelization | deck | 3 | A statement slide in plain words (cost grows with requests, not rows: one page of up to 50,000 rows is one request, and your key allows 1,000 an hour), then one table (requests and time for: Louisville's full daily record, 36,087 rows; one day at every location, 9,064 rows; 27 county locations one at a time vs. as one list). The table isn't in the lesson yet: measured 2026-11-11 (full record 1 request; every location 1 request; the loop 33 requests in 11 s; the list 1 request in 0.4 s) |
+| 14 | A route that scales | 03/03 § Choosing an access route, § Temporal scaling, § Spatial scaling | deck | 4 | Session 3's schematic, redrawn for WDFN: how many locations across, how much time up, fuzzy regions for `get_daily` with no `time` (one location, the whole record), `get_continuous` in three-year windows, and `get_daily` with no location, a list or a `bbox` (many locations, a short window), one highlighted per slide with its purpose and limit. Many locations over a long record is left as a plan-it corner: save what you have and request only what's new |
+| 15 | Parallelization | 03/03 § Parallelization | deck | 2 | Titled "Parallel code with WDFN requests", in two labelled groups. OK: asking for more in each request (lists, `bbox`, time intervals); letting `dataretrieval` page and split large queries. Avoid: many simultaneous requests from your own threads or processes; re-downloading a record you already have. The key, HTTP 429 and `last_modified` go in the notes |
+| 16 | Live coding 2: get WDFN data | 03/03 § Programmatic data downloads, § Plot the data, § Understanding what you downloaded, § Temporal scaling, § Spatial scaling | deck + notebook | 28 | Live-coding slide lists only the sections: continuous data, daily data, field measurements, plot the data, understanding what you downloaded, then the two scaling examples (one location's full record; one day at every location). What came back is read here, on the real results, not on slides |
+| 17 | Approval status: check before you publish | 03/03 § Continuous data, § Understanding what you downloaded | deck | 2 | One slide: WDFN does have per-value quality information (`approval_status`, `qualifier`, and `measurement_rated` for field measurements); provisional values can change; what to record and cite (monitoring location IDs, codes, dates, access date, the DOI). No slide for `images/m03/wdfn-ohio-louisville-discharge.png`: learners make it in live coding 2, and the notes recall it. The notes give a real revision: the provisional Salem crest was 64,000 ft³/s at 23:45 UTC on 2026-10-08 and 63,900 at 22:55 UTC on 2026-11-11 |
+| 18 | Now you try it: the Willamette | 03/03 § Now you try it | deck + notebook | 12 | Learners follow along in the notebook's "Now you try it" section (no time limit on the slide). The lesson's steps; the example answer is collapsed in the notebook |
+| 19 | Module 3 wrap-up: three products, three routes | 03/00 § The lessons, § Important concepts and terminology | deck | 2 | One table comparing the three lessons: what discovery finds, the routes, files or a service, what cost grows with, the quality information |
+| 20 | Recap and what's due | – | deck | 2 | Today's recap (what each function is for), then the Module 3 quiz (see Canvas) and the Module 3 reading; Session 6, Nov 19, Module 4 |
+| 21 | Further reading and questions | 03/03 § Further reading | deck | 3 | The lesson's external links (this cohort can't see the lesson pages), then open the floor for questions here (there is no separate questions slide) |
+| 22 | The exact code for each step | 03/03 § Codes: parameters and statistics, § Finding monitoring locations, § Continuous data, § Daily data, § Field  measurements, § Plot the data | notebook | – | Explained during live coding, not on slides |
 | 23 | Counting qualifiers on long records | 03/03 § Temporal scaling | notebook | – | Optional "Going further" section |
-| 24 | The metadata object, reference tables, paging | 03/03 § Spatial scaling, § Parallelization | reading | – |  |
+| 24 | The metadata object, reference tables, paging settings | 03/03 § Codes: parameters and statistics, § Programmatic data downloads, § Parallelization | reading | – | `md.url`, other reference tables, `limit` and `max_rows` |
+| 25 | The legacy `nwis` module, for contrast | 03/03 § Retrieve USGS WDFN data (intro) | cut | – | Named in the slide 5 notes only |
