@@ -346,15 +346,36 @@ NWM API and the NWM archives on Google Cloud and AWS are all public."
 - **Credentials:** USGS Water Data API key.
 - **Downloads and time:** small; about 1 minute.
 - **Depends on the day:** provisional values can still be revised, and lists of monitoring locations and the
-  ends of records grow. Check `approval_status`.
-- **Fixes:** the task's "Repeat the main steps for accessing NWM data" → "… USGS WDFN data".
+  ends of records grow. Check `approval_status`. On 2026-11-11: 119 locations (lesson 120), 11,887 continuous
+  rows (lesson 11,697), Salem continuous crest 63,900 ft³/s at 22:55 UTC (lesson 64,000 at 23:45). Keep the
+  lesson's numbers; "Before you start" says they can differ.
+- **Choosing an access route:** include the lesson's section and table (all rows), after "Before you start", as
+  reference rather than live coding, as in the SWOT and NWM notebooks (Lindsay, 2026-11-11). The legacy row's
+  "(see the note below)" becomes the lesson's decommissioning link, since the legacy note is cut.
+- **Define your query:** the deck's first live-coding slide starts with "Set up and define your query". Move the
+  lesson's query lines (`STATE, COUNTY`, `site`, `START, END` and the comment above them) out of the first
+  `get_monitoring_locations` block into their own cell under `## Define your query` (after Credentials), with the
+  lesson's sentence on keeping the query in variables.
+- **Live coding 1 headings:** under `### Finding monitoring locations`, use the deck's section names as `####`
+  headings for the lesson's examples: "Stream monitoring locations in a county", "Which of them have daily mean
+  discharge", "Map: where these locations are", "What the Louisville gage records, and since when" (the deck
+  added the period of record to discovery).
+- **Headings:** the lesson's "Field  measurements" has a double space; use one, as on the deck.
+- **Live coding 2** runs to the end of "Spatial scaling" (the deck's "Scaling: one location's whole record, one
+  day everywhere"): include "Best practices FAQs" with "Temporal scaling" and "Spatial scaling", but not
+  "Parallelization" (deck only).
+- **Temporal scaling:** leave out "Approved data rarely change, so save each window to a file and only request new
+  data next time." Lindsay flagged it on the deck: values can be revised even after approval.
+- **Now you try it:** split the lesson's one example answer into the deck's three steps (the location and its
+  time series metadata; the daily mean and its approval status; the continuous crest), each with its own starter,
+  collapsed answer and "What you should get".
 - **Going further, row 23 (counting qualifiers):** the lesson gives the count only as inline code. Replace its
   "(count them with `daily_record[...]...sum()`)" with "("Going further" at the end of this notebook counts
   them)", and add:
   > This downloads the whole daily record for the Ohio River at Louisville again, as in the "Temporal scaling"
   > example (about 6 seconds), and counts its qualifiers:
   ```python
-  # the whole daily record, as in "Temporal scaling" (the site is set here, since the task changed `site`)
+  # the whole daily record, as in "Temporal scaling" (the site is written out so this cell runs on its own)
   daily_record, md = waterdata.get_daily(
       monitoring_location_id="USGS-03294500",
       parameter_code="00060",
