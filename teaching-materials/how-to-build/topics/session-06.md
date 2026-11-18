@@ -1,9 +1,9 @@
-# Session 6 · Module 4: Combining federal water data
+# Session 6 · Module 4: Synthesizing federal water data
 
 - **When:** Thu Nov 19, 2026, 2:00–4:00 pm ET (120 min, with a 5-minute break)
 - **Deck:** `teaching-materials/materials/slides/261119_lplatt_open-water-data_module-04_federal-water-data-synthesis.pptx`
 - **Reading:** none for this cohort
-- **Notebook:** the Module 4 notebook plus `helpers.py`, side by side in the HydroShare resource (built locally, never committed)
+- **Notebook:** `module-04_federal-water-data-synthesis.ipynb` plus `helpers.py`, side by side in the HydroShare resource (built locally, never committed)
 - **Pages (source material only; this cohort can't see the website, so nothing learners see points to it):** `04/00` =
   `04-federal-water-data-synthesis/00_introduction.md`, `04/01` = `01_comparative_overview.md`, `04/02` =
   `02_synthesize_river_data.md`
@@ -21,12 +21,12 @@ covered. 04/03 is cut.
 
 | # | Topic | Source | Where | Min | What the slides should show or do |
 |---|---|---|---|---|---|
-| 1 | Session title | – | deck | 1 | Module 4, Combining federal water data, Nov 19 |
+| 1 | Session title | – | deck | 1 | Module 4, Synthesizing federal water data, Nov 19; Lindsay Platt and Kimberlee Wong |
 | 2 | Program schedule | – | deck | 1 | Highlight on Nov 19 |
 | 3 | Session objectives | new (not 04/00) | deck | 1 | Four skill-based objectives: link a gage to its NWM and SWOT reach by ID and by distance in a shared CRS; line up observations, forecasts and passes in time; convert units and decide which variables compare; explain why products on different vertical references are compared as changes, and how a conversion is done |
 | 4 | What doesn't line up | 04/01 § Side-by-side comparison | deck | 3 | Table: location ID, variable, unit, time, vertical reference, version across SWOT, NWM, WDFN. Each row maps to a skill |
 | 5 | Setup: `helpers.py` | new | deck + notebook | 2 | Import of the five helpers, one call and its `info` record. Notes: `md.query_time` is the request duration, not when it was made |
-| 6 | Ready to code | – | deck + how-to | 2 | Notebook and `helpers.py` in one folder, `open-water-data` kernel, Earthdata Login (Raster), optional USGS key, the place |
+| 6 | Ready to code | – | deck + how-to | 2 | Notebook and `helpers.py` in one folder (pynhd adds a harmless `cache/` folder), `open-water-data` kernel, Earthdata Login (Raster), optional USGS key, the place |
 | 7 | Skill 1: link locations | 04/02 § Defining the area of interest | deck | 3 | Three IDs for one place (gage, COMID 24270288, SWORD reach 78310800031); three methods: by ID, by geometry, by grid; link through the gage. Given SWORD reach IDs (PO.DAAC Hydrocron Skagit tutorial) |
 | 8 | By ID: gage to COMID | 04/02 § Defining the area of interest | deck + notebook | 2 | `NLDI().getfeature_byid("nwissite", site)` → 24270288 |
 | 9 | Each product's location and CRS | new | deck | 3 | Table: USGS point, NLDI line, Hydrocron GeoJSON LineString, Raster grid in UTM 10N (EPSG:32610) |
