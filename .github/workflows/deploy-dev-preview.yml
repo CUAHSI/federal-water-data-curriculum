@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install MyST
         run: npm install -g mystmd
       - name: Mark the build as a draft (CI-only edit, not committed)
