@@ -14,6 +14,7 @@ the notebooks through HydroShare, so each has to stand on its own.
 | **Notebook** | Practising the code, during the session's live coding and after | `notebooks/`, one `.ipynb` per lesson with code, and one `environment.yml` for them all; shared through HydroShare |
 | **Reading** | Extra detail and nuance that's useful but not needed in the session (Modules 2–4 only, at most one per module) | `readings/`, a Word document exported to PDF; the PDF is shared through Canvas |
 | **Quiz** | A formative check per module, aligned to its objectives | `quizzes/`, `text2qti` text, QTI zip and answer key; imported into Canvas |
+| **Final assessment** | The end-of-course task: learner page for Canvas, grader packet and scoring sheet for the demos, staff review checklist | `assessment/`, built with `/build-assessment` |
 | **Instructor guide** | Prep for a new or substitute instructor (not for learners) | `instructor-guide/` |
 
 Decks, notebooks, readings and quizzes are **built locally and never committed** (git-ignored). Each records the
@@ -29,6 +30,7 @@ What goes where is decided per topic in the **topic lists**, not by whoever runs
    the deck explains.
 3. **Readings** (`/build-slides reading M`): only what the module's decks left out.
 4. **Quizzes** (`/build-quizzes`), then the **instructor guide** (`/build-instructor-guide`).
+5. **Final assessment** (`/build-assessment`), after the last session's deck and notebook.
 
 ## What's where
 
