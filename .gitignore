@@ -22,3 +22,5 @@ teaching-materials/materials/quizzes/*
 # Notebooks and their environment files are built locally and shared through HydroShare, never committed
 teaching-materials/materials/notebooks/*
 !teaching-materials/materials/notebooks/.gitkeep
+# The final assessment (learner page, grader packet with answers, scoring sheets) is built locally, never committed
+teaching-materials/materials/assessment/
